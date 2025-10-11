@@ -730,7 +730,7 @@ function checkKey(e) {
       if (!cellOccupied()) {
         cardsInPlayerHand.splice(selectedCardNumber, 1);
         removeGridCursor();
-        placeCard(
+        CardPlacer.placeCard(
           selectedCard,
           (gameOffsetX + (cellWidth * (selectedColumn - 1)) + cardOffsetX),
           (gameOffsetY + (cellHeight * (selectedRow - 1)) + cardOffsetY)
@@ -763,7 +763,7 @@ function aiTurn() {
   aiCardsAboveSelection = aiSelectedCardNumber;
   cardsInAIHand.splice(aiSelectedCardNumber, 1);
   setTimeout(function() {
-    placeCard(
+    CardPlacer.placeCard(
       aiSelectedCard,
       (gameOffsetX + (cellWidth * (selectedColumn - 1)) + cardOffsetX),
       (gameOffsetY + (cellHeight * (selectedRow - 1)) + cardOffsetY)
