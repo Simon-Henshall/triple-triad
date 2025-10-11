@@ -1,193 +1,165 @@
+// cardFlipping.js
+
+// =========================
 // Card Flipping Logic
-var sliceContainer = new createjs.Container();
-var sliceWidth;
-var sliceHeight;
-var degToRad = Math.PI / 180;
+// =========================
 
-// Flip The Entire AI Hand Over At The Start Of A Game
+const degToRad = Math.PI / 180;
+const sliceContainer = new createjs.Container();
+let sliceWidth, sliceHeight;
+
+const directionMap = {
+  left:  { prop: 'cardLeft',  playerStrength: 'strengthLeft',  opponentStrength: 'strengthRight' },
+  right: { prop: 'cardRight', playerStrength: 'strengthRight', opponentStrength: 'strengthLeft' },
+  up:    { prop: 'cardUp',    playerStrength: 'strengthUp',    opponentStrength: 'strengthDown' },
+  down:  { prop: 'cardDown',  playerStrength: 'strengthDown',  opponentStrength: 'strengthUp' }
+};
+
+// =========================
+// Flip The Entire AI Hand At Game Start
+// =========================
 function flipAIHand() {
-  setTimeout(function () {
-    flipCard(cardsInAIHand[4], "right");
-    setTimeout(function () {
-      flipCard(cardsInAIHand[3], "right");
-      setTimeout(function () {
-        flipCard(cardsInAIHand[2], "right");
-        setTimeout(function () {
-          flipCard(cardsInAIHand[1], "right");
-          setTimeout(function () {
-            flipCard(cardsInAIHand[0], "right");
-          }, 2000);
-        }, 2000);
-      }, 2000);
-    }, 2000);
-  }, 2000);
+  cardsInAIHand.slice().reverse().forEach((card, index) => {
+    setTimeout(() => {
+      flipCard(card, 'right');
+    }, 2000 * (index + 1));
+  });
 }
 
-// Check If A Card Needs To Be Flipped Over
-// Check If A Card Needs To Be Flipped Over
-function flipCardsCheck(card) {  // <-- pass the active card in
-  if (
-    card.cardLeft &&
-    card.owner !== card.cardLeft.owner &&
-    card.strengthLeft > card.cardLeft.strengthRight
-  ) {
-    flipCardOver(card, "left");
-  }
-  if (
-    card.cardUp &&
-    card.owner !== card.cardUp.owner &&
-    card.strengthUp > card.cardUp.strengthDown
-  ) {
-    flipCardOver(card, "up");
-  }
-  if (
-    card.cardRight &&
-    card.owner !== card.cardRight.owner &&
-    card.strengthRight > card.cardRight.strengthLeft
-  ) {
-    flipCardOver(card, "right");
-  }
-  if (
-    card.cardDown &&
-    card.owner !== card.cardDown.owner &&
-    card.strengthDown > card.cardDown.strengthUp
-  ) {
-    flipCardOver(card, "down");
-  }
+// =========================
+// Check Adjacent Cards For Flip
+// =========================
+function flipCardsCheck(card) {
+  Object.entries(directionMap).forEach(([direction, { prop, playerStrength, opponentStrength }]) => {
+    const target = card[prop];
+    if (target && card.owner !== target.owner && card[playerStrength] > target[opponentStrength]) {
+      flipCardOver(card, direction);
+    }
+  });
 }
 
-// Returns the color of the player who is *currently flipping*
+// =========================
+// Get Current Player Colour
+// =========================
 function getCurrentPlayerColour() {
   return getPlayerTurn(); // always 'red' or 'blue'
 }
 
-// Flip a card in the given direction
+// =========================
+// Flip a Single Card Over
+// =========================
 function flipCardOver(card, direction) {
-  let cardsFlipped = 0;
-
-  const targets = [];
-  if (direction === "left" && card.cardLeft) targets.push(card.cardLeft);
-  if (direction === "up" && card.cardUp) targets.push(card.cardUp);
-  if (direction === "down" && card.cardDown) targets.push(card.cardDown);
-  if (direction === "right" && card.cardRight) targets.push(card.cardRight);
-
-  targets.forEach(targetCard => {
-    // Assign ownership to the current player
-    targetCard.owner = getCurrentPlayerColour();
-
-    // Update the visual
-    replaceCard(targetCard, direction);
-
-    cardsFlipped++;
-  });
-
-  // Update card counts
-  if (getCurrentPlayerColour() === "blue") {
-    totalBlueCards += cardsFlipped;
-    totalRedCards -= cardsFlipped;
-  } else if (getCurrentPlayerColour() === "red") {
-    totalBlueCards -= cardsFlipped;
-    totalRedCards += cardsFlipped;
+  const targetCard = card[directionMap[direction].prop];
+  if (!targetCard) {
+    return;
   }
+
+  targetCard.owner = getCurrentPlayerColour();
+  replaceCard(targetCard);
+
+  updateOwnershipCounts(1);
+}
+
+// =========================
+// Update Ownership Totals
+// =========================
+function updateOwnershipCounts(flippedCount) {
+  const playerColour = getCurrentPlayerColour();
+  const delta = {
+    blue: { totalBlueCards: 1, totalRedCards: -1 },
+    red:  { totalBlueCards: -1, totalRedCards: 1 }
+  };
+
+  totalBlueCards += delta[playerColour].totalBlueCards * flippedCount;
+  totalRedCards  += delta[playerColour].totalRedCards * flippedCount;
 
   updateCardCounts();
 }
 
-// Update The Card Count For Each Player
+// =========================
+// Update Displayed Card Counts
+// =========================
 function updateCardCounts() {
   aiCardCount.text = totalRedCards;
   playerCardCount.text = totalBlueCards;
   stage.update();
 }
 
-// Replace The Card Upon Flip
-function replaceCard(cardToReplace, direction) {
-  cardToReplace.children[0].image.src =
-    "front_end/images/cards/" + cardToReplace.owner + ".png";
+// =========================
+// Replace Card Image Upon Flip
+// =========================
+function replaceCard(cardToReplace) {
+  cardToReplace.children[0].image.src = `front_end/images/cards/${cardToReplace.owner}.png`;
 }
 
-// Initiate A Card Flip
+// =========================
+// Animate Card Flip
+// =========================
 function flipCard(card, direction) {
   sliceWidth = card.children[1].image.width * card.scaleX;
   sliceHeight = card.children[1].image.height * card.scaleY;
+
   sliceContainer.x = card.x + sliceWidth / 2;
   sliceContainer.y = card.y;
-  var slice = card;
-  slice.sourceRect = new createjs.Rectangle(0, 0, 0, sliceWidth);
-  slice.cache(0, 0, sliceWidth, sliceHeight);
-  sliceContainer.addChild(slice);
+
+  card.sourceRect = new createjs.Rectangle(0, 0, 0, sliceWidth);
+  card.cache(0, 0, sliceWidth, sliceHeight);
+
+  sliceContainer.addChild(card);
   stage.addChild(sliceContainer);
-  flipCard2(card, direction, 0);
+
+  animateFlip(card, direction, 0);
 }
 
-// Handle Card Flip Main Logic
-function flipCard2(card, direction, counter) {
-  if (counter < 180) {
-    setTimeout(function () {
-      counter++;
-      if (counter == 90) {
-        if (card.children[1].image.src.indexOf(card.backImage) !== -1) {
-          var replacementImage = card.frontImage;
-        } else {
-          var replacementImage = card.backImage;
-        }
-        card.children[1].image.src = replacementImage;
-        card.children[1].x += card.children[1].image.width;
-        card.children[1].scaleX = -1;
-      }
-      if (direction == "left") {
-        flipLeft(counter);
-      } else if (direction == "right") {
-        flipRight(counter);
-      }
-      flipCard2(card, direction, counter);
-    }, 2);
-  } else if (counter == 180) {
-    // Finished Flipping
-    // This Gets Called Only AFTER Animation, Regardless Of Animation Length!
-    // Thus, It's A Great Place For Time Logic!
-    var cardToAdd = sliceContainer.getChildAt(0);
-    console.log(card.x); // 76.5
-    console.log(sliceContainer.x); // 118
-    cardToAdd.x = sliceContainer.x + card.x;
-    cardToAdd.y = sliceContainer.y;
-    stage.addChild(cardToAdd); // Probably Not The Most Elegant Solution
-    sliceContainer.children.pop();
+function animateFlip(card, direction, counter) {
+  if (counter > 180) {
+    finalizeFlip(card);
+    return;
   }
+
+  setTimeout(() => {
+    counter++;
+
+    if (counter === 90) {
+      swapCardFace(card);
+    }
+
+    flipDirection(direction, counter);
+
+    animateFlip(card, direction, counter);
+  }, 2);
 }
 
-// Flip A Card Left
-function flipLeft(value) {
-  var l = sliceContainer.getNumChildren();
-  for (var i = 0; i < l; i++) {
-    var slice = sliceContainer.getChildAt(i);
-    slice.y = (Math.sin(value * degToRad) * -sliceWidth) / 2;
-    if (i % 2) {
-      slice.skewY = value;
-    } else {
-      slice.skewY = -value;
+function swapCardFace(card) {
+  const isBack = card.children[1].image.src.includes(card.backImage);
+  card.children[1].image.src = isBack ? card.frontImage : card.backImage;
+  card.children[1].x += card.children[1].image.width;
+  card.children[1].scaleX = -1;
+}
+
+function flipDirection(direction, value) {
+  const factor = direction === 'left' ? -1 : 1;
+  const l = sliceContainer.getNumChildren();
+
+  for (let i = 0; i < l; i++) {
+    const slice = sliceContainer.getChildAt(i);
+    slice.y = Math.sin(value * degToRad) * factor * sliceWidth / 2;
+    slice.skewY = (i % 2 === 0 ? -1 : 1) * value * factor;
+    if (i % 2 === 0) {
       slice.y -= sliceWidth * Math.sin(slice.skewY * degToRad);
     }
+
     slice.x = sliceWidth * (i - l / 2) * Math.cos(slice.skewY * degToRad);
     slice.updateCache();
   }
+
   stage.update();
 }
 
-// Flip A Card Right
-function flipRight(value) {
-  var l = sliceContainer.getNumChildren();
-  for (var i = 0; i < l; i++) {
-    var slice = sliceContainer.getChildAt(i);
-    slice.y = (Math.sin(value * degToRad) * sliceWidth) / 2;
-    if (i % 2) {
-      slice.skewY = -value;
-    } else {
-      slice.skewY = value;
-      slice.y -= sliceWidth * Math.sin(slice.skewY * degToRad);
-    }
-    slice.x = sliceWidth * (i + l / -2) * Math.cos(slice.skewY * degToRad);
-    slice.updateCache();
-  }
-  stage.update();
+function finalizeFlip(card) {
+  const cardToAdd = sliceContainer.getChildAt(0);
+  cardToAdd.x = sliceContainer.x + card.x;
+  cardToAdd.y = sliceContainer.y;
+  stage.addChild(cardToAdd);
+  sliceContainer.removeAllChildren();
 }
