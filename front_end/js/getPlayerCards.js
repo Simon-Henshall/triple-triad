@@ -2,60 +2,6 @@
 // PlayerCardManager
 // -----------------------------
 class PlayerCardManager {
-  constructor() {
-    // Use existing global objects if present; otherwise create sensible defaults.
-    // Many variables in the original code were globals set up by game.php - we do not override them if present.
-    //this.stage = window.stage || null;
-
-    // // Containers referenced by other code; if absent, create them here.
-    // window.selectionBoard = window.selectionBoard || new createjs.Container();
-    // window.selectionBoardBackground =
-    //   window.selectionBoardBackground || new createjs.Shape();
-    // window.shownCards = window.shownCards || new createjs.Container();
-    // window.displayedCard = window.displayedCard || null;
-    // window.displayedCardImage = window.displayedCardImage || null;
-    // window.displayedCardColour = window.displayedCardColour || null;
-
-    // // Variables used by pagination & selection
-    // window.page = window.page || 1;
-    // window.pageDisplay = window.pageDisplay || null;
-    // window.totalPages = window.totalPages || 0;
-    // window.displayedCards = window.displayedCards || [];
-    // window.remainingCards = window.remainingCards || 0;
-    // window.selectedHandCardNumber = window.selectedHandCardNumber || 0;
-    // window.selectedHandCard = window.selectedHandCard || null;
-
-    // // Player/AI/hand globals - preserve (or create) so other code can rely on them.
-    // window.playerCards = window.playerCards || [];
-    // window.ownedCards = window.ownedCards || [];
-    // window.cardsInAIHand = window.cardsInAIHand || [];
-    // window.cardsInPlayerHand = window.cardsInPlayerHand || [];
-
-    // Cursor containers (global in original code)
-    // window.playerHandSelectionCursor =
-    //   window.playerHandSelectionCursor ||
-    //   new createjs.Bitmap(
-    //     window.Game && Game.config && Game.config.imagePath
-    //       ? Game.config.imagePath + "cursor.png"
-    //       : "front_end/images/cursor.png"
-    //   );
-    // window.confirmation = window.confirmation || new createjs.Container();
-    // window.confirmationBackground =
-    //   window.confirmationBackground || new createjs.Shape();
-    // window.confirmationCursor =
-    //   window.confirmationCursor ||
-    //   new createjs.Bitmap(
-    //     window.Game && Game.config && Game.config.imagePath
-    //       ? Game.config.imagePath + "cursor.png"
-    //       : "front_end/images/cursor.png"
-    //   );
-
-    // fallback card image path base
-    this.cardFolder =
-      window.Game && Game.config && Game.config.cardPath
-        ? Game.config.cardPath
-        : "front_end/images/cards/";
-  }
 
   // -----------------------------
   // Ajax wrapper (keeps original signature)
@@ -134,7 +80,7 @@ class PlayerCardManager {
       window.playerCards = this.shuffle(window.ownedCards);
       window.playerCards = $.extend({}, window.ownedCards);
       // populate AI cards and start game (match original flow)
-      this.populateAICards();
+      populateAICards();
       if (typeof window.startGame === "function") {
         window.startGame();
       }
@@ -176,10 +122,10 @@ class PlayerCardManager {
       page = 1;
 
       // Add AI cards (original behaviour)
-      this.populateAICards();
+      populateAICards();
 
       // Add selection board cards
-      this.populateSelectionBoardCards();
+      populateSelectionBoardCards();
 
       // Add container to stage and set up selection cursor
       if (this.stage) {
@@ -189,7 +135,7 @@ class PlayerCardManager {
       }
 
       // place selection cursor and allow user to pick
-      this.placePlayerHandSelectionCursor();
+      placePlayerHandSelectionCursor();
       window.playerSelectingHand = true;
     }
   }
@@ -210,412 +156,8 @@ class PlayerCardManager {
     return array;
   }
 
-  // -----------------------------
-  // populateAICards - unchanged behaviour (just organised into method)
-  // -----------------------------
-  populateAICards() {
-    // Setup AI hand (match original behaviour)
-    var aiHand = this.shuffle(window.cards || []);
-    aiHand = $.extend({}, window.cards || []);
-    aiHand.length = 5;
-
-    for (var i = 0; i < aiHand.length; i++) {
-      var chosen_card = aiHand[i];
-
-      // Default to a face-down card
-      var cardImage = new createjs.Bitmap(this.cardFolder + "back.png");
-
-      // Card background colour (owner)
-      var cardColour = new createjs.Bitmap(
-        this.cardFolder +
-          (typeof window.getPlayerTurn === "function"
-            ? getPlayerTurn()
-            : "blue") +
-          ".png"
-      );
-
-      // Card container
-      var card = new createjs.Container();
-      card.addChild(cardColour, cardImage);
-
-      // Adjust card scale (guard against missing images by checking width/height values)
-      if (
-        card.children[0] &&
-        card.children[0].image &&
-        card.children[0].image.width
-      ) {
-        card.scaleX =
-          (window.cardWidth ||
-            window.cellWidth - (window.cardOffsetX || 3) * 2) /
-          card.children[0].image.width;
-        card.scaleY =
-          (window.cardHeight ||
-            window.cellHeight - (window.cardOffsetY || 3) * 2) /
-          card.children[0].image.height;
-      } else {
-        card.scaleX = card.scaleY = 1;
-      }
-
-      // Card imagery
-      card.frontImage = this.cardFolder + chosen_card.image + ".png";
-      card.backImage = this.cardFolder + "back.png";
-
-      // Card stats (preserve original property names)
-      card.name = chosen_card.displayName;
-      card.strengthUp = chosen_card.strengthUp;
-      card.strengthRight = chosen_card.strengthRight;
-      card.strengthDown = chosen_card.strengthDown;
-      card.strengthLeft = chosen_card.strengthLeft;
-      card.element = chosen_card.element;
-      card.owner = card.background =
-        typeof window.getPlayerTurn === "function" ? getPlayerTurn() : "blue";
-
-      // Place the card off to the AI hand area
-      card.x =
-        window.aiHandOffsetX ||
-        (window.gameOffsetX ? window.gameOffsetX / 2 : 100);
-      card.y = (window.handOffsetY || 50) + i * (window.handCardOffset || 95);
-
-      window.cardsInAIHand.push(card);
-      if (this.stage) {
-        this.stage.addChild(card);
-      } else if (window.stage) {
-        window.stage.addChild(card);
-      }
-
-      if (this.stage || window.stage) {
-        (this.stage || window.stage).update();
-      }
-    }
-
-    // Select the top card by default (preserve original globals)
-    window.selectedCardNumber = 0;
-    window.selectedCard = window.cardsInAIHand[window.selectedCardNumber];
-    window.cardsAboveSelection = 0;
-    window.previouslySelectedCard = [];
-
-    // Handle the "open" rule flip all AI hand behaviour
-    if (
-      (window.rules && window.rules.indexOf("open") != -1) ||
-      (window.Game && Game.rules && Game.rules.indexOf("open") != -1)
-    ) {
-      if (typeof window.flipAIHand === "function") {
-        flipAIHand();
-      }
-    }
-  }
-
-  // -----------------------------
-  // populateSelectionBoardCards - draw the selectable owned cards (preserve original behaviour)
-  // -----------------------------
-  populateSelectionBoardCards() {
-    // Determine paging and which cards to display
-    totalPages = Math.floor(window.ownedCards.length / 11) + 1;
-    remainingCards = Object.keys(window.ownedCards).length % 11;
-    displayedCards = $.extend({}, window.ownedCards);
-    var offset = (page - 1) * 11;
-
-    // Determine displayedCards length exactly like original
-    if (window.ownedCards.length >= 11) {
-      if (page != totalPages) {
-        displayedCards.length = 11;
-      } else if (page == totalPages) {
-        displayedCards.length = remainingCards;
-      }
-    } else {
-      displayedCards.length = Object.keys(window.ownedCards).length;
-    }
-
-    // Draw the data entries onto shownCards (createjs.Text and bitmaps)
-    var j = 0;
-    for (var i = offset; i < offset + displayedCards.length; i++) {
-      var cardName = new createjs.Text(
-        displayedCards[i].displayName,
-        "26px Arial",
-        "#ffffff"
-      );
-      cardName.x = selectionBoardBackground.x + 50;
-      cardName.y = selectionBoardBackground.y + 35 * j + 60;
-      cardName.textBaseline = "alphabetic";
-
-      var cardCount = new createjs.Text(
-        displayedCards[i].count,
-        "26px Arial",
-        "#ffffff"
-      );
-      cardCount.x = selectionBoardBackground.x + 380;
-      cardCount.y = selectionBoardBackground.y + 35 * j + 60;
-      cardCount.textBaseline = "alphabetic";
-
-      shownCards.addChild(cardName, cardCount);
-
-      // Small image icon for the row
-      var selectionBoardCardImage = new createjs.Bitmap(
-        "front_end/images/selection_card.png"
-      );
-      selectionBoardCardImage.x = selectionBoardBackground.x + 15;
-      selectionBoardCardImage.y = selectionBoardBackground.y + 35 * j + 35;
-
-      // Protect scale calculation if image not loaded yet
-      if (
-        selectionBoardCardImage.image &&
-        selectionBoardCardImage.image.width
-      ) {
-        selectionBoardCardImage.scaleX =
-          30 / selectionBoardCardImage.image.width;
-        selectionBoardCardImage.scaleY =
-          30 / selectionBoardCardImage.image.height;
-      }
-
-      shownCards.addChild(selectionBoardCardImage);
-      j++;
-    }
-
-    selectionBoard.addChild(shownCards);
-
-    // Select the top card by default
-    selectedHandCardNumber = 0;
-    selectedHandCard = window.ownedCards[selectedHandCardNumber];
-
-    // Draw the displayed card on the right of the selection board
-    displayedCardImage = new createjs.Bitmap(
-      this.cardFolder + selectedHandCard.image + ".png"
-    );
-    displayedCardColour = new createjs.Bitmap(this.cardFolder + "blue.png");
-    displayedCard = new createjs.Container();
-    displayedCard.addChild(displayedCardColour, displayedCardImage);
-    displayedCard.x = selectionBoardBackground.x + 440;
-    displayedCard.y = selectionBoardBackground.y + 200;
-
-    // Scale accordingly (guard for missing image size)
-    if (
-      displayedCard.children[0] &&
-      displayedCard.children[0].image &&
-      displayedCard.children[0].image.width
-    ) {
-      displayedCard.scaleX =
-        (window.cardWidth || window.cellWidth - (window.cardOffsetX || 3) * 2) /
-        displayedCard.children[0].image.width;
-      displayedCard.scaleY =
-        (window.cardHeight ||
-          window.cellHeight - (window.cardOffsetY || 3) * 2) /
-        displayedCard.children[0].image.height;
-    }
-
-    selectionBoard.addChild(displayedCard);
-  }
-
-  // -----------------------------
-  // placePlayerHandSelectionCursor - show the small cursor next to the list
-  // -----------------------------
-  placePlayerHandSelectionCursor() {
-    playerHandSelectionCursor.x = selectionBoardBackground.x - 40;
-    playerHandSelectionCursor.y = selectionBoardBackground.y + 48;
-    selectionBoard.addChild(playerHandSelectionCursor);
-    if (this.stage) {
-      this.stage.update();
-    } else if (window.stage) {
-      window.stage.update();
-    }
-  }
-
-  // -----------------------------
-  // moveSelectionCursor - move selection cursor and update displayed card
-  // -----------------------------
-  moveSelectionCursor(direction) {
-    if (direction == "up" && selectedHandCardNumber % 11 != 0) {
-      playerHandSelectionCursor.y -= 35;
-      selectedHandCardNumber -= 1;
-      selectedHandCard = window.ownedCards[selectedHandCardNumber];
-      this.updateDisplayedCard();
-    } else if (
-      direction == "down" &&
-      ((page != totalPages && selectedHandCardNumber % 11 != 10) ||
-        (page == totalPages &&
-          selectedHandCardNumber % 11 < remainingCards - 1))
-    ) {
-      playerHandSelectionCursor.y += 35;
-      selectedHandCardNumber += 1;
-      selectedHandCard = window.ownedCards[selectedHandCardNumber];
-      this.updateDisplayedCard();
-    } else if (direction == "left" && page != 1) {
-      page--;
-      selectedHandCardNumber -= 11;
-      selectedHandCard = window.ownedCards[selectedHandCardNumber];
-      this.updateHandCards();
-      this.updateDisplayedCard();
-    } else if (direction == "right" && page != totalPages - 1) {
-      if (page != totalPages) {
-        page++;
-        selectedHandCardNumber += 11;
-        selectedHandCard = window.ownedCards[selectedHandCardNumber];
-        this.updateHandCards();
-        this.updateDisplayedCard();
-      }
-    } else if (direction == "right" && page == totalPages - 1) {
-      page++;
-      if (selectedHandCardNumber > window.ownedCards.length - 12) {
-        var selectedHandCardNumberForPage = Math.floor(
-          (selectedHandCardNumber % 11) + 1
-        );
-        playerHandSelectionCursor.y -=
-          35 * (selectedHandCardNumberForPage - remainingCards);
-        selectedHandCardNumber = window.ownedCards.length - 1;
-        selectedHandCard = window.ownedCards[selectedHandCardNumber];
-      } else {
-        selectedHandCardNumber += 11;
-        selectedHandCard = window.ownedCards[selectedHandCardNumber];
-      }
-      this.updateHandCards();
-      this.updateDisplayedCard();
-    }
-
-    if (this.stage) {
-      this.stage.update();
-    } else if (window.stage) {
-      window.stage.update();
-    }
-  }
-
-  // -----------------------------
-  // displayConfirmationBox - original UI for "Are you sure?" dialog
-  // -----------------------------
-  displayConfirmationBox() {
-    window.playerConfirming = true;
-
-    // Background rectangle
-    confirmationBackground.width = 300;
-    confirmationBackground.height = 120;
-    confirmationBackground.graphics
-      .beginFill("#666666")
-      .drawRect(
-        0,
-        0,
-        confirmationBackground.width,
-        confirmationBackground.height
-      );
-    confirmationBackground.x = 380;
-    confirmationBackground.y = 285;
-
-    // Border (black)
-    var confirmationBorder = new createjs.Shape();
-    confirmationBorder.width = confirmationBackground.width + 2;
-    confirmationBorder.height = confirmationBackground.height + 2;
-    confirmationBorder.graphics
-      .beginFill("#000000")
-      .drawRect(0, 0, confirmationBorder.width, confirmationBorder.height);
-    confirmationBorder.x = confirmationBackground.x - 1;
-    confirmationBorder.y = confirmationBackground.y - 1;
-
-    // Text elements
-    var confirmationChoice = new createjs.Text(
-      "CHOICE",
-      "18px Arial",
-      "#ffffff"
-    );
-    confirmationChoice.x = confirmationBackground.x + 10;
-    confirmationChoice.y = confirmationBackground.y + 15;
-    confirmationChoice.textBaseline = "alphabetic";
-    confirmationChoice.alpha = 1;
-
-    var confirmationSure = new createjs.Text(
-      "Are you sure?",
-      "28px Arial",
-      "#ffffff"
-    );
-    confirmationSure.x = confirmationBackground.x + 60;
-    confirmationSure.y = confirmationBackground.y + 40;
-    confirmationSure.textBaseline = "alphabetic";
-    confirmationSure.alpha = 1;
-
-    var confirmationYes = new createjs.Text("Yes", "28px Arial", "#ffffff");
-    confirmationYes.x = confirmationBackground.x + 120;
-    confirmationYes.y = confirmationBackground.y + 75;
-    confirmationYes.textBaseline = "alphabetic";
-    confirmationYes.alpha = 1;
-
-    var confirmationNo = new createjs.Text("No", "28px Arial", "#ffffff");
-    confirmationNo.x = confirmationBackground.x + 120;
-    confirmationNo.y = confirmationBackground.y + 105;
-    confirmationNo.textBaseline = "alphabetic";
-    confirmationNo.alpha = 1;
-
-    confirmation.addChild(
-      confirmationBorder,
-      confirmationBackground,
-      confirmationChoice,
-      confirmationSure,
-      confirmationYes,
-      confirmationNo
-    );
-
-    if (this.stage) {
-      this.stage.addChild(confirmation);
-    } else if (window.stage) {
-      window.stage.addChild(confirmation);
-    }
-
-    this.placeConfirmationCursor();
-    if (this.stage) {
-      this.stage.update();
-    } else if (window.stage) {
-      window.stage.update();
-    }
-  }
-
-  placeConfirmationCursor() {
-    confirmationCursor.x = confirmationBackground.x + 50;
-    confirmationCursor.y = confirmationBackground.y + 60;
-    if (this.stage) {
-      this.stage.addChild(confirmationCursor);
-    } else if (window.stage) {
-      window.stage.addChild(confirmationCursor);
-    }
-    if (this.stage) {
-      this.stage.update();
-    } else if (window.stage) {
-      window.stage.update();
-    }
-  }
-
-  removeConfirmationCursor() {
-    window.playerConfirming = false;
-    if (this.stage) {
-      this.stage.removeChild(confirmationCursor);
-    } else if (window.stage) {
-      window.stage.removeChild(confirmationCursor);
-    }
-    if (this.stage) {
-      this.stage.update();
-    } else if (window.stage) {
-      window.stage.update();
-    }
-  }
-
-  moveConfirmationCursor(direction) {
-    if (direction == "up" && window.selectedConfirmationChoice != 0) {
-      confirmationCursor.y -= 30;
-      window.selectedConfirmationChoice -= 1;
-    } else if (direction == "down" && window.selectedConfirmationChoice != 1) {
-      confirmationCursor.y += 30;
-      window.selectedConfirmationChoice += 1;
-    }
-    if (this.stage) {
-      this.stage.update();
-    } else if (window.stage) {
-      window.stage.update();
-    }
-  }
-
-  hideConfirmationBox() {
-    window.playerConfirming = false;
-    if (this.stage) {
-      this.stage.removeChild(confirmation);
-    } else if (window.stage) {
-      window.stage.removeChild(confirmation);
-    }
-    window.playerSelectingHand = true;
-  }
+  
+  
 
   // -----------------------------
   // updateHandCards - updates the text/icon list on the selection board
@@ -706,7 +248,7 @@ class PlayerCardManager {
       displayedCard.children[1].image
     ) {
       displayedCard.children[1].image.src =
-        this.cardFolder + selectedHandCard.image + ".png";
+        Game.config.cardPath + selectedHandCard.image + ".png";
     }
     createjs.Tween.get(displayedCard).to(
       {
@@ -734,33 +276,6 @@ function pickPlayerCards(ownedCardsJSON) {
 }
 
 // Expose other functions that external files may call (same names as original)
-function populateAICards() {
-  return __playerCardManager.populateAICards();
-}
-function populateSelectionBoardCards() {
-  return __playerCardManager.populateSelectionBoardCards();
-}
-function placePlayerHandSelectionCursor() {
-  return __playerCardManager.placePlayerHandSelectionCursor();
-}
-function moveSelectionCursor(direction) {
-  return __playerCardManager.moveSelectionCursor(direction);
-}
-function displayConfirmationBox() {
-  return __playerCardManager.displayConfirmationBox();
-}
-function placeConfirmationCursor() {
-  return __playerCardManager.placeConfirmationCursor();
-}
-function removeConfirmationCursor() {
-  return __playerCardManager.removeConfirmationCursor();
-}
-function moveConfirmationCursor(direction) {
-  return __playerCardManager.moveConfirmationCursor(direction);
-}
-function hideConfirmationBox() {
-  return __playerCardManager.hideConfirmationBox();
-}
 function updateHandCards() {
   return __playerCardManager.updateHandCards();
 }

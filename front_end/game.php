@@ -14,3 +14,5 @@
 <script type="text/javascript" src="front_end/js/ui.js"></script>
 <script type="text/javascript" src="front_end/js/keyHandling.js"></script>
 <script type="text/javascript" src="front_end/js/helperFunctions.js"></script>
+<script type="text/javascript" src="front_end/js/selectionBoardCards.js"></script>
+<script type="text/javascript" src="front_end/js/cardSelectionConfirmation.js"></script>
