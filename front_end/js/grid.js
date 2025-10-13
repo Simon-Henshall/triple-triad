@@ -9,7 +9,7 @@ const squareMap = [
   { row: 2, col: 3, left: 5, up: 3, right: "none", down: 9 },
   { row: 3, col: 1, left: "none", up: 4, right: 8, down: "none" },
   { row: 3, col: 2, left: 7, up: 5, right: 9, down: "none" },
-  { row: 3, col: 3, left: 8, up: 6, right: "none", down: "none" }
+  { row: 3, col: 3, left: 8, up: 6, right: "none", down: "none" },
 ];
 
 // -------------------------
@@ -56,14 +56,14 @@ function generateGrid() {
   squares.length = 0;
   Game.ui.squares = squares;
 
-  console.log("generateGrid() running, squares:", squares);
-
   // Determine elemental squares if "elemental" rule active
-  const possibleElements = [1,2,3,4,5,6,7,8];
+  const possibleElements = [1, 2, 3, 4, 5, 6, 7, 8];
   const elements = [];
   const numElements = Math.floor(Math.random() * 3) + 1;
   for (let i = 0; i < numElements; i++) {
-    elements.push(possibleElements[Math.floor(Math.random() * possibleElements.length)]);
+    elements.push(
+      possibleElements[Math.floor(Math.random() * possibleElements.length)]
+    );
   }
   for (let i = numElements; i < 9; i++) elements.push(0);
   shuffle(elements);
@@ -73,15 +73,22 @@ function generateGrid() {
       squareID++;
       const square = new createjs.Shape();
       square.graphics.beginStroke("#000").setStrokeStyle(1).beginFill("White");
-      square.graphics.drawRect(Game.offsets.gameOffsetX, Game.offsets.gameOffsetY, Game.offsets.cellWidth, Game.offsets.cellHeight);
+      square.graphics.drawRect(
+        Game.offsets.gameOffsetX,
+        Game.offsets.gameOffsetY,
+        Game.offsets.cellWidth,
+        Game.offsets.cellHeight
+      );
       square.x = x * Game.offsets.cellWidth;
       square.y = y * Game.offsets.cellHeight;
       square.alpha = Game.alpha;
 
       if (Game.rules.includes("elemental")) {
-        square.element = elements[squareID-1];
+        square.element = elements[squareID - 1];
         if (square.element !== 0) {
-          squareElement = new createjs.Bitmap(`front_end/images/elements/${square.element}.png`);
+          squareElement = new createjs.Bitmap(
+            `front_end/images/elements/${square.element}.png`
+          );
           squareElement.x = Game.offsets.gameOffsetX + square.x + 60;
           squareElement.y = Game.offsets.gameOffsetY + square.y + 70;
           Game.stage.addChild(squareElement);
@@ -118,4 +125,14 @@ function drawGridNumbers() {
       count++;
     }
   }
+}
+
+// -------------------------
+// CELL CHECKS
+// -------------------------
+
+function cellOccupied() {
+  return board[selectedSquare - 1] === "Empty"
+    ? false
+    : board[selectedSquare - 1];
 }
