@@ -101,19 +101,11 @@
     playerTurn: "red"
   };
 
-  function getPlayerTurn() {
-    return Game.ui.playerTurn;
-  }
-
-  function setPlayerTurn(value) {
-    Game.ui.playerTurn = value;
-  }
-
   Game.alpha = 0.01;
   Game.rules = ["elemental"];
 
   Game.board = {
-    boardArray: ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
+    boardArray: Array(9).fill("Empty"),
     freeCells: [1, 2, 3, 4, 5, 6, 7, 8, 9]
   };
 
@@ -152,6 +144,7 @@
   }
 
   function init() {
+    // Stage
     Game.stage = new createjs.Stage("gameArea");
     createjs.Ticker.setFPS(Game.config.fps);
     createjs.Ticker.addEventListener("tick", handleTick);
@@ -162,6 +155,7 @@
     Game.stageWidth = stageWidth;
     Game.stageHeight = stageHeight;
 
+    // Offsets and dimensions
     Game.offsets.handOffsetY = Game.offsets.gameOffsetY;
     gameOffsetX = Game.offsets.gameOffsetX;
     gameOffsetY = Game.offsets.gameOffsetY;
@@ -174,6 +168,7 @@
     cardWidth = cellWidth - (cardOffsetX * 2);
     cardHeight = cellHeight - (cardOffsetY * 2);
 
+    // Player & AI hand positions
     playerHandOffsetX = gameOffsetX + (cellWidth * 3) + (cardWidth / 4);
     Game.player.handOffsetX = playerHandOffsetX;
 
@@ -181,7 +176,7 @@
     Game.ai.handOffsetX = aiHandOffsetX;
 
     // -------------------------
-    // Create cursors
+    // Cursors
     // -------------------------
     Game.player.playerHandCursor = new createjs.Bitmap(Game.config.imagePath + 'cursor.png');
     Game.player.playerHandSelectionCursor = new createjs.Bitmap(Game.config.imagePath + 'cursor.png');
@@ -194,7 +189,7 @@
     gridCursor = Game.ui.gridCursor;
 
     // -------------------------
-    // UI containers
+    // UI Containers
     // -------------------------
     Game.ui.selectionBoard = new createjs.Container();
     selectionBoard = Game.ui.selectionBoard;
@@ -213,8 +208,6 @@
 
     Game.ui.infoBox = new createjs.Container();
     infoBox = Game.ui.infoBox;
-    Game.ui.previouslySelectedCard = previouslySelectedCard = [];
-    // End of the initialization chunk from Part One:
     Game.ui.previouslySelectedCard = previouslySelectedCard = [];
 
     // -------------------------
@@ -275,10 +268,10 @@
 
     alpha = Game.alpha;
 
-    // preserve original key binding
+    // Key binding
     document.onkeydown = checkKey;
 
-    // Add initial background and then ajax call as before (ajaxCall is in getPlayerCards.js)
+    // Add initial background and call ajax
     addBackground();
     if (typeof ajaxCall === "function") {
       ajaxCall(pickPlayerCards);
@@ -290,12 +283,11 @@
     }
   }
 
-  // ---------------------------------------------------------------------
-  // RENDERING / UI functions (same logic, full braces)
-  // ---------------------------------------------------------------------
-
+  // -------------------------
+  // Rendering / UI
+  // -------------------------
   function addBackground() {
-    var background = new createjs.Bitmap('front_end/images/board.png');
+    const background = new createjs.Bitmap(Game.config.imagePath + 'board.png');
     background.x = 0;
     background.y = 0;
     stage.addChild(background);
@@ -327,7 +319,7 @@
   // Draw The Info Box
   function drawInfoBox() {
     // Background
-    var infoBoxBackground = new createjs.Shape();
+    const infoBoxBackground = new createjs.Shape();
     infoBoxBackground.width = 420;
     infoBoxBackground.height = 65;
     infoBoxBackground.graphics.beginFill("#666666").drawRect(0, 0, infoBoxBackground.width, infoBoxBackground.height);
@@ -344,11 +336,11 @@
     infoBox.addChild(infoBoxText);
 
     // Player Count (selectedCard may be undefined until a selection exists)
-    if (typeof selectedCard !== "undefined" && selectedCard !== null) {
-      infoBoxCardName = new createjs.Text(selectedCard.name, "30px Arial", "#ffffff");
-    } else {
-      infoBoxCardName = new createjs.Text("", "30px Arial", "#ffffff");
-    }
+    infoBoxCardName = new createjs.Text(
+      selectedCard?.name || "",
+      "30px Arial",
+      "#ffffff"
+    );
     infoBoxCardName.x = infoBoxBackground.x + (infoBoxBackground.width / 3);
     infoBoxCardName.y = infoBoxBackground.y + (infoBoxBackground.height / 2) + 10;
     infoBoxCardName.textBaseline = "alphabetic";
@@ -377,11 +369,10 @@
     placePlayerHandCursor();
   }
 
-  // Shuffle An Array -- Used For Ensuring No Duplicate Cards In Hand
+  // Shuffle an array
   function shuffle(array) {
-    var counter = array.length;
-    var temp;
-    var index;
+    let counter = array.length,
+      temp, index;
     while (counter--) {
       index = (Math.random() * counter) | 0;
       temp = array[counter];
@@ -396,40 +387,32 @@
     // Calculate The Current Player
     player();
 
-    // Setup Player Hand
-    playerHand = shuffle(playerCardsParam);
-    playerHand = $.extend({}, playerCardsParam);
-    playerHand.length = 5;
+    // Shuffle and copy hand
+    playerHand = shuffle([...playerCardsParam]).slice(0, 5);
 
-    for (var i = 0; i < playerHand.length; i++) {
-      // Grab The Correct Card Graphically
-      var chosen_card = playerHand[i];
+    for (let i = 0; i < playerHand.length; i++) {
+      const chosenCard = playerHand[i];
 
-      // Defensive check
-      if (typeof chosen_card === "undefined" || chosen_card === null) {
-        continue;
-      }
-
-      cardImage = new createjs.Bitmap('front_end/images/cards/' + chosen_card.image + '.png');
-
+      // Transparent card data
+      const cardImage = new createjs.Bitmap(`${Game.config.cardPath}${chosenCard.image}.png`);
       // Card Background Colour
-      cardColour = new createjs.Bitmap('front_end/images/cards/' + getPlayerTurn() + '.png');
+      const cardColour = new createjs.Bitmap(`${Game.config.cardPath}${getPlayerTurn()}.png`);
 
       // Card Container
-      card = new createjs.Container();
+      const card = new createjs.Container();
       card.addChild(cardColour, cardImage);
 
       // Adjust The Card For The Board
       card.scaleX = cardWidth / card.children[0].image.width;
       card.scaleY = cardHeight / card.children[0].image.height;
 
-      // Card Stats
-      card.name = chosen_card.displayName;
-      card.strengthUp = chosen_card.strengthUp;
-      card.strengthRight = chosen_card.strengthRight;
-      card.strengthDown = chosen_card.strengthDown;
-      card.strengthLeft = chosen_card.strengthLeft;
-      card.element = chosen_card.element;
+      // Assign stats
+      card.name = chosenCard.displayName;
+      card.strengthUp = chosenCard.strengthUp;
+      card.strengthRight = chosenCard.strengthRight;
+      card.strengthDown = chosenCard.strengthDown;
+      card.strengthLeft = chosenCard.strengthLeft;
+      card.element = chosenCard.element;
       card.owner = card.background = getPlayerTurn();
 
       // Place The Card
@@ -490,31 +473,33 @@
 
   // Move The Player Hand Cursor
   function movePlayerHandCursor(direction) {
-    if (direction == 'up' && selectedCardNumber != 0) {
+    if (direction === 'up' && selectedCardNumber > 0) {
       playerHandCursor.y -= handCardOffset;
-      selectedCardNumber -= 1;
-      cardsAboveSelection -= 1;
+      selectedCardNumber--;
+      cardsAboveSelection--;
+      previouslySelectedCard = selectedCard;
       selectedCard = cardsInPlayerHand[selectedCardNumber];
-      previouslySelectedCard = cardsInPlayerHand[selectedCardNumber + 1];
       updateInfoBox();
       indentSelectedCard();
-    } else if (direction == 'down' && selectedCardNumber != cardsInPlayerHand.length - 1) {
+    } else if (direction === 'down' && selectedCardNumber < cardsInPlayerHand.length - 1) {
       playerHandCursor.y += handCardOffset;
-      selectedCardNumber += 1;
-      cardsAboveSelection += 1;
+      selectedCardNumber++;
+      cardsAboveSelection++;
+      previouslySelectedCard = selectedCard;
       selectedCard = cardsInPlayerHand[selectedCardNumber];
-      previouslySelectedCard = cardsInPlayerHand[selectedCardNumber - 1];
       updateInfoBox();
       indentSelectedCard();
     }
     stage.update();
   }
 
-  // Place The Selection Cursor Onto The Grid
+  // -------------------------
+  // GRID CURSOR
+  // -------------------------
   function placeGridCursor() {
     playerSelectingPlacement = true;
-    gridCursor.x = gameOffsetX + (cellWidth * 1) + 16;
-    gridCursor.y = gameOffsetY + (cellHeight * 1) + 80;
+    gridCursor.x = gameOffsetX + cellWidth + 16;
+    gridCursor.y = gameOffsetY + cellHeight + 80;
     stage.addChild(gridCursor);
     stage.update();
   }
@@ -528,25 +513,43 @@
 
   // Move The Selection Cursor
   function moveGridCursor(direction) {
-    if (direction == 'left' && gridCursor.x != gameOffsetX + 16) {
+    if (direction === 'left' && gridCursor.x > gameOffsetX + 16) {
       gridCursor.x -= cellWidth;
-      selectedColumn -= 1;
-    } else if (direction == 'up' && gridCursor.y != gameOffsetY + 80) {
+      selectedColumn--;
+    } else if (direction === 'up' && gridCursor.y > gameOffsetY + 80) {
       gridCursor.y -= cellHeight;
-      selectedRow -= 1;
-    } else if (direction == 'right' && gridCursor.x != gameOffsetX + (cellWidth * 2) + 16) {
+      selectedRow--;
+    } else if (direction === 'right' && gridCursor.x < gameOffsetX + cellWidth * 2 + 16) {
       gridCursor.x += cellWidth;
-      selectedColumn += 1;
-    } else if (direction == 'down' && gridCursor.y != gameOffsetY + (cellHeight * 2) + 80) {
+      selectedColumn++;
+    } else if (direction === 'down' && gridCursor.y < gameOffsetY + cellHeight * 2 + 80) {
       gridCursor.y += cellHeight;
-      selectedRow += 1;
+      selectedRow++;
     }
-
     checkSelectedSquare();
     stage.update();
   }
 
-  // Handler For Key Presses
+  // -------------------------
+  // PLAYER TURN HELPERS
+  // -------------------------
+
+  function getPlayerTurn() {
+    return Game.ui.playerTurn;
+  }
+
+  function setPlayerTurn(value) {
+    Game.ui.playerTurn = value;
+  }
+
+  function player() {
+    Game.ui.playerTurn = Game.ui.playerTurn === "red" ? "blue" : "red";
+  }
+
+  // -------------------------
+  // KEY HANDLING
+  // -------------------------
+
   function checkKey(e) {
     "use strict";
     e = e || window.event;
@@ -564,20 +567,19 @@
       } else if (e.keyCode === 40) {
         moveSelectionCursor('down');
         // Enter
-      } else if (e.keyCode === 13) {
+      } else if (e.keyCode === 13) { // Enter
         if (displayedCards[selectedHandCardNumber].count > 0) {
-          displayedCards[selectedHandCardNumber].count -= 1;
+          displayedCards[selectedHandCardNumber].count--;
           playerCards.push(selectedHandCard);
           updateHandCards();
         }
-        if (playerCards.length == 5) {
+        if (playerCards.length === 5) {
           playerSelectingHand = false;
           displayConfirmationBox();
         }
-        // Backspace And Esc
-      } else if (e.keyCode === 27 || e.keyCode === 8) {
+      } else if (e.keyCode === 27 || e.keyCode === 8) { // Esc / Backspace
         if (playerCards.length > 0) {
-          playerCards[playerCards.length - 1].count += 1;
+          playerCards[playerCards.length - 1].count++;
           updateHandCards();
           playerCards.pop();
         }
@@ -597,8 +599,8 @@
         startGame();
         // Backspace, Esc, And 'No'
       } else if ((e.keyCode === 27 || e.keyCode === 8) || (e.keyCode === 13 && selectedConfirmationChoice == 1)) {
-        for (var i = 0; i < 5; i++) {
-          playerCards[playerCards.length - 1].count += 1;
+        for (let i = 0; i < 5; i++) {
+          playerCards[playerCards.length - 1].count++;
           updateHandCards();
           playerCards.pop();
         }
@@ -655,11 +657,10 @@
     }
   }
 
-  // ---------------------------------------------------------------------
-  // GAME LOGIC functions
-  // ---------------------------------------------------------------------
+  // -------------------------
+  // AI TURN
+  // -------------------------
 
-  // AI Turn
   function aiTurn() {
     // Pick A Card To Play (Currently Random)
     var aiSelectedCard = cardsInAIHand[Math.floor(Math.random() * cardsInAIHand.length)];
@@ -681,21 +682,18 @@
     }, aiDelay);
   }
 
-  // Check If A Cell Is Occupied
+  // -------------------------
+  // CELL CHECKS
+  // -------------------------
+
   function cellOccupied() {
-    if (board[selectedSquare - 1] == "Empty") {
-      return false;
-    } else {
-      return board[selectedSquare - 1];
-    }
+    return board[selectedSquare - 1] === "Empty" ? false : board[selectedSquare - 1];
   }
 
-  // Calculate Player Turn
-  function player() {
-    Game.ui.playerTurn = Game.ui.playerTurn === "red" ? "blue" : "red";
-  }
+  // -------------------------
+  // END GAME
+  // -------------------------
 
-  // End The Game
   function endGame() {
     // Calculate The Winner
     var winner;
@@ -705,13 +703,16 @@
       alert('win');
     } else {
       alert('draw');
-      if (rules.indexOf("sudden_death") != -1) {
+      if (rules.includes("sudden_death")) {
         startGame();
       }
     }
   }
 
-  // Debug click handler used by grid cells
+  // -------------------------
+  // DEBUG HELPERS
+  // -------------------------
+
   function clickHandler(event) {
     console.log("++++++++++++++++++++++++++++++++++++");
     console.log("Cell ID: " + event.target.name);
@@ -735,8 +736,10 @@
     console.log("++++++++++++++++++++++++++++++++++++");
   }
 
-  // preserve original ready call
-  $(document).ready(function() {
-    init();
-  });
+  // -------------------------
+  // DOCUMENT READY
+  // -------------------------
+
+  document.addEventListener("DOMContentLoaded", init);
+  
 </script>

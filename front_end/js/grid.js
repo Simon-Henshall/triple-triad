@@ -1,7 +1,3 @@
-// =========================
-// grid.js (refactored with comments & table-driven square mapping)
-// =========================
-
 // Lookup table for square positions and adjacency
 // Index corresponds to squareID - 1
 const squareMap = [
@@ -19,6 +15,7 @@ const squareMap = [
 // -------------------------
 // Determine selected square from row & column
 // -------------------------
+
 function checkSelectedSquare() {
   for (let i = 0; i < squareMap.length; i++) {
     const s = squareMap[i];
@@ -36,8 +33,9 @@ function checkSelectedSquare() {
 // -------------------------
 // Determine row & column from selected square
 // -------------------------
+
 function checkSelectedRowColumn() {
-  const s = squareMap[selectedAISquare - 1]; // -1 because array is 0-indexed
+  const s = squareMap[selectedAISquare - 1];
   selectedRow = s.row;
   selectedColumn = s.col;
   squareLeft = s.left;
@@ -49,12 +47,19 @@ function checkSelectedRowColumn() {
 // -------------------------
 // Generate the 3x3 grid
 // -------------------------
+
 function generateGrid() {
   let squareID = 0;
   let squareElement;
 
+  const squares = Game.ui.squares || [];
+  squares.length = 0;
+  Game.ui.squares = squares;
+
+  console.log("generateGrid() running, squares:", squares);
+
   // Determine elemental squares if "elemental" rule active
-  const possibleElements = [1, 2, 3, 4, 5, 6, 7, 8];
+  const possibleElements = [1,2,3,4,5,6,7,8];
   const elements = [];
   const numElements = Math.floor(Math.random() * 3) + 1;
   for (let i = 0; i < numElements; i++) {
@@ -63,43 +68,35 @@ function generateGrid() {
   for (let i = numElements; i < 9; i++) elements.push(0);
   shuffle(elements);
 
-  // Reset global squares array
-  squares = squares || [];
-  squares.length = 0;
-
-  // Create grid squares
   for (let y = 0; y < 3; y++) {
     for (let x = 0; x < 3; x++) {
       squareID++;
-      square = new createjs.Shape();
+      const square = new createjs.Shape();
       square.graphics.beginStroke("#000").setStrokeStyle(1).beginFill("White");
-      square.graphics.drawRect(gameOffsetX, gameOffsetY, cellWidth, cellHeight);
-      square.x = x * cellWidth;
-      square.y = y * cellHeight;
-      square.alpha = alpha;
+      square.graphics.drawRect(Game.offsets.gameOffsetX, Game.offsets.gameOffsetY, Game.offsets.cellWidth, Game.offsets.cellHeight);
+      square.x = x * Game.offsets.cellWidth;
+      square.y = y * Game.offsets.cellHeight;
+      square.alpha = Game.alpha;
 
-      // Assign element if active
-      if (rules.indexOf("elemental") !== -1) {
-        square.element = elements[squareID - 1];
+      if (Game.rules.includes("elemental")) {
+        square.element = elements[squareID-1];
         if (square.element !== 0) {
           squareElement = new createjs.Bitmap(`front_end/images/elements/${square.element}.png`);
-          squareElement.x = gameOffsetX + square.x + 60;
-          squareElement.y = gameOffsetY + square.y + 70;
-          stage.addChild(squareElement);
+          squareElement.x = Game.offsets.gameOffsetX + square.x + 60;
+          squareElement.y = Game.offsets.gameOffsetY + square.y + 70;
+          Game.stage.addChild(squareElement);
         }
       } else {
         square.element = 0;
       }
 
-      // Enable click handling
       square.addEventListener("click", clickHandler);
 
-      // Store global ID & push to squares array
       square.name = squareID;
       squares.push(square);
 
-      stage.addChild(square);
-      stage.update();
+      Game.stage.addChild(square);
+      Game.stage.update();
     }
   }
 }
@@ -107,6 +104,7 @@ function generateGrid() {
 // -------------------------
 // Draw grid numbers for reference
 // -------------------------
+
 function drawGridNumbers() {
   let count = 1;
   for (let y = 0; y < 3; y++) {
