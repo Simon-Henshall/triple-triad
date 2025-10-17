@@ -12,7 +12,7 @@ class CardPlacer {
     checkSelectedSquare();
 
     // Determine the offscreen exit direction based on player turn
-    const offscreenX = getPlayerTurn() === "red"
+    const offscreenX = Game.utils.getPlayerTurn() === "red"
       ? card.x + 40
       : card.x - 40;
     const offscreenY = -200;
@@ -34,7 +34,7 @@ class CardPlacer {
     stage.setChildIndex(card, stage.getNumChildren() - 1);
 
     // Reveal the card face if it belongs to the AI (red)
-    if (getPlayerTurn() === "red") {
+    if (Game.utils.getPlayerTurn() === "red") {
       card.children[1].image.src = card.frontImage;
     }
 
@@ -142,7 +142,7 @@ class CardPlacer {
     // Swap the internal turn tracker
     CardPlacer.swapPlayerTurn();
 
-    if (getPlayerTurn() === "blue") {
+    if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
       playedPlayerCardCount++;
       selectedCard = cardsInPlayerHand[selectedCardNumber];
@@ -154,7 +154,7 @@ class CardPlacer {
       infoBox.visible = true;
       playerChoosingCard = true;
 
-    } else if (getPlayerTurn() === "red") {
+    } else if (Game.utils.getPlayerTurn() === "red") {
       // === AI TURN ===
       aiTurn();
     }
@@ -164,7 +164,10 @@ class CardPlacer {
   // Swap the current active player (red <-> blue)
   // ======================================================================
   static swapPlayerTurn() {
-    Game.ui.playerTurn = getPlayerTurn() === "blue" ? "red" : "blue";
+    console.log("Before swap:", Game.ui.playerTurn);
+    console.log("getPlayerTurn() reports:", Game.utils.getPlayerTurn());
+    Game.ui.playerTurn = Game.utils.getPlayerTurn() === "blue" ? "red" : "blue";
+    console.log("After swap:", Game.ui.playerTurn);
   }
 
   // ======================================================================
@@ -190,7 +193,7 @@ class CardPlacer {
       }
     }
 
-    if (getPlayerTurn() === "blue") {
+    if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER HAND ===
       animateHandCardsDown(cardsInPlayerHand, cardsAboveSelection);
 
@@ -205,7 +208,7 @@ class CardPlacer {
         cardsAboveSelection -= 1;
       }
 
-    } else if (getPlayerTurn() === "red") {
+    } else if (Game.utils.getPlayerTurn() === "red") {
       // === AI HAND ===
       animateHandCardsDown(cardsInAIHand, aiCardsAboveSelection);
     }

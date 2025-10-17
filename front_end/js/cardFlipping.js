@@ -68,7 +68,7 @@ function flipCardsCheck(card) {
 // =======================================================
 function getCurrentPlayerColour() {
   // Always returns 'red' or 'blue'
-  return getPlayerTurn();
+  return Game.utils.getPlayerTurn();
 }
 
 // =======================================================

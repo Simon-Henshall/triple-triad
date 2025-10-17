@@ -1,8 +1,7 @@
-// Shuffle an array
-function shuffle(array) {
-  let counter = array.length,
-    temp,
-    index;
+Game.utils = Game.utils || {};
+
+Game.utils.shuffle = function (array) {
+  let counter = array.length, temp, index;
   while (counter--) {
     index = (Math.random() * counter) | 0;
     temp = array[counter];
@@ -10,20 +9,16 @@ function shuffle(array) {
     array[index] = temp;
   }
   return array;
-}
+};
 
-// -------------------------
-  // PLAYER TURN HELPERS
-  // -------------------------
+Game.utils.getPlayerTurn = function() {
+  return Game.ui.playerTurn;
+};
 
-  function getPlayerTurn() {
-    return Game.ui.playerTurn;
-  }
+Game.utils.setPlayerTurn = function(value) {
+  Game.ui.playerTurn = value;
+};
 
-  function setPlayerTurn(value) {
-    Game.ui.playerTurn = value;
-  }
-
-  function player() {
-    Game.ui.playerTurn = Game.ui.playerTurn === "red" ? "blue" : "red";
-  }
+Game.utils.togglePlayerTurn = function() {
+  Game.ui.playerTurn = Game.ui.playerTurn === "red" ? "blue" : "red";
+};

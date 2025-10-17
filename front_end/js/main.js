@@ -1,3 +1,77 @@
+window.Game = window.Game || {};
+(function(Game) {
+  // safe guard: if previously initialized, destroy first
+  if (Game.initialized && typeof Game.destroy === 'function') {
+    console.log('Game: previous instance found — destroying before re-init');
+    try { Game.destroy(); } catch (e) { console.warn('Game.destroy failed', e); }
+  }
+
+  Game.initialized = false;
+
+  Game.destroy = function() {
+    try {
+      // stop createjs Ticker (if used)
+      if (createjs && createjs.Ticker) {
+        createjs.Ticker.removeAllEventListeners();
+        try { createjs.Ticker.reset && createjs.Ticker.reset(); } catch(e){}
+      }
+      // stage cleanup
+      if (Game.stage) {
+        try {
+          Game.stage.removeAllChildren();
+          Game.stage.removeAllEventListeners && Game.stage.removeAllEventListeners();
+        } catch(e){ console.warn(e); }
+      }
+      // remove any DOM listeners you registered
+      if (Game._listeners && Array.isArray(Game._listeners)) {
+        Game._listeners.forEach(function(l){
+          try { window.removeEventListener(l.event, l.fn); } catch(e){}
+          try { document.removeEventListener(l.event, l.fn); } catch(e){}
+        });
+      }
+      // clear any intervals/timeouts the game created
+      if (Game._intervals) {
+        Game._intervals.forEach(id => clearInterval(id));
+      }
+      if (Game._timeouts) {
+        Game._timeouts.forEach(id => clearTimeout(id));
+      }
+      // clear references
+      Game.stage = null;
+      Game.assets = null;
+      Game.cursor = null;
+      Game.selectionBoard = null;
+      // ...and anything else you attach to Game during runtime
+    } finally {
+      Game.initialized = false;
+      console.log('Game destroyed');
+    }
+  };
+
+  Game.bootstrap = function(options) {
+    options = options || {};
+    // small helper registries for teardown bookkeeping
+    Game._listeners = Game._listeners || [];
+    Game._intervals = Game._intervals || [];
+    Game._timeouts = Game._timeouts || [];
+
+    // hookup a single asset loader if none exists
+    if (!Game.assets) {
+       var queue = new createjs.LoadQueue(false);
+       // example: queue.loadManifest([...]); // leave manifest for main.js
+       Game.assets = queue;
+       Game.assets.loaded = new Promise(function(resolve){
+         queue.on('complete', function(){ resolve(); });
+         queue.on('error', function(err){ console.error('assets load error', err); resolve(); });
+       });
+    }
+  };
+
+  // mark ready
+  Game.initialized = false;
+
+})(window.Game);
+
 var Game = Game || {};
 
 // -------------------------
@@ -353,10 +427,10 @@ function startGame() {
 // Choose Which Cards To Play With (Currently Random Cards)
 function populatePlayerCards(playerCardsParam) {
   // Calculate The Current Player
-  player();
+  Game.utils.togglePlayerTurn();
 
   // Shuffle and copy hand
-  playerHand = shuffle([...playerCardsParam]).slice(0, 5);
+  playerHand = Game.utils.shuffle([...playerCardsParam]).slice(0, 5);
 
   for (let i = 0; i < playerHand.length; i++) {
     const chosenCard = playerHand[i];
@@ -367,7 +441,7 @@ function populatePlayerCards(playerCardsParam) {
     );
     // Card Background Colour
     const cardColour = new createjs.Bitmap(
-      `${Game.config.cardPath}${getPlayerTurn()}.png`
+      `${Game.config.cardPath}${Game.utils.getPlayerTurn()}.png`
     );
 
     // Card Container
@@ -385,7 +459,7 @@ function populatePlayerCards(playerCardsParam) {
     card.strengthDown = chosenCard.strengthDown;
     card.strengthLeft = chosenCard.strengthLeft;
     card.element = chosenCard.element;
-    card.owner = card.background = getPlayerTurn();
+    card.owner = card.background = Game.utils.getPlayerTurn();
 
     // Place The Card
     card.x = playerHandOffsetX;
@@ -409,7 +483,7 @@ function populatePlayerCards(playerCardsParam) {
 
 // Indent The Selected Card
 function indentSelectedCard() {
-  if (getPlayerTurn() == "red") {
+  if (Game.utils.getPlayerTurn() == "red") {
     if (selectedCard && typeof selectedCard.x !== "undefined") {
       selectedCard.x = selectedCard.x + 30;
     }
@@ -419,7 +493,7 @@ function indentSelectedCard() {
     ) {
       previouslySelectedCard.x = previouslySelectedCard.x - 30;
     }
-  } else if (getPlayerTurn() == "blue") {
+  } else if (Game.utils.getPlayerTurn() == "blue") {
     if (selectedCard && typeof selectedCard.x !== "undefined") {
       selectedCard.x = selectedCard.x - 30;
     }

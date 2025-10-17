@@ -66,7 +66,7 @@ function generateGrid() {
     );
   }
   for (let i = numElements; i < 9; i++) elements.push(0);
-  shuffle(elements);
+  Game.utils.shuffle(elements);
 
   for (let y = 0; y < 3; y++) {
     for (let x = 0; x < 3; x++) {

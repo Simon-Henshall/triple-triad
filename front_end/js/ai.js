@@ -3,6 +3,7 @@
 // -------------------------
 
 function aiTurn() {
+  console.log("AI turn starting, Game.ui.playerTurn =", Game.ui.playerTurn);
   // Pick A Card To Play (Currently Random)
   var aiSelectedCard =
     cardsInAIHand[Math.floor(Math.random() * cardsInAIHand.length)];
@@ -25,80 +26,63 @@ function aiTurn() {
 }
 
 // -----------------------------
-// populateAICards - unchanged behaviour (just organised into method)
+// populateAICards
 // -----------------------------
 function populateAICards() {
-  // Setup AI hand (match original behaviour)
-  var aiHand = this.shuffle(window.cards || []);
-  aiHand = $.extend({}, window.cards || []);
-  aiHand.length = 5;
+  // Setup AI hand
+  var aiHand = Game.utils.shuffle((window.cards || []).slice());
+  aiHand = aiHand.slice(0, 5); // 5 cards for AI
 
   for (var i = 0; i < aiHand.length; i++) {
     var chosen_card = aiHand[i];
 
-    // Default to a face-down card
+    // Default to a face-down card image
     var cardImage = new createjs.Bitmap(Game.config.cardPath + "back.png");
 
-    // Card background colour (owner)
-    var cardColour = new createjs.Bitmap(
-      Game.config.cardPath +
-        (typeof window.getPlayerTurn === "function"
-          ? getPlayerTurn()
-          : "blue") +
-        ".png"
-    );
+    // Card background colour (owner) - AI cards should be red
+    var cardColour = new createjs.Bitmap(Game.config.cardPath + "red.png");
 
     // Card container
     var card = new createjs.Container();
     card.addChild(cardColour, cardImage);
 
-    // Adjust card scale (guard against missing images by checking width/height values)
-    if (
+    // Safely compute scale (fall back to 1 if images not loaded)
+    var baseWidth =
+      card.children[0] && card.children[0].image && card.children[0].image.width
+        ? card.children[0].image.width
+        : cellWidth - cardOffsetX * 2 || 100;
+    var baseHeight =
       card.children[0] &&
       card.children[0].image &&
-      card.children[0].image.width
-    ) {
-      card.scaleX =
-        (window.cardWidth || window.cellWidth - (window.cardOffsetX || 3) * 2) /
-        card.children[0].image.width;
-      card.scaleY =
-        (window.cardHeight ||
-          window.cellHeight - (window.cardOffsetY || 3) * 2) /
-        card.children[0].image.height;
-    } else {
-      card.scaleX = card.scaleY = 1;
-    }
+      card.children[0].image.height
+        ? card.children[0].image.height
+        : cellHeight - cardOffsetY * 2 || 140;
 
-    // Card imagery
+    card.scaleX = (cardWidth || cellWidth - cardOffsetX * 2) / baseWidth;
+    card.scaleY = (cardHeight || cellHeight - cardOffsetY * 2) / baseHeight;
+
+    // Card imagery paths
     card.frontImage = Game.config.cardPath + chosen_card.image + ".png";
     card.backImage = Game.config.cardPath + "back.png";
 
-    // Card stats (preserve original property names)
+    // Card stats and ownership
     card.name = chosen_card.displayName;
     card.strengthUp = chosen_card.strengthUp;
     card.strengthRight = chosen_card.strengthRight;
     card.strengthDown = chosen_card.strengthDown;
     card.strengthLeft = chosen_card.strengthLeft;
     card.element = chosen_card.element;
-    card.owner = card.background =
-      typeof window.getPlayerTurn === "function" ? getPlayerTurn() : "blue";
+    card.owner = "red";
+    card.background = "red";
 
-    // Place the card off to the AI hand area
-    card.x =
-      window.aiHandOffsetX ||
-      (window.gameOffsetX ? window.gameOffsetX / 2 : 100);
-    card.y = (window.handOffsetY || 50) + i * (window.handCardOffset || 95);
+    // Position off to AI hand area
+    card.x = Game.ai.handOffsetX || gameOffsetX / 2 || 100;
+    card.y = (handOffsetY || 50) + i * (handCardOffset || 95);
 
-    window.cardsInAIHand.push(card);
-    if (this.stage) {
-      this.stage.addChild(card);
-    } else if (window.stage) {
-      window.stage.addChild(card);
-    }
-
-    if (this.stage || window.stage) {
-      (this.stage || window.stage).update();
-    }
+    // Add to AI hand and stage
+    cardsInAIHand.push(card);
+    stage.addChild(card);
+    stage.update();
   }
 
   // Select the top card by default (preserve original globals)
