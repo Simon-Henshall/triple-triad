@@ -1,119 +1,94 @@
 // -------------------------
-// AI TURN
+// ai.js
+// AI behaviour and AI hand rendering
 // -------------------------
 
+// Top-level aiTurn uses legacy window array alias for compatibility
 function aiTurn() {
-  // Pick A Card To Play (Currently Random)
-  var aiSelectedCard =
-    cardsInAIHand[Math.floor(Math.random() * cardsInAIHand.length)];
-  var aiSelectedCardNumber = cardsInAIHand.indexOf(aiSelectedCard);
+  // ensure compatibility with legacy variable names
+  window.cardsInAIHand = window.cardsInAIHand || Game.ai.cardsInAIHand || [];
 
-  // Pick A Cell To Play In (Currently Random)
-  selectedAISquare = freeCells[Math.floor(Math.random() * freeCells.length)];
-  checkSelectedRowColumn();
+  var hand = window.cardsInAIHand;
+  if (!hand || hand.length === 0) return;
 
-  // Place The Card
-  aiCardsAboveSelection = aiSelectedCardNumber;
-  cardsInAIHand.splice(aiSelectedCardNumber, 1);
+  var aiSelectedCard = hand[Math.floor(Math.random() * hand.length)];
+  var aiSelectedCardNumber = hand.indexOf(aiSelectedCard);
+
+  // Pick a cell
+  selectedAISquare = Game.board.freeCells[Math.floor(Math.random() * Game.board.freeCells.length)];
+  checkSelectedRowColumn && checkSelectedRowColumn();
+
+  // Place the card
+  Game.ai.aiCardsAboveSelection = aiSelectedCardNumber;
+  hand.splice(aiSelectedCardNumber, 1);
+
   setTimeout(function () {
     CardPlacer.placeCard(
       aiSelectedCard,
-      gameOffsetX + cellWidth * (selectedColumn - 1) + cardOffsetX,
-      gameOffsetY + cellHeight * (selectedRow - 1) + cardOffsetY
+      Game.offsets.gameOffsetX + Game.offsets.cellWidth * (selectedColumn - 1) + Game.offsets.cardOffsetX,
+      Game.offsets.gameOffsetY + Game.offsets.cellHeight * (selectedRow - 1) + Game.offsets.cardOffsetY
     );
-  }, aiDelay);
+  }, Game.ai.aiDelay || 1000);
 }
 
-// -----------------------------
-// populateAICards - unchanged behaviour (just organised into method)
-// -----------------------------
+// Populate AI hand cleanly (clear old cards, add new, alias globals)
 function populateAICards() {
-  // Setup AI hand (match original behaviour)
-  var aiHand = this.shuffle(window.cards || []);
-  aiHand = $.extend({}, window.cards || []);
-  aiHand.length = 5;
+  // Ensure ai structure exists
+  Game.ai = Game.ai || {};
+  Game.ai.cardsInAIHand = Game.ai.cardsInAIHand || [];
 
-  for (var i = 0; i < aiHand.length; i++) {
-    var chosen_card = aiHand[i];
+  // Clear any previous AI hand from both Game.ai and legacy window
+  Game.ai.cardsInAIHand.length = 0;
+  window.cardsInAIHand = window.cardsInAIHand || Game.ai.cardsInAIHand;
+  window.cardsInAIHand.length = 0;
 
-    // Default to a face-down card
-    var cardImage = new createjs.Bitmap(Game.config.cardPath + "back.png");
+  var totalToShow = Game.ai.totalRedCards || 5;
 
-    // Card background colour (owner)
-    var cardColour = new createjs.Bitmap(
-      Game.config.cardPath +
-        (typeof window.getPlayerTurn === "function"
-          ? getPlayerTurn()
-          : "blue") +
-        ".png"
-    );
+  // Build the AI hand (face-down placeholders)
+  for (var i = 0; i < totalToShow; i++) {
+    var container = new createjs.Container();
 
-    // Card container
-    var card = new createjs.Container();
-    card.addChild(cardColour, cardImage);
+    var cardBack = new createjs.Bitmap((Game && Game.config ? Game.config.cardPath : "front_end/images/cards/") + "back.png");
+    var cardColour = new createjs.Bitmap((Game && Game.config ? Game.config.cardPath : "front_end/images/cards/") + "blue.png");
 
-    // Adjust card scale (guard against missing images by checking width/height values)
-    if (
-      card.children[0] &&
-      card.children[0].image &&
-      card.children[0].image.width
-    ) {
-      card.scaleX =
-        (window.cardWidth || window.cellWidth - (window.cardOffsetX || 3) * 2) /
-        card.children[0].image.width;
-      card.scaleY =
-        (window.cardHeight ||
-          window.cellHeight - (window.cardOffsetY || 3) * 2) /
-        card.children[0].image.height;
+    container.addChild(cardColour, cardBack);
+
+    // Guard scaling (if images loaded)
+    if (cardBack.image && cardBack.image.width) {
+      container.scaleX = (Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2) / cardBack.image.width;
+      container.scaleY = (Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2) / cardBack.image.height;
     } else {
-      card.scaleX = card.scaleY = 1;
+      // onload fix: scale once image available (single update)
+      (function (c, cb) {
+        cb.image.onload = function () {
+          c.scaleX = (Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2) / cb.image.width;
+          c.scaleY = (Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2) / cb.image.height;
+          if (Game.stage) Game.stage.update();
+        };
+      })(container, cardBack);
     }
 
-    // Card imagery
-    card.frontImage = Game.config.cardPath + chosen_card.image + ".png";
-    card.backImage = Game.config.cardPath + "back.png";
+    container.x = Game.ai.handOffsetX || (Game.offsets.gameOffsetX / 2 - Game.offsets.cellWidth / 2);
+    container.y = Game.offsets.handOffsetY + i * Game.offsets.handCardOffset;
 
-    // Card stats (preserve original property names)
-    card.name = chosen_card.displayName;
-    card.strengthUp = chosen_card.strengthUp;
-    card.strengthRight = chosen_card.strengthRight;
-    card.strengthDown = chosen_card.strengthDown;
-    card.strengthLeft = chosen_card.strengthLeft;
-    card.element = chosen_card.element;
-    card.owner = card.background =
-      typeof window.getPlayerTurn === "function" ? getPlayerTurn() : "blue";
+    Game.ai.cardsInAIHand.push(container);
+    window.cardsInAIHand.push(container);
 
-    // Place the card off to the AI hand area
-    card.x =
-      window.aiHandOffsetX ||
-      (window.gameOffsetX ? window.gameOffsetX / 2 : 100);
-    card.y = (window.handOffsetY || 50) + i * (window.handCardOffset || 95);
-
-    window.cardsInAIHand.push(card);
-    if (this.stage) {
-      this.stage.addChild(card);
-    } else if (window.stage) {
-      window.stage.addChild(card);
-    }
-
-    if (this.stage || window.stage) {
-      (this.stage || window.stage).update();
+    // add to stage (do not cause duplication)
+    if (Game.stage && Game.stage.getChildIndex(container) === -1) {
+      Game.stage.addChild(container);
     }
   }
 
-  // Select the top card by default (preserve original globals)
+  // One update after all added
+  if (Game.stage) Game.stage.update();
+
+  // Legacy aliases for other scripts
+  window.cardsInAIHand = Game.ai.cardsInAIHand;
+
+  // default selection indices (legacy)
   window.selectedCardNumber = 0;
   window.selectedCard = window.cardsInAIHand[window.selectedCardNumber];
   window.cardsAboveSelection = 0;
   window.previouslySelectedCard = [];
-
-  // Handle the "open" rule flip all AI hand behaviour
-  if (
-    (window.rules && window.rules.indexOf("open") != -1) ||
-    (window.Game && Game.rules && Game.rules.indexOf("open") != -1)
-  ) {
-    if (typeof window.flipAIHand === "function") {
-      flipAIHand();
-    }
-  }
 }

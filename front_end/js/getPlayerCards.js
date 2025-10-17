@@ -1,287 +1,179 @@
 // -----------------------------
-// PlayerCardManager
+// getPlayerCards.js
 // -----------------------------
-class PlayerCardManager {
+(function (global) {
+  // -------------------------
+  // Helper: generate random integer [min, max]
+  // -------------------------
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-  // -----------------------------
-  // Ajax wrapper (keeps original signature)
-  // -----------------------------
-  // Original code used a function named `ajaxCall(whenDone)` — we preserve that name globally.
-  ajaxCall(whenDone) {
-    var ownedCardsJSON;
-    // Keep the original ajax call present so future endpoint works unchanged.
-    // If the AJAX request succeeds, pass the response to the callback.
-    // If it fails, the original code used alerts; we keep that behaviour.
-    $.ajax({
-      url: "back_end/includes/get_player_cards.php",
-      async: "false",
-      cache: "false",
-      type: "GET",
-      success: function (response) {
-        ownedCardsJSON = response;
-        whenDone(ownedCardsJSON);
-      },
-      error: function (jqXHR, exception) {
-        if (jqXHR.status === 0) {
-          alert("Not connect.\n Verify Network.");
-        } else if (jqXHR.status == 404) {
-          alert("Requested page not found. [404]");
-        } else if (jqXHR.status == 500) {
-          alert("Internal Server Error [500].");
-        } else if (exception === "parsererror") {
-          alert("Requested JSON parse failed.");
-        } else if (exception === "timeout") {
-          alert("Time out error.");
-        } else if (exception === "abort") {
-          alert("Ajax request aborted.");
-        } else {
-          alert("Uncaught Error.\n" + jqXHR.responseText);
-        }
-      },
+  // -------------------------
+  // PlayerCardManager
+  // -------------------------
+  const PlayerCardManager = function (cards = []) {
+    this.ownedCards = Array.isArray(cards) ? cards : [];
+    this.selectedCardIndex = 0;
+    this.page = 1;
+    this.cardsPerPage = 11;
+
+    // References for UI (selection board)
+    this.selectionBoard = global.selectionBoard || null;
+    this.displayedCardContainer = null;
+  };
+
+  // -------------------------
+// Shim for old populatePlayerCards() behavior
+// -------------------------
+function populatePlayerCardsShim(playerCardsParam) {
+  // fallback to global cards array if not passed
+  const cardsSource = Array.isArray(playerCardsParam) && playerCardsParam.length
+    ? playerCardsParam
+    : (Array.isArray(window.cards) && window.cards.length ? window.cards : []);
+
+  if (!cardsSource.length) {
+    console.warn("⚠️ No cards available to populate player deck!");
+    return;
+  }
+
+  window.ownedCards = [];
+
+  // randomize a count for each card (1–5 copies for now)
+  for (const card of cardsSource) {
+    const count = Math.floor(Math.random() * 5) + 1;
+    window.ownedCards.push({
+      ...card,
+      count,
+      image: `${Game.config.cardPath}${card.image}.png`,
     });
   }
 
-  // -----------------------------
-  // Main entry-point used by other code
-  // pickPlayerCards(ownedCardsJSON)
-  // -----------------------------
-  pickPlayerCards(ownedCardsJSONParam) {
-    // The original code intentionally overwrote the incoming parameter with
-    // a large placeholder JSON string (used for dev/testing).
-    // We preserve that behaviour exactly so the code is identical to original.
-    var ownedCardsJSON =
-      '[{"card": 1, "image": "card0", "count": 6}, {"card": 2, "image": "card1", "count": 4}, {"card": 3, "image": "card2", "count": 8}, {"card": 4, "image": "card3", "count": 2}, {"card": 5, "image": "card4", "count": 4}, {"card": 6, "image": "card5", "count": 4}, {"card": 7, "image": "card6", "count": 7}, {"card": 8, "image": "card7", "count": 4}, {"card": 9, "image": "card8", "count": 4}, {"card": 10, "image": "card9", "count": 7}, {"card": 11, "image": "card10", "count": 2}, {"card": 12, "image": "card11", "count": 4}, {"card": 13, "image": "card12", "count": 9}, {"card": 14, "image": "card13", "count": 8}, {"card": 15, "image": "card14", "count": 1}, {"card": 16, "image": "card15", "count": 3}, {"card": 17, "image": "card16", "count": 7}, {"card": 18, "image": "card17", "count": 7}, {"card": 19, "image": "card18", "count": 9}, {"card": 20, "image": "card19", "count": 4}, {"card": 21, "image": "card20", "count": 6}, {"card": 22, "image": "card21", "count": 6}, {"card": 23, "image": "card22", "count": 1}, {"card": 24, "image": "card23", "count": 7}, {"card": 25, "image": "card24", "count": 2}, {"card": 26, "image": "card25", "count": 0}, {"card": 27, "image": "card26", "count": 6}, {"card": 28, "image": "card27", "count": 1}, {"card": 29, "image": "card28", "count": 5}, {"card": 30, "image": "card29", "count": 5}, {"card": 31, "image": "card30", "count": 0}, {"card": 32, "image": "card31", "count": 0}, {"card": 33, "image": "card32", "count": 1}, {"card": 34, "image": "card33", "count": 5}, {"card": 35, "image": "card34", "count": 8}, {"card": 36, "image": "card35", "count": 8}, {"card": 37, "image": "card36", "count": 4}, {"card": 38, "image": "card37", "count": 3}, {"card": 39, "image": "card38", "count": 7}, {"card": 40, "image": "card39", "count": 4}, {"card": 41, "image": "card40", "count": 1}, {"card": 42, "image": "card41", "count": 4}, {"card": 43, "image": "card42", "count": 2}, {"card": 44, "image": "card43", "count": 9}, {"card": 45, "image": "card44", "count": 3}, {"card": 46, "image": "card45", "count": 7}, {"card": 47, "image": "card46", "count": 7}, {"card": 48, "image": "card47", "count": 2}, {"card": 49, "image": "card48", "count": 9}, {"card": 50, "image": "card49", "count": 9}, {"card": 51, "image": "card50", "count": 4}, {"card": 52, "image": "card51", "count": 5}, {"card": 53, "image": "card52", "count": 2}, {"card": 54, "image": "card53", "count": 1}, {"card": 55, "image": "card54", "count": 2}, {"card": 56, "image": "card55", "count": 9}, {"card": 57, "image": "card56", "count": 3}, {"card": 58, "image": "card57", "count": 6}, {"card": 59, "image": "card58", "count": 1}, {"card": 60, "image": "card59", "count": 7}, {"card": 61, "image": "card60", "count": 5}, {"card": 62, "image": "card61", "count": 8}, {"card": 63, "image": "card62", "count": 2}, {"card": 64, "image": "card63", "count": 5}, {"card": 65, "image": "card64", "count": 5}, {"card": 66, "image": "card65", "count": 0}, {"card": 67, "image": "card66", "count": 7}, {"card": 68, "image": "card67", "count": 2}, {"card": 69, "image": "card68", "count": 4}, {"card": 70, "image": "card69", "count": 1}, {"card": 71, "image": "card70", "count": 5}, {"card": 72, "image": "card71", "count": 6}, {"card": 73, "image": "card72", "count": 9}, {"card": 74, "image": "card73", "count": 1}, {"card": 75, "image": "card74", "count": 8}, {"card": 76, "image": "card75", "count": 5}, {"card": 77, "image": "card76", "count": 8}, {"card": 78, "image": "card77", "count": 1}, {"card": 79, "image": "card78", "count": 1}, {"card": 80, "image": "card79", "count": 7}, {"card": 81, "image": "card80", "count": 6}, {"card": 82, "image": "card81", "count": 1}, {"card": 83, "image": "card82", "count": 6}, {"card": 84, "image": "card83", "count": 9}, {"card": 85, "image": "card84", "count": 6}, {"card": 86, "image": "card85", "count": 8}, {"card": 87, "image": "card86", "count": 1}, {"card": 88, "image": "card87", "count": 6}, {"card": 89, "image": "card88", "count": 4}, {"card": 90, "image": "card89", "count": 0}, {"card": 91, "image": "card90", "count": 3}, {"card": 92, "image": "card91", "count": 6}, {"card": 93, "image": "card92", "count": 9}, {"card": 94, "image": "card93", "count": 8}, {"card": 95, "image": "card94", "count": 6}, {"card": 96, "image": "card95", "count": 7}, {"card": 97, "image": "card96", "count": 8}, {"card": 98, "image": "card97", "count": 9}, {"card": 99, "image": "card98", "count": 7}, {"card": 100, "image": "card99", "count": 8}, {"card": 101, "image": "card100", "count": 9}, {"card": 102, "image": "card101", "count": 8}, {"card": 103, "image": "card102", "count": 7}, {"card": 104, "image": "card103", "count": 0}, {"card": 105, "image": "card104", "count": 2}, {"card": 106, "image": "card105", "count": 8}, {"card": 107, "image": "card106", "count": 2}, {"card": 108, "image": "card107", "count": 4}, {"card": 109, "image": "card108", "count": 7}, {"card": 110, "image": "card109", "count": 5}]';
-
-    // convert database objects to the corresponding card objects from 'cards' array
-    var cardsCopy = $.extend({}, window.cards || []); // uses global cards variable
-    var parsedCards;
-    try {
-      parsedCards = JSON.parse(ownedCardsJSON);
-    } catch (err) {
-      // If JSON.parse fails, preserve original behaviour by alerting and returning gracefully.
-      alert("Error parsing owned cards JSON: " + err.message);
-      return;
-    }
-
-    for (var i = 0; i < parsedCards.length; i++) {
-      if (parsedCards[i].count > 0) {
-        var cardCount = parsedCards[i].count;
-        if (cardsCopy[i]) {
-          cardsCopy[i].count = cardCount;
-          cardsCopy[i].colour = "#ffffff";
-          window.ownedCards.push(cardsCopy[i]);
-        }
-      }
-    }
-
-    // Either pick random cards or show selection board
-    window.rules = window.rules || (window.Game && Game.rules) || ["elemental"];
-    if (window.rules.indexOf("random") != -1) {
-      window.playerCards = this.shuffle(window.ownedCards);
-      window.playerCards = $.extend({}, window.ownedCards);
-      // populate AI cards and start game (match original flow)
-      populateAICards();
-      if (typeof window.startGame === "function") {
-        window.startGame();
-      }
-    } else {
-      // Draw the selection board background exactly as original
-      selectionBoardBackground = new createjs.Shape();
-      selectionBoardBackground.graphics
-        .beginFill("#666666")
-        .drawRect(0, 0, 420, 450);
-      selectionBoardBackground.x = 170;
-      selectionBoardBackground.y = 100;
-      selectionBoard.addChild(selectionBoardBackground);
-
-      // Draw the selection board text
-      var cardListText = new createjs.Text("CARDS", "20px Arial", "#ffffff");
-      cardListText.x = selectionBoardBackground.x + 10;
-      cardListText.y = selectionBoardBackground.y + 20;
-      cardListText.textBaseline = "alphabetic";
-
-      var pageText = new createjs.Text("P.", "20px Arial", "#ffffff");
-      pageText.x = selectionBoardBackground.x + 110;
-      pageText.y = selectionBoardBackground.y + 20;
-      pageText.textBaseline = "alphabetic";
-
-      // pageDisplay should be a createjs.Text object as in original code
-      pageDisplay = new createjs.Text("1", "20px Arial", "#ffffff");
-      pageDisplay.x = selectionBoardBackground.x + 150;
-      pageDisplay.y = selectionBoardBackground.y + 20;
-      pageDisplay.textBaseline = "alphabetic";
-
-      var numText = new createjs.Text("NUM.", "20px Arial", "#ffffff");
-      numText.x = selectionBoardBackground.x + 350;
-      numText.y = selectionBoardBackground.y + 20;
-      numText.textBaseline = "alphabetic";
-
-      selectionBoard.addChild(cardListText, pageText, pageDisplay, numText);
-
-      // default page and populate
-      page = 1;
-
-      // Add AI cards (original behaviour)
-      populateAICards();
-
-      // Add selection board cards
-      populateSelectionBoardCards();
-
-      // Add container to stage and set up selection cursor
-      if (this.stage) {
-        this.stage.addChild(selectionBoard);
-      } else if (window.stage) {
-        window.stage.addChild(selectionBoard);
-      }
-
-      // place selection cursor and allow user to pick
-      placePlayerHandSelectionCursor();
-      window.playerSelectingHand = true;
-    }
+  // once filled, render the selection board
+  if (window.populateSelectionBoardCards) {
+    window.populateSelectionBoardCards(window.ownedCards);
   }
 
-  // -----------------------------
-  // Helper: shuffle array in-place (original logic preserved)
-  // -----------------------------
-  shuffle(array) {
-    var counter = array.length;
-    var temp;
-    var index;
-    while (counter--) {
-      index = (Math.random() * counter) | 0;
-      temp = array[counter];
-      array[counter] = array[index];
-      array[index] = temp;
+  console.log(`✅ Player deck populated with ${window.ownedCards.length} cards`);
+}
+
+
+
+  // -------------------------
+  // Async "load" for player cards
+  // -------------------------
+  PlayerCardManager.prototype.pickPlayerCards = async function () {
+    // Expose global for legacy / selectionBoardCards.js
+    window.ownedCards = this.ownedCards;
+
+    // Ensure globals expected by selectionBoardCards.js
+    if (typeof window.page === "undefined") window.page = 1;
+    if (typeof window.selectedHandCardNumber === "undefined")
+      window.selectedHandCardNumber = 0;
+
+    // Call the existing populate function
+    if (typeof window.populateSelectionBoardCardsShim === "function") {
+      window.populateSelectionBoardCardsShim(this.ownedCards);
     }
-    return array;
+
+    populatePlayerCardsShim(window.playerCards);
+
+    return this.ownedCards;
+  };
+
+  // -------------------------
+  // Optional: update preview card
+  // -------------------------
+  PlayerCardManager.prototype.updateDisplayedCard = function (cardObj) {
+    if (!cardObj || !global.selectionBoard) return;
+
+    if (this.displayedCardContainer && this.displayedCardContainer.parent) {
+      this.displayedCardContainer.parent.removeChild(this.displayedCardContainer);
+      this.displayedCardContainer = null;
+    }
+
+    const container = new createjs.Container();
+    const backing = new createjs.Bitmap(Game.config.cardPath + "blue.png");
+    const front = new createjs.Bitmap(cardObj.image);
+
+    container.addChild(backing, front);
+    const bg = global.selectionBoardBackground;
+    container.x = (bg?.x || 480) + (bg?.getBounds()?.width || 480) - 140;
+    container.y = (bg?.y || 0) + 700;
+
+    global.selectionBoard.addChild(container);
+    this.displayedCardContainer = container;
+
+    const finalize = () => {
+      const targetW = Game.offsets.cellWidth || 120;
+      const targetH = Game.offsets.cellHeight || 160;
+      const bw = backing.image?.width || targetW;
+      const bh = backing.image?.height || targetH;
+      const scale = Math.min(targetW / bw, targetH / bh);
+      backing.scaleX = backing.scaleY = scale;
+
+      if (front.image?.width) front.scaleX = front.scaleY = scale;
+      front.x = (bw * scale - (front.image?.width || bw) * scale) / 2;
+      front.y = (bh * scale - (front.image?.height || bh) * scale) / 2;
+
+      createjs.Tween.get(container).to({ y: (bg?.y || 0) + 120 }, 180, createjs.Ease.quadOut);
+      global.stage && global.stage.update();
+    };
+
+    let pending = 0;
+    if (!backing.image || !backing.image.complete) {
+      pending++;
+      backing.image.onload = () => {
+        if (--pending <= 0) finalize();
+      };
+    }
+    if (!front.image || !front.image.complete) {
+      pending++;
+      front.image.onload = () => {
+        if (--pending <= 0) finalize();
+      };
+    }
+    if (pending === 0) finalize();
+  };
+
+  // -------------------------
+  // Generate player deck + AI hand
+  // -------------------------
+  if (global.cards && global.cards.length > 0) {
+    const playerDeck = [];
+
+    // Give each card a random count of ownership (1–3)
+    global.cards.forEach((card) => {
+      const count = randomInt(1, 3);
+      for (let i = 0; i < count; i++) {
+        playerDeck.push({ ...card }); // allow duplicates
+      }
+    });
+
+    // Save AI hand (5 random cards)
+    const shuffled = global.cards.slice().sort(() => 0.5 - Math.random());
+    if (!Game.ai) Game.ai = {};
+    Game.ai.cardsInAIHand = shuffled.slice(0, 5).map((c) => ({ ...c }));
+
+    // Create singleton manager
+    global.__playerCardManager =
+      global.__playerCardManager || new PlayerCardManager(playerDeck);
+
+    window.ownedCards = playerDeck;
+  } else {
+    console.warn("⚠️ cards.js not loaded or empty!");
+    global.__playerCardManager =
+      global.__playerCardManager || new PlayerCardManager([]);
+    window.ownedCards = [];
   }
 
-  
-  
-
-  // -----------------------------
-  // updateHandCards - updates the text/icon list on the selection board
-  // -----------------------------
-  updateHandCards() {
-    var offset = (page - 1) * 11;
-
-    // calculate how many cards are displayed (exact original flow)
-    if (window.ownedCards.length >= 11) {
-      if (page != totalPages) {
-        displayedCards.length = 11;
-      } else if (page == totalPages) {
-        displayedCards.length = remainingCards;
-      }
-    } else {
-      displayedCards.length = Object.keys(window.ownedCards).length;
+  // -------------------------
+  // Shim for legacy calls
+  // -------------------------
+  PlayerCardManager.prototype.updateHandCards = function () {
+    // Calls the real selection board population
+    if (typeof window.populateSelectionBoardCardsShim === "function") {
+      window.populateSelectionBoardCardsShim(this.ownedCards);
     }
-
-    // change card colour for none left
-    if (displayedCards[selectedHandCardNumber].count == 0) {
-      displayedCards[selectedHandCardNumber].colour = "#909497";
-    }
-    if (window.playerCards.length > 0) {
-      if (window.playerCards[window.playerCards.length - 1].count > 0) {
-        window.playerCards[window.playerCards.length - 1].colour = "#ffffff";
-      }
-    }
-
-    // display the card texts and icons - we must operate on shownCards.children
-    var j = 0;
-    for (var i = 0; i < displayedCards.length; i++) {
-      if (shownCards.children[j]) {
-        shownCards.children[j].text = window.ownedCards[i + offset].displayName;
-        shownCards.children[j].color = window.ownedCards[i + offset].colour;
-        shownCards.children[j].visible = true;
-      }
-      j += 3;
-    }
-    var k = 1;
-    for (var i = 0; i < displayedCards.length; i++) {
-      if (shownCards.children[k]) {
-        shownCards.children[k].text = window.ownedCards[i + offset].count;
-        shownCards.children[k].color = window.ownedCards[i + offset].colour;
-        shownCards.children[k].visible = true;
-      }
-      k += 3;
-    }
-    var l = 2;
-    for (var i = 0; i < displayedCards.length; i++) {
-      if (shownCards.children[l]) {
-        shownCards.children[l].visible = true;
-      }
-      l += 3;
-    }
-
-    // hide excess lines if any
-    for (var m = displayedCards.length * 3; m < 31; m++) {
-      if (shownCards.children[j]) {
-        shownCards.children[j].text = "";
-      }
-      if (shownCards.children[k]) {
-        shownCards.children[k].text = "";
-      }
-      if (shownCards.children[l]) {
-        shownCards.children[l].visible = false;
-      }
-      j++;
-      k++;
-      l++;
-    }
-
-    if (pageDisplay) {
-      pageDisplay.text = page;
-    }
-  }
-
-  // -----------------------------
-  // updateDisplayedCard - update the preview image on the selection board
-  // -----------------------------
-  updateDisplayedCard() {
-    if (!displayedCard) {
-      return;
-    }
-    displayedCard.y = 700;
-    if (
-      displayedCard.children &&
-      displayedCard.children[1] &&
-      displayedCard.children[1].image
-    ) {
-      displayedCard.children[1].image.src =
-        Game.config.cardPath + selectedHandCard.image + ".png";
-    }
-    createjs.Tween.get(displayedCard).to(
-      {
-        x: displayedCard.x,
-        y: selectionBoardBackground.y + 200,
-      },
-      100
-    );
-  }
-}
-
-// -----------------------------
-// Backwards-compatible function bindings
-// -----------------------------
-// Create manager instance (single instance to preserve previous single-file behaviour)
-var __playerCardManager = window.__playerCardManager || new PlayerCardManager();
-
-// Maintain original function names so other scripts continue to call them unchanged.
-function ajaxCall(whenDone) {
-  return __playerCardManager.ajaxCall(whenDone);
-}
-
-function pickPlayerCards(ownedCardsJSON) {
-  return __playerCardManager.pickPlayerCards(ownedCardsJSON);
-}
-
-// Expose other functions that external files may call (same names as original)
-function updateHandCards() {
-  return __playerCardManager.updateHandCards();
-}
-function updateDisplayedCard() {
-  return __playerCardManager.updateDisplayedCard();
-}
-
-// Also expose the instance for future debugging if required
-window.__playerCardManager = __playerCardManager;
+  };
+})(window);
