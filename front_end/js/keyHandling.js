@@ -3,110 +3,112 @@
 // -------------------------
 
 function checkKey(e) {
+  "use strict";
   e = e || window.event;
-
-  // -------------------------
-  // Player Selecting Hand
-  // -------------------------
-  if (Game.ui.playerSelectingHand) {
+  if (playerSelectingHand) {
     // Left
-    if (e.keyCode === 37) moveSelectionCursor("left");
-    // Up
-    else if (e.keyCode === 38) moveSelectionCursor("up");
-    // Right
-    else if (e.keyCode === 39) moveSelectionCursor("right");
-    // Down
-    else if (e.keyCode === 40) moveSelectionCursor("down");
-    // Enter
-    else if (e.keyCode === 13) {
-      const card =
-      Game.player.cardsInPlayerHand?.[Game.ui.selectedHandCardNumber] || null;
-      if (!card) return; // ignore if no card is selected
-      if (card.count > 0) {
-        card.count--;
-        Game.player.playerCards.push(Game.ui.selectedHandCard);
+    if (e.keyCode === 37) {
+      moveSelectionCursor("left");
+      // Up
+    } else if (e.keyCode === 38) {
+      moveSelectionCursor("up");
+      // Right
+    } else if (e.keyCode === 39) {
+      moveSelectionCursor("right");
+      // Down
+    } else if (e.keyCode === 40) {
+      moveSelectionCursor("down");
+      // Enter
+    } else if (e.keyCode === 13) {
+      // Enter
+      if (displayedCards[selectedHandCardNumber].count > 0) {
+        displayedCards[selectedHandCardNumber].count--;
+        playerCards.push(selectedHandCard);
         updateHandCards();
       }
-      if (Game.player.playerCards.length === 5) {
-        Game.ui.playerSelectingHand = false;
+      if (playerCards.length === 5) {
+        playerSelectingHand = false;
         displayConfirmationBox();
       }
-    }
-    // Esc / Backspace
-    else if (e.keyCode === 27 || e.keyCode === 8) {
-      if (Game.player.playerCards.length > 0) {
-        const lastCard = Game.player.playerCards.pop();
-        lastCard.count++;
+    } else if (e.keyCode === 27 || e.keyCode === 8) {
+      // Esc / Backspace
+      if (playerCards.length > 0) {
+        playerCards[playerCards.length - 1].count++;
         updateHandCards();
+        playerCards.pop();
       }
     }
-  }
-
-  // -------------------------
-  // Player Confirming
-  // -------------------------
-  else if (Game.ui.playerConfirming) {
-    if (e.keyCode === 38) moveConfirmationCursor("up");
-    else if (e.keyCode === 40) moveConfirmationCursor("down");
-    else if (e.keyCode === 13 && Game.ui.selectedConfirmationChoice === 0) {
-      Game.stage.removeChild(Game.ui.selectionBoard);
-      Game.stage.removeChild(Game.ui.confirmation);
+  } else if (playerConfirming) {
+    // Up
+    if (e.keyCode === 38) {
+      moveConfirmationCursor("up");
+      // Down
+    } else if (e.keyCode === 40) {
+      moveConfirmationCursor("down");
+      // Enter
+    } else if (e.keyCode === 13 && selectedConfirmationChoice == 0) {
+      stage.removeChild(selectionBoard);
+      stage.removeChild(confirmation);
       removeConfirmationCursor();
-      Game.startGame();
+      startGame();
+      // Backspace, Esc, And 'No'
     } else if (
       e.keyCode === 27 ||
       e.keyCode === 8 ||
-      (e.keyCode === 13 && Game.ui.selectedConfirmationChoice === 1)
+      (e.keyCode === 13 && selectedConfirmationChoice == 1)
     ) {
       for (let i = 0; i < 5; i++) {
-        const lastCard = Game.player.playerCards.pop();
-        lastCard.count++;
+        playerCards[playerCards.length - 1].count++;
         updateHandCards();
+        playerCards.pop();
       }
-      Game.stage.removeChild(Game.ui.confirmation);
+      stage.removeChild(confirmation);
       moveConfirmationCursor("up");
       removeConfirmationCursor();
-      Game.ui.playerSelectingHand = true;
+      playerSelectingHand = true;
     }
-  }
-
-  // -------------------------
-  // Player Choosing Card
-  // -------------------------
-  else if (Game.ui.playerChoosingCard) {
-    if (e.keyCode === 38) movePlayerHandCursor("up");
-    else if (e.keyCode === 40) movePlayerHandCursor("down");
-    else if (e.keyCode === 13) {
+  } else if (playerChoosingCard) {
+    // Up
+    if (e.keyCode === 38) {
+      movePlayerHandCursor("up");
+      // Down
+    } else if (e.keyCode === 40) {
+      movePlayerHandCursor("down");
+      // Enter
+    } else if (e.keyCode === 13) {
       removePlayerHandCursor();
       placeGridCursor();
-      Game.ui.selectedRow = 2;
-      Game.ui.selectedColumn = 2;
-      Game.stage.removeChild(Game.player.playerHandCursor);
+      selectedRow = 2;
+      selectedColumn = 2;
+      stage.removeChild(playerHandCursor);
     }
-  }
-
-  // -------------------------
-  // Player Selecting Placement
-  // -------------------------
-  else if (Game.ui.playerSelectingPlacement) {
-    Game.ui.infoBox.visible = false;
-
-    if (e.keyCode === 37) moveGridCursor("left");
-    else if (e.keyCode === 38) moveGridCursor("up");
-    else if (e.keyCode === 39) moveGridCursor("right");
-    else if (e.keyCode === 40) moveGridCursor("down");
-    else if (e.keyCode === 13) {
+  } else if (playerSelectingPlacement) {
+    infoBox.visible = false;
+    // Left
+    if (e.keyCode === 37) {
+      moveGridCursor("left");
+      // Up
+    } else if (e.keyCode === 38) {
+      moveGridCursor("up");
+      // Right
+    } else if (e.keyCode === 39) {
+      moveGridCursor("right");
+      // Down
+    } else if (e.keyCode === 40) {
+      moveGridCursor("down");
+      // Enter
+    } else if (e.keyCode === 13) {
       if (!cellOccupied()) {
-        Game.player.cardsInPlayerHand.splice(Game.ui.selectedHandCardNumber, 1);
+        cardsInPlayerHand.splice(selectedCardNumber, 1);
         removeGridCursor();
         CardPlacer.placeCard(
-          Game.ui.selectedHandCard,
-          Game.offsets.gameOffsetX + Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) + Game.offsets.cardOffsetX,
-          Game.offsets.gameOffsetY + Game.offsets.cellHeight * (Game.ui.selectedRow - 1) + Game.offsets.cardOffsetY
+          selectedCard,
+          gameOffsetX + cellWidth * (selectedColumn - 1) + cardOffsetX,
+          gameOffsetY + cellHeight * (selectedRow - 1) + cardOffsetY
         );
       }
-    }
-    else if (e.keyCode === 27 || e.keyCode === 8) {
+      // Backspace And Esc
+    } else if (e.keyCode === 27 || e.keyCode === 8) {
       removeGridCursor();
       placePlayerHandCursor();
     }
