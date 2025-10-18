@@ -103,8 +103,8 @@ function checkKey(e) {
         removeGridCursor();
         CardPlacer.placeCard(
           Game.ui.selectedCard,
-          gameOffsetX + cellWidth * (Game.ui.selectedColumn - 1) + cardOffsetX,
-          gameOffsetY + cellHeight * (Game.ui.selectedRow - 1) + cardOffsetY
+          Game.offsets.gameOffsetX + Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) + Game.offsets.cardOffsetX,
+          Game.offsets.gameOffsetY + Game.offsets.cellHeight * (Game.ui.selectedRow - 1) + Game.offsets.cardOffsetY
         );
       }
       // Backspace And Esc

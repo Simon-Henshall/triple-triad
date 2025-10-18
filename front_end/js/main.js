@@ -106,6 +106,8 @@ Game.offsets = {
   cellHeight: 184,
   cardOffsetX: 3,
   cardOffsetY: 3,
+  cardWidth: 0,
+  cardHeight: 0,
 };
 
 Game.player = {
@@ -129,7 +131,7 @@ Game.ai = {
   aiCardsAboveSelection: 0,
   aiCardCount: 0,
   aiDelay: 1000,
-  totalRedCards: 5
+  totalRedCards: 5,
 };
 
 Game.ui = {
@@ -192,17 +194,7 @@ Game.stageHeight = 0;
 // -------------------------
 // LEGACY GLOBALS (aliases)
 // -------------------------
-var gameOffsetX,
-  gameOffsetY,
-  handOffsetY,
-  handCardOffset,
-  cellWidth,
-  cellHeight,
-  cardOffsetX,
-  cardOffsetY,
-  cardWidth,
-  cardHeight,
-  playerCards = [],
+var playerCards = [],
   ownedCards,
   selectedCards,
   playerHand,
@@ -292,24 +284,14 @@ function initStage() {
 }
 
 function initOffsets() {
-  // Base offsets
-  gameOffsetX = Game.offsets.gameOffsetX;
-  gameOffsetY = Game.offsets.gameOffsetY;
-  handOffsetY = Game.offsets.handOffsetY;
-  handCardOffset = Game.offsets.handCardOffset;
-  cellWidth = Game.offsets.cellWidth;
-  cellHeight = Game.offsets.cellHeight;
-  cardOffsetX = Game.offsets.cardOffsetX;
-  cardOffsetY = Game.offsets.cardOffsetY;
-
   // Card size
-  cardWidth = cellWidth - cardOffsetX * 2;
-  cardHeight = cellHeight - cardOffsetY * 2;
+  Game.offsets.cardWidth = Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2;
+  Game.offsets.cardHeight = Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2;
 }
 
 function initHandPositions() {
-  Game.player.handOffsetX = gameOffsetX + cellWidth * 3 + cardWidth / 4;
-  Game.ai.handOffsetX = gameOffsetX / 2 - cardWidth / 2;
+  Game.player.handOffsetX = Game.offsets.gameOffsetX + Game.offsets.cellWidth * 3 + Game.offsets.cardWidth / 4;
+  Game.ai.handOffsetX = Game.offsets.gameOffsetX / 2 - Game.offsets.cardWidth / 2;
 }
 
 function initCursors() {
@@ -405,8 +387,8 @@ function populatePlayerCards(playerCardsParam) {
     card.addChild(cardColour, cardImage);
 
     // Adjust The Card For The Board
-    card.scaleX = cardWidth / card.children[0].image.width;
-    card.scaleY = cardHeight / card.children[0].image.height;
+    card.scaleX = Game.offsets.cardWidth / card.children[0].image.width;
+    card.scaleY = Game.offsets.cardHeight / card.children[0].image.height;
 
     // Assign stats
     card.name = chosenCard.displayName;
@@ -419,7 +401,7 @@ function populatePlayerCards(playerCardsParam) {
 
     // Place The Card
     card.x = Game.player.handOffsetX;
-    card.y = handOffsetY + i * handCardOffset;
+    card.y = Game.offsets.handOffsetY + i * Game.offsets.handCardOffset;
     Game.player.cardsInPlayerHand.push(card);
     Game.stage.addChild(card);
     Game.stage.update();

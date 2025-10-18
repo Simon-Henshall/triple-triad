@@ -36,14 +36,14 @@ function drawCardCounts() {
   }
 
   aiCardCount = new createjs.Text(totalRedCards, "90px Arial", "#ffffff");
-  aiCardCount.x = Game.ai.handOffsetX + cardWidth / 3;
+  aiCardCount.x = Game.ai.handOffsetX + Game.offsets.cardWidth / 3;
   aiCardCount.y = Game.stageHeight - 15;
   aiCardCount.textBaseline = "alphabetic";
   aiCardCount.alpha = 1;
   Game.stage.addChild(aiCardCount);
 
   playerCardCount = new createjs.Text(totalBlueCards, "90px Arial", "#ffffff");
-  playerCardCount.x = Game.player.handOffsetX + cardWidth / 3;
+  playerCardCount.x = Game.player.handOffsetX + Game.offsets.cardWidth / 3;
   playerCardCount.y = Game.stageHeight - 15;
   playerCardCount.textBaseline = "alphabetic";
   playerCardCount.alpha = 1;

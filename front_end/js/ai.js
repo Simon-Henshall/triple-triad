@@ -18,8 +18,8 @@ function aiTurn() {
   setTimeout(function () {
     CardPlacer.placeCard(
       aiSelectedCard,
-      gameOffsetX + cellWidth * (Game.ui.selectedColumn - 1) + cardOffsetX,
-      gameOffsetY + cellHeight * (Game.ui.selectedRow - 1) + cardOffsetY
+      Game.offsets.gameOffsetX + Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) + Game.offsets.cardOffsetX,
+      Game.offsets.gameOffsetY + Game.offsets.cellHeight * (Game.ui.selectedRow - 1) + Game.offsets.cardOffsetY
     );
   }, aiDelay);
 }
@@ -49,16 +49,16 @@ function populateAICards() {
     var baseWidth =
       card.children[0] && card.children[0].image && card.children[0].image.width
         ? card.children[0].image.width
-        : cellWidth - cardOffsetX * 2 || 100;
+        : Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2 || 100;
     var baseHeight =
       card.children[0] &&
       card.children[0].image &&
       card.children[0].image.height
         ? card.children[0].image.height
-        : cellHeight - cardOffsetY * 2 || 140;
+        : Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2 || 140;
 
-    card.scaleX = (cardWidth || cellWidth - cardOffsetX * 2) / baseWidth;
-    card.scaleY = (cardHeight || cellHeight - cardOffsetY * 2) / baseHeight;
+    card.scaleX = (Game.offsets.cardWidth || Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2) / baseWidth;
+    card.scaleY = (Game.offsets.cardHeight || Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2) / baseHeight;
 
     // Card imagery paths
     card.frontImage = Game.config.cardPath + chosen_card.image + ".png";
@@ -75,8 +75,8 @@ function populateAICards() {
     card.background = "red";
 
     // Position off to AI hand area
-    card.x = Game.ai.handOffsetX || gameOffsetX / 2 || 100;
-    card.y = (handOffsetY || 50) + i * (handCardOffset || 95);
+    card.x = Game.ai.handOffsetX || Game.offsets.gameOffsetX / 2 || 100;
+    card.y = (Game.offsets.handOffsetY || 50) + i * (Game.offsets.handCardOffset || 95);
 
     // Add to AI hand and stage
     cardsInAIHand.push(card);

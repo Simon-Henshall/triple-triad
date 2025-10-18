@@ -91,10 +91,10 @@ function populateSelectionBoardCards() {
     Game.ui.displayedCard.children[0].image.width
   ) {
     Game.ui.displayedCard.scaleX =
-      (window.cardWidth || window.cellWidth - (window.cardOffsetX || 3) * 2) /
+      (Game.offsets.cardWidth || Game.offsets.cellWidth - (Game.offsets.cardOffsetX || 3) * 2) /
       Game.ui.displayedCard.children[0].image.width;
     Game.ui.displayedCard.scaleY =
-      (window.cardHeight || window.cellHeight - (window.cardOffsetY || 3) * 2) /
+      (Game.offsets.cardHeight || Game.offsets.cellHeight - (wGame.offsets.cardOffsetY || 3) * 2) /
       Game.ui.displayedCard.children[0].image.height;
   }
 
