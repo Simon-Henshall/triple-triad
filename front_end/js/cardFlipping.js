@@ -80,11 +80,17 @@ function flipCardOver(card, direction) {
   // Change ownership colour to match current player
   targetCard.owner = getCurrentPlayerColour();
 
-  // Replace card image to reflect new owner
+  // Update images: retain front card art, swap ownership overlay
   replaceCard(targetCard);
 
-  // Update ownership counts accordingly
+  // Update ownership counts
   updateOwnershipCounts(1);
+
+  // Keep board state consistent
+  const squareObj = Game.ui.squares[targetCard.inCell - 1];
+  if (squareObj) {
+    squareObj.card = targetCard;
+  }
 }
 
 // =======================================================
@@ -93,7 +99,6 @@ function flipCardOver(card, direction) {
 function updateOwnershipCounts(flippedCount) {
   const playerColour = getCurrentPlayerColour();
 
-  // Ownership delta table for each colour
   const delta = {
     blue: { totalBlueCards: 1, totalRedCards: -1 },
     red: { totalBlueCards: -1, totalRedCards: 1 },
@@ -115,11 +120,22 @@ function updateCardCounts() {
 }
 
 // =======================================================
-// Replace Card Image Upon Flip
+// Replace Card Image Upon Flip (retain front art + ownership colour)
 // =======================================================
 function replaceCard(cardToReplace) {
-  // Swap the image source to reflect ownership change
-  cardToReplace.children[0].image.src = `front_end/images/cards/${cardToReplace.owner}.png`;
+  if (!cardToReplace.children[0]) {
+    // Create ownership background if missing
+    const ownerBmp = new createjs.Bitmap(`front_end/images/cards/${cardToReplace.owner}.png`);
+    cardToReplace.addChildAt(ownerBmp, 0);
+  } else {
+    // Only update ownership layer
+    cardToReplace.children[0].image.src = `front_end/images/cards/${cardToReplace.owner}.png`;
+  }
+
+  // Ensure front face stays above ownership background
+  if (cardToReplace.children[1]) {
+    cardToReplace.setChildIndex(cardToReplace.children[1], cardToReplace.getNumChildren() - 1);
+  }
 }
 
 // =======================================================
@@ -174,12 +190,11 @@ function animateFlip(card, direction, counter) {
 function swapCardFace(card) {
   const isBack = card.children[1].image.src.includes(card.backImage);
 
-  // Toggle image between front and back
   card.children[1].image.src = isBack
     ? card.frontImage
     : card.backImage;
 
-  // Adjust for horizontal mirroring effect
+  // Adjust for horizontal mirroring
   card.children[1].x += card.children[1].image.width;
   card.children[1].scaleX = -1;
 }
