@@ -3,7 +3,6 @@
 // -------------------------
 
 function aiTurn() {
-  console.log("AI turn starting, Game.ui.playerTurn =", Game.ui.playerTurn);
   // Pick A Card To Play (Currently Random)
   var aiSelectedCard =
     cardsInAIHand[Math.floor(Math.random() * cardsInAIHand.length)];

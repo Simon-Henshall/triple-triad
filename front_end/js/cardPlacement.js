@@ -33,9 +33,11 @@ class CardPlacer {
     // Ensure the card stays visually on top
     stage.setChildIndex(card, stage.getNumChildren() - 1);
 
-    // Reveal the card face if it belongs to the AI (red)
+    // Reveal the card face for AI cards if needed
     if (Game.utils.getPlayerTurn() === "red") {
       card.children[1].image.src = card.frontImage;
+      // Ensure ownership background is correct
+      replaceCard(card);
     }
 
     // Animate the card into its final placement position on the board
@@ -94,6 +96,9 @@ class CardPlacer {
     if (freeCellIndex > -1) {
       freeCells.splice(freeCellIndex, 1);
     }
+
+    // Ensure ownership background is correct after placement
+    replaceCard(card);
   }
 
   // ======================================================================
@@ -170,10 +175,7 @@ class CardPlacer {
   // Swap the current active player (red <-> blue)
   // ======================================================================
   static swapPlayerTurn() {
-    console.log("Before swap:", Game.ui.playerTurn);
-    console.log("getPlayerTurn() reports:", Game.utils.getPlayerTurn());
     Game.ui.playerTurn = Game.utils.getPlayerTurn() === "blue" ? "red" : "blue";
-    console.log("After swap:", Game.ui.playerTurn);
   }
 
   // ======================================================================
