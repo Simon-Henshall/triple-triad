@@ -187,7 +187,7 @@ class CardPlacer {
       Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
 
       // Reposition cursor and UI elements
-      stage.addChild(playerHandCursor);
+      stage.addChild(Game.player.playerHandCursor);
       Game.ui.selectedCard.x -= 30;
 
       stage.setChildIndex(Game.ui.infoBox, stage.getNumChildren() - 1);
@@ -234,7 +234,7 @@ class CardPlacer {
 
       if (Game.ui.selectedCardNumber === 0) {
         // Top card was played; move cursor down
-        playerHandCursor.y += handCardOffset;
+        Game.player.playerHandCursor.y += handCardOffset;
         Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
       } else {
         // Adjust selection to the next card

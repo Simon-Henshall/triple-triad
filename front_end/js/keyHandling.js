@@ -21,8 +21,8 @@ function checkKey(e) {
       // Enter
     } else if (e.keyCode === 13) {
       // Enter
-      if (displayedCards[selectedHandCardNumber].count > 0) {
-        displayedCards[selectedHandCardNumber].count--;
+      if (Game.ui.displayedCards[selectedHandCardNumber].count > 0) {
+        Game.ui.displayedCards[selectedHandCardNumber].count--;
         playerCards.push(selectedHandCard);
         updateHandCards();
       }
@@ -80,7 +80,7 @@ function checkKey(e) {
       placeGridCursor();
       Game.ui.selectedRow = 2;
       Game.ui.selectedColumn = 2;
-      stage.removeChild(playerHandCursor);
+      stage.removeChild(Game.player.playerHandCursor);
     }
   } else if (Game.ui.playerSelectingPlacement) {
     Game.ui.infoBox.visible = false;

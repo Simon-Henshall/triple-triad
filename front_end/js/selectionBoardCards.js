@@ -3,31 +3,31 @@
 // -----------------------------
 function populateSelectionBoardCards() {
   // Determine paging and which cards to display
-  totalPages = Math.floor(window.ownedCards.length / 11) + 1;
+  Game.ui.totalPages = Math.floor(window.ownedCards.length / 11) + 1;
   remainingCards = Object.keys(window.ownedCards).length % 11;
-  displayedCards = $.extend({}, window.ownedCards);
-  var offset = (page - 1) * 11;
+  Game.ui.displayedCards = $.extend({}, window.ownedCards);
+  var offset = (Game.ui.page - 1) * 11;
 
-  // Determine displayedCards length exactly like original
+  // Determine Game.ui.displayedCards length exactly like original
   if (window.ownedCards.length >= 11) {
-    if (page != totalPages) {
-      displayedCards.length = 11;
-    } else if (page == totalPages) {
+    if (Game.ui.page != Game.ui.totalPages) {
+      Game.ui.displayedCards.length = 11;
+    } else if (Game.ui.page == Game.ui.totalPages) {
       // Safeguard for having a count perfectly divisble by 11
       if (remainingCards == 0) {
         remainingCards = 11;
       }
-      displayedCards.length = remainingCards;
+      Game.ui.displayedCards.length = remainingCards;
     }
   } else {
-    displayedCards.length = Object.keys(window.ownedCards).length;
+    Game.ui.displayedCards.length = Object.keys(window.ownedCards).length;
   }
 
   // Draw the data entries onto Game.ui.shownCards (createjs.Text and bitmaps)
   var j = 0;
-  for (var i = offset; i < offset + displayedCards.length; i++) {
+  for (var i = offset; i < offset + Game.ui.displayedCards.length; i++) {
     var cardName = new createjs.Text(
-      displayedCards[i].displayName,
+      Game.ui.displayedCards[i].displayName,
       "26px Arial",
       "#ffffff"
     );
@@ -36,7 +36,7 @@ function populateSelectionBoardCards() {
     cardName.textBaseline = "alphabetic";
 
     var cardCount = new createjs.Text(
-      displayedCards[i].count,
+      Game.ui.displayedCards[i].count,
       "26px Arial",
       "#ffffff"
     );
@@ -75,28 +75,28 @@ function populateSelectionBoardCards() {
   selectedHandCard = window.ownedCards[selectedHandCardNumber] || null;
 
   // Draw the displayed card on the right of the selection board
-  var displayedCardImage = new createjs.Bitmap(
+  Game.ui.displayedCardImage = new createjs.Bitmap(
     selectedHandCard ? Game.config.cardPath + selectedHandCard.image + ".png" : ""
   );
-  displayedCardColour = new createjs.Bitmap(Game.config.cardPath + "blue.png");
-  displayedCard = new createjs.Container();
-  displayedCard.addChild(displayedCardColour, displayedCardImage);
-  displayedCard.x = selectionBoardBackground.x + 440;
-  displayedCard.y = selectionBoardBackground.y + 200;
+  Game.ui.displayedCardColour = new createjs.Bitmap(Game.config.cardPath + "blue.png");
+  Game.ui.displayedCard = new createjs.Container();
+  Game.ui.displayedCard.addChild(Game.ui.displayedCardColour, Game.ui.displayedCardImage);
+  Game.ui.displayedCard.x = selectionBoardBackground.x + 440;
+  Game.ui.displayedCard.y = selectionBoardBackground.y + 200;
 
   // Scale accordingly (guard for missing image size)
   if (
-    displayedCard.children[0] &&
-    displayedCard.children[0].image &&
-    displayedCard.children[0].image.width
+    Game.ui.displayedCard.children[0] &&
+    Game.ui.displayedCard.children[0].image &&
+    Game.ui.displayedCard.children[0].image.width
   ) {
-    displayedCard.scaleX =
+    Game.ui.displayedCard.scaleX =
       (window.cardWidth || window.cellWidth - (window.cardOffsetX || 3) * 2) /
-      displayedCard.children[0].image.width;
-    displayedCard.scaleY =
+      Game.ui.displayedCard.children[0].image.width;
+    Game.ui.displayedCard.scaleY =
       (window.cardHeight || window.cellHeight - (window.cardOffsetY || 3) * 2) /
-      displayedCard.children[0].image.height;
+      Game.ui.displayedCard.children[0].image.height;
   }
 
-  Game.ui.selectionBoard.addChild(displayedCard);
+  Game.ui.selectionBoard.addChild(Game.ui.displayedCard);
 }

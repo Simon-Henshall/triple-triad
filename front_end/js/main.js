@@ -129,8 +129,7 @@ Game.ai = {
   aiCardsAboveSelection: 0,
   aiCardCount: 0,
   aiDelay: 1000,
-  totalRedCards: 5,
-  aiHandCursor: null,
+  totalRedCards: 5
 };
 
 Game.ui = {
@@ -213,28 +212,17 @@ var stage,
   playerCardCount,
   playedPlayerCardCount,
   totalBlueCards,
-  playerHandCursor,
-  playerHandSelectionCursor,
   cardsInAIHand,
   aiCardCount,
   aiDelay,
   totalRedCards,
-  aiHandCursor,
   squares,
   square,
   squareLeft,
   squareUp,
   squareRight,
   squareDown,
-  gridCursor,
   selectionBoardBackground,
-  page,
-  pageDisplay,
-  totalPages,
-  displayedCards,
-  displayedCard,
-  displayedCardImage,
-  displayedCardColour,
   remainingCards,
   selectedHandCardNumber,
   selectedHandCard,
@@ -273,26 +261,16 @@ function init() {
   playerCardCount = Game.player.playerCardCount;
   playedPlayerCardCount = Game.player.playedPlayerCardCount;
   totalBlueCards = Game.player.totalBlueCards;
-  playerHandCursor = Game.player.playerHandCursor;
-  playerHandSelectionCursor = Game.player.playerHandSelectionCursor;
 
   cardsInAIHand = Game.ai.cardsInAIHand;
   aiCardCount = Game.ai.aiCardCount;
   aiDelay = Game.ai.aiDelay;
   totalRedCards = Game.ai.totalRedCards;
-  aiHandCursor = Game.ai.aiHandCursor;
 
   squares = Game.ui.squares;
   square = Game.ui.square;
 
   selectionBoardBackground = Game.ui.selectionBoardBackground;
-  page = Game.ui.page;
-  pageDisplay = Game.ui.pageDisplay;
-  totalPages = Game.ui.totalPages;
-  displayedCards = Game.ui.displayedCards;
-  displayedCard = Game.ui.displayedCard;
-  displayedCardImage = Game.ui.displayedCardImage;
-  displayedCardColour = Game.ui.displayedCardColour;
   remainingCards = Game.ui.remainingCards;
   selectedHandCardNumber = Game.ui.selectedHandCardNumber;
   selectedHandCard = Game.ui.selectedHandCard;
@@ -347,17 +325,9 @@ function initCursors() {
   Game.player.playerHandSelectionCursor = new createjs.Bitmap(
     Game.config.imagePath + "cursor.png"
   );
-  Game.ai.aiHandCursor = new createjs.Bitmap(
-    Game.config.imagePath + "cursor.png"
-  );
   Game.ui.gridCursor = new createjs.Bitmap(
     Game.config.imagePath + "cursor.png"
   );
-
-  playerHandCursor = Game.player.playerHandCursor;
-  playerHandSelectionCursor = Game.player.playerHandSelectionCursor;
-  aiHandCursor = Game.ai.aiHandCursor;
-  gridCursor = Game.ui.gridCursor;
 }
 
 function initUIContainers() {

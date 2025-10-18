@@ -6,13 +6,13 @@
  * Place the small hand selection cursor at its initial position
  */
 function placePlayerHandSelectionCursor() {
-  playerHandSelectionCursor.x = selectionBoardBackground.x - 40;
-  playerHandSelectionCursor.y = selectionBoardBackground.y + 48;
+  Game.player.playerHandSelectionCursor.x = selectionBoardBackground.x - 40;
+  Game.player.playerHandSelectionCursor.y = selectionBoardBackground.y + 48;
 
-  Game.ui.selectionBoard.addChild(playerHandSelectionCursor);
+  Game.ui.selectionBoard.addChild(Game.player.playerHandSelectionCursor);
   stage.update();
 
-  console.log(`Player hand selection cursor placed at X:${playerHandSelectionCursor.x}, Y:${playerHandSelectionCursor.y}`);
+  console.log(`Player hand selection cursor placed at X:${Game.player.playerHandSelectionCursor.x}, Y:${Game.player.playerHandSelectionCursor.y}`);
 }
 
 /**
@@ -20,40 +20,40 @@ function placePlayerHandSelectionCursor() {
  */
 function moveSelectionCursor(direction) {
   if (direction == "up" && selectedHandCardNumber % 11 != 0) {
-    playerHandSelectionCursor.y -= 35;
+    Game.player.playerHandSelectionCursor.y -= 35;
     selectedHandCardNumber -= 1;
     selectedHandCard = window.ownedCards[selectedHandCardNumber];
     this.updateDisplayedCard();
   } else if (
     direction == "down" &&
-    ((page != totalPages && selectedHandCardNumber % 11 != 10) ||
-      (page == totalPages && selectedHandCardNumber % 11 < remainingCards - 1))
+    ((Game.ui.page != totalPages && selectedHandCardNumber % 11 != 10) ||
+      (Game.ui.page == totalPages && selectedHandCardNumber % 11 < remainingCards - 1))
   ) {
-    playerHandSelectionCursor.y += 35;
+    Game.player.playerHandSelectionCursor.y += 35;
     selectedHandCardNumber += 1;
     selectedHandCard = window.ownedCards[selectedHandCardNumber];
     this.updateDisplayedCard();
-  } else if (direction == "left" && page != 1) {
-    page--;
+  } else if (direction == "left" && Game.ui.page != 1) {
+    Game.ui.page--;
     selectedHandCardNumber -= 11;
     selectedHandCard = window.ownedCards[selectedHandCardNumber];
     this.updateHandCards();
     this.updateDisplayedCard();
-  } else if (direction == "right" && page != totalPages - 1) {
-    if (page != totalPages) {
-      page++;
+  } else if (direction == "right" && Game.ui.page != Game.ui.totalPages - 1) {
+    if (Game.ui.page != totalPages) {
+      Game.ui.page++;
       selectedHandCardNumber += 11;
       selectedHandCard = window.ownedCards[selectedHandCardNumber];
       this.updateHandCards();
       this.updateDisplayedCard();
     }
-  } else if (direction == "right" && page == totalPages - 1) {
-    page++;
+  } else if (direction == "right" && Game.ui.page == Game.ui.totalPages - 1) {
+    Game.ui.page++;
     if (selectedHandCardNumber > window.ownedCards.length - 12) {
       var selectedHandCardNumberForPage = Math.floor(
         (selectedHandCardNumber % 11) + 1
       );
-      playerHandSelectionCursor.y -=
+      Game.player.playerHandSelectionCursor.y -=
         35 * (selectedHandCardNumberForPage - remainingCards);
       selectedHandCardNumber = window.ownedCards.length - 1;
       selectedHandCard = window.ownedCards[selectedHandCardNumber];
@@ -72,7 +72,7 @@ function moveSelectionCursor(direction) {
  * Remove the hand selection cursor
  */
 function removePlayerHandSelectionCursor() {
-  stage.removeChild(playerHandSelectionCursor);
+  stage.removeChild(Game.player.playerHandSelectionCursor);
   stage.update();
 
   console.log("Player hand selection cursor removed");
@@ -85,30 +85,30 @@ function movePlayerHandSelectionCursor(direction) {
   let moved = false;
 
   if (direction == "up" && selectedHandCardNumber % 11 != 0) {
-    playerHandSelectionCursor.y -= 35;
+    Game.player.playerHandSelectionCursor.y -= 35;
     selectedHandCardNumber -= 1;
     selectedHandCard = window.ownedCards[selectedHandCardNumber];
     updateDisplayedCard();
     moved = true;
   } else if (
     direction == "down" &&
-    ((page != totalPages && selectedHandCardNumber % 11 != 10) ||
-      (page == totalPages && selectedHandCardNumber % 11 < remainingCards - 1))
+    ((Game.ui.page != Game.ui.totalPages && selectedHandCardNumber % 11 != 10) ||
+      (Game.ui.page == Game.ui.totalPages && selectedHandCardNumber % 11 < remainingCards - 1))
   ) {
-    playerHandSelectionCursor.y += 35;
+    Game.player.playerHandSelectionCursor.y += 35;
     selectedHandCardNumber += 1;
     selectedHandCard = window.ownedCards[selectedHandCardNumber];
     updateDisplayedCard();
     moved = true;
-  } else if (direction == "left" && page != 1) {
-    page--;
+  } else if (direction == "left" && Game.ui.page != 1) {
+    Game.ui.page--;
     selectedHandCardNumber -= 11;
     selectedHandCard = window.ownedCards[selectedHandCardNumber];
     updateHandCards();
     updateDisplayedCard();
     moved = true;
-  } else if (direction == "right" && page != totalPages - 1) {
-    page++;
+  } else if (direction == "right" && Game.ui.page != Game.ui.totalPages - 1) {
+    Game.ui.page++;
     selectedHandCardNumber += 11;
     selectedHandCard = window.ownedCards[selectedHandCardNumber];
     updateHandCards();
@@ -177,15 +177,15 @@ function moveConfirmationCursor(direction) {
  */
 function placePlayerHandCursor() {
   Game.ui.playerChoosingCard = true;
-  playerHandCursor.x = Game.player.handOffsetX - 50;
-  playerHandCursor.y =
+  Game.player.playerHandCursor.x = Game.player.handOffsetX - 50;
+  Game.player.playerHandCursor.y =
     handOffsetY +
     (Game.ui.selectedCardNumber + 1 + playedPlayerCardCount) * (cardHeight / 2);
 
-  stage.addChild(playerHandCursor);
+  stage.addChild(Game.player.playerHandCursor);
   stage.update();
 
-  console.log(`Player hand cursor placed at X:${playerHandCursor.x}, Y:${playerHandCursor.y}`);
+  console.log(`Player hand cursor placed at X:${Game.player.playerHandCursor.x}, Y:${Game.player.playerHandCursor.y}`);
 }
 
 /**
@@ -193,7 +193,7 @@ function placePlayerHandCursor() {
  */
 function removePlayerHandCursor() {
   Game.ui.playerChoosingCard = false;
-  stage.removeChild(playerHandCursor);
+  stage.removeChild(Game.player.playerHandCursor);
   stage.update();
 
   console.log("Player hand cursor removed");
@@ -205,11 +205,11 @@ function removePlayerHandCursor() {
  */
 function movePlayerHandCursor(direction) {
   if (direction === "up" && Game.ui.selectedCardNumber > 0) {
-    playerHandCursor.y -= handCardOffset;
+    Game.player.playerHandCursor.y -= handCardOffset;
     Game.ui.selectedCardNumber--;
     Game.player.cardsAboveSelection--;
   } else if (direction === "down" && Game.ui.selectedCardNumber < Game.player.cardsInPlayerHand.length - 1) {
-    playerHandCursor.y += handCardOffset;
+    Game.player.playerHandCursor.y += handCardOffset;
     Game.ui.selectedCardNumber++;
     Game.player.cardsAboveSelection++;
   } else {
@@ -236,13 +236,13 @@ function movePlayerHandCursor(direction) {
  */
 function placeGridCursor() {
   Game.ui.playerSelectingPlacement = true;
-  gridCursor.x = gameOffsetX + cellWidth + 16;
-  gridCursor.y = gameOffsetY + cellHeight + 80;
+  Game.ui.gridCursor.x = gameOffsetX + cellWidth + 16;
+  Game.ui.gridCursor.y = gameOffsetY + cellHeight + 80;
 
-  stage.addChild(gridCursor);
+  stage.addChild(Game.ui.gridCursor);
   stage.update();
 
-  console.log(`Grid cursor placed at X:${gridCursor.x}, Y:${gridCursor.y}`);
+  console.log(`Grid cursor placed at X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`);
 }
 
 /**
@@ -250,20 +250,20 @@ function placeGridCursor() {
  * @param {"left"|"up"|"right"|"down"} direction
  */
 function moveGridCursor(direction) {
-  const oldX = gridCursor.x;
-  const oldY = gridCursor.y;
+  const oldX = Game.ui.gridCursor.x;
+  const oldY = Game.ui.gridCursor.y;
 
-  if (direction === "left" && gridCursor.x > gameOffsetX + 16) {
-    gridCursor.x -= cellWidth;
+  if (direction === "left" && Game.ui.gridCursor.x > gameOffsetX + 16) {
+    Game.ui.gridCursor.x -= cellWidth;
     Game.ui.selectedColumn--;
-  } else if (direction === "up" && gridCursor.y > gameOffsetY + 80) {
-    gridCursor.y -= cellHeight;
+  } else if (direction === "up" && Game.ui.gridCursor.y > gameOffsetY + 80) {
+    Game.ui.gridCursor.y -= cellHeight;
     Game.ui.selectedRow--;
-  } else if (direction === "right" && gridCursor.x < gameOffsetX + cellWidth * 2 + 16) {
-    gridCursor.x += cellWidth;
+  } else if (direction === "right" && Game.ui.gridCursor.x < gameOffsetX + cellWidth * 2 + 16) {
+    Game.ui.gridCursor.x += cellWidth;
     Game.ui.selectedColumn++;
-  } else if (direction === "down" && gridCursor.y < gameOffsetY + cellHeight * 2 + 80) {
-    gridCursor.y += cellHeight;
+  } else if (direction === "down" && Game.ui.gridCursor.y < gameOffsetY + cellHeight * 2 + 80) {
+    Game.ui.gridCursor.y += cellHeight;
     Game.ui.selectedRow++;
   } else {
     console.warn(`Cannot move grid cursor ${direction} - out of bounds`);
@@ -273,7 +273,7 @@ function moveGridCursor(direction) {
   checkSelectedSquare();
   stage.update();
 
-  console.log(`Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${gridCursor.x}, Y:${gridCursor.y}`);
+  console.log(`Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`);
 }
 
 /**
@@ -281,7 +281,7 @@ function moveGridCursor(direction) {
  */
 function removeGridCursor() {
   Game.ui.playerSelectingPlacement = false;
-  stage.removeChild(gridCursor);
+  stage.removeChild(Game.ui.gridCursor);
   stage.update();
 
   console.log("Grid cursor removed");
