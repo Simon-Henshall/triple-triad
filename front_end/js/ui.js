@@ -20,8 +20,8 @@ function addBackground() {
   const background = new createjs.Bitmap(Game.config.imagePath + "board.png");
   background.x = 0;
   background.y = 0;
-  stage.addChild(background);
-  stage.update();
+  Game.stage.addChild(background);
+  Game.stage.update();
 }
 
 // -------------------------
@@ -29,27 +29,27 @@ function addBackground() {
 // -------------------------
 function drawCardCounts() {
   if (aiCardCount) {
-    stage.removeChild(aiCardCount);
+    Game.stage.removeChild(aiCardCount);
   }
   if (playerCardCount) {
-    stage.removeChild(playerCardCount);
+    Game.stage.removeChild(playerCardCount);
   }
 
   aiCardCount = new createjs.Text(totalRedCards, "90px Arial", "#ffffff");
   aiCardCount.x = Game.ai.handOffsetX + cardWidth / 3;
-  aiCardCount.y = stageHeight - 15;
+  aiCardCount.y = Game.stageHeight - 15;
   aiCardCount.textBaseline = "alphabetic";
   aiCardCount.alpha = 1;
-  stage.addChild(aiCardCount);
+  Game.stage.addChild(aiCardCount);
 
   playerCardCount = new createjs.Text(totalBlueCards, "90px Arial", "#ffffff");
   playerCardCount.x = Game.player.handOffsetX + cardWidth / 3;
-  playerCardCount.y = stageHeight - 15;
+  playerCardCount.y = Game.stageHeight - 15;
   playerCardCount.textBaseline = "alphabetic";
   playerCardCount.alpha = 1;
-  stage.addChild(playerCardCount);
+  Game.stage.addChild(playerCardCount);
 
-  stage.update();
+  Game.stage.update();
 }
 
 // -------------------------
@@ -110,8 +110,8 @@ function drawInfoBox() {
 
   Game.ui.infoBox.addChild(infoBoxCardName);
 
-  stage.addChild(Game.ui.infoBox);
-  stage.update();
+  Game.stage.addChild(Game.ui.infoBox);
+  Game.stage.update();
 }
 
 // -------------------------
@@ -137,5 +137,5 @@ function updateInfoBox() {
     playerCardCount.text = totalBlueCards;
   }
 
-  stage.update();
+  Game.stage.update();
 }

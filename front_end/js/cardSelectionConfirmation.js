@@ -66,13 +66,13 @@ function displayConfirmationBox() {
     confirmationNo
   );
 
-  stage.addChild(Game.ui.confirmation);
+  Game.stage.addChild(Game.ui.confirmation);
   placeConfirmationCursor();
-  stage.update();
+  Game.stage.update();
 }
 
 function hideConfirmationBox() {
   Game.ui.playerConfirming = false;
-  stage.removeChild(Game.ui.confirmation);
+  Game.stage.removeChild(Game.ui.confirmation);
   Game.ui.playerSelectingHand = true;
 }

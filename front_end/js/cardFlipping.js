@@ -116,7 +116,7 @@ function updateOwnershipCounts(flippedCount) {
 function updateCardCounts() {
   aiCardCount.text = totalRedCards;
   playerCardCount.text = totalBlueCards;
-  stage.update();
+  Game.stage.update();
 }
 
 // =======================================================
@@ -158,7 +158,7 @@ function flipCard(card, direction) {
   card.cache(0, 0, sliceWidth, sliceHeight);
 
   sliceContainer.addChild(card);
-  stage.addChild(sliceContainer);
+  Game.stage.addChild(sliceContainer);
 
   animateFlip(card, sliceContainer, direction, 0, initialX, initialY);
 }
@@ -218,7 +218,7 @@ function flipDirection(card, container, direction, value) {
     slice.updateCache();
   }
 
-  stage.update();
+  Game.stage.update();
 }
 
 // =======================================================
@@ -228,9 +228,9 @@ function finaliseFlip(card, container, initialX, initialY) {
   card.x = initialX;
   card.y = initialY;
 
-  stage.addChild(card);
+  Game.stage.addChild(card);
   container.removeAllChildren();
-  stage.removeChild(container);
+  Game.stage.removeChild(container);
 }
 
 // =======================================================

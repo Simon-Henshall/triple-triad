@@ -10,7 +10,7 @@ function placePlayerHandSelectionCursor() {
   Game.player.playerHandSelectionCursor.y = selectionBoardBackground.y + 48;
 
   Game.ui.selectionBoard.addChild(Game.player.playerHandSelectionCursor);
-  stage.update();
+  Game.stage.update();
 
   console.log(`Player hand selection cursor placed at X:${Game.player.playerHandSelectionCursor.x}, Y:${Game.player.playerHandSelectionCursor.y}`);
 }
@@ -65,15 +65,15 @@ function moveSelectionCursor(direction) {
     this.updateDisplayedCard();
   }
 
-  stage.update();
+  Game.stage.update();
 }
 
 /**
  * Remove the hand selection cursor
  */
 function removePlayerHandSelectionCursor() {
-  stage.removeChild(Game.player.playerHandSelectionCursor);
-  stage.update();
+  Game.stage.removeChild(Game.player.playerHandSelectionCursor);
+  Game.stage.update();
 
   console.log("Player hand selection cursor removed");
 }
@@ -116,7 +116,7 @@ function movePlayerHandSelectionCursor(direction) {
     moved = true;
   }
 
-  stage.update();
+  Game.stage.update();
 
   if (moved) {
     console.log(`Moved hand selection cursor ${direction} -> Card index: ${selectedHandCardNumber}`);
@@ -136,8 +136,8 @@ function placeConfirmationCursor() {
   confirmationCursor.x = confirmationBackground.x + 50;
   confirmationCursor.y = confirmationBackground.y + 60;
 
-  stage.addChild(confirmationCursor);
-  stage.update();
+  Game.stage.addChild(confirmationCursor);
+  Game.stage.update();
 
   console.log(`Confirmation cursor placed at X:${confirmationCursor.x}, Y:${confirmationCursor.y}`);
 }
@@ -146,8 +146,8 @@ function placeConfirmationCursor() {
  * Remove the confirmation cursor
  */
 function removeConfirmationCursor() {
-  stage.removeChild(confirmationCursor);
-  stage.update();
+  Game.stage.removeChild(confirmationCursor);
+  Game.stage.update();
 
   console.log("Confirmation cursor removed");
 }
@@ -164,7 +164,7 @@ function moveConfirmationCursor(direction) {
     window.selectedConfirmationChoice += 1;
   }
 
-  stage.update();
+  Game.stage.update();
   console.log(`Confirmation cursor moved ${direction} -> Choice index: ${window.selectedConfirmationChoice}`);
 }
 
@@ -182,8 +182,8 @@ function placePlayerHandCursor() {
     handOffsetY +
     (Game.ui.selectedCardNumber + 1 + playedPlayerCardCount) * (cardHeight / 2);
 
-  stage.addChild(Game.player.playerHandCursor);
-  stage.update();
+  Game.stage.addChild(Game.player.playerHandCursor);
+  Game.stage.update();
 
   console.log(`Player hand cursor placed at X:${Game.player.playerHandCursor.x}, Y:${Game.player.playerHandCursor.y}`);
 }
@@ -193,8 +193,8 @@ function placePlayerHandCursor() {
  */
 function removePlayerHandCursor() {
   Game.ui.playerChoosingCard = false;
-  stage.removeChild(Game.player.playerHandCursor);
-  stage.update();
+  Game.stage.removeChild(Game.player.playerHandCursor);
+  Game.stage.update();
 
   console.log("Player hand cursor removed");
 }
@@ -223,7 +223,7 @@ function movePlayerHandCursor(direction) {
   updateInfoBox();
   indentSelectedCard();
 
-  stage.update();
+  Game.stage.update();
   console.log(`Moved player hand cursor ${direction} -> Card index: ${Game.ui.selectedCardNumber}`);
 }
 
@@ -239,8 +239,8 @@ function placeGridCursor() {
   Game.ui.gridCursor.x = gameOffsetX + cellWidth + 16;
   Game.ui.gridCursor.y = gameOffsetY + cellHeight + 80;
 
-  stage.addChild(Game.ui.gridCursor);
-  stage.update();
+  Game.stage.addChild(Game.ui.gridCursor);
+  Game.stage.update();
 
   console.log(`Grid cursor placed at X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`);
 }
@@ -271,7 +271,7 @@ function moveGridCursor(direction) {
   }
 
   checkSelectedSquare();
-  stage.update();
+  Game.stage.update();
 
   console.log(`Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`);
 }
@@ -281,8 +281,8 @@ function moveGridCursor(direction) {
  */
 function removeGridCursor() {
   Game.ui.playerSelectingPlacement = false;
-  stage.removeChild(Game.ui.gridCursor);
-  stage.update();
+  Game.stage.removeChild(Game.ui.gridCursor);
+  Game.stage.update();
 
   console.log("Grid cursor removed");
 }

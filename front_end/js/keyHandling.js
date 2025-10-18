@@ -47,8 +47,8 @@ function checkKey(e) {
       moveConfirmationCursor("down");
       // Enter
     } else if (e.keyCode === 13 && selectedConfirmationChoice == 0) {
-      stage.removeChild(Game.ui.selectionBoard);
-      stage.removeChild(Game.ui.confirmation);
+      Game.stage.removeChild(Game.ui.selectionBoard);
+      Game.stage.removeChild(Game.ui.confirmation);
       removeConfirmationCursor();
       startGame();
       // Backspace, Esc, And 'No'
@@ -62,7 +62,7 @@ function checkKey(e) {
         updateHandCards();
         playerCards.pop();
       }
-      stage.removeChild(Game.ui.confirmation);
+      Game.stage.removeChild(Game.ui.confirmation);
       moveConfirmationCursor("up");
       removeConfirmationCursor();
       Game.ui.playerSelectingHand = true;
@@ -80,7 +80,7 @@ function checkKey(e) {
       placeGridCursor();
       Game.ui.selectedRow = 2;
       Game.ui.selectedColumn = 2;
-      stage.removeChild(Game.player.playerHandCursor);
+      Game.stage.removeChild(Game.player.playerHandCursor);
     }
   } else if (Game.ui.playerSelectingPlacement) {
     Game.ui.infoBox.visible = false;

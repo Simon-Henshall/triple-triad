@@ -31,7 +31,7 @@ class CardPlacer {
   // ======================================================================
   static onCardOffscreenComplete(card, placementX, placementY) {
     // Ensure the card stays visually on top
-    stage.setChildIndex(card, stage.getNumChildren() - 1);
+    Game.stage.setChildIndex(card, Game.stage.getNumChildren() - 1);
 
     // Reveal the card face for AI cards if needed
     if (Game.utils.getPlayerTurn() === "red") {
@@ -65,7 +65,7 @@ class CardPlacer {
     flipCardsCheck(card);
 
     // Redraw the stage to show changes
-    stage.update();
+    Game.stage.update();
 
     // Debug
     logCell(card.inCell); // logs the specific cell
@@ -166,10 +166,10 @@ class CardPlacer {
     const effectBmp = new createjs.Bitmap(effectImage);
     effectBmp.x = card.x + cardWidth / 4;
     effectBmp.y = card.y + cardHeight / 3;
-    stage.addChild(effectBmp);
+    Game.stage.addChild(effectBmp);
 
     // Ensure the image appears on top
-    stage.setChildIndex(effectBmp, stage.getNumChildren() - 1);
+    Game.stage.setChildIndex(effectBmp, Game.stage.getNumChildren() - 1);
   }
 
   // ======================================================================
@@ -187,10 +187,10 @@ class CardPlacer {
       Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
 
       // Reposition cursor and UI elements
-      stage.addChild(Game.player.playerHandCursor);
+      Game.stage.addChild(Game.player.playerHandCursor);
       Game.ui.selectedCard.x -= 30;
 
-      stage.setChildIndex(Game.ui.infoBox, stage.getNumChildren() - 1);
+      Game.stage.setChildIndex(Game.ui.infoBox, Game.stage.getNumChildren() - 1);
       Game.ui.infoBox.visible = true;
       Game.ui.playerChoosingCard = true;
     } else if (Game.utils.getPlayerTurn() === "red") {

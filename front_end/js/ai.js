@@ -80,8 +80,8 @@ function populateAICards() {
 
     // Add to AI hand and stage
     cardsInAIHand.push(card);
-    stage.addChild(card);
-    stage.update();
+    Game.stage.addChild(card);
+    Game.stage.update();
   }
 
   // Select the top card by default (preserve original globals)

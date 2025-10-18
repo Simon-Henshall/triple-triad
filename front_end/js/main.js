@@ -192,10 +192,7 @@ Game.stageHeight = 0;
 // -------------------------
 // LEGACY GLOBALS (aliases)
 // -------------------------
-var stage,
-  stageWidth,
-  stageHeight,
-  gameOffsetX,
+var gameOffsetX,
   gameOffsetY,
   handOffsetY,
   handCardOffset,
@@ -241,7 +238,7 @@ var stage,
 // CORE: Initialization
 // -------------------------
 function handleTick() {
-  stage.update();
+  Game.stage.update();
 }
 
 function init() {
@@ -290,11 +287,8 @@ function initStage() {
   createjs.Ticker.setFPS(Game.config.fps);
   createjs.Ticker.addEventListener("tick", handleTick);
 
-  stage = Game.stage;
-  stageWidth = stage.canvas.width;
-  stageHeight = stage.canvas.height;
-  Game.stageWidth = stageWidth;
-  Game.stageHeight = stageHeight;
+  Game.stageWidth = Game.stage.canvas.width;
+  Game.stageHeight = Game.stage.canvas.height;
 }
 
 function initOffsets() {
@@ -427,8 +421,8 @@ function populatePlayerCards(playerCardsParam) {
     card.x = Game.player.handOffsetX;
     card.y = handOffsetY + i * handCardOffset;
     Game.player.cardsInPlayerHand.push(card);
-    stage.addChild(card);
-    stage.update();
+    Game.stage.addChild(card);
+    Game.stage.update();
   }
 
   // Select The Top Card By Default
@@ -465,7 +459,7 @@ function indentSelectedCard() {
       Game.ui.previouslySelectedCard.x = Game.ui.previouslySelectedCard.x + 30;
     }
   }
-  stage.update();
+  Game.stage.update();
 }
 
 // -------------------------

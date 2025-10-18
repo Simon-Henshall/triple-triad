@@ -123,7 +123,7 @@ class PlayerCardManager {
       if (Game.ui.selectionBoard.parent) {
         Game.ui.selectionBoard.parent.removeChild(Game.ui.selectionBoard);
       }
-      (window.stage || this.stage).addChild(Game.ui.selectionBoard);
+      Game.stage.addChild(Game.ui.selectionBoard);
 
       // place selection cursor and allow user to pick
       placePlayerHandSelectionCursor();
