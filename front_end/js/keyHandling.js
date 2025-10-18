@@ -21,21 +21,21 @@ function checkKey(e) {
       // Enter
     } else if (e.keyCode === 13) {
       // Enter
-      if (Game.ui.displayedCards[selectedHandCardNumber].count > 0) {
-        Game.ui.displayedCards[selectedHandCardNumber].count--;
-        playerCards.push(selectedHandCard);
+      if (Game.ui.displayedCards[Game.ui.selectedHandCardNumber].count > 0) {
+        Game.ui.displayedCards[Game.ui.selectedHandCardNumber].count--;
+        Game.player.playerCards.push(Game.ui.selectedHandCard);
         updateHandCards();
       }
-      if (playerCards.length === 5) {
+      if (Game.player.playerCards.length === 5) {
         Game.ui.playerSelectingHand = false;
         displayConfirmationBox();
       }
     } else if (e.keyCode === 27 || e.keyCode === 8) {
       // Esc / Backspace
-      if (playerCards.length > 0) {
-        playerCards[playerCards.length - 1].count++;
+      if (Game.player.playerCards.length > 0) {
+        Game.player.playerCards[Game.player.playerCards.length - 1].count++;
         updateHandCards();
-        playerCards.pop();
+        Game.player.playerCards.pop();
       }
     }
   } else if (Game.ui.playerConfirming) {
@@ -50,7 +50,7 @@ function checkKey(e) {
       Game.stage.removeChild(Game.ui.selectionBoard);
       Game.stage.removeChild(Game.ui.confirmation);
       removeConfirmationCursor();
-      startGame();
+      Game.startGame();
       // Backspace, Esc, And 'No'
     } else if (
       e.keyCode === 27 ||
@@ -58,9 +58,9 @@ function checkKey(e) {
       (e.keyCode === 13 && Game.ui.selectedConfirmationChoice == 1)
     ) {
       for (let i = 0; i < 5; i++) {
-        playerCards[playerCards.length - 1].count++;
+        Game.player.playerCards[Game.player.playerCards.length - 1].count++;
         updateHandCards();
-        playerCards.pop();
+        Game.player.playerCards.pop();
       }
       Game.stage.removeChild(Game.ui.confirmation);
       moveConfirmationCursor("up");

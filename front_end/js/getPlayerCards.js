@@ -34,9 +34,9 @@ class PlayerCardManager {
   }
 
   pickPlayerCards(ownedCardsJSON) {
-    window.ownedCards = [];
+    Game.player.ownedCards = [];
     Game.ui.page = 1;
-    selectedHandCardNumber = 0;
+    Game.ui.selectedHandCardNumber = 0;
     Game.ui.displayedCards = [];
     Game.ui.displayedCard = null;
     const fallBackCardsForTesting =
@@ -60,51 +60,49 @@ class PlayerCardManager {
         if (cardsCopy[i]) {
           cardsCopy[i].count = Game.ui.cardCount;
           cardsCopy[i].colour = "#ffffff";
-          window.ownedCards.push(cardsCopy[i]);
+          Game.player.ownedCards.push(cardsCopy[i]);
         }
       }
     }
 
     // Either pick random cards or show selection board
     if (Game.rules.indexOf("random") != -1) {
-      window.playerCards = this.shuffle($.extend(true, [], window.ownedCards));
+      Game.player.playerCards = this.shuffle($.extend(true, [], Game.player.ownedCards));
       // populate AI cards and start game
       if (!Game.ai.cardsInAIHand || Game.ai.cardsInAIHand.length === 0) {
         populateAICards();
       }
-      if (typeof window.startGame === "function") {
-        window.startGame();
-      }
+      Game.startGame();
     } else {
       // Draw the selection board background exactly as original
-      selectionBoardBackground = new createjs.Shape();
-      selectionBoardBackground.graphics
+      Game.ui.selectionBoardBackground = new createjs.Shape();
+      Game.ui.selectionBoardBackground.graphics
         .beginFill("#666666")
         .drawRect(0, 0, 420, 450);
-      selectionBoardBackground.x = 170;
-      selectionBoardBackground.y = 100;
-      Game.ui.selectionBoard.addChild(selectionBoardBackground);
+      Game.ui.selectionBoardBackground.x = 170;
+      Game.ui.selectionBoardBackground.y = 100;
+      Game.ui.selectionBoard.addChild(Game.ui.selectionBoardBackground);
 
       // Draw the selection board text
       var cardListText = new createjs.Text("CARDS", "20px Arial", "#ffffff");
-      cardListText.x = selectionBoardBackground.x + 10;
-      cardListText.y = selectionBoardBackground.y + 20;
+      cardListText.x = Game.ui.selectionBoardBackground.x + 10;
+      cardListText.y = Game.ui.selectionBoardBackground.y + 20;
       cardListText.textBaseline = "alphabetic";
 
       var pageText = new createjs.Text("P.", "20px Arial", "#ffffff");
-      pageText.x = selectionBoardBackground.x + 110;
-      pageText.y = selectionBoardBackground.y + 20;
+      pageText.x = Game.ui.selectionBoardBackground.x + 110;
+      pageText.y = Game.ui.selectionBoardBackground.y + 20;
       pageText.textBaseline = "alphabetic";
 
       // Game.ui.pageDisplay should be a createjs.Text object
       Game.ui.pageDisplay = new createjs.Text("1", "20px Arial", "#ffffff");
-      Game.ui.pageDisplay.x = selectionBoardBackground.x + 150;
-      Game.ui.pageDisplay.y = selectionBoardBackground.y + 20;
+      Game.ui.pageDisplay.x = Game.ui.selectionBoardBackground.x + 150;
+      Game.ui.pageDisplay.y = Game.ui.selectionBoardBackground.y + 20;
       Game.ui.pageDisplay.textBaseline = "alphabetic";
 
       var numText = new createjs.Text("NUM.", "20px Arial", "#ffffff");
-      numText.x = selectionBoardBackground.x + 350;
-      numText.y = selectionBoardBackground.y + 20;
+      numText.x = Game.ui.selectionBoardBackground.x + 350;
+      numText.y = Game.ui.selectionBoardBackground.y + 20;
       numText.textBaseline = "alphabetic";
 
       Game.ui.selectionBoard.addChild(cardListText, pageText, Game.ui.pageDisplay, numText);
@@ -137,23 +135,23 @@ class PlayerCardManager {
     var offset = (Game.ui.page - 1) * 11;
 
     // calculate how many cards are displayed
-    if (window.ownedCards.length >= 11) {
+    if (Game.player.ownedCards.length >= 11) {
       if (Game.ui.page != Game.ui.totalPages) {
         Game.ui.displayedCards.length = 11;
       } else if (Game.ui.page == Game.ui.totalPages) {
-        Game.ui.displayedCards.length = remainingCards;
+        Game.ui.displayedCards.length = Game.ui.remainingCards;
       }
     } else {
-      Game.ui.displayedCards.length = Object.keys(window.ownedCards).length;
+      Game.ui.displayedCards.length = Object.keys(Game.player.ownedCards).length;
     }
 
     // change card colour for none left
-    if (Game.ui.displayedCards[selectedHandCardNumber].count == 0) {
-      Game.ui.displayedCards[selectedHandCardNumber].colour = "#909497";
+    if (Game.ui.displayedCards[Game.ui.selectedHandCardNumber].count == 0) {
+      Game.ui.displayedCards[Game.ui.selectedHandCardNumber].colour = "#909497";
     }
-    if (window.playerCards.length > 0) {
-      if (window.playerCards[window.playerCards.length - 1].count > 0) {
-        window.playerCards[window.playerCards.length - 1].colour = "#ffffff";
+    if (Game.player.playerCards.length > 0) {
+      if (Game.player.playerCards[Game.player.playerCards.length - 1].count > 0) {
+        Game.player.playerCards[Game.player.playerCards.length - 1].colour = "#ffffff";
       }
     }
 
@@ -161,8 +159,8 @@ class PlayerCardManager {
     var j = 0;
     for (var i = 0; i < Game.ui.displayedCards.length; i++) {
       if (Game.ui.shownCards.children[j]) {
-        Game.ui.shownCards.children[j].text = window.ownedCards[i + offset].displayName;
-        Game.ui.shownCards.children[j].color = window.ownedCards[i + offset].colour;
+        Game.ui.shownCards.children[j].text = Game.player.ownedCards[i + offset].displayName;
+        Game.ui.shownCards.children[j].color = Game.player.ownedCards[i + offset].colour;
         Game.ui.shownCards.children[j].visible = true;
       }
       j += 3;
@@ -170,8 +168,8 @@ class PlayerCardManager {
     var k = 1;
     for (var i = 0; i < Game.ui.displayedCards.length; i++) {
       if (Game.ui.shownCards.children[k]) {
-        Game.ui.shownCards.children[k].text = window.ownedCards[i + offset].count;
-        Game.ui.shownCards.children[k].color = window.ownedCards[i + offset].colour;
+        Game.ui.shownCards.children[k].text = Game.player.ownedCards[i + offset].count;
+        Game.ui.shownCards.children[k].color = Game.player.ownedCards[i + offset].colour;
         Game.ui.shownCards.children[k].visible = true;
       }
       k += 3;
@@ -218,15 +216,15 @@ class PlayerCardManager {
       Game.ui.displayedCard.children[1] &&
       Game.ui.displayedCard.children[1].image
     ) {
-      if (selectedHandCard) {
+      if (Game.ui.selectedHandCard) {
         Game.ui.displayedCard.children[1].image.src =
-          Game.config.cardPath + selectedHandCard.image + ".png";
+          Game.config.cardPath + Game.ui.selectedHandCard.image + ".png";
       }
     }
     createjs.Tween.get(Game.ui.displayedCard).to(
       {
         x: Game.ui.displayedCard.x,
-        y: selectionBoardBackground.y + 200,
+        y: Game.ui.selectionBoardBackground.y + 200,
       },
       100
     );

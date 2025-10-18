@@ -114,7 +114,6 @@ Game.player = {
   handOffsetX: 0,
   playerCards: [],
   ownedCards: [],
-  selectedCards: [],
   cardsInPlayerHand: [],
   playerHand: [],
   cardsAboveSelection: 0,
@@ -136,7 +135,6 @@ Game.ai = {
 
 Game.ui = {
   squares: [],
-  square: undefined,
   selectedRow: 2,
   selectedColumn: 2,
   selectedSquare: 5,
@@ -191,32 +189,13 @@ Game.stageWidth = 0;
 Game.stageHeight = 0;
 
 // -------------------------
-// LEGACY GLOBALS (aliases)
-// -------------------------
-var playerCards = [],
-  ownedCards,
-  selectedCards,
-  playerHand,
-  squares,
-  square,
-  squareLeft,
-  squareUp,
-  squareRight,
-  squareDown,
-  selectionBoardBackground,
-  remainingCards,
-  selectedHandCardNumber,
-  selectedHandCard,
-  selectedConfirmationChoice;
-
-// -------------------------
 // CORE: Initialization
 // -------------------------
 function handleTick() {
   Game.stage.update();
 }
 
-function init() {
+Game.init = function() {
   initStage();
   initOffsets();
   initHandPositions();
@@ -224,20 +203,6 @@ function init() {
   initUIContainers();
   bindEvents();
   loadInitialCards();
-
-  // Legacy global aliases
-  playerCards = Game.player.playerCards;
-  ownedCards = Game.player.ownedCards;
-  selectedCards = Game.player.selectedCards;
-  playerHand = Game.player.playerHand;
-
-  squares = Game.ui.squares;
-  square = Game.ui.square;
-
-  selectionBoardBackground = Game.ui.selectionBoardBackground;
-  remainingCards = Game.ui.remainingCards;
-  selectedHandCardNumber = Game.ui.selectedHandCardNumber;
-  selectedHandCard = Game.ui.selectedHandCard;
 }
 
 function initStage() {
@@ -304,9 +269,9 @@ function loadInitialCards() {
 }
 
 // Start The Game
-function startGame() {
+Game.startGame = function() {
   generateGrid();
-  populatePlayerCards(playerCards);
+  populatePlayerCards(Game.player.playerCards);
 
   // Debugging
   logHands(); // shows initial hands for player and AI
@@ -324,10 +289,10 @@ function populatePlayerCards(playerCardsParam) {
   Game.utils.togglePlayerTurn();
 
   // Shuffle and copy hand
-  playerHand = Game.utils.shuffle([...playerCardsParam]).slice(0, 5);
+  Game.player.playerHand = Game.utils.shuffle([...playerCardsParam]).slice(0, 5);
 
-  for (let i = 0; i < playerHand.length; i++) {
-    const chosenCard = playerHand[i];
+  for (let i = 0; i < Game.player.playerHand.length; i++) {
+    const chosenCard = Game.player.playerHand[i];
 
     // Transparent card data
     Game.ui.cardImage = new createjs.Bitmap(
@@ -368,7 +333,7 @@ function populatePlayerCards(playerCardsParam) {
   Game.ui.previouslySelectedCard = [];
 
   // Indent The Chosen Card
-  indentSelectedCard();
+  Game.indentSelectedCard();
 
   // Ready For The Player To Choose Which Card To Play
   Game.ui.playerConfirming = false;
@@ -376,7 +341,7 @@ function populatePlayerCards(playerCardsParam) {
 }
 
 // Indent The Selected Card
-function indentSelectedCard() {
+Game.indentSelectedCard = function() {
   if (Game.utils.getPlayerTurn() == "red") {
     if (Game.ui.selectedCard && typeof Game.ui.selectedCard.x !== "undefined") {
       Game.ui.selectedCard.x = Game.ui.selectedCard.x + 30;
@@ -405,7 +370,7 @@ function indentSelectedCard() {
 // END GAME
 // -------------------------
 
-function endGame() {
+Game.endGame = function() {
   // Calculate The Winner
   if (Game.ai.totalRedCards > Game.player.totalBlueCards) {
     alert("lose");
@@ -414,7 +379,7 @@ function endGame() {
   } else {
     alert("draw");
     if (Game.rules.includes("sudden_death")) {
-      startGame();
+      Game.startGame();
     }
   }
 }
@@ -423,4 +388,4 @@ function endGame() {
 // DOCUMENT READY
 // -------------------------
 
-document.addEventListener("DOMContentLoaded", init);
+document.addEventListener("DOMContentLoaded", Game.init);

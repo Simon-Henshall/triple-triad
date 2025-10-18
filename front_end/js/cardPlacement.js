@@ -75,7 +75,7 @@ class CardPlacer {
 
     // Determine if the game has ended, otherwise swap turn
     if (CardPlacer.isGameOver()) {
-      endGame();
+      Game.endGame();
     } else {
       CardPlacer.playerTurnSwitch();
     }
