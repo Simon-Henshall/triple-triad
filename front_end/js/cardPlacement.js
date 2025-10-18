@@ -86,25 +86,25 @@ class CardPlacer {
   // ======================================================================
   static setCardAdjacents(card) {
     if (squareLeft !== "none") {
-      card.cardLeft = board[squareLeft - 1];
+      card.cardLeft = Game.board.boardArray[squareLeft - 1];
     } else {
       card.cardLeft = null;
     }
 
     if (squareUp !== "none") {
-      card.cardUp = board[squareUp - 1];
+      card.cardUp = Game.board.boardArray[squareUp - 1];
     } else {
       card.cardUp = null;
     }
 
     if (squareRight !== "none") {
-      card.cardRight = board[squareRight - 1];
+      card.cardRight = Game.board.boardArray[squareRight - 1];
     } else {
       card.cardRight = null;
     }
 
     if (squareDown !== "none") {
-      card.cardDown = board[squareDown - 1];
+      card.cardDown = Game.board.boardArray[squareDown - 1];
     } else {
       card.cardDown = null;
     }
@@ -115,12 +115,12 @@ class CardPlacer {
   // ======================================================================
   static addCardToBoard(card) {
     card.inCell = selectedSquare;
-    board[selectedSquare - 1] = card;
+    Game.board.boardArray[selectedSquare - 1] = card;
 
     // Remove the used square from the list of available cells
-    const freeCellIndex = freeCells.indexOf(selectedSquare);
+    const freeCellIndex = Game.board.freeCells.indexOf(selectedSquare);
     if (freeCellIndex > -1) {
-      freeCells.splice(freeCellIndex, 1);
+      Game.board.freeCells.splice(freeCellIndex, 1);
     }
 
     // Ensure ownership background is correct after placement
@@ -184,7 +184,7 @@ class CardPlacer {
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
       playedPlayerCardCount++;
-      Game.ui.selectedCard = cardsInPlayerHand[Game.ui.selectedCardNumber];
+      Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
 
       // Reposition cursor and UI elements
       stage.addChild(playerHandCursor);
@@ -210,7 +210,7 @@ class CardPlacer {
   // Determine if the game is finished (no more empty cells)
   // ======================================================================
   static isGameOver() {
-    return board.indexOf("Empty") === -1;
+    return Game.board.boardArray.indexOf("Empty") === -1;
   }
 
   // ======================================================================
@@ -230,16 +230,16 @@ class CardPlacer {
 
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER HAND ===
-      animateHandCardsDown(cardsInPlayerHand, cardsAboveSelection);
+      animateHandCardsDown(Game.player.cardsInPlayerHand, cardsAboveSelection);
 
       if (Game.ui.selectedCardNumber === 0) {
         // Top card was played; move cursor down
         playerHandCursor.y += handCardOffset;
-        Game.ui.selectedCard = cardsInPlayerHand[Game.ui.selectedCardNumber];
+        Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
       } else {
         // Adjust selection to the next card
         Game.ui.selectedCardNumber -= 1;
-        Game.ui.selectedCard = cardsInPlayerHand[Game.ui.selectedCardNumber];
+        Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
         cardsAboveSelection -= 1;
       }
     } else if (Game.utils.getPlayerTurn() === "red") {

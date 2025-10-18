@@ -9,7 +9,7 @@ function aiTurn() {
   var aiSelectedCardNumber = cardsInAIHand.indexOf(aiSelectedCard);
 
   // Pick A Cell To Play In (Currently Random)
-  selectedAISquare = freeCells[Math.floor(Math.random() * freeCells.length)];
+  selectedAISquare = Game.board.freeCells[Math.floor(Math.random() * Game.board.freeCells.length)];
   checkSelectedRowColumn();
 
   // Place The Card

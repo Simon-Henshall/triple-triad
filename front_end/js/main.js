@@ -211,7 +211,6 @@ var stage,
   playerCards = [],
   ownedCards,
   selectedCards,
-  cardsInPlayerHand,
   playerHand,
   cardsAboveSelection,
   playerCardCount,
@@ -266,9 +265,7 @@ var stage,
   playerChoosingCard,
   playerSelectingPlacement,
   alpha,
-  rules,
-  board,
-  freeCells;
+  rules;
 
 // -------------------------
 // CORE: Initialization
@@ -290,7 +287,6 @@ function init() {
   playerCards = Game.player.playerCards;
   ownedCards = Game.player.ownedCards;
   selectedCards = Game.player.selectedCards;
-  cardsInPlayerHand = Game.player.cardsInPlayerHand;
   playerHand = Game.player.playerHand;
   cardsAboveSelection = Game.player.cardsAboveSelection;
   playerCardCount = Game.player.playerCardCount;
@@ -338,8 +334,6 @@ function init() {
   previouslySelectedCard = Game.ui.previouslySelectedCard;
 
   rules = Game.rules;
-  board = Game.board.boardArray;
-  freeCells = Game.board.freeCells;
   alpha = Game.alpha;
 }
 
@@ -500,13 +494,13 @@ function populatePlayerCards(playerCardsParam) {
     // Place The Card
     card.x = playerHandOffsetX;
     card.y = handOffsetY + i * handCardOffset;
-    cardsInPlayerHand.push(card);
+    Game.player.cardsInPlayerHand.push(card);
     stage.addChild(card);
     stage.update();
   }
 
   // Select The Top Card By Default
-  Game.ui.selectedCard = cardsInPlayerHand[Game.ui.selectedCardNumber];
+  Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
   previouslySelectedCard = [];
 
   // Indent The Chosen Card

@@ -9,7 +9,7 @@
 function logCell(eventOrSquare) {
   const squareID = eventOrSquare.name ?? eventOrSquare.id;
   const squareObj = Game.ui.squares[squareID - 1];
-  const cardHere = board[squareID - 1];
+  const cardHere = Game.board.boardArray[squareID - 1];
 
   console.log("======================================================");
   console.log(`CELL DEBUG | Square ID: ${squareID}`);
@@ -39,7 +39,7 @@ function logCell(eventOrSquare) {
 function logBoard() {
   console.log("--------------- BOARD STATE ---------------");
   for (let i = 0; i < 3; i++) {
-    const row = board.slice(i * 3, i * 3 + 3).map((cell) => {
+    const row = Game.board.boardArray.slice(i * 3, i * 3 + 3).map((cell) => {
       if (cell === "Empty") return "[Empty]";
       return `[${cell.name} | ${cell.owner}]`;
     });
@@ -53,7 +53,7 @@ function logBoard() {
  */
 function logHands() {
   console.log("=============== PLAYER HAND ===============");
-  cardsInPlayerHand.forEach((card, i) => {
+  Game.player.cardsInPlayerHand.forEach((card, i) => {
     console.log(`Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`);
   });
 
@@ -71,7 +71,7 @@ function logTurn() {
   const currentPlayer = Game.utils.getPlayerTurn();
   console.log(`********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`);
   console.log(`SCORE | Player: ${totalBlueCards} AI: ${totalRedCards}`);
-  console.log(`Free cells remaining: ${freeCells.join(", ")}`);
+  console.log(`Free cells remaining: ${Game.board.freeCells.join(", ")}`);
   console.log("*****************************************");
 }
 

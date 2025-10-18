@@ -108,7 +108,7 @@ function generateGrid() {
 // CELL CHECKS
 // -------------------------
 function cellOccupied() {
-  return board[selectedSquare - 1] === "Empty"
+  return Game.board.boardArray[selectedSquare - 1] === "Empty"
     ? false
-    : board[selectedSquare - 1];
+    : Game.board.boardArray[selectedSquare - 1];
 }

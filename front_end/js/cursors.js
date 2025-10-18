@@ -208,7 +208,7 @@ function movePlayerHandCursor(direction) {
     playerHandCursor.y -= handCardOffset;
     Game.ui.selectedCardNumber--;
     cardsAboveSelection--;
-  } else if (direction === "down" && Game.ui.selectedCardNumber < cardsInPlayerHand.length - 1) {
+  } else if (direction === "down" && Game.ui.selectedCardNumber < Game.player.cardsInPlayerHand.length - 1) {
     playerHandCursor.y += handCardOffset;
     Game.ui.selectedCardNumber++;
     cardsAboveSelection++;
@@ -218,7 +218,7 @@ function movePlayerHandCursor(direction) {
   }
 
   previouslySelectedCard = Game.ui.selectedCard;
-  Game.ui.selectedCard = cardsInPlayerHand[Game.ui.selectedCardNumber];
+  Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
 
   updateInfoBox();
   indentSelectedCard();
