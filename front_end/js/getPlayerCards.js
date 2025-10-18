@@ -56,9 +56,9 @@ class PlayerCardManager {
 
     for (var i = 0; i < parsedCards.length; i++) {
       if (parsedCards[i].count > 0) {
-        var cardCount = parsedCards[i].count;
+        Game.ui.cardCount = parsedCards[i].count;
         if (cardsCopy[i]) {
-          cardsCopy[i].count = cardCount;
+          cardsCopy[i].count = Game.ui.cardCount;
           cardsCopy[i].colour = "#ffffff";
           window.ownedCards.push(cardsCopy[i]);
         }

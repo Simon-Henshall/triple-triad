@@ -208,14 +208,7 @@ var playerCards = [],
   remainingCards,
   selectedHandCardNumber,
   selectedHandCard,
-  confirmationBackground,
-  confirmationCursor,
   selectedConfirmationChoice,
-  infoBoxCardName,
-  cardName,
-  cardCount,
-  card,
-  cardImage,
   alpha,
   rules;
 
@@ -248,12 +241,6 @@ function init() {
   remainingCards = Game.ui.remainingCards;
   selectedHandCardNumber = Game.ui.selectedHandCardNumber;
   selectedHandCard = Game.ui.selectedHandCard;
-
-  confirmationBackground = Game.ui.confirmationBackground;
-  confirmationCursor = Game.ui.confirmationCursor;
-  selectedConfirmationChoice = Game.ui.selectedConfirmationChoice;
-
-  infoBoxCardName = Game.ui.infoBoxCardName;
 
   rules = Game.rules;
   alpha = Game.alpha;
@@ -299,16 +286,13 @@ function initUIContainers() {
   Game.ui.infoBox = new createjs.Container();
   Game.ui.previouslySelectedCard = [];
 
-  // Aliases for convenience
-  confirmationBackground = Game.ui.confirmationBackground =
-    new createjs.Shape();
-  confirmationCursor = Game.ui.confirmationCursor = new createjs.Bitmap(
+  Game.ui.confirmationBackground = new createjs.Shape();
+  Game.ui.confirmationCursor = new createjs.Bitmap(
     Game.config.imagePath + "cursor.png"
   );
 
   // Confirmation state
   Game.ui.selectedConfirmationChoice = 0;
-  selectedConfirmationChoice = Game.ui.selectedConfirmationChoice;
 }
 
 function bindEvents() {
@@ -352,7 +336,7 @@ function populatePlayerCards(playerCardsParam) {
     const chosenCard = playerHand[i];
 
     // Transparent card data
-    const cardImage = new createjs.Bitmap(
+    Game.ui.cardImage = new createjs.Bitmap(
       `${Game.config.cardPath}${chosenCard.image}.png`
     );
     // Card Background Colour
@@ -361,27 +345,27 @@ function populatePlayerCards(playerCardsParam) {
     );
 
     // Card Container
-    const card = new createjs.Container();
-    card.addChild(cardColour, cardImage);
+    Game.ui.card = new createjs.Container();
+    Game.ui.card.addChild(cardColour, Game.ui.cardImage);
 
     // Adjust The Card For The Board
-    card.scaleX = Game.offsets.cardWidth / card.children[0].image.width;
-    card.scaleY = Game.offsets.cardHeight / card.children[0].image.height;
+    Game.ui.card.scaleX = Game.offsets.cardWidth / Game.ui.card.children[0].image.width;
+    Game.ui.card.scaleY = Game.offsets.cardHeight / Game.ui.card.children[0].image.height;
 
     // Assign stats
-    card.name = chosenCard.displayName;
-    card.strengthUp = chosenCard.strengthUp;
-    card.strengthRight = chosenCard.strengthRight;
-    card.strengthDown = chosenCard.strengthDown;
-    card.strengthLeft = chosenCard.strengthLeft;
-    card.element = chosenCard.element;
-    card.owner = card.background = Game.utils.getPlayerTurn();
+    Game.ui.card.name = chosenCard.displayName;
+    Game.ui.card.strengthUp = chosenCard.strengthUp;
+    Game.ui.card.strengthRight = chosenCard.strengthRight;
+    Game.ui.card.strengthDown = chosenCard.strengthDown;
+    Game.ui.card.strengthLeft = chosenCard.strengthLeft;
+    Game.ui.card.element = chosenCard.element;
+    Game.ui.card.owner = Game.ui.card.background = Game.utils.getPlayerTurn();
 
     // Place The Card
-    card.x = Game.player.handOffsetX;
-    card.y = Game.offsets.handOffsetY + i * Game.offsets.handCardOffset;
-    Game.player.cardsInPlayerHand.push(card);
-    Game.stage.addChild(card);
+    Game.ui.card.x = Game.player.handOffsetX;
+    Game.ui.card.y = Game.offsets.handOffsetY + i * Game.offsets.handCardOffset;
+    Game.player.cardsInPlayerHand.push(Game.ui.card);
+    Game.stage.addChild(Game.ui.card);
     Game.stage.update();
   }
 

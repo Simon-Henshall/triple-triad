@@ -46,7 +46,7 @@ function checkKey(e) {
     } else if (e.keyCode === 40) {
       moveConfirmationCursor("down");
       // Enter
-    } else if (e.keyCode === 13 && selectedConfirmationChoice == 0) {
+    } else if (e.keyCode === 13 && Game.ui.selectedConfirmationChoice == 0) {
       Game.stage.removeChild(Game.ui.selectionBoard);
       Game.stage.removeChild(Game.ui.confirmation);
       removeConfirmationCursor();
@@ -55,7 +55,7 @@ function checkKey(e) {
     } else if (
       e.keyCode === 27 ||
       e.keyCode === 8 ||
-      (e.keyCode === 13 && selectedConfirmationChoice == 1)
+      (e.keyCode === 13 && Game.ui.selectedConfirmationChoice == 1)
     ) {
       for (let i = 0; i < 5; i++) {
         playerCards[playerCards.length - 1].count++;

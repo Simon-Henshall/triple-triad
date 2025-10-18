@@ -5,33 +5,33 @@ function displayConfirmationBox() {
   Game.ui.playerConfirming = true;
 
   // Background rectangle
-  confirmationBackground.width = 300;
-  confirmationBackground.height = 120;
-  confirmationBackground.graphics
+  Game.ui.confirmationBackground.width = 300;
+  Game.ui.confirmationBackground.height = 120;
+  Game.ui.confirmationBackground.graphics
     .beginFill("#666666")
     .drawRect(
       0,
       0,
-      confirmationBackground.width,
-      confirmationBackground.height
+      Game.ui.confirmationBackground.width,
+      Game.ui.confirmationBackground.height
     );
-  confirmationBackground.x = 380;
-  confirmationBackground.y = 285;
+  Game.ui.confirmationBackground.x = 380;
+  Game.ui.confirmationBackground.y = 285;
 
   // Border (black)
   var confirmationBorder = new createjs.Shape();
-  confirmationBorder.width = confirmationBackground.width + 2;
-  confirmationBorder.height = confirmationBackground.height + 2;
+  confirmationBorder.width = Game.ui.confirmationBackground.width + 2;
+  confirmationBorder.height = Game.ui.confirmationBackground.height + 2;
   confirmationBorder.graphics
     .beginFill("#000000")
     .drawRect(0, 0, confirmationBorder.width, confirmationBorder.height);
-  confirmationBorder.x = confirmationBackground.x - 1;
-  confirmationBorder.y = confirmationBackground.y - 1;
+  confirmationBorder.x = Game.ui.confirmationBackground.x - 1;
+  confirmationBorder.y = Game.ui.confirmationBackground.y - 1;
 
   // Text elements
   var confirmationChoice = new createjs.Text("CHOICE", "18px Arial", "#ffffff");
-  confirmationChoice.x = confirmationBackground.x + 10;
-  confirmationChoice.y = confirmationBackground.y + 15;
+  confirmationChoice.x = Game.ui.confirmationBackground.x + 10;
+  confirmationChoice.y = Game.ui.confirmationBackground.y + 15;
   confirmationChoice.textBaseline = "alphabetic";
   confirmationChoice.alpha = 1;
 
@@ -40,26 +40,26 @@ function displayConfirmationBox() {
     "28px Arial",
     "#ffffff"
   );
-  confirmationSure.x = confirmationBackground.x + 60;
-  confirmationSure.y = confirmationBackground.y + 40;
+  confirmationSure.x = Game.ui.confirmationBackground.x + 60;
+  confirmationSure.y = Game.ui.confirmationBackground.y + 40;
   confirmationSure.textBaseline = "alphabetic";
   confirmationSure.alpha = 1;
 
   var confirmationYes = new createjs.Text("Yes", "28px Arial", "#ffffff");
-  confirmationYes.x = confirmationBackground.x + 120;
-  confirmationYes.y = confirmationBackground.y + 75;
+  confirmationYes.x = Game.ui.confirmationBackground.x + 120;
+  confirmationYes.y = Game.ui.confirmationBackground.y + 75;
   confirmationYes.textBaseline = "alphabetic";
   confirmationYes.alpha = 1;
 
   var confirmationNo = new createjs.Text("No", "28px Arial", "#ffffff");
-  confirmationNo.x = confirmationBackground.x + 120;
-  confirmationNo.y = confirmationBackground.y + 105;
+  confirmationNo.x = Game.ui.confirmationBackground.x + 120;
+  confirmationNo.y = Game.ui.confirmationBackground.y + 105;
   confirmationNo.textBaseline = "alphabetic";
   confirmationNo.alpha = 1;
 
   Game.ui.confirmation.addChild(
     confirmationBorder,
-    confirmationBackground,
+    Game.ui.confirmationBackground,
     confirmationChoice,
     confirmationSure,
     confirmationYes,

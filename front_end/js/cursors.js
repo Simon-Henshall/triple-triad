@@ -133,20 +133,20 @@ function movePlayerHandSelectionCursor(direction) {
  * Place the confirmation cursor at the default position
  */
 function placeConfirmationCursor() {
-  confirmationCursor.x = confirmationBackground.x + 50;
-  confirmationCursor.y = confirmationBackground.y + 60;
+  Game.ui.confirmationCursor.x = Game.ui.confirmationBackground.x + 50;
+  Game.ui.confirmationCursor.y = Game.ui.confirmationBackground.y + 60;
 
-  Game.stage.addChild(confirmationCursor);
+  Game.stage.addChild(Game.ui.confirmationCursor);
   Game.stage.update();
 
-  console.log(`Confirmation cursor placed at X:${confirmationCursor.x}, Y:${confirmationCursor.y}`);
+  console.log(`Confirmation cursor placed at X:${Game.ui.confirmationCursor.x}, Y:${Game.ui.confirmationCursor.y}`);
 }
 
 /**
  * Remove the confirmation cursor
  */
 function removeConfirmationCursor() {
-  Game.stage.removeChild(confirmationCursor);
+  Game.stage.removeChild(Game.ui.confirmationCursor);
   Game.stage.update();
 
   console.log("Confirmation cursor removed");
@@ -156,16 +156,16 @@ function removeConfirmationCursor() {
  * Move the confirmation cursor up/down between Yes/No
  */
 function moveConfirmationCursor(direction) {
-  if (direction == "up" && window.selectedConfirmationChoice != 0) {
-    confirmationCursor.y -= 30;
-    window.selectedConfirmationChoice -= 1;
-  } else if (direction == "down" && window.selectedConfirmationChoice != 1) {
-    confirmationCursor.y += 30;
-    window.selectedConfirmationChoice += 1;
+  if (direction == "up" && Game.ui.selectedConfirmationChoice != 0) {
+    Game.ui.confirmationCursor.y -= 30;
+    Game.ui.selectedConfirmationChoice -= 1;
+  } else if (direction == "down" && Game.ui.selectedConfirmationChoice != 1) {
+    Game.ui.confirmationCursor.y += 30;
+    Game.ui.selectedConfirmationChoice += 1;
   }
 
   Game.stage.update();
-  console.log(`Confirmation cursor moved ${direction} -> Choice index: ${window.selectedConfirmationChoice}`);
+  console.log(`Confirmation cursor moved ${direction} -> Choice index: ${Game.ui.selectedConfirmationChoice}`);
 }
 
 // -------------------------

@@ -2,9 +2,6 @@
 // Rendering / UI
 // -------------------------
 
-// Persistent objects
-var infoBoxCardName = null;
-
 // Info box fixed dimensions
 const INFO_BOX_WIDTH = 420;
 const INFO_BOX_HEIGHT = 65;
@@ -86,27 +83,27 @@ function drawInfoBox() {
   Game.ui.infoBox.addChild(infoBoxText);
 
   // Card name text
-  if (!infoBoxCardName) {
-    infoBoxCardName = new createjs.Text(
+  if (!Game.ui.infoBoxCardName) {
+    Game.ui.infoBoxCardName = new createjs.Text(
       Game.ui.selectedCard?.name || "",
       "30px Arial",
       "#ffffff"
     );
-    infoBoxCardName.textBaseline = "alphabetic";
+    Game.ui.infoBoxCardName.textBaseline = "alphabetic";
   }
-  infoBoxCardName.text = Game.ui.selectedCard?.name || "";
+  Game.ui.infoBoxCardName.text = Game.ui.selectedCard?.name || "";
 
   // Center card name inside the info box (horizontal and vertical)
   const verticalOffset = 30 / 2 + 10; // half of font size + 10px downward nudge
-  infoBoxCardName.x =
-    INFO_BOX_X + INFO_BOX_WIDTH / 2 - infoBoxCardName.getMeasuredWidth() / 2;
-  infoBoxCardName.y =
+  Game.ui.infoBoxCardName.x =
+    INFO_BOX_X + INFO_BOX_WIDTH / 2 - Game.ui.infoBoxCardName.getMeasuredWidth() / 2;
+  Game.ui.infoBoxCardName.y =
     INFO_BOX_Y +
     INFO_BOX_HEIGHT / 2 -
-    infoBoxCardName.getMeasuredHeight() / 2 +
+    Game.ui.infoBoxCardName.getMeasuredHeight() / 2 +
     verticalOffset;
 
-  Game.ui.infoBox.addChild(infoBoxCardName);
+  Game.ui.infoBox.addChild(Game.ui.infoBoxCardName);
 
   Game.stage.addChild(Game.ui.infoBox);
   Game.stage.update();
@@ -116,15 +113,15 @@ function drawInfoBox() {
 // Update The Info Box
 // -------------------------
 function updateInfoBox() {
-  if (infoBoxCardName && Game.ui.selectedCard) {
-    infoBoxCardName.text = Game.ui.selectedCard.name;
+  if (Game.ui.infoBoxCardName && Game.ui.selectedCard) {
+    Game.ui.infoBoxCardName.text = Game.ui.selectedCard.name;
     const verticalOffset = 30 / 2 + 10; // half of font size + 10px downward nudge
-    infoBoxCardName.x =
-      INFO_BOX_X + INFO_BOX_WIDTH / 2 - infoBoxCardName.getMeasuredWidth() / 2;
-    infoBoxCardName.y =
+    Game.ui.infoBoxCardName.x =
+      INFO_BOX_X + INFO_BOX_WIDTH / 2 - Game.ui.infoBoxCardName.getMeasuredWidth() / 2;
+    Game.ui.infoBoxCardName.y =
       INFO_BOX_Y +
       INFO_BOX_HEIGHT / 2 -
-      infoBoxCardName.getMeasuredHeight() / 2 +
+      Game.ui.infoBoxCardName.getMeasuredHeight() / 2 +
       verticalOffset;
   }
 

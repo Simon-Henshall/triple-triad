@@ -26,29 +26,29 @@ function populateSelectionBoardCards() {
   // Draw the data entries onto Game.ui.shownCards (createjs.Text and bitmaps)
   var j = 0;
   for (var i = offset; i < offset + Game.ui.displayedCards.length; i++) {
-    var cardName = new createjs.Text(
+    Game.ui.cardName = new createjs.Text(
       Game.ui.displayedCards[i].displayName,
       "26px Arial",
       "#ffffff"
     );
-    cardName.x = selectionBoardBackground.x + 50;
-    cardName.y = selectionBoardBackground.y + 35 * j + 60;
-    cardName.textBaseline = "alphabetic";
+    Game.ui.cardName.x = selectionBoardBackground.x + 50;
+    Game.ui.cardName.y = selectionBoardBackground.y + 35 * j + 60;
+    Game.ui.cardName.textBaseline = "alphabetic";
 
-    var cardCount = new createjs.Text(
+    Game.ui.cardCount = new createjs.Text(
       Game.ui.displayedCards[i].count,
       "26px Arial",
       "#ffffff"
     );
-    cardCount.x = selectionBoardBackground.x + 380;
-    cardCount.y = selectionBoardBackground.y + 35 * j + 60;
-    cardCount.textBaseline = "alphabetic";
+    Game.ui.cardCount.x = selectionBoardBackground.x + 380;
+    Game.ui.cardCount.y = selectionBoardBackground.y + 35 * j + 60;
+    Game.ui.cardCount.textBaseline = "alphabetic";
 
     // Guard THAT BREAKS THE UI
     //Game.ui.shownCards = Game.ui.shownCards || new createjs.Container();
     //Game.ui.shownCards.removeAllChildren(); // Clear previous entries
 
-    Game.ui.shownCards.addChild(cardName, cardCount);
+    Game.ui.shownCards.addChild(Game.ui.cardName, Game.ui.cardCount);
 
     // Small image icon for the row
     var selectionBoardCardImage = new createjs.Bitmap(

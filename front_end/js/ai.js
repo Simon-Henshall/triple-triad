@@ -36,51 +36,51 @@ function populateAICards() {
     var chosen_card = aiHand[i];
 
     // Default to a face-down card image
-    var cardImage = new createjs.Bitmap(Game.config.cardPath + "back.png");
+    Game.ui.cardImage = new createjs.Bitmap(Game.config.cardPath + "back.png");
 
     // Card background colour (owner) - AI cards should be red
     var cardColour = new createjs.Bitmap(Game.config.cardPath + "red.png");
 
     // Card container
-    var card = new createjs.Container();
-    card.addChild(cardColour, cardImage);
+    Game.ui.card = new createjs.Container();
+    Game.ui.card.addChild(cardColour, Game.ui.cardImage);
 
     // Safely compute scale (fall back to 1 if images not loaded)
     var baseWidth =
-      card.children[0] && card.children[0].image && card.children[0].image.width
-        ? card.children[0].image.width
+      Game.ui.card.children[0] && Game.ui.card.children[0].image && Game.ui.card.children[0].image.width
+        ? Game.ui.card.children[0].image.width
         : Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2 || 100;
     var baseHeight =
-      card.children[0] &&
-      card.children[0].image &&
-      card.children[0].image.height
-        ? card.children[0].image.height
+      Game.ui.card.children[0] &&
+      Game.ui.card.children[0].image &&
+      Game.ui.card.children[0].image.height
+        ? Game.ui.card.children[0].image.height
         : Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2 || 140;
 
-    card.scaleX = (Game.offsets.cardWidth || Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2) / baseWidth;
-    card.scaleY = (Game.offsets.cardHeight || Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2) / baseHeight;
+    Game.ui.card.scaleX = (Game.offsets.cardWidth || Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2) / baseWidth;
+    Game.ui.card.scaleY = (Game.offsets.cardHeight || Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2) / baseHeight;
 
     // Card imagery paths
-    card.frontImage = Game.config.cardPath + chosen_card.image + ".png";
-    card.backImage = Game.config.cardPath + "back.png";
+    Game.ui.card.frontImage = Game.config.cardPath + chosen_card.image + ".png";
+    Game.ui.card.backImage = Game.config.cardPath + "back.png";
 
     // Card stats and ownership
-    card.name = chosen_card.displayName;
-    card.strengthUp = chosen_card.strengthUp;
-    card.strengthRight = chosen_card.strengthRight;
-    card.strengthDown = chosen_card.strengthDown;
-    card.strengthLeft = chosen_card.strengthLeft;
-    card.element = chosen_card.element;
-    card.owner = "red";
-    card.background = "red";
+    Game.ui.card.name = chosen_card.displayName;
+    Game.ui.card.strengthUp = chosen_card.strengthUp;
+    Game.ui.card.strengthRight = chosen_card.strengthRight;
+    Game.ui.card.strengthDown = chosen_card.strengthDown;
+    Game.ui.card.strengthLeft = chosen_card.strengthLeft;
+    Game.ui.card.element = chosen_card.element;
+    Game.ui.card.owner = "red";
+    Game.ui.card.background = "red";
 
     // Position off to AI hand area
-    card.x = Game.ai.handOffsetX || Game.offsets.gameOffsetX / 2 || 100;
-    card.y = (Game.offsets.handOffsetY || 50) + i * (Game.offsets.handCardOffset || 95);
+    Game.ui.card.x = Game.ai.handOffsetX || Game.offsets.gameOffsetX / 2 || 100;
+    Game.ui.card.y = (Game.offsets.handOffsetY || 50) + i * (Game.offsets.handCardOffset || 95);
 
     // Add to AI hand and stage
-    Game.ai.cardsInAIHand.push(card);
-    Game.stage.addChild(card);
+    Game.ai.cardsInAIHand.push(Game.ui.card);
+    Game.stage.addChild(Game.ui.card);
     Game.stage.update();
   }
 
