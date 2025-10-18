@@ -5,8 +5,8 @@
 function aiTurn() {
   // Pick A Card To Play (Currently Random)
   var aiSelectedCard =
-    cardsInAIHand[Math.floor(Math.random() * cardsInAIHand.length)];
-  var aiSelectedCardNumber = cardsInAIHand.indexOf(aiSelectedCard);
+    Game.ai.cardsInAIHand[Math.floor(Math.random() * Game.ai.cardsInAIHand.length)];
+  var aiSelectedCardNumber = Game.ai.cardsInAIHand.indexOf(aiSelectedCard);
 
   // Pick A Cell To Play In (Currently Random)
   Game.ui.selectedAISquare = Game.board.freeCells[Math.floor(Math.random() * Game.board.freeCells.length)];
@@ -14,14 +14,14 @@ function aiTurn() {
 
   // Place The Card
   Game.ai.aiCardsAboveSelection = aiSelectedCardNumber;
-  cardsInAIHand.splice(aiSelectedCardNumber, 1);
+  Game.ai.cardsInAIHand.splice(aiSelectedCardNumber, 1);
   setTimeout(function () {
     CardPlacer.placeCard(
       aiSelectedCard,
       Game.offsets.gameOffsetX + Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) + Game.offsets.cardOffsetX,
       Game.offsets.gameOffsetY + Game.offsets.cellHeight * (Game.ui.selectedRow - 1) + Game.offsets.cardOffsetY
     );
-  }, aiDelay);
+  }, Game.ai.aiDelay);
 }
 
 // -----------------------------
@@ -79,13 +79,13 @@ function populateAICards() {
     card.y = (Game.offsets.handOffsetY || 50) + i * (Game.offsets.handCardOffset || 95);
 
     // Add to AI hand and stage
-    cardsInAIHand.push(card);
+    Game.ai.cardsInAIHand.push(card);
     Game.stage.addChild(card);
     Game.stage.update();
   }
 
   // Select the top card by default (preserve original globals)
-  window.selectedCard = window.cardsInAIHand[Game.ui.selectedCardNumber];
+  window.selectedCard = Game.ai.cardsInAIHand[Game.ui.selectedCardNumber];
   Game.ui.previouslySelectedCard = [];
 
   // Handle the "open" rule flip all AI hand behaviour

@@ -58,7 +58,7 @@ function logHands() {
   });
 
   console.log("=============== AI HAND ===================");
-  cardsInAIHand.forEach((card, i) => {
+  Game.ai.cardsInAIHand.forEach((card, i) => {
     console.log(`Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`);
   });
   console.log("==========================================");
@@ -70,7 +70,7 @@ function logHands() {
 function logTurn() {
   const currentPlayer = Game.utils.getPlayerTurn();
   console.log(`********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`);
-  console.log(`SCORE | Player: ${totalBlueCards} AI: ${totalRedCards}`);
+  console.log(`SCORE | Player: ${Game.player.totalBlueCards} AI: ${Game.ai.totalRedCards}`);
   console.log(`Free cells remaining: ${Game.board.freeCells.join(", ")}`);
   console.log("*****************************************");
 }

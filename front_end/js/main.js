@@ -198,13 +198,6 @@ var playerCards = [],
   ownedCards,
   selectedCards,
   playerHand,
-  playerCardCount,
-  playedPlayerCardCount,
-  totalBlueCards,
-  cardsInAIHand,
-  aiCardCount,
-  aiDelay,
-  totalRedCards,
   squares,
   square,
   squareLeft,
@@ -247,14 +240,6 @@ function init() {
   ownedCards = Game.player.ownedCards;
   selectedCards = Game.player.selectedCards;
   playerHand = Game.player.playerHand;
-  playerCardCount = Game.player.playerCardCount;
-  playedPlayerCardCount = Game.player.playedPlayerCardCount;
-  totalBlueCards = Game.player.totalBlueCards;
-
-  cardsInAIHand = Game.ai.cardsInAIHand;
-  aiCardCount = Game.ai.aiCardCount;
-  aiDelay = Game.ai.aiDelay;
-  totalRedCards = Game.ai.totalRedCards;
 
   squares = Game.ui.squares;
   square = Game.ui.square;
@@ -323,7 +308,6 @@ function initUIContainers() {
 
   // Confirmation state
   Game.ui.selectedConfirmationChoice = 0;
-  Game.ui.playerConfirming = false;
   selectedConfirmationChoice = Game.ui.selectedConfirmationChoice;
 }
 
@@ -343,12 +327,6 @@ function loadInitialCards() {
 
 // Start The Game
 function startGame() {
-  // --- Reset all state flags properly ---
-  Game.ui.playerSelectingHand = false;
-  Game.ui.playerConfirming = false;
-  Game.ui.playerChoosingCard = true;
-  Game.ui.playerSelectingPlacement = false;
-
   generateGrid();
   populatePlayerCards(playerCards);
 
@@ -415,7 +393,8 @@ function populatePlayerCards(playerCardsParam) {
   indentSelectedCard();
 
   // Ready For The Player To Choose Which Card To Play
-  playerChoosingCard = true;
+  Game.ui.playerConfirming = false;
+  Game.ui.playerChoosingCard = true;
 }
 
 // Indent The Selected Card
@@ -451,9 +430,9 @@ function indentSelectedCard() {
 function endGame() {
   // Calculate The Winner
   var winner;
-  if (totalRedCards > totalBlueCards) {
+  if (Game.ai.totalRedCards > Game.player.totalBlueCards) {
     alert("lose");
-  } else if (totalBlueCards > totalRedCards) {
+  } else if (Game.player.totalBlueCards > Game.ai.totalRedCards) {
     alert("win");
   } else {
     alert("draw");

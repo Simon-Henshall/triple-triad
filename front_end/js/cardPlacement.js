@@ -183,7 +183,7 @@ class CardPlacer {
 
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
-      playedPlayerCardCount++;
+      Game.player.playedPlayerCardCount++;
       Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
 
       // Reposition cursor and UI elements
@@ -244,7 +244,7 @@ class CardPlacer {
       }
     } else if (Game.utils.getPlayerTurn() === "red") {
       // === AI HAND ===
-      animateHandCardsDown(cardsInAIHand, Game.ai.aiCardsAboveSelection);
+      animateHandCardsDown(Game.ai.cardsInAIHand, Game.ai.aiCardsAboveSelection);
     }
   }
 }

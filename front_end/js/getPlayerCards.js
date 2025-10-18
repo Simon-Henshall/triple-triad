@@ -70,7 +70,7 @@ class PlayerCardManager {
     if (window.rules.indexOf("random") != -1) {
       window.playerCards = this.shuffle($.extend(true, [], window.ownedCards));
       // populate AI cards and start game
-      if (!window.cardsInAIHand || window.cardsInAIHand.length === 0) {
+      if (!Game.ai.cardsInAIHand || Game.ai.cardsInAIHand.length === 0) {
         populateAICards();
       }
       if (typeof window.startGame === "function") {

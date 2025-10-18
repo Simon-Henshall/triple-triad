@@ -180,7 +180,7 @@ function placePlayerHandCursor() {
   Game.player.playerHandCursor.x = Game.player.handOffsetX - 50;
   Game.player.playerHandCursor.y =
     Game.offsets.handOffsetY +
-    (Game.ui.selectedCardNumber + 1 + playedPlayerCardCount) * (Game.offsets.cardHeight / 2);
+    (Game.ui.selectedCardNumber + 1 + Game.player.playedPlayerCardCount) * (Game.offsets.cardHeight / 2);
 
   Game.stage.addChild(Game.player.playerHandCursor);
   Game.stage.update();

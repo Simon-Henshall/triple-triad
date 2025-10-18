@@ -33,7 +33,7 @@ const directionMap = {
 // =======================================================
 function flipAIHand() {
   // Reverse copy ensures flipping starts from last to first visually
-  cardsInAIHand.slice().reverse().forEach((card, index) => {
+  Game.ai.cardsInAIHand.slice().reverse().forEach((card, index) => {
     setTimeout(() => {
       flipCard(card, "right");
     }, 2000 * (index + 1));
@@ -99,13 +99,16 @@ function flipCardOver(card, direction) {
 function updateOwnershipCounts(flippedCount) {
   const playerColour = getCurrentPlayerColour();
 
+  let totalBlueCardsConfined = Game.player.totalBlueCards;
+  let totalRedCardsConfined = Game.ai.totalRedCards;
+
   const delta = {
-    blue: { totalBlueCards: 1, totalRedCards: -1 },
-    red: { totalBlueCards: -1, totalRedCards: 1 },
+    blue: { totalBlueCardsConfined: 1, totalRedCardsConfined: -1 },
+    red: { totalBlueCardsConfined: -1, totalRedCardsConfined: 1 },
   };
 
-  totalBlueCards += delta[playerColour].totalBlueCards * flippedCount;
-  totalRedCards += delta[playerColour].totalRedCards * flippedCount;
+  Game.player.totalBlueCards += delta[playerColour].totalBlueCardsConfined * flippedCount;
+  Game.ai.totalRedCards += delta[playerColour].totalRedCardsConfined * flippedCount;
 
   updateCardCounts();
 }
@@ -114,8 +117,8 @@ function updateOwnershipCounts(flippedCount) {
 // Update Displayed Card Counts
 // =======================================================
 function updateCardCounts() {
-  aiCardCount.text = totalRedCards;
-  playerCardCount.text = totalBlueCards;
+  Game.ai.aiCardCount.text = Game.ai.totalRedCards;
+  Game.player.playerCardCount.text = Game.player.totalBlueCards;
   Game.stage.update();
 }
 

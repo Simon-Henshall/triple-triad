@@ -3,8 +3,6 @@
 // -------------------------
 
 // Persistent objects
-var aiCardCount = null;
-var playerCardCount = null;
 var infoBoxCardName = null;
 
 // Info box fixed dimensions
@@ -28,26 +26,26 @@ function addBackground() {
 // Draw The Card Count For Each Player
 // -------------------------
 function drawCardCounts() {
-  if (aiCardCount) {
-    Game.stage.removeChild(aiCardCount);
+  if (Game.ai.aiCardCount) {
+    Game.stage.removeChild(Game.ai.aiCardCount);
   }
-  if (playerCardCount) {
-    Game.stage.removeChild(playerCardCount);
+  if (Game.player.playerCardCount) {
+    Game.stage.removeChild(Game.player.playerCardCount);
   }
 
-  aiCardCount = new createjs.Text(totalRedCards, "90px Arial", "#ffffff");
-  aiCardCount.x = Game.ai.handOffsetX + Game.offsets.cardWidth / 3;
-  aiCardCount.y = Game.stageHeight - 15;
-  aiCardCount.textBaseline = "alphabetic";
-  aiCardCount.alpha = 1;
-  Game.stage.addChild(aiCardCount);
+  Game.ai.aiCardCount = new createjs.Text(Game.ai.totalRedCards, "90px Arial", "#ffffff");
+  Game.ai.aiCardCount.x = Game.ai.handOffsetX + Game.offsets.cardWidth / 3;
+  Game.ai.aiCardCount.y = Game.stageHeight - 15;
+  Game.ai.aiCardCount.textBaseline = "alphabetic";
+  Game.ai.aiCardCount.alpha = 1;
+  Game.stage.addChild(Game.ai.aiCardCount);
 
-  playerCardCount = new createjs.Text(totalBlueCards, "90px Arial", "#ffffff");
-  playerCardCount.x = Game.player.handOffsetX + Game.offsets.cardWidth / 3;
-  playerCardCount.y = Game.stageHeight - 15;
-  playerCardCount.textBaseline = "alphabetic";
-  playerCardCount.alpha = 1;
-  Game.stage.addChild(playerCardCount);
+  Game.player.playerCardCount = new createjs.Text(Game.player.totalBlueCards, "90px Arial", "#ffffff");
+  Game.player.playerCardCount.x = Game.player.handOffsetX + Game.offsets.cardWidth / 3;
+  Game.player.playerCardCount.y = Game.stageHeight - 15;
+  Game.player.playerCardCount.textBaseline = "alphabetic";
+  Game.player.playerCardCount.alpha = 1;
+  Game.stage.addChild(Game.player.playerCardCount);
 
   Game.stage.update();
 }
@@ -130,11 +128,11 @@ function updateInfoBox() {
       verticalOffset;
   }
 
-  if (aiCardCount) {
-    aiCardCount.text = totalRedCards;
+  if (Game.ai.aiCardCount) {
+    Game.ai.aiCardCount.text = Game.ai.totalRedCards;
   }
-  if (playerCardCount) {
-    playerCardCount.text = totalBlueCards;
+  if (Game.player.playerCardCount) {
+    Game.player.playerCardCount.text = Game.player.totalBlueCards;
   }
 
   Game.stage.update();
