@@ -18,8 +18,8 @@ const squareMap = [
 function checkSelectedSquare() {
   for (let i = 0; i < squareMap.length; i++) {
     const s = squareMap[i];
-    if (s.row === selectedRow && s.col === selectedColumn) {
-      selectedSquare = i + 1;
+    if (s.row === Game.ui.selectedRow && s.col === Game.ui.selectedColumn) {
+      Game.ui.selectedSquare = i + 1;
       squareLeft = s.left;
       squareUp = s.up;
       squareRight = s.right;
@@ -33,9 +33,9 @@ function checkSelectedSquare() {
 // Determine row & column from selected square
 // -------------------------
 function checkSelectedRowColumn() {
-  const s = squareMap[selectedAISquare - 1];
-  selectedRow = s.row;
-  selectedColumn = s.col;
+  const s = squareMap[Game.ui.selectedAISquare - 1];
+  Game.ui.selectedRow = s.row;
+  Game.ui.selectedColumn = s.col;
   squareLeft = s.left;
   squareUp = s.up;
   squareRight = s.right;
@@ -108,7 +108,7 @@ function generateGrid() {
 // CELL CHECKS
 // -------------------------
 function cellOccupied() {
-  return Game.board.boardArray[selectedSquare - 1] === "Empty"
+  return Game.board.boardArray[Game.ui.selectedSquare - 1] === "Empty"
     ? false
-    : Game.board.boardArray[selectedSquare - 1];
+    : Game.board.boardArray[Game.ui.selectedSquare - 1];
 }

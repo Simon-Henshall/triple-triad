@@ -78,8 +78,8 @@ function checkKey(e) {
     } else if (e.keyCode === 13) {
       removePlayerHandCursor();
       placeGridCursor();
-      selectedRow = 2;
-      selectedColumn = 2;
+      Game.ui.selectedRow = 2;
+      Game.ui.selectedColumn = 2;
       stage.removeChild(playerHandCursor);
     }
   } else if (playerSelectingPlacement) {
@@ -103,8 +103,8 @@ function checkKey(e) {
         removeGridCursor();
         CardPlacer.placeCard(
           Game.ui.selectedCard,
-          gameOffsetX + cellWidth * (selectedColumn - 1) + cardOffsetX,
-          gameOffsetY + cellHeight * (selectedRow - 1) + cardOffsetY
+          gameOffsetX + cellWidth * (Game.ui.selectedColumn - 1) + cardOffsetX,
+          gameOffsetY + cellHeight * (Game.ui.selectedRow - 1) + cardOffsetY
         );
       }
       // Backspace And Esc

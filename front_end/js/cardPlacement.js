@@ -114,11 +114,11 @@ class CardPlacer {
   // Add card to board array and mark the cell as occupied
   // ======================================================================
   static addCardToBoard(card) {
-    card.inCell = selectedSquare;
-    Game.board.boardArray[selectedSquare - 1] = card;
+    card.inCell = Game.ui.selectedSquare;
+    Game.board.boardArray[Game.ui.selectedSquare - 1] = card;
 
     // Remove the used square from the list of available cells
-    const freeCellIndex = Game.board.freeCells.indexOf(selectedSquare);
+    const freeCellIndex = Game.board.freeCells.indexOf(Game.ui.selectedSquare);
     if (freeCellIndex > -1) {
       Game.board.freeCells.splice(freeCellIndex, 1);
     }
@@ -131,10 +131,10 @@ class CardPlacer {
   // Apply element bonuses or penalties, and display corresponding effect image
   // ======================================================================
   static applyElementEffects(card) {
-    const squareObj = Game.ui.squares[selectedSquare - 1];
+    const squareObj = Game.ui.squares[Game.ui.selectedSquare - 1];
 
     if (!squareObj || squareObj.element === undefined) {
-      console.warn("Square missing or element undefined:", selectedSquare);
+      console.warn("Square missing or element undefined:", Game.ui.selectedSquare);
       return; // Safety guard
     }
 
@@ -230,7 +230,7 @@ class CardPlacer {
 
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER HAND ===
-      animateHandCardsDown(Game.player.cardsInPlayerHand, cardsAboveSelection);
+      animateHandCardsDown(Game.player.cardsInPlayerHand, Game.player.cardsAboveSelection);
 
       if (Game.ui.selectedCardNumber === 0) {
         // Top card was played; move cursor down
@@ -240,11 +240,11 @@ class CardPlacer {
         // Adjust selection to the next card
         Game.ui.selectedCardNumber -= 1;
         Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
-        cardsAboveSelection -= 1;
+        Game.player.cardsAboveSelection -= 1;
       }
     } else if (Game.utils.getPlayerTurn() === "red") {
       // === AI HAND ===
-      animateHandCardsDown(cardsInAIHand, aiCardsAboveSelection);
+      animateHandCardsDown(cardsInAIHand, Game.ai.aiCardsAboveSelection);
     }
   }
 }

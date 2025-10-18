@@ -9,17 +9,17 @@ function aiTurn() {
   var aiSelectedCardNumber = cardsInAIHand.indexOf(aiSelectedCard);
 
   // Pick A Cell To Play In (Currently Random)
-  selectedAISquare = Game.board.freeCells[Math.floor(Math.random() * Game.board.freeCells.length)];
+  Game.ui.selectedAISquare = Game.board.freeCells[Math.floor(Math.random() * Game.board.freeCells.length)];
   checkSelectedRowColumn();
 
   // Place The Card
-  aiCardsAboveSelection = aiSelectedCardNumber;
+  Game.ai.aiCardsAboveSelection = aiSelectedCardNumber;
   cardsInAIHand.splice(aiSelectedCardNumber, 1);
   setTimeout(function () {
     CardPlacer.placeCard(
       aiSelectedCard,
-      gameOffsetX + cellWidth * (selectedColumn - 1) + cardOffsetX,
-      gameOffsetY + cellHeight * (selectedRow - 1) + cardOffsetY
+      gameOffsetX + cellWidth * (Game.ui.selectedColumn - 1) + cardOffsetX,
+      gameOffsetY + cellHeight * (Game.ui.selectedRow - 1) + cardOffsetY
     );
   }, aiDelay);
 }
@@ -86,7 +86,6 @@ function populateAICards() {
 
   // Select the top card by default (preserve original globals)
   window.selectedCard = window.cardsInAIHand[Game.ui.selectedCardNumber];
-  window.cardsAboveSelection = 0;
   window.previouslySelectedCard = [];
 
   // Handle the "open" rule flip all AI hand behaviour

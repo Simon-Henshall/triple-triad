@@ -207,30 +207,22 @@ var stage,
   cardOffsetY,
   cardWidth,
   cardHeight,
-  playerHandOffsetX,
   playerCards = [],
   ownedCards,
   selectedCards,
   playerHand,
-  cardsAboveSelection,
   playerCardCount,
   playedPlayerCardCount,
   totalBlueCards,
   playerHandCursor,
   playerHandSelectionCursor,
-  aiHandOffsetX,
   cardsInAIHand,
-  aiCardsAboveSelection,
   aiCardCount,
   aiDelay,
   totalRedCards,
   aiHandCursor,
   squares,
   square,
-  selectedRow,
-  selectedColumn,
-  selectedSquare,
-  selectedAISquare,
   squareLeft,
   squareUp,
   squareRight,
@@ -288,7 +280,6 @@ function init() {
   ownedCards = Game.player.ownedCards;
   selectedCards = Game.player.selectedCards;
   playerHand = Game.player.playerHand;
-  cardsAboveSelection = Game.player.cardsAboveSelection;
   playerCardCount = Game.player.playerCardCount;
   playedPlayerCardCount = Game.player.playedPlayerCardCount;
   totalBlueCards = Game.player.totalBlueCards;
@@ -296,7 +287,6 @@ function init() {
   playerHandSelectionCursor = Game.player.playerHandSelectionCursor;
 
   cardsInAIHand = Game.ai.cardsInAIHand;
-  aiCardsAboveSelection = Game.ai.aiCardsAboveSelection;
   aiCardCount = Game.ai.aiCardCount;
   aiDelay = Game.ai.aiDelay;
   totalRedCards = Game.ai.totalRedCards;
@@ -304,10 +294,6 @@ function init() {
 
   squares = Game.ui.squares;
   square = Game.ui.square;
-  selectedRow = Game.ui.selectedRow;
-  selectedColumn = Game.ui.selectedColumn;
-  selectedSquare = Game.ui.selectedSquare;
-  selectedAISquare = Game.ui.selectedAISquare;
 
   selectionBoard = Game.ui.selectionBoard;
   selectionBoardBackground = Game.ui.selectionBoardBackground;
@@ -366,11 +352,8 @@ function initOffsets() {
 }
 
 function initHandPositions() {
-  playerHandOffsetX = gameOffsetX + cellWidth * 3 + cardWidth / 4;
-  Game.player.handOffsetX = playerHandOffsetX;
-
-  aiHandOffsetX = gameOffsetX / 2 - cardWidth / 2;
-  Game.ai.handOffsetX = aiHandOffsetX;
+  Game.player.handOffsetX = gameOffsetX + cellWidth * 3 + cardWidth / 4;
+  Game.ai.handOffsetX = gameOffsetX / 2 - cardWidth / 2;
 }
 
 function initCursors() {
@@ -492,7 +475,7 @@ function populatePlayerCards(playerCardsParam) {
     card.owner = card.background = Game.utils.getPlayerTurn();
 
     // Place The Card
-    card.x = playerHandOffsetX;
+    card.x = Game.player.handOffsetX;
     card.y = handOffsetY + i * handCardOffset;
     Game.player.cardsInPlayerHand.push(card);
     stage.addChild(card);
