@@ -13,6 +13,10 @@ function populateSelectionBoardCards() {
     if (page != totalPages) {
       displayedCards.length = 11;
     } else if (page == totalPages) {
+      // Safeguard for having a count perfectly divisble by 11
+      if (remainingCards == 0) {
+        remainingCards = 11;
+      }
       displayedCards.length = remainingCards;
     }
   } else {
@@ -40,6 +44,10 @@ function populateSelectionBoardCards() {
     cardCount.y = selectionBoardBackground.y + 35 * j + 60;
     cardCount.textBaseline = "alphabetic";
 
+    // Guard THAT BREAKS THE UI
+    //shownCards = shownCards || new createjs.Container();
+    //shownCards.removeAllChildren(); // Clear previous entries
+
     shownCards.addChild(cardName, cardCount);
 
     // Small image icon for the row
@@ -64,11 +72,11 @@ function populateSelectionBoardCards() {
 
   // Select the top card by default
   selectedHandCardNumber = 0;
-  selectedHandCard = window.ownedCards[selectedHandCardNumber];
+  selectedHandCard = window.ownedCards[selectedHandCardNumber] || null;
 
   // Draw the displayed card on the right of the selection board
-  displayedCardImage = new createjs.Bitmap(
-    Game.config.cardPath + selectedHandCard.image + ".png"
+  var displayedCardImage = new createjs.Bitmap(
+    selectedHandCard ? Game.config.cardPath + selectedHandCard.image + ".png" : ""
   );
   displayedCardColour = new createjs.Bitmap(Game.config.cardPath + "blue.png");
   displayedCard = new createjs.Container();
