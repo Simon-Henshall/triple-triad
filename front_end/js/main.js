@@ -418,6 +418,12 @@ function init() {
 function startGame() {
   generateGrid();
   populatePlayerCards(playerCards);
+
+  // Debugging
+  logHands();   // shows initial hands for player and AI
+  logBoard();   // empty board
+  logTurn();    // shows who starts
+
   drawCardCounts();
   drawInfoBox();
   placePlayerHandCursor();

@@ -91,6 +91,11 @@ function flipCardOver(card, direction) {
   if (squareObj) {
     squareObj.card = targetCard;
   }
+
+  // Debugging
+  logCell(targetCard.inCell);  // logs the flipped card’s cell
+  logBoard();                  // shows board after flip
+  logTurn();                   // updates totals and turn info
 }
 
 // =======================================================

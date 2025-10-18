@@ -65,6 +65,12 @@ class CardPlacer {
     // Redraw the stage to show changes
     stage.update();
 
+    // Debug
+    logCell(card.inCell); // logs the specific cell
+    logBoard(); // logs the whole board
+    logHands(); // logs remaining cards in hands
+    logTurn(); // logs current turn and totals
+
     // Determine if the game has ended, otherwise swap turn
     if (CardPlacer.isGameOver()) {
       endGame();
@@ -153,6 +159,9 @@ class CardPlacer {
   static playerTurnSwitch() {
     // Swap the internal turn tracker
     CardPlacer.swapPlayerTurn();
+    
+    // Debugging
+    logTurn();  // shows whose turn, card totals, free cells
 
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
