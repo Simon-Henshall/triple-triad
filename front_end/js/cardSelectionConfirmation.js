@@ -1,5 +1,5 @@
 // -----------------------------
-// displayConfirmationBox - original UI for "Are you sure?" dialog
+// displayConfirmationBox - UI for "Are you sure?" dialog
 // -----------------------------
 function displayConfirmationBox() {
   window.playerConfirming = true;
@@ -66,47 +66,22 @@ function displayConfirmationBox() {
     confirmationNo
   );
 
-  if (this.stage) {
-    this.stage.addChild(confirmation);
-  } else if (window.stage) {
-    window.stage.addChild(confirmation);
-  }
-
+  stage.addChild(confirmation);
   this.placeConfirmationCursor();
-  if (this.stage) {
-    this.stage.update();
-  } else if (window.stage) {
-    window.stage.update();
-  }
+  stage.update();
 }
 
 function placeConfirmationCursor() {
   confirmationCursor.x = confirmationBackground.x + 50;
   confirmationCursor.y = confirmationBackground.y + 60;
-  if (this.stage) {
-    this.stage.addChild(confirmationCursor);
-  } else if (window.stage) {
-    window.stage.addChild(confirmationCursor);
-  }
-  if (this.stage) {
-    this.stage.update();
-  } else if (window.stage) {
-    window.stage.update();
-  }
+  stage.addChild(confirmationCursor);
+  stage.update();
 }
 
 function removeConfirmationCursor() {
   window.playerConfirming = false;
-  if (this.stage) {
-    this.stage.removeChild(confirmationCursor);
-  } else if (window.stage) {
-    window.stage.removeChild(confirmationCursor);
-  }
-  if (this.stage) {
-    this.stage.update();
-  } else if (window.stage) {
-    window.stage.update();
-  }
+  stage.removeChild(confirmationCursor);
+  stage.update();
 }
 
 function moveConfirmationCursor(direction) {
@@ -117,20 +92,12 @@ function moveConfirmationCursor(direction) {
     confirmationCursor.y += 30;
     window.selectedConfirmationChoice += 1;
   }
-  if (this.stage) {
-    this.stage.update();
-  } else if (window.stage) {
-    window.stage.update();
-  }
+  stage.update();
 }
 
 function hideConfirmationBox() {
   window.playerConfirming = false;
-  if (this.stage) {
-    this.stage.removeChild(confirmation);
-  } else if (window.stage) {
-    window.stage.removeChild(confirmation);
-  }
+  stage.removeChild(confirmation);
   window.playerSelectingHand = true;
 }
 
@@ -141,11 +108,7 @@ function placePlayerHandSelectionCursor() {
   playerHandSelectionCursor.x = selectionBoardBackground.x - 40;
   playerHandSelectionCursor.y = selectionBoardBackground.y + 48;
   selectionBoard.addChild(playerHandSelectionCursor);
-  if (this.stage) {
-    this.stage.update();
-  } else if (window.stage) {
-    window.stage.update();
-  }
+  stage.update();
 }
 
 // -----------------------------
@@ -198,9 +161,5 @@ function moveSelectionCursor(direction) {
     this.updateDisplayedCard();
   }
 
-  if (this.stage) {
-    this.stage.update();
-  } else if (window.stage) {
-    window.stage.update();
-  }
+  stage.update();
 }

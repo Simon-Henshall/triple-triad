@@ -417,7 +417,6 @@ function init() {
 // Start The Game
 function startGame() {
   generateGrid();
-  drawGridNumbers();
   populatePlayerCards(playerCards);
   drawCardCounts();
   drawInfoBox();

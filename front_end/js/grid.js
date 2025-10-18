@@ -15,7 +15,6 @@ const squareMap = [
 // -------------------------
 // Determine selected square from row & column
 // -------------------------
-
 function checkSelectedSquare() {
   for (let i = 0; i < squareMap.length; i++) {
     const s = squareMap[i];
@@ -33,7 +32,6 @@ function checkSelectedSquare() {
 // -------------------------
 // Determine row & column from selected square
 // -------------------------
-
 function checkSelectedRowColumn() {
   const s = squareMap[selectedAISquare - 1];
   selectedRow = s.row;
@@ -47,19 +45,15 @@ function checkSelectedRowColumn() {
 // -------------------------
 // Generate the 3x3 grid
 // -------------------------
-
 function generateGrid() {
   let squareID = 0;
-  let squareElement;
-
-  const squares = Game.ui.squares || [];
-  squares.length = 0;
-  Game.ui.squares = squares;
+  Game.ui.squares = [];
 
   // Determine elemental squares if "elemental" rule active
   const possibleElements = [1, 2, 3, 4, 5, 6, 7, 8];
   const elements = [];
   const numElements = Math.floor(Math.random() * 3) + 1;
+
   for (let i = 0; i < numElements; i++) {
     elements.push(
       possibleElements[Math.floor(Math.random() * possibleElements.length)]
@@ -71,66 +65,48 @@ function generateGrid() {
   for (let y = 0; y < 3; y++) {
     for (let x = 0; x < 3; x++) {
       squareID++;
-      const square = new createjs.Shape();
-      square.graphics.beginStroke("#000").setStrokeStyle(1).beginFill("White");
-      square.graphics.drawRect(
-        Game.offsets.gameOffsetX,
-        Game.offsets.gameOffsetY,
-        Game.offsets.cellWidth,
-        Game.offsets.cellHeight
-      );
-      square.x = x * Game.offsets.cellWidth;
-      square.y = y * Game.offsets.cellHeight;
-      square.alpha = Game.alpha;
 
-      if (Game.rules.includes("elemental")) {
-        square.element = elements[squareID - 1];
-        if (square.element !== 0) {
-          squareElement = new createjs.Bitmap(
-            `front_end/images/elements/${square.element}.png`
-          );
-          squareElement.x = Game.offsets.gameOffsetX + square.x + 60;
-          squareElement.y = Game.offsets.gameOffsetY + square.y + 70;
-          Game.stage.addChild(squareElement);
-        }
-      } else {
-        square.element = 0;
+      // Keep a "square object" in memory with all required data
+      const square = {
+        id: squareID,
+        x: x * Game.offsets.cellWidth,
+        y: y * Game.offsets.cellHeight,
+        element: Game.rules.includes("elemental") ? elements[squareID - 1] : 0,
+        container: new createjs.Container()
+      };
+
+      // Position the container
+      square.container.x = square.x;
+      square.container.y = square.y;
+      square.container.name = squareID;
+
+      // If elemental, add the bitmap visually
+      if (square.element !== 0) {
+        const squareElement = new createjs.Bitmap(
+          `front_end/images/elements/${square.element}.png`
+        );
+        squareElement.x = Game.offsets.gameOffsetX + 60;
+        squareElement.y = Game.offsets.gameOffsetY + 70;
+        square.container.addChild(squareElement);
       }
 
-      square.addEventListener("click", clickHandler);
+      // Click handler
+      square.container.addEventListener("click", clickHandler);
 
-      square.name = squareID;
-      squares.push(square);
+      // Save to the squares array
+      Game.ui.squares.push(square);
 
-      Game.stage.addChild(square);
-      Game.stage.update();
+      // Add container to stage
+      Game.stage.addChild(square.container);
     }
   }
-}
 
-// -------------------------
-// Draw grid numbers for reference
-// -------------------------
-
-function drawGridNumbers() {
-  let count = 1;
-  for (let y = 0; y < 3; y++) {
-    for (let x = 0; x < 3; x++) {
-      const text = new createjs.Text(count, "40px Arial", "#ff7700");
-      text.x = gameOffsetX + cellWidth * x + 10;
-      text.y = gameOffsetY + cellHeight * y + 40;
-      text.textBaseline = "alphabetic";
-      text.alpha = alpha;
-      stage.addChild(text);
-      count++;
-    }
-  }
+  Game.stage.update();
 }
 
 // -------------------------
 // CELL CHECKS
 // -------------------------
-
 function cellOccupied() {
   return board[selectedSquare - 1] === "Empty"
     ? false
