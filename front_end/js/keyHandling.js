@@ -5,7 +5,7 @@
 function checkKey(e) {
   "use strict";
   e = e || window.event;
-  if (playerSelectingHand) {
+  if (Game.ui.playerSelectingHand) {
     // Left
     if (e.keyCode === 37) {
       movePlayerHandSelectionCursor("left");
@@ -27,7 +27,7 @@ function checkKey(e) {
         updateHandCards();
       }
       if (playerCards.length === 5) {
-        playerSelectingHand = false;
+        Game.ui.playerSelectingHand = false;
         displayConfirmationBox();
       }
     } else if (e.keyCode === 27 || e.keyCode === 8) {
@@ -38,7 +38,7 @@ function checkKey(e) {
         playerCards.pop();
       }
     }
-  } else if (playerConfirming) {
+  } else if (Game.ui.playerConfirming) {
     // Up
     if (e.keyCode === 38) {
       moveConfirmationCursor("up");
@@ -47,8 +47,8 @@ function checkKey(e) {
       moveConfirmationCursor("down");
       // Enter
     } else if (e.keyCode === 13 && selectedConfirmationChoice == 0) {
-      stage.removeChild(selectionBoard);
-      stage.removeChild(confirmation);
+      stage.removeChild(Game.ui.selectionBoard);
+      stage.removeChild(Game.ui.confirmation);
       removeConfirmationCursor();
       startGame();
       // Backspace, Esc, And 'No'
@@ -62,12 +62,12 @@ function checkKey(e) {
         updateHandCards();
         playerCards.pop();
       }
-      stage.removeChild(confirmation);
+      stage.removeChild(Game.ui.confirmation);
       moveConfirmationCursor("up");
       removeConfirmationCursor();
-      playerSelectingHand = true;
+      Game.ui.playerSelectingHand = true;
     }
-  } else if (playerChoosingCard) {
+  } else if (Game.ui.playerChoosingCard) {
     // Up
     if (e.keyCode === 38) {
       movePlayerHandCursor("up");
@@ -82,8 +82,8 @@ function checkKey(e) {
       Game.ui.selectedColumn = 2;
       stage.removeChild(playerHandCursor);
     }
-  } else if (playerSelectingPlacement) {
-    infoBox.visible = false;
+  } else if (Game.ui.playerSelectingPlacement) {
+    Game.ui.infoBox.visible = false;
     // Left
     if (e.keyCode === 37) {
       moveGridCursor("left");

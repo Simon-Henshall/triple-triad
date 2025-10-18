@@ -9,7 +9,7 @@ function placePlayerHandSelectionCursor() {
   playerHandSelectionCursor.x = selectionBoardBackground.x - 40;
   playerHandSelectionCursor.y = selectionBoardBackground.y + 48;
 
-  selectionBoard.addChild(playerHandSelectionCursor);
+  Game.ui.selectionBoard.addChild(playerHandSelectionCursor);
   stage.update();
 
   console.log(`Player hand selection cursor placed at X:${playerHandSelectionCursor.x}, Y:${playerHandSelectionCursor.y}`);
@@ -176,7 +176,7 @@ function moveConfirmationCursor(direction) {
  * Place the player hand cursor at its initial position
  */
 function placePlayerHandCursor() {
-  playerChoosingCard = true;
+  Game.ui.playerChoosingCard = true;
   playerHandCursor.x = Game.player.handOffsetX - 50;
   playerHandCursor.y =
     handOffsetY +
@@ -192,7 +192,7 @@ function placePlayerHandCursor() {
  * Remove the player hand cursor
  */
 function removePlayerHandCursor() {
-  playerChoosingCard = false;
+  Game.ui.playerChoosingCard = false;
   stage.removeChild(playerHandCursor);
   stage.update();
 
@@ -217,7 +217,7 @@ function movePlayerHandCursor(direction) {
     return;
   }
 
-  previouslySelectedCard = Game.ui.selectedCard;
+  Game.ui.previouslySelectedCard = Game.ui.selectedCard;
   Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
 
   updateInfoBox();
@@ -235,7 +235,7 @@ function movePlayerHandCursor(direction) {
  * Place the selection cursor on the grid
  */
 function placeGridCursor() {
-  playerSelectingPlacement = true;
+  Game.ui.playerSelectingPlacement = true;
   gridCursor.x = gameOffsetX + cellWidth + 16;
   gridCursor.y = gameOffsetY + cellHeight + 80;
 
@@ -280,7 +280,7 @@ function moveGridCursor(direction) {
  * Remove the selection cursor from the grid
  */
 function removeGridCursor() {
-  playerSelectingPlacement = false;
+  Game.ui.playerSelectingPlacement = false;
   stage.removeChild(gridCursor);
   stage.update();
 

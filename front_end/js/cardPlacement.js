@@ -190,9 +190,9 @@ class CardPlacer {
       stage.addChild(playerHandCursor);
       Game.ui.selectedCard.x -= 30;
 
-      stage.setChildIndex(infoBox, stage.getNumChildren() - 1);
-      infoBox.visible = true;
-      playerChoosingCard = true;
+      stage.setChildIndex(Game.ui.infoBox, stage.getNumChildren() - 1);
+      Game.ui.infoBox.visible = true;
+      Game.ui.playerChoosingCard = true;
     } else if (Game.utils.getPlayerTurn() === "red") {
       // === AI TURN ===
       aiTurn();

@@ -2,7 +2,7 @@
 // displayConfirmationBox - UI for "Are you sure?" dialog
 // -----------------------------
 function displayConfirmationBox() {
-  window.playerConfirming = true;
+  Game.ui.playerConfirming = true;
 
   // Background rectangle
   confirmationBackground.width = 300;
@@ -57,7 +57,7 @@ function displayConfirmationBox() {
   confirmationNo.textBaseline = "alphabetic";
   confirmationNo.alpha = 1;
 
-  confirmation.addChild(
+  Game.ui.confirmation.addChild(
     confirmationBorder,
     confirmationBackground,
     confirmationChoice,
@@ -66,13 +66,13 @@ function displayConfirmationBox() {
     confirmationNo
   );
 
-  stage.addChild(confirmation);
+  stage.addChild(Game.ui.confirmation);
   placeConfirmationCursor();
   stage.update();
 }
 
 function hideConfirmationBox() {
-  window.playerConfirming = false;
-  stage.removeChild(confirmation);
-  window.playerSelectingHand = true;
+  Game.ui.playerConfirming = false;
+  stage.removeChild(Game.ui.confirmation);
+  Game.ui.playerSelectingHand = true;
 }

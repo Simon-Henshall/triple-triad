@@ -84,7 +84,7 @@ class PlayerCardManager {
         .drawRect(0, 0, 420, 450);
       selectionBoardBackground.x = 170;
       selectionBoardBackground.y = 100;
-      selectionBoard.addChild(selectionBoardBackground);
+      Game.ui.selectionBoard.addChild(selectionBoardBackground);
 
       // Draw the selection board text
       var cardListText = new createjs.Text("CARDS", "20px Arial", "#ffffff");
@@ -108,7 +108,7 @@ class PlayerCardManager {
       numText.y = selectionBoardBackground.y + 20;
       numText.textBaseline = "alphabetic";
 
-      selectionBoard.addChild(cardListText, pageText, pageDisplay, numText);
+      Game.ui.selectionBoard.addChild(cardListText, pageText, pageDisplay, numText);
 
       // default page and populate
       page = 1;
@@ -120,14 +120,14 @@ class PlayerCardManager {
       populateSelectionBoardCards();
 
       // Add container to stage and set up selection cursor
-      if (selectionBoard.parent) {
-        selectionBoard.parent.removeChild(selectionBoard);
+      if (Game.ui.selectionBoard.parent) {
+        Game.ui.selectionBoard.parent.removeChild(Game.ui.selectionBoard);
       }
-      (window.stage || this.stage).addChild(selectionBoard);
+      (window.stage || this.stage).addChild(Game.ui.selectionBoard);
 
       // place selection cursor and allow user to pick
       placePlayerHandSelectionCursor();
-      window.playerSelectingHand = true;
+      Game.ui.playerSelectingHand = true;
     }
   }
 
@@ -158,43 +158,43 @@ class PlayerCardManager {
       }
     }
 
-    // display the card texts and icons - we must operate on shownCards.children
+    // display the card texts and icons - we must operate on Game.ui.shownCards.children
     var j = 0;
     for (var i = 0; i < displayedCards.length; i++) {
-      if (shownCards.children[j]) {
-        shownCards.children[j].text = window.ownedCards[i + offset].displayName;
-        shownCards.children[j].color = window.ownedCards[i + offset].colour;
-        shownCards.children[j].visible = true;
+      if (Game.ui.shownCards.children[j]) {
+        Game.ui.shownCards.children[j].text = window.ownedCards[i + offset].displayName;
+        Game.ui.shownCards.children[j].color = window.ownedCards[i + offset].colour;
+        Game.ui.shownCards.children[j].visible = true;
       }
       j += 3;
     }
     var k = 1;
     for (var i = 0; i < displayedCards.length; i++) {
-      if (shownCards.children[k]) {
-        shownCards.children[k].text = window.ownedCards[i + offset].count;
-        shownCards.children[k].color = window.ownedCards[i + offset].colour;
-        shownCards.children[k].visible = true;
+      if (Game.ui.shownCards.children[k]) {
+        Game.ui.shownCards.children[k].text = window.ownedCards[i + offset].count;
+        Game.ui.shownCards.children[k].color = window.ownedCards[i + offset].colour;
+        Game.ui.shownCards.children[k].visible = true;
       }
       k += 3;
     }
     var l = 2;
     for (var i = 0; i < displayedCards.length; i++) {
-      if (shownCards.children[l]) {
-        shownCards.children[l].visible = true;
+      if (Game.ui.shownCards.children[l]) {
+        Game.ui.shownCards.children[l].visible = true;
       }
       l += 3;
     }
 
     // hide excess lines if any
     for (var m = displayedCards.length * 3; m < 31; m++) {
-      if (shownCards.children[j]) {
-        shownCards.children[j].text = "";
+      if (Game.ui.shownCards.children[j]) {
+        Game.ui.shownCards.children[j].text = "";
       }
-      if (shownCards.children[k]) {
-        shownCards.children[k].text = "";
+      if (Game.ui.shownCards.children[k]) {
+        Game.ui.shownCards.children[k].text = "";
       }
-      if (shownCards.children[l]) {
-        shownCards.children[l].visible = false;
+      if (Game.ui.shownCards.children[l]) {
+        Game.ui.shownCards.children[l].visible = false;
       }
       j++;
       k++;

@@ -86,7 +86,7 @@ function populateAICards() {
 
   // Select the top card by default (preserve original globals)
   window.selectedCard = window.cardsInAIHand[Game.ui.selectedCardNumber];
-  window.previouslySelectedCard = [];
+  Game.ui.previouslySelectedCard = [];
 
   // Handle the "open" rule flip all AI hand behaviour
   if (

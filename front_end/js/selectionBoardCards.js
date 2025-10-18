@@ -23,7 +23,7 @@ function populateSelectionBoardCards() {
     displayedCards.length = Object.keys(window.ownedCards).length;
   }
 
-  // Draw the data entries onto shownCards (createjs.Text and bitmaps)
+  // Draw the data entries onto Game.ui.shownCards (createjs.Text and bitmaps)
   var j = 0;
   for (var i = offset; i < offset + displayedCards.length; i++) {
     var cardName = new createjs.Text(
@@ -45,10 +45,10 @@ function populateSelectionBoardCards() {
     cardCount.textBaseline = "alphabetic";
 
     // Guard THAT BREAKS THE UI
-    //shownCards = shownCards || new createjs.Container();
-    //shownCards.removeAllChildren(); // Clear previous entries
+    //Game.ui.shownCards = Game.ui.shownCards || new createjs.Container();
+    //Game.ui.shownCards.removeAllChildren(); // Clear previous entries
 
-    shownCards.addChild(cardName, cardCount);
+    Game.ui.shownCards.addChild(cardName, cardCount);
 
     // Small image icon for the row
     var selectionBoardCardImage = new createjs.Bitmap(
@@ -64,11 +64,11 @@ function populateSelectionBoardCards() {
         30 / selectionBoardCardImage.image.height;
     }
 
-    shownCards.addChild(selectionBoardCardImage);
+    Game.ui.shownCards.addChild(selectionBoardCardImage);
     j++;
   }
 
-  selectionBoard.addChild(shownCards);
+  Game.ui.selectionBoard.addChild(Game.ui.shownCards);
 
   // Select the top card by default
   selectedHandCardNumber = 0;
@@ -98,5 +98,5 @@ function populateSelectionBoardCards() {
       displayedCard.children[0].image.height;
   }
 
-  selectionBoard.addChild(displayedCard);
+  Game.ui.selectionBoard.addChild(displayedCard);
 }

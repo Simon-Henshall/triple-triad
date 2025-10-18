@@ -53,7 +53,6 @@ window.Game = window.Game || {};
       Game.stage = null;
       Game.assets = null;
       Game.cursor = null;
-      Game.selectionBoard = null;
       // ...and anything else you attach to Game during runtime
     } finally {
       Game.initialized = false;
@@ -163,7 +162,6 @@ Game.ui = {
   confirmationBackground: null,
   confirmationCursor: null,
   selectedConfirmationChoice: 0,
-  playerConfirming: false,
   infoBox: null,
   infoBoxCardName: undefined,
   cardName: undefined,
@@ -174,6 +172,7 @@ Game.ui = {
   cardImage: undefined,
   previouslySelectedCard: [],
   playerSelectingHand: false,
+  playerConfirming: false,
   playerChoosingCard: false,
   playerSelectingPlacement: false,
   playerTurn: "red",
@@ -228,9 +227,7 @@ var stage,
   squareRight,
   squareDown,
   gridCursor,
-  selectionBoard,
   selectionBoardBackground,
-  shownCards,
   page,
   pageDisplay,
   totalPages,
@@ -241,21 +238,14 @@ var stage,
   remainingCards,
   selectedHandCardNumber,
   selectedHandCard,
-  confirmation,
   confirmationBackground,
   confirmationCursor,
   selectedConfirmationChoice,
-  playerConfirming,
-  infoBox,
   infoBoxCardName,
   cardName,
   cardCount,
   card,
   cardImage,
-  previouslySelectedCard,
-  playerSelectingHand,
-  playerChoosingCard,
-  playerSelectingPlacement,
   alpha,
   rules;
 
@@ -295,9 +285,7 @@ function init() {
   squares = Game.ui.squares;
   square = Game.ui.square;
 
-  selectionBoard = Game.ui.selectionBoard;
   selectionBoardBackground = Game.ui.selectionBoardBackground;
-  shownCards = Game.ui.shownCards;
   page = Game.ui.page;
   pageDisplay = Game.ui.pageDisplay;
   totalPages = Game.ui.totalPages;
@@ -309,15 +297,11 @@ function init() {
   selectedHandCardNumber = Game.ui.selectedHandCardNumber;
   selectedHandCard = Game.ui.selectedHandCard;
 
-  confirmation = Game.ui.confirmation;
   confirmationBackground = Game.ui.confirmationBackground;
   confirmationCursor = Game.ui.confirmationCursor;
   selectedConfirmationChoice = Game.ui.selectedConfirmationChoice;
-  playerConfirming = Game.ui.playerConfirming;
 
-  infoBox = Game.ui.infoBox;
   infoBoxCardName = Game.ui.infoBoxCardName;
-  previouslySelectedCard = Game.ui.previouslySelectedCard;
 
   rules = Game.rules;
   alpha = Game.alpha;
@@ -385,21 +369,16 @@ function initUIContainers() {
   Game.ui.previouslySelectedCard = [];
 
   // Aliases for convenience
-  selectionBoard = Game.ui.selectionBoard;
-  shownCards = Game.ui.shownCards;
-  confirmation = Game.ui.confirmation;
   confirmationBackground = Game.ui.confirmationBackground =
     new createjs.Shape();
   confirmationCursor = Game.ui.confirmationCursor = new createjs.Bitmap(
     Game.config.imagePath + "cursor.png"
   );
-  infoBox = Game.ui.infoBox;
 
   // Confirmation state
   Game.ui.selectedConfirmationChoice = 0;
   Game.ui.playerConfirming = false;
   selectedConfirmationChoice = Game.ui.selectedConfirmationChoice;
-  playerConfirming = Game.ui.playerConfirming;
 }
 
 function bindEvents() {
@@ -419,10 +398,10 @@ function loadInitialCards() {
 // Start The Game
 function startGame() {
   // --- Reset all state flags properly ---
-  playerSelectingHand = false;
-  playerConfirming = false;
-  playerChoosingCard = true;
-  playerSelectingPlacement = false;
+  Game.ui.playerSelectingHand = false;
+  Game.ui.playerConfirming = false;
+  Game.ui.playerChoosingCard = true;
+  Game.ui.playerSelectingPlacement = false;
 
   generateGrid();
   populatePlayerCards(playerCards);
@@ -484,7 +463,7 @@ function populatePlayerCards(playerCardsParam) {
 
   // Select The Top Card By Default
   Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
-  previouslySelectedCard = [];
+  Game.ui.previouslySelectedCard = [];
 
   // Indent The Chosen Card
   indentSelectedCard();
@@ -500,20 +479,20 @@ function indentSelectedCard() {
       Game.ui.selectedCard.x = Game.ui.selectedCard.x + 30;
     }
     if (
-      previouslySelectedCard &&
-      typeof previouslySelectedCard.x !== "undefined"
+      Game.ui.previouslySelectedCard &&
+      typeof Game.ui.previouslySelectedCard.x !== "undefined"
     ) {
-      previouslySelectedCard.x = previouslySelectedCard.x - 30;
+      Game.ui.previouslySelectedCard.x = Game.ui.previouslySelectedCard.x - 30;
     }
   } else if (Game.utils.getPlayerTurn() == "blue") {
     if (Game.ui.selectedCard && typeof Game.ui.selectedCard.x !== "undefined") {
       Game.ui.selectedCard.x = Game.ui.selectedCard.x - 30;
     }
     if (
-      previouslySelectedCard &&
-      typeof previouslySelectedCard.x !== "undefined"
+      Game.ui.previouslySelectedCard &&
+      typeof Game.ui.previouslySelectedCard.x !== "undefined"
     ) {
-      previouslySelectedCard.x = previouslySelectedCard.x + 30;
+      Game.ui.previouslySelectedCard.x = Game.ui.previouslySelectedCard.x + 30;
     }
   }
   stage.update();

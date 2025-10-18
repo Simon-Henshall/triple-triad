@@ -5,7 +5,6 @@
 // Persistent objects
 var aiCardCount = null;
 var playerCardCount = null;
-var infoBox = null;
 var infoBoxCardName = null;
 
 // Info box fixed dimensions
@@ -57,10 +56,10 @@ function drawCardCounts() {
 // Draw The Info Box
 // -------------------------
 function drawInfoBox() {
-  if (!infoBox) {
-    infoBox = new createjs.Container();
+  if (!Game.ui.infoBox) {
+    Game.ui.infoBox = new createjs.Container();
   } else {
-    infoBox.removeAllChildren();
+    Game.ui.infoBox.removeAllChildren();
   }
 
   // Background
@@ -79,14 +78,14 @@ function drawInfoBox() {
     INFO_BOX_HEIGHT
   );
 
-  infoBox.addChild(infoBoxBackground);
+  Game.ui.infoBox.addChild(infoBoxBackground);
 
   // "INFO." label
   const infoBoxText = new createjs.Text("INFO.", "18px Arial", "#ffffff");
   infoBoxText.x = infoBoxBackground.x + 10;
   infoBoxText.y = infoBoxBackground.y + 15;
   infoBoxText.textBaseline = "alphabetic";
-  infoBox.addChild(infoBoxText);
+  Game.ui.infoBox.addChild(infoBoxText);
 
   // Card name text
   if (!infoBoxCardName) {
@@ -109,9 +108,9 @@ function drawInfoBox() {
     infoBoxCardName.getMeasuredHeight() / 2 +
     verticalOffset;
 
-  infoBox.addChild(infoBoxCardName);
+  Game.ui.infoBox.addChild(infoBoxCardName);
 
-  stage.addChild(infoBox);
+  stage.addChild(Game.ui.infoBox);
   stage.update();
 }
 
