@@ -72,8 +72,6 @@ window.Game = window.Game || {};
 
 })(window.Game);
 
-var Game = Game || {};
-
 // -------------------------
 // CONFIG + CONSTANTS
 // -------------------------
@@ -175,87 +173,6 @@ Game.board = {
 Game.stage = null;
 Game.stageWidth = 0;
 Game.stageHeight = 0;
-
-// -------------------------
-// LEGACY GLOBALS (aliases)
-// -------------------------
-var stage,
-  stageWidth,
-  stageHeight,
-  gameOffsetX,
-  gameOffsetY,
-  handOffsetY,
-  handCardOffset,
-  cellWidth,
-  cellHeight,
-  cardOffsetX,
-  cardOffsetY,
-  cardWidth,
-  cardHeight,
-  playerHandOffsetX,
-  playerCards = [],
-  ownedCards,
-  selectedCards,
-  cardsInPlayerHand,
-  playerHand,
-  cardsAboveSelection,
-  playerCardCount,
-  playedPlayerCardCount,
-  totalBlueCards,
-  playerHandCursor,
-  playerHandSelectionCursor,
-  aiHandOffsetX,
-  cardsInAIHand,
-  aiCardsAboveSelection,
-  aiCardCount,
-  aiDelay,
-  totalRedCards,
-  aiHandCursor,
-  squares,
-  square,
-  selectedRow,
-  selectedColumn,
-  selectedSquare,
-  selectedAISquare,
-  squareLeft,
-  squareUp,
-  squareRight,
-  squareDown,
-  gridCursor,
-  selectionBoard,
-  selectionBoardBackground,
-  shownCards,
-  page,
-  pageDisplay,
-  totalPages,
-  displayedCards,
-  displayedCard,
-  displayedCardImage,
-  displayedCardColour,
-  remainingCards,
-  selectedHandCardNumber,
-  selectedHandCard,
-  confirmation,
-  confirmationBackground,
-  confirmationCursor,
-  selectedConfirmationChoice,
-  playerConfirming,
-  infoBox,
-  infoBoxCardName,
-  cardName,
-  cardCount,
-  selectedCardNumber,
-  selectedCard,
-  card,
-  cardImage,
-  previouslySelectedCard,
-  playerSelectingHand,
-  playerChoosingCard,
-  playerSelectingPlacement,
-  alpha,
-  rules,
-  board,
-  freeCells;
 
 // -------------------------
 // CORE: Initialization
