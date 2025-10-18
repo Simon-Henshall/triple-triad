@@ -99,10 +99,10 @@ function checkKey(e) {
       // Enter
     } else if (e.keyCode === 13) {
       if (!cellOccupied()) {
-        cardsInPlayerHand.splice(selectedCardNumber, 1);
+        cardsInPlayerHand.splice(Game.ui.selectedCardNumber, 1);
         removeGridCursor();
         CardPlacer.placeCard(
-          selectedCard,
+          Game.ui.selectedCard,
           gameOffsetX + cellWidth * (selectedColumn - 1) + cardOffsetX,
           gameOffsetY + cellHeight * (selectedRow - 1) + cardOffsetY
         );

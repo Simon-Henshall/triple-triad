@@ -168,7 +168,7 @@ Game.ui = {
   infoBoxCardName: undefined,
   cardName: undefined,
   cardCount: undefined,
-  selectedCardNumber: undefined,
+  selectedCardNumber: 0,
   selectedCard: undefined,
   card: undefined,
   cardImage: undefined,
@@ -259,8 +259,6 @@ var stage,
   infoBoxCardName,
   cardName,
   cardCount,
-  selectedCardNumber,
-  selectedCard,
   card,
   cardImage,
   previouslySelectedCard,
@@ -508,8 +506,7 @@ function populatePlayerCards(playerCardsParam) {
   }
 
   // Select The Top Card By Default
-  selectedCardNumber = 0;
-  selectedCard = cardsInPlayerHand[selectedCardNumber];
+  Game.ui.selectedCard = cardsInPlayerHand[Game.ui.selectedCardNumber];
   previouslySelectedCard = [];
 
   // Indent The Chosen Card
@@ -522,8 +519,8 @@ function populatePlayerCards(playerCardsParam) {
 // Indent The Selected Card
 function indentSelectedCard() {
   if (Game.utils.getPlayerTurn() == "red") {
-    if (selectedCard && typeof selectedCard.x !== "undefined") {
-      selectedCard.x = selectedCard.x + 30;
+    if (Game.ui.selectedCard && typeof Game.ui.selectedCard.x !== "undefined") {
+      Game.ui.selectedCard.x = Game.ui.selectedCard.x + 30;
     }
     if (
       previouslySelectedCard &&
@@ -532,8 +529,8 @@ function indentSelectedCard() {
       previouslySelectedCard.x = previouslySelectedCard.x - 30;
     }
   } else if (Game.utils.getPlayerTurn() == "blue") {
-    if (selectedCard && typeof selectedCard.x !== "undefined") {
-      selectedCard.x = selectedCard.x - 30;
+    if (Game.ui.selectedCard && typeof Game.ui.selectedCard.x !== "undefined") {
+      Game.ui.selectedCard.x = Game.ui.selectedCard.x - 30;
     }
     if (
       previouslySelectedCard &&

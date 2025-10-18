@@ -91,13 +91,13 @@ function drawInfoBox() {
   // Card name text
   if (!infoBoxCardName) {
     infoBoxCardName = new createjs.Text(
-      selectedCard?.name || "",
+      Game.ui.selectedCard?.name || "",
       "30px Arial",
       "#ffffff"
     );
     infoBoxCardName.textBaseline = "alphabetic";
   }
-  infoBoxCardName.text = selectedCard?.name || "";
+  infoBoxCardName.text = Game.ui.selectedCard?.name || "";
 
   // Center card name inside the info box (horizontal and vertical)
   const verticalOffset = 30 / 2 + 10; // half of font size + 10px downward nudge
@@ -119,8 +119,8 @@ function drawInfoBox() {
 // Update The Info Box
 // -------------------------
 function updateInfoBox() {
-  if (infoBoxCardName && selectedCard) {
-    infoBoxCardName.text = selectedCard.name;
+  if (infoBoxCardName && Game.ui.selectedCard) {
+    infoBoxCardName.text = Game.ui.selectedCard.name;
     const verticalOffset = 30 / 2 + 10; // half of font size + 10px downward nudge
     infoBoxCardName.x =
       INFO_BOX_X + INFO_BOX_WIDTH / 2 - infoBoxCardName.getMeasuredWidth() / 2;

@@ -180,7 +180,7 @@ function placePlayerHandCursor() {
   playerHandCursor.x = playerHandOffsetX - 50;
   playerHandCursor.y =
     handOffsetY +
-    (selectedCardNumber + 1 + playedPlayerCardCount) * (cardHeight / 2);
+    (Game.ui.selectedCardNumber + 1 + playedPlayerCardCount) * (cardHeight / 2);
 
   stage.addChild(playerHandCursor);
   stage.update();
@@ -204,27 +204,27 @@ function removePlayerHandCursor() {
  * @param {"up"|"down"} direction
  */
 function movePlayerHandCursor(direction) {
-  if (direction === "up" && selectedCardNumber > 0) {
+  if (direction === "up" && Game.ui.selectedCardNumber > 0) {
     playerHandCursor.y -= handCardOffset;
-    selectedCardNumber--;
+    Game.ui.selectedCardNumber--;
     cardsAboveSelection--;
-  } else if (direction === "down" && selectedCardNumber < cardsInPlayerHand.length - 1) {
+  } else if (direction === "down" && Game.ui.selectedCardNumber < cardsInPlayerHand.length - 1) {
     playerHandCursor.y += handCardOffset;
-    selectedCardNumber++;
+    Game.ui.selectedCardNumber++;
     cardsAboveSelection++;
   } else {
     console.warn(`Cannot move cursor ${direction} - out of bounds`);
     return;
   }
 
-  previouslySelectedCard = selectedCard;
-  selectedCard = cardsInPlayerHand[selectedCardNumber];
+  previouslySelectedCard = Game.ui.selectedCard;
+  Game.ui.selectedCard = cardsInPlayerHand[Game.ui.selectedCardNumber];
 
   updateInfoBox();
   indentSelectedCard();
 
   stage.update();
-  console.log(`Moved player hand cursor ${direction} -> Card index: ${selectedCardNumber}`);
+  console.log(`Moved player hand cursor ${direction} -> Card index: ${Game.ui.selectedCardNumber}`);
 }
 
 // -------------------------

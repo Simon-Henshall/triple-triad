@@ -184,11 +184,11 @@ class CardPlacer {
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
       playedPlayerCardCount++;
-      selectedCard = cardsInPlayerHand[selectedCardNumber];
+      Game.ui.selectedCard = cardsInPlayerHand[Game.ui.selectedCardNumber];
 
       // Reposition cursor and UI elements
       stage.addChild(playerHandCursor);
-      selectedCard.x -= 30;
+      Game.ui.selectedCard.x -= 30;
 
       stage.setChildIndex(infoBox, stage.getNumChildren() - 1);
       infoBox.visible = true;
@@ -232,14 +232,14 @@ class CardPlacer {
       // === PLAYER HAND ===
       animateHandCardsDown(cardsInPlayerHand, cardsAboveSelection);
 
-      if (selectedCardNumber === 0) {
+      if (Game.ui.selectedCardNumber === 0) {
         // Top card was played; move cursor down
         playerHandCursor.y += handCardOffset;
-        selectedCard = cardsInPlayerHand[selectedCardNumber];
+        Game.ui.selectedCard = cardsInPlayerHand[Game.ui.selectedCardNumber];
       } else {
         // Adjust selection to the next card
-        selectedCardNumber -= 1;
-        selectedCard = cardsInPlayerHand[selectedCardNumber];
+        Game.ui.selectedCardNumber -= 1;
+        Game.ui.selectedCard = cardsInPlayerHand[Game.ui.selectedCardNumber];
         cardsAboveSelection -= 1;
       }
     } else if (Game.utils.getPlayerTurn() === "red") {

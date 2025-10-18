@@ -85,8 +85,7 @@ function populateAICards() {
   }
 
   // Select the top card by default (preserve original globals)
-  window.selectedCardNumber = 0;
-  window.selectedCard = window.cardsInAIHand[window.selectedCardNumber];
+  window.selectedCard = window.cardsInAIHand[Game.ui.selectedCardNumber];
   window.cardsAboveSelection = 0;
   window.previouslySelectedCard = [];
 
