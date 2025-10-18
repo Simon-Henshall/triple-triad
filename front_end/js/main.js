@@ -399,6 +399,14 @@ function init() {
 
   alpha = Game.alpha;
 
+  // -------------------------
+  // GLOBAL STATE FLAGS
+  // -------------------------
+  window.playerSelectingHand = true;   // true at game start
+  window.playerConfirming = false;
+  window.playerChoosingCard = false;
+  window.playerSelectingPlacement = false;
+
   // Key binding
   document.onkeydown = checkKey;
 
@@ -416,6 +424,12 @@ function init() {
 
 // Start The Game
 function startGame() {
+  // --- Reset all state flags properly ---
+  playerSelectingHand = false;
+  playerConfirming = false;
+  playerChoosingCard = true;
+  playerSelectingPlacement = false;
+
   generateGrid();
   populatePlayerCards(playerCards);
 

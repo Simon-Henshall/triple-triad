@@ -8,16 +8,16 @@ function checkKey(e) {
   if (playerSelectingHand) {
     // Left
     if (e.keyCode === 37) {
-      moveSelectionCursor("left");
+      movePlayerHandSelectionCursor("left");
       // Up
     } else if (e.keyCode === 38) {
-      moveSelectionCursor("up");
+      movePlayerHandSelectionCursor("up");
       // Right
     } else if (e.keyCode === 39) {
-      moveSelectionCursor("right");
+      movePlayerHandSelectionCursor("right");
       // Down
     } else if (e.keyCode === 40) {
-      moveSelectionCursor("down");
+      movePlayerHandSelectionCursor("down");
       // Enter
     } else if (e.keyCode === 13) {
       // Enter

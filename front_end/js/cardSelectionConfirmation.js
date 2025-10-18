@@ -67,31 +67,7 @@ function displayConfirmationBox() {
   );
 
   stage.addChild(confirmation);
-  this.placeConfirmationCursor();
-  stage.update();
-}
-
-function placeConfirmationCursor() {
-  confirmationCursor.x = confirmationBackground.x + 50;
-  confirmationCursor.y = confirmationBackground.y + 60;
-  stage.addChild(confirmationCursor);
-  stage.update();
-}
-
-function removeConfirmationCursor() {
-  window.playerConfirming = false;
-  stage.removeChild(confirmationCursor);
-  stage.update();
-}
-
-function moveConfirmationCursor(direction) {
-  if (direction == "up" && window.selectedConfirmationChoice != 0) {
-    confirmationCursor.y -= 30;
-    window.selectedConfirmationChoice -= 1;
-  } else if (direction == "down" && window.selectedConfirmationChoice != 1) {
-    confirmationCursor.y += 30;
-    window.selectedConfirmationChoice += 1;
-  }
+  placeConfirmationCursor();
   stage.update();
 }
 
@@ -99,67 +75,4 @@ function hideConfirmationBox() {
   window.playerConfirming = false;
   stage.removeChild(confirmation);
   window.playerSelectingHand = true;
-}
-
-// -----------------------------
-// placePlayerHandSelectionCursor - show the small cursor next to the list
-// -----------------------------
-function placePlayerHandSelectionCursor() {
-  playerHandSelectionCursor.x = selectionBoardBackground.x - 40;
-  playerHandSelectionCursor.y = selectionBoardBackground.y + 48;
-  selectionBoard.addChild(playerHandSelectionCursor);
-  stage.update();
-}
-
-// -----------------------------
-// moveSelectionCursor - move selection cursor and update displayed card
-// -----------------------------
-function moveSelectionCursor(direction) {
-  if (direction == "up" && selectedHandCardNumber % 11 != 0) {
-    playerHandSelectionCursor.y -= 35;
-    selectedHandCardNumber -= 1;
-    selectedHandCard = window.ownedCards[selectedHandCardNumber];
-    this.updateDisplayedCard();
-  } else if (
-    direction == "down" &&
-    ((page != totalPages && selectedHandCardNumber % 11 != 10) ||
-      (page == totalPages && selectedHandCardNumber % 11 < remainingCards - 1))
-  ) {
-    playerHandSelectionCursor.y += 35;
-    selectedHandCardNumber += 1;
-    selectedHandCard = window.ownedCards[selectedHandCardNumber];
-    this.updateDisplayedCard();
-  } else if (direction == "left" && page != 1) {
-    page--;
-    selectedHandCardNumber -= 11;
-    selectedHandCard = window.ownedCards[selectedHandCardNumber];
-    this.updateHandCards();
-    this.updateDisplayedCard();
-  } else if (direction == "right" && page != totalPages - 1) {
-    if (page != totalPages) {
-      page++;
-      selectedHandCardNumber += 11;
-      selectedHandCard = window.ownedCards[selectedHandCardNumber];
-      this.updateHandCards();
-      this.updateDisplayedCard();
-    }
-  } else if (direction == "right" && page == totalPages - 1) {
-    page++;
-    if (selectedHandCardNumber > window.ownedCards.length - 12) {
-      var selectedHandCardNumberForPage = Math.floor(
-        (selectedHandCardNumber % 11) + 1
-      );
-      playerHandSelectionCursor.y -=
-        35 * (selectedHandCardNumberForPage - remainingCards);
-      selectedHandCardNumber = window.ownedCards.length - 1;
-      selectedHandCard = window.ownedCards[selectedHandCardNumber];
-    } else {
-      selectedHandCardNumber += 11;
-      selectedHandCard = window.ownedCards[selectedHandCardNumber];
-    }
-    this.updateHandCards();
-    this.updateDisplayedCard();
-  }
-
-  stage.update();
 }
