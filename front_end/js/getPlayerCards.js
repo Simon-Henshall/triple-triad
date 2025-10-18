@@ -66,8 +66,7 @@ class PlayerCardManager {
     }
 
     // Either pick random cards or show selection board
-    window.rules = window.rules || (window.Game && Game.rules) || ["elemental"];
-    if (window.rules.indexOf("random") != -1) {
+    if (Game.rules.indexOf("random") != -1) {
       window.playerCards = this.shuffle($.extend(true, [], window.ownedCards));
       // populate AI cards and start game
       if (!Game.ai.cardsInAIHand || Game.ai.cardsInAIHand.length === 0) {

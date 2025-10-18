@@ -5,11 +5,16 @@
 function aiTurn() {
   // Pick A Card To Play (Currently Random)
   var aiSelectedCard =
-    Game.ai.cardsInAIHand[Math.floor(Math.random() * Game.ai.cardsInAIHand.length)];
+    Game.ai.cardsInAIHand[
+      Math.floor(Math.random() * Game.ai.cardsInAIHand.length)
+    ];
   var aiSelectedCardNumber = Game.ai.cardsInAIHand.indexOf(aiSelectedCard);
 
   // Pick A Cell To Play In (Currently Random)
-  Game.ui.selectedAISquare = Game.board.freeCells[Math.floor(Math.random() * Game.board.freeCells.length)];
+  Game.ui.selectedAISquare =
+    Game.board.freeCells[
+      Math.floor(Math.random() * Game.board.freeCells.length)
+    ];
   checkSelectedRowColumn();
 
   // Place The Card
@@ -18,8 +23,12 @@ function aiTurn() {
   setTimeout(function () {
     CardPlacer.placeCard(
       aiSelectedCard,
-      Game.offsets.gameOffsetX + Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) + Game.offsets.cardOffsetX,
-      Game.offsets.gameOffsetY + Game.offsets.cellHeight * (Game.ui.selectedRow - 1) + Game.offsets.cardOffsetY
+      Game.offsets.gameOffsetX +
+        Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) +
+        Game.offsets.cardOffsetX,
+      Game.offsets.gameOffsetY +
+        Game.offsets.cellHeight * (Game.ui.selectedRow - 1) +
+        Game.offsets.cardOffsetY
     );
   }, Game.ai.aiDelay);
 }
@@ -47,7 +56,9 @@ function populateAICards() {
 
     // Safely compute scale (fall back to 1 if images not loaded)
     var baseWidth =
-      Game.ui.card.children[0] && Game.ui.card.children[0].image && Game.ui.card.children[0].image.width
+      Game.ui.card.children[0] &&
+      Game.ui.card.children[0].image &&
+      Game.ui.card.children[0].image.width
         ? Game.ui.card.children[0].image.width
         : Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2 || 100;
     var baseHeight =
@@ -57,8 +68,12 @@ function populateAICards() {
         ? Game.ui.card.children[0].image.height
         : Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2 || 140;
 
-    Game.ui.card.scaleX = (Game.offsets.cardWidth || Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2) / baseWidth;
-    Game.ui.card.scaleY = (Game.offsets.cardHeight || Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2) / baseHeight;
+    Game.ui.card.scaleX =
+      (Game.offsets.cardWidth ||
+        Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2) / baseWidth;
+    Game.ui.card.scaleY =
+      (Game.offsets.cardHeight ||
+        Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2) / baseHeight;
 
     // Card imagery paths
     Game.ui.card.frontImage = Game.config.cardPath + chosen_card.image + ".png";
@@ -76,7 +91,9 @@ function populateAICards() {
 
     // Position off to AI hand area
     Game.ui.card.x = Game.ai.handOffsetX || Game.offsets.gameOffsetX / 2 || 100;
-    Game.ui.card.y = (Game.offsets.handOffsetY || 50) + i * (Game.offsets.handCardOffset || 95);
+    Game.ui.card.y =
+      (Game.offsets.handOffsetY || 50) +
+      i * (Game.offsets.handCardOffset || 95);
 
     // Add to AI hand and stage
     Game.ai.cardsInAIHand.push(Game.ui.card);
@@ -89,10 +106,7 @@ function populateAICards() {
   Game.ui.previouslySelectedCard = [];
 
   // Handle the "open" rule flip all AI hand behaviour
-  if (
-    (window.rules && window.rules.indexOf("open") != -1) ||
-    (window.Game && Game.rules && Game.rules.indexOf("open") != -1)
-  ) {
+  if (Game.rules && Game.rules.indexOf("open") != -1) {
     if (typeof window.flipAIHand === "function") {
       flipAIHand();
     }

@@ -179,7 +179,6 @@ Game.ui = {
   playerTurn: "red",
 };
 
-Game.alpha = 0.01;
 Game.rules = ["elemental"];
 
 Game.board = {
@@ -208,9 +207,7 @@ var playerCards = [],
   remainingCards,
   selectedHandCardNumber,
   selectedHandCard,
-  selectedConfirmationChoice,
-  alpha,
-  rules;
+  selectedConfirmationChoice;
 
 // -------------------------
 // CORE: Initialization
@@ -241,9 +238,6 @@ function init() {
   remainingCards = Game.ui.remainingCards;
   selectedHandCardNumber = Game.ui.selectedHandCardNumber;
   selectedHandCard = Game.ui.selectedHandCard;
-
-  rules = Game.rules;
-  alpha = Game.alpha;
 }
 
 function initStage() {
@@ -413,14 +407,13 @@ function indentSelectedCard() {
 
 function endGame() {
   // Calculate The Winner
-  var winner;
   if (Game.ai.totalRedCards > Game.player.totalBlueCards) {
     alert("lose");
   } else if (Game.player.totalBlueCards > Game.ai.totalRedCards) {
     alert("win");
   } else {
     alert("draw");
-    if (rules.includes("sudden_death")) {
+    if (Game.rules.includes("sudden_death")) {
       startGame();
     }
   }
