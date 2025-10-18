@@ -3,10 +3,6 @@
 // =======================================================
 
 const DEG_TO_RAD = Math.PI / 180;
-const sliceContainer = new createjs.Container();
-
-let sliceWidth;
-let sliceHeight;
 
 // Maps direction keywords to relevant card-side references
 const directionMap = {
@@ -67,7 +63,6 @@ function flipCardsCheck(card) {
 // Get Current Player Colour
 // =======================================================
 function getCurrentPlayerColour() {
-  // Always returns 'red' or 'blue'
   return Game.utils.getPlayerTurn();
 }
 
@@ -93,9 +88,9 @@ function flipCardOver(card, direction) {
   }
 
   // Debugging
-  logCell(targetCard.inCell);  // logs the flipped card’s cell
-  logBoard();                  // shows board after flip
-  logTurn();                   // updates totals and turn info
+  logCell(targetCard.inCell);
+  logBoard();
+  logTurn();
 }
 
 // =======================================================
@@ -144,14 +139,19 @@ function replaceCard(cardToReplace) {
 }
 
 // =======================================================
-// Animate Card Flip (for full 3D-like effect)
+// Animate Card Flip (isolated container per card)
 // =======================================================
 function flipCard(card, direction) {
-  sliceWidth = card.children[1].image.width * card.scaleX;
-  sliceHeight = card.children[1].image.height * card.scaleY;
+  const sliceContainer = new createjs.Container();
 
-  sliceContainer.x = card.x + sliceWidth / 2;
-  sliceContainer.y = card.y;
+  const sliceWidth = card.children[1].image.width * card.scaleX;
+  const sliceHeight = card.children[1].image.height * card.scaleY;
+
+  const initialX = card.x;
+  const initialY = card.y;
+
+  sliceContainer.x = initialX + sliceWidth / 2;
+  sliceContainer.y = initialY;
 
   // Cache the card before starting animation
   card.sourceRect = new createjs.Rectangle(0, 0, 0, sliceWidth);
@@ -160,32 +160,28 @@ function flipCard(card, direction) {
   sliceContainer.addChild(card);
   stage.addChild(sliceContainer);
 
-  // Begin recursive flip animation
-  animateFlip(card, direction, 0);
+  animateFlip(card, sliceContainer, direction, 0, initialX, initialY);
 }
 
 // =======================================================
 // Animate Flip Progress (Recursive Timeout Loop)
 // =======================================================
-function animateFlip(card, direction, counter) {
+function animateFlip(card, container, direction, counter, initialX, initialY) {
   if (counter > 180) {
-    finaliseFlip(card);
+    finaliseFlip(card, container, initialX, initialY);
     return;
   }
 
   setTimeout(() => {
     counter++;
 
-    // At halfway point, switch visible card face
     if (counter === 90) {
       swapCardFace(card);
     }
 
-    // Apply rotation frame
-    flipDirection(direction, counter);
+    flipDirection(card, container, direction, counter);
 
-    // Continue animation
-    animateFlip(card, direction, counter);
+    animateFlip(card, container, direction, counter, initialX, initialY);
   }, 2);
 }
 
@@ -195,33 +191,30 @@ function animateFlip(card, direction, counter) {
 function swapCardFace(card) {
   const isBack = card.children[1].image.src.includes(card.backImage);
 
-  card.children[1].image.src = isBack
-    ? card.frontImage
-    : card.backImage;
+  card.children[1].image.src = isBack ? card.frontImage : card.backImage;
 
-  // Adjust for horizontal mirroring
   card.children[1].x += card.children[1].image.width;
   card.children[1].scaleX = -1;
 }
 
 // =======================================================
-// Calculate Flip Direction Offset For Each Frame
+// Flip Direction Math
 // =======================================================
-function flipDirection(direction, value) {
+function flipDirection(card, container, direction, value) {
   const factor = direction === "left" ? -1 : 1;
-  const totalSlices = sliceContainer.getNumChildren();
+  const totalSlices = container.getNumChildren();
 
   for (let i = 0; i < totalSlices; i++) {
-    const slice = sliceContainer.getChildAt(i);
+    const slice = container.getChildAt(i);
 
-    slice.y = Math.sin(value * DEG_TO_RAD) * factor * sliceWidth / 2;
+    slice.y = Math.sin(value * DEG_TO_RAD) * factor * card.children[1].image.width / 2;
     slice.skewY = (i % 2 === 0 ? -1 : 1) * value * factor;
 
     if (i % 2 === 0) {
-      slice.y -= sliceWidth * Math.sin(slice.skewY * DEG_TO_RAD);
+      slice.y -= card.children[1].image.width * Math.sin(slice.skewY * DEG_TO_RAD);
     }
 
-    slice.x = sliceWidth * (i - totalSlices / 2) * Math.cos(slice.skewY * DEG_TO_RAD);
+    slice.x = card.children[1].image.width * (i - totalSlices / 2) * Math.cos(slice.skewY * DEG_TO_RAD);
     slice.updateCache();
   }
 
@@ -229,16 +222,15 @@ function flipDirection(direction, value) {
 }
 
 // =======================================================
-// Finalise Flip Animation
+// Finalise Flip
 // =======================================================
-function finaliseFlip(card) {
-  const cardToAdd = sliceContainer.getChildAt(0);
+function finaliseFlip(card, container, initialX, initialY) {
+  card.x = initialX;
+  card.y = initialY;
 
-  cardToAdd.x = sliceContainer.x + card.x;
-  cardToAdd.y = sliceContainer.y;
-
-  stage.addChild(cardToAdd);
-  sliceContainer.removeAllChildren();
+  stage.addChild(card);
+  container.removeAllChildren();
+  stage.removeChild(container);
 }
 
 // =======================================================
