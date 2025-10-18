@@ -18,9 +18,9 @@ class CardPlacer {
     // Animate the card offscreen before placing
     createjs.Tween.get(card)
       .to({ x: offscreenX, y: offscreenY }, 500)
-      .call(() =>
-        CardPlacer.onCardOffscreenComplete(card, placementX, placementY)
-      );
+      .call(() => {
+        CardPlacer.onCardOffscreenComplete(card, placementX, placementY);
+      });
 
     // Animate the remaining cards in the player's or AI's hand
     CardPlacer.shiftHandCardsDown();
@@ -43,7 +43,9 @@ class CardPlacer {
     // Animate the card into its final placement position on the board
     createjs.Tween.get(card)
       .to({ x: placementX, y: placementY }, 500)
-      .call(() => CardPlacer.onCardPlacementComplete(card));
+      .call(() => {
+        CardPlacer.onCardPlacementComplete(card);
+      });
   }
 
   // ======================================================================
@@ -83,11 +85,29 @@ class CardPlacer {
   // Set the card's adjacent references (left, right, up, down)
   // ======================================================================
   static setCardAdjacents(card) {
-    card.cardLeft = squareLeft !== "none" ? board[squareLeft - 1] : "[INVALID]";
-    card.cardUp = squareUp !== "none" ? board[squareUp - 1] : "[INVALID]";
-    card.cardRight =
-      squareRight !== "none" ? board[squareRight - 1] : "[INVALID]";
-    card.cardDown = squareDown !== "none" ? board[squareDown - 1] : "[INVALID]";
+    if (squareLeft !== "none") {
+      card.cardLeft = board[squareLeft - 1];
+    } else {
+      card.cardLeft = null;
+    }
+
+    if (squareUp !== "none") {
+      card.cardUp = board[squareUp - 1];
+    } else {
+      card.cardUp = null;
+    }
+
+    if (squareRight !== "none") {
+      card.cardRight = board[squareRight - 1];
+    } else {
+      card.cardRight = null;
+    }
+
+    if (squareDown !== "none") {
+      card.cardDown = board[squareDown - 1];
+    } else {
+      card.cardDown = null;
+    }
   }
 
   // ======================================================================
@@ -111,7 +131,6 @@ class CardPlacer {
   // Apply element bonuses or penalties, and display corresponding effect image
   // ======================================================================
   static applyElementEffects(card) {
-    // Reference the correct squares array
     const squareObj = Game.ui.squares[selectedSquare - 1];
 
     if (!squareObj || squareObj.element === undefined) {
@@ -157,11 +176,10 @@ class CardPlacer {
   // Swap the player turn and trigger next phase
   // ======================================================================
   static playerTurnSwitch() {
-    // Swap the internal turn tracker
     CardPlacer.swapPlayerTurn();
-    
+
     // Debugging
-    logTurn();  // shows whose turn, card totals, free cells
+    logTurn(); // shows whose turn, card totals, free cells
 
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
@@ -171,6 +189,7 @@ class CardPlacer {
       // Reposition cursor and UI elements
       stage.addChild(playerHandCursor);
       selectedCard.x -= 30;
+
       stage.setChildIndex(infoBox, stage.getNumChildren() - 1);
       infoBox.visible = true;
       playerChoosingCard = true;
