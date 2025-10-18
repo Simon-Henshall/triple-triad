@@ -1,40 +1,53 @@
 window.Game = window.Game || {};
-(function(Game) {
+(function (Game) {
   // safe guard: if previously initialized, destroy first
-  if (Game.initialized && typeof Game.destroy === 'function') {
-    console.log('Game: previous instance found — destroying before re-init');
-    try { Game.destroy(); } catch (e) { console.warn('Game.destroy failed', e); }
+  if (Game.initialized && typeof Game.destroy === "function") {
+    console.log("Game: previous instance found — destroying before re-init");
+    try {
+      Game.destroy();
+    } catch (e) {
+      console.warn("Game.destroy failed", e);
+    }
   }
 
   Game.initialized = false;
 
-  Game.destroy = function() {
+  Game.destroy = function () {
     try {
       // stop createjs Ticker (if used)
       if (createjs && createjs.Ticker) {
         createjs.Ticker.removeAllEventListeners();
-        try { createjs.Ticker.reset && createjs.Ticker.reset(); } catch(e){}
+        try {
+          createjs.Ticker.reset && createjs.Ticker.reset();
+        } catch (e) {}
       }
       // stage cleanup
       if (Game.stage) {
         try {
           Game.stage.removeAllChildren();
-          Game.stage.removeAllEventListeners && Game.stage.removeAllEventListeners();
-        } catch(e){ console.warn(e); }
+          Game.stage.removeAllEventListeners &&
+            Game.stage.removeAllEventListeners();
+        } catch (e) {
+          console.warn(e);
+        }
       }
       // remove any DOM listeners you registered
       if (Game._listeners && Array.isArray(Game._listeners)) {
-        Game._listeners.forEach(function(l){
-          try { window.removeEventListener(l.event, l.fn); } catch(e){}
-          try { document.removeEventListener(l.event, l.fn); } catch(e){}
+        Game._listeners.forEach(function (l) {
+          try {
+            window.removeEventListener(l.event, l.fn);
+          } catch (e) {}
+          try {
+            document.removeEventListener(l.event, l.fn);
+          } catch (e) {}
         });
       }
       // clear any intervals/timeouts the game created
       if (Game._intervals) {
-        Game._intervals.forEach(id => clearInterval(id));
+        Game._intervals.forEach((id) => clearInterval(id));
       }
       if (Game._timeouts) {
-        Game._timeouts.forEach(id => clearTimeout(id));
+        Game._timeouts.forEach((id) => clearTimeout(id));
       }
       // clear references
       Game.stage = null;
@@ -44,11 +57,11 @@ window.Game = window.Game || {};
       // ...and anything else you attach to Game during runtime
     } finally {
       Game.initialized = false;
-      console.log('Game destroyed');
+      console.log("Game destroyed");
     }
   };
 
-  Game.bootstrap = function(options) {
+  Game.bootstrap = function (options) {
     options = options || {};
     // small helper registries for teardown bookkeeping
     Game._listeners = Game._listeners || [];
@@ -57,19 +70,23 @@ window.Game = window.Game || {};
 
     // hookup a single asset loader if none exists
     if (!Game.assets) {
-       var queue = new createjs.LoadQueue(false);
-       // example: queue.loadManifest([...]); // leave manifest for main.js
-       Game.assets = queue;
-       Game.assets.loaded = new Promise(function(resolve){
-         queue.on('complete', function(){ resolve(); });
-         queue.on('error', function(err){ console.error('assets load error', err); resolve(); });
-       });
+      var queue = new createjs.LoadQueue(false);
+      // example: queue.loadManifest([...]); // leave manifest for main.js
+      Game.assets = queue;
+      Game.assets.loaded = new Promise(function (resolve) {
+        queue.on("complete", function () {
+          resolve();
+        });
+        queue.on("error", function (err) {
+          console.error("assets load error", err);
+          resolve();
+        });
+      });
     }
   };
 
   // mark ready
   Game.initialized = false;
-
 })(window.Game);
 
 // -------------------------
@@ -175,6 +192,87 @@ Game.stageWidth = 0;
 Game.stageHeight = 0;
 
 // -------------------------
+// LEGACY GLOBALS (aliases)
+// -------------------------
+var stage,
+  stageWidth,
+  stageHeight,
+  gameOffsetX,
+  gameOffsetY,
+  handOffsetY,
+  handCardOffset,
+  cellWidth,
+  cellHeight,
+  cardOffsetX,
+  cardOffsetY,
+  cardWidth,
+  cardHeight,
+  playerHandOffsetX,
+  playerCards = [],
+  ownedCards,
+  selectedCards,
+  cardsInPlayerHand,
+  playerHand,
+  cardsAboveSelection,
+  playerCardCount,
+  playedPlayerCardCount,
+  totalBlueCards,
+  playerHandCursor,
+  playerHandSelectionCursor,
+  aiHandOffsetX,
+  cardsInAIHand,
+  aiCardsAboveSelection,
+  aiCardCount,
+  aiDelay,
+  totalRedCards,
+  aiHandCursor,
+  squares,
+  square,
+  selectedRow,
+  selectedColumn,
+  selectedSquare,
+  selectedAISquare,
+  squareLeft,
+  squareUp,
+  squareRight,
+  squareDown,
+  gridCursor,
+  selectionBoard,
+  selectionBoardBackground,
+  shownCards,
+  page,
+  pageDisplay,
+  totalPages,
+  displayedCards,
+  displayedCard,
+  displayedCardImage,
+  displayedCardColour,
+  remainingCards,
+  selectedHandCardNumber,
+  selectedHandCard,
+  confirmation,
+  confirmationBackground,
+  confirmationCursor,
+  selectedConfirmationChoice,
+  playerConfirming,
+  infoBox,
+  infoBoxCardName,
+  cardName,
+  cardCount,
+  selectedCardNumber,
+  selectedCard,
+  card,
+  cardImage,
+  previouslySelectedCard,
+  playerSelectingHand,
+  playerChoosingCard,
+  playerSelectingPlacement,
+  alpha,
+  rules,
+  board,
+  freeCells;
+
+// -------------------------
 // CORE: Initialization
 // -------------------------
 function handleTick() {
@@ -182,85 +280,15 @@ function handleTick() {
 }
 
 function init() {
-  // Stage
-  Game.stage = new createjs.Stage("gameArea");
-  createjs.Ticker.setFPS(Game.config.fps);
-  createjs.Ticker.addEventListener("tick", handleTick);
+  initStage();
+  initOffsets();
+  initHandPositions();
+  initCursors();
+  initUIContainers();
+  bindEvents();
+  loadInitialCards();
 
-  stage = Game.stage;
-  stageWidth = stage.canvas.width;
-  stageHeight = stage.canvas.height;
-  Game.stageWidth = stageWidth;
-  Game.stageHeight = stageHeight;
-
-  // Offsets and dimensions
-  Game.offsets.handOffsetY = Game.offsets.gameOffsetY;
-  gameOffsetX = Game.offsets.gameOffsetX;
-  gameOffsetY = Game.offsets.gameOffsetY;
-  handOffsetY = Game.offsets.handOffsetY;
-  handCardOffset = Game.offsets.handCardOffset;
-  cellWidth = Game.offsets.cellWidth;
-  cellHeight = Game.offsets.cellHeight;
-  cardOffsetX = Game.offsets.cardOffsetX;
-  cardOffsetY = Game.offsets.cardOffsetY;
-  cardWidth = cellWidth - cardOffsetX * 2;
-  cardHeight = cellHeight - cardOffsetY * 2;
-
-  // Player & AI hand positions
-  playerHandOffsetX = gameOffsetX + cellWidth * 3 + cardWidth / 4;
-  Game.player.handOffsetX = playerHandOffsetX;
-
-  aiHandOffsetX = gameOffsetX / 2 - cardWidth / 2;
-  Game.ai.handOffsetX = aiHandOffsetX;
-
-  // -------------------------
-  // Cursors
-  // -------------------------
-  Game.player.playerHandCursor = new createjs.Bitmap(
-    Game.config.imagePath + "cursor.png"
-  );
-  Game.player.playerHandSelectionCursor = new createjs.Bitmap(
-    Game.config.imagePath + "cursor.png"
-  );
-  Game.ai.aiHandCursor = new createjs.Bitmap(
-    Game.config.imagePath + "cursor.png"
-  );
-  Game.ui.gridCursor = new createjs.Bitmap(
-    Game.config.imagePath + "cursor.png"
-  );
-
-  playerHandCursor = Game.player.playerHandCursor;
-  playerHandSelectionCursor = Game.player.playerHandSelectionCursor;
-  aiHandCursor = Game.ai.aiHandCursor;
-  gridCursor = Game.ui.gridCursor;
-
-  // -------------------------
-  // UI Containers
-  // -------------------------
-  Game.ui.selectionBoard = new createjs.Container();
-  selectionBoard = Game.ui.selectionBoard;
-
-  Game.ui.shownCards = new createjs.Container();
-  shownCards = Game.ui.shownCards;
-
-  Game.ui.confirmation = new createjs.Container();
-  confirmation = Game.ui.confirmation;
-  Game.ui.confirmationBackground = new createjs.Shape();
-  confirmationBackground = Game.ui.confirmationBackground;
-  Game.ui.confirmationCursor = new createjs.Bitmap(
-    Game.config.imagePath + "cursor.png"
-  );
-  confirmationCursor = Game.ui.confirmationCursor;
-  selectedConfirmationChoice = Game.ui.selectedConfirmationChoice = 0;
-  playerConfirming = Game.ui.playerConfirming = false;
-
-  Game.ui.infoBox = new createjs.Container();
-  infoBox = Game.ui.infoBox;
-  Game.ui.previouslySelectedCard = previouslySelectedCard = [];
-
-  // -------------------------
-  // State aliases (legacy globals)
-  // -------------------------
+  // Legacy global aliases
   playerCards = Game.player.playerCards;
   ownedCards = Game.player.ownedCards;
   selectedCards = Game.player.selectedCards;
@@ -270,12 +298,15 @@ function init() {
   playerCardCount = Game.player.playerCardCount;
   playedPlayerCardCount = Game.player.playedPlayerCardCount;
   totalBlueCards = Game.player.totalBlueCards;
+  playerHandCursor = Game.player.playerHandCursor;
+  playerHandSelectionCursor = Game.player.playerHandSelectionCursor;
 
   cardsInAIHand = Game.ai.cardsInAIHand;
   aiCardsAboveSelection = Game.ai.aiCardsAboveSelection;
   aiCardCount = Game.ai.aiCardCount;
   aiDelay = Game.ai.aiDelay;
   totalRedCards = Game.ai.totalRedCards;
+  aiHandCursor = Game.ai.aiHandCursor;
 
   squares = Game.ui.squares;
   square = Game.ui.square;
@@ -308,34 +339,105 @@ function init() {
   infoBoxCardName = Game.ui.infoBoxCardName;
   previouslySelectedCard = Game.ui.previouslySelectedCard;
 
-  Game.rules = Game.rules || ["elemental"];
   rules = Game.rules;
-
   board = Game.board.boardArray;
   freeCells = Game.board.freeCells;
-
   alpha = Game.alpha;
+}
 
-  // -------------------------
-  // GLOBAL STATE FLAGS
-  // -------------------------
-  window.playerSelectingHand = true;   // true at game start
-  window.playerConfirming = false;
-  window.playerChoosingCard = false;
-  window.playerSelectingPlacement = false;
+function initStage() {
+  Game.stage = new createjs.Stage("gameArea");
+  createjs.Ticker.setFPS(Game.config.fps);
+  createjs.Ticker.addEventListener("tick", handleTick);
 
-  // Key binding
-  document.onkeydown = checkKey;
+  stage = Game.stage;
+  stageWidth = stage.canvas.width;
+  stageHeight = stage.canvas.height;
+  Game.stageWidth = stageWidth;
+  Game.stageHeight = stageHeight;
+}
 
-  // Add initial background and call ajax
+function initOffsets() {
+  // Base offsets
+  gameOffsetX = Game.offsets.gameOffsetX;
+  gameOffsetY = Game.offsets.gameOffsetY;
+  handOffsetY = Game.offsets.handOffsetY;
+  handCardOffset = Game.offsets.handCardOffset;
+  cellWidth = Game.offsets.cellWidth;
+  cellHeight = Game.offsets.cellHeight;
+  cardOffsetX = Game.offsets.cardOffsetX;
+  cardOffsetY = Game.offsets.cardOffsetY;
+
+  // Card size
+  cardWidth = cellWidth - cardOffsetX * 2;
+  cardHeight = cellHeight - cardOffsetY * 2;
+}
+
+function initHandPositions() {
+  playerHandOffsetX = gameOffsetX + cellWidth * 3 + cardWidth / 4;
+  Game.player.handOffsetX = playerHandOffsetX;
+
+  aiHandOffsetX = gameOffsetX / 2 - cardWidth / 2;
+  Game.ai.handOffsetX = aiHandOffsetX;
+}
+
+function initCursors() {
+  Game.player.playerHandCursor = new createjs.Bitmap(
+    Game.config.imagePath + "cursor.png"
+  );
+  Game.player.playerHandSelectionCursor = new createjs.Bitmap(
+    Game.config.imagePath + "cursor.png"
+  );
+  Game.ai.aiHandCursor = new createjs.Bitmap(
+    Game.config.imagePath + "cursor.png"
+  );
+  Game.ui.gridCursor = new createjs.Bitmap(
+    Game.config.imagePath + "cursor.png"
+  );
+
+  playerHandCursor = Game.player.playerHandCursor;
+  playerHandSelectionCursor = Game.player.playerHandSelectionCursor;
+  aiHandCursor = Game.ai.aiHandCursor;
+  gridCursor = Game.ui.gridCursor;
+}
+
+function initUIContainers() {
+  // Main containers
+  Game.ui.selectionBoard = new createjs.Container();
+  Game.ui.shownCards = new createjs.Container();
+  Game.ui.confirmation = new createjs.Container();
+  Game.ui.infoBox = new createjs.Container();
+  Game.ui.previouslySelectedCard = [];
+
+  // Aliases for convenience
+  selectionBoard = Game.ui.selectionBoard;
+  shownCards = Game.ui.shownCards;
+  confirmation = Game.ui.confirmation;
+  confirmationBackground = Game.ui.confirmationBackground =
+    new createjs.Shape();
+  confirmationCursor = Game.ui.confirmationCursor = new createjs.Bitmap(
+    Game.config.imagePath + "cursor.png"
+  );
+  infoBox = Game.ui.infoBox;
+
+  // Confirmation state
+  Game.ui.selectedConfirmationChoice = 0;
+  Game.ui.playerConfirming = false;
+  selectedConfirmationChoice = Game.ui.selectedConfirmationChoice;
+  playerConfirming = Game.ui.playerConfirming;
+}
+
+function bindEvents() {
+  document.addEventListener("keydown", checkKey);
+}
+
+function loadInitialCards() {
   addBackground();
+
   if (typeof ajaxCall === "function") {
     ajaxCall(pickPlayerCards);
-  } else {
-    // Fallback if ajaxCall isn't present (should be in getPlayerCards.js)
-    if (typeof pickPlayerCards === "function") {
-      pickPlayerCards();
-    }
+  } else if (typeof pickPlayerCards === "function") {
+    pickPlayerCards();
   }
 }
 
@@ -351,9 +453,9 @@ function startGame() {
   populatePlayerCards(playerCards);
 
   // Debugging
-  logHands();   // shows initial hands for player and AI
-  logBoard();   // empty board
-  logTurn();    // shows who starts
+  logHands(); // shows initial hands for player and AI
+  logBoard(); // empty board
+  logTurn(); // shows who starts
 
   drawCardCounts();
   drawInfoBox();
