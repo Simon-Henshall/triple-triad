@@ -221,7 +221,7 @@ function movePlayerHandCursor(direction) {
   Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
 
   updateInfoBox();
-  Game.indentSelectedCard();
+  Game.player.indentSelectedCard();
 
   Game.stage.update();
   console.log(`Moved player hand cursor ${direction} -> Card index: ${Game.ui.selectedCardNumber}`);

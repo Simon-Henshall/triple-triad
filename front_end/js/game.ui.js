@@ -2,6 +2,50 @@
 // Rendering / UI
 // -------------------------
 
+Game.ui = {
+  squares: [],
+  selectedRow: 2,
+  selectedColumn: 2,
+  selectedSquare: 5,
+  selectedAISquare: undefined,
+  squareLeft: undefined,
+  squareUp: undefined,
+  squareRight: undefined,
+  squareDown: undefined,
+  gridCursor: null,
+  selectionBoard: null,
+  selectionBoardBackground: undefined,
+  shownCards: null,
+  page: undefined,
+  pageDisplay: undefined,
+  totalPages: undefined,
+  displayedCards: undefined,
+  displayedCard: undefined,
+  displayedCardImage: undefined,
+  displayedCardColour: undefined,
+  remainingCards: undefined,
+  selectedHandCardNumber: undefined,
+  selectedHandCard: undefined,
+  confirmation: null,
+  confirmationBackground: null,
+  confirmationCursor: null,
+  selectedConfirmationChoice: 0,
+  infoBox: null,
+  infoBoxCardName: undefined,
+  cardName: undefined,
+  cardCount: undefined,
+  selectedCardNumber: 0,
+  selectedCard: undefined,
+  card: undefined,
+  cardImage: undefined,
+  previouslySelectedCard: [],
+  playerSelectingHand: false,
+  playerConfirming: false,
+  playerChoosingCard: false,
+  playerSelectingPlacement: false,
+  playerTurn: "red",
+};
+
 // Info box fixed dimensions
 const INFO_BOX_WIDTH = 420;
 const INFO_BOX_HEIGHT = 65;
