@@ -50,7 +50,7 @@ Game.init = {
     );
   },
   events() {
-    document.addEventListener("keydown", checkKey);
+    document.addEventListener("keydown", Game.input.checkKey);
   },
   loadInitialCards() {
     addBackground();
