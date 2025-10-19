@@ -15,8 +15,8 @@
 <script type="text/javascript" src="front_end/js/game.ui.js"></script>
 <script type="text/javascript" src="front_end/js/game.utils.js"></script>
 <script type="text/javascript" src="front_end/js/game.cards.flipping.js"></script>
+<script type="text/javascript" src="front_end/js/game.cards.placement.js"></script>
 
-<script type="text/javascript" src="front_end/js/cardPlacement.js"></script>
 <script type="text/javascript" src="front_end/js/cursors.js"></script>
 <script type="text/javascript" src="front_end/js/keyHandling.js"></script>
 <script type="text/javascript" src="front_end/js/selectionBoardCards.js"></script>
