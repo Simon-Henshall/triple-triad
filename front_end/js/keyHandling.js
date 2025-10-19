@@ -98,7 +98,7 @@ function checkKey(e) {
       moveGridCursor("down");
       // Enter
     } else if (e.keyCode === 13) {
-      if (!cellOccupied()) {
+      if (!Game.board.cellOccupied()) {
         Game.player.cardsInPlayerHand.splice(Game.ui.selectedCardNumber, 1);
         removeGridCursor();
         CardPlacer.placeCard(

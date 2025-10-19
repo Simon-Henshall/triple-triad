@@ -179,11 +179,6 @@ Game.ui = {
 
 Game.rules = ["elemental"];
 
-Game.board = {
-  boardArray: Array(9).fill("Empty"),
-  freeCells: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-};
-
 Game.stage = null;
 Game.stageWidth = 0;
 Game.stageHeight = 0;
@@ -195,93 +190,91 @@ function handleTick() {
   Game.stage.update();
 }
 
-Game.init = function() {
-  initStage();
-  initOffsets();
-  initHandPositions();
-  initCursors();
-  initUIContainers();
-  bindEvents();
-  loadInitialCards();
-}
+Game.init = {
+  stage() {
+    Game.stage = new createjs.Stage("gameArea");
+    createjs.Ticker.setFPS(Game.config.fps);
+    createjs.Ticker.addEventListener("tick", handleTick);
 
-function initStage() {
-  Game.stage = new createjs.Stage("gameArea");
-  createjs.Ticker.setFPS(Game.config.fps);
-  createjs.Ticker.addEventListener("tick", handleTick);
+    Game.stageWidth = Game.stage.canvas.width;
+    Game.stageHeight = Game.stage.canvas.height;
+  },
+  offsets() {
+    // Card size
+    Game.offsets.cardWidth =
+      Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2;
+    Game.offsets.cardHeight =
+      Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2;
+  },
+  handPositions() {
+    Game.player.handOffsetX =
+      Game.offsets.gameOffsetX +
+      Game.offsets.cellWidth * 3 +
+      Game.offsets.cardWidth / 4;
+    Game.ai.handOffsetX =
+      Game.offsets.gameOffsetX / 2 - Game.offsets.cardWidth / 2;
+  },
+  cursors() {
+    Game.player.playerHandCursor = new createjs.Bitmap(
+      Game.config.imagePath + "cursor.png"
+    );
+    Game.player.playerHandSelectionCursor = new createjs.Bitmap(
+      Game.config.imagePath + "cursor.png"
+    );
+    Game.ui.gridCursor = new createjs.Bitmap(
+      Game.config.imagePath + "cursor.png"
+    );
+  },
+  uiContainers() {
+    // Main containers
+    Game.ui.selectionBoard = new createjs.Container();
+    Game.ui.shownCards = new createjs.Container();
+    Game.ui.confirmation = new createjs.Container();
+    Game.ui.infoBox = new createjs.Container();
+    Game.ui.previouslySelectedCard = [];
 
-  Game.stageWidth = Game.stage.canvas.width;
-  Game.stageHeight = Game.stage.canvas.height;
-}
+    Game.ui.confirmationBackground = new createjs.Shape();
+    Game.ui.confirmationCursor = new createjs.Bitmap(
+      Game.config.imagePath + "cursor.png"
+    );
+  },
+  events() {
+    document.addEventListener("keydown", checkKey);
+  },
+  loadInitialCards() {
+    addBackground();
 
-function initOffsets() {
-  // Card size
-  Game.offsets.cardWidth = Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2;
-  Game.offsets.cardHeight = Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2;
-}
-
-function initHandPositions() {
-  Game.player.handOffsetX = Game.offsets.gameOffsetX + Game.offsets.cellWidth * 3 + Game.offsets.cardWidth / 4;
-  Game.ai.handOffsetX = Game.offsets.gameOffsetX / 2 - Game.offsets.cardWidth / 2;
-}
-
-function initCursors() {
-  Game.player.playerHandCursor = new createjs.Bitmap(
-    Game.config.imagePath + "cursor.png"
-  );
-  Game.player.playerHandSelectionCursor = new createjs.Bitmap(
-    Game.config.imagePath + "cursor.png"
-  );
-  Game.ui.gridCursor = new createjs.Bitmap(
-    Game.config.imagePath + "cursor.png"
-  );
-}
-
-function initUIContainers() {
-  // Main containers
-  Game.ui.selectionBoard = new createjs.Container();
-  Game.ui.shownCards = new createjs.Container();
-  Game.ui.confirmation = new createjs.Container();
-  Game.ui.infoBox = new createjs.Container();
-  Game.ui.previouslySelectedCard = [];
-
-  Game.ui.confirmationBackground = new createjs.Shape();
-  Game.ui.confirmationCursor = new createjs.Bitmap(
-    Game.config.imagePath + "cursor.png"
-  );
-
-  // Confirmation state
-  Game.ui.selectedConfirmationChoice = 0;
-}
-
-function bindEvents() {
-  document.addEventListener("keydown", checkKey);
-}
-
-function loadInitialCards() {
-  addBackground();
-
-  if (typeof ajaxCall === "function") {
-    ajaxCall(pickPlayerCards);
-  } else if (typeof pickPlayerCards === "function") {
-    pickPlayerCards();
-  }
-}
+    if (typeof ajaxCall === "function") {
+      Game.utils.ajaxCall(Game.utils.pickPlayerCards);
+    } else if (typeof Game.utils.pickPlayerCards === "function") {
+      Game.utils.pickPlayerCards();
+    }
+  },
+  all() {
+    this.stage();
+    this.offsets();
+    this.handPositions();
+    this.cursors();
+    this.uiContainers();
+    this.events();
+    this.loadInitialCards();
+  },
+};
 
 // Start The Game
-Game.startGame = function() {
-  generateGrid();
+Game.startGame = function () {
+  Game.board.generateGrid();
   populatePlayerCards(Game.player.playerCards);
 
   // Debugging
-  logHands(); // shows initial hands for player and AI
-  logBoard(); // empty board
-  logTurn(); // shows who starts
+  Game.debug.logHands();
+  Game.debug.logBoard();
+  Game.debug.logTurn();
 
   drawCardCounts();
   drawInfoBox();
   placePlayerHandCursor();
-}
+};
 
 // Choose Which Cards To Play With (Currently Random Cards)
 function populatePlayerCards(playerCardsParam) {
@@ -289,7 +282,9 @@ function populatePlayerCards(playerCardsParam) {
   Game.utils.togglePlayerTurn();
 
   // Shuffle and copy hand
-  Game.player.playerHand = Game.utils.shuffle([...playerCardsParam]).slice(0, 5);
+  Game.player.playerHand = Game.utils
+    .shuffle([...playerCardsParam])
+    .slice(0, 5);
 
   for (let i = 0; i < Game.player.playerHand.length; i++) {
     const chosenCard = Game.player.playerHand[i];
@@ -308,8 +303,10 @@ function populatePlayerCards(playerCardsParam) {
     Game.ui.card.addChild(cardColour, Game.ui.cardImage);
 
     // Adjust The Card For The Board
-    Game.ui.card.scaleX = Game.offsets.cardWidth / Game.ui.card.children[0].image.width;
-    Game.ui.card.scaleY = Game.offsets.cardHeight / Game.ui.card.children[0].image.height;
+    Game.ui.card.scaleX =
+      Game.offsets.cardWidth / Game.ui.card.children[0].image.width;
+    Game.ui.card.scaleY =
+      Game.offsets.cardHeight / Game.ui.card.children[0].image.height;
 
     // Assign stats
     Game.ui.card.name = chosenCard.displayName;
@@ -329,7 +326,8 @@ function populatePlayerCards(playerCardsParam) {
   }
 
   // Select The Top Card By Default
-  Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+  Game.ui.selectedCard =
+    Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
   Game.ui.previouslySelectedCard = [];
 
   // Indent The Chosen Card
@@ -341,7 +339,7 @@ function populatePlayerCards(playerCardsParam) {
 }
 
 // Indent The Selected Card
-Game.indentSelectedCard = function() {
+Game.indentSelectedCard = function () {
   if (Game.utils.getPlayerTurn() == "red") {
     if (Game.ui.selectedCard && typeof Game.ui.selectedCard.x !== "undefined") {
       Game.ui.selectedCard.x = Game.ui.selectedCard.x + 30;
@@ -364,13 +362,13 @@ Game.indentSelectedCard = function() {
     }
   }
   Game.stage.update();
-}
+};
 
 // -------------------------
 // END GAME
 // -------------------------
 
-Game.endGame = function() {
+Game.endGame = function () {
   // Calculate The Winner
   if (Game.ai.totalRedCards > Game.player.totalBlueCards) {
     alert("lose");
@@ -382,10 +380,10 @@ Game.endGame = function() {
       Game.startGame();
     }
   }
-}
+};
 
 // -------------------------
 // DOCUMENT READY
 // -------------------------
 
-document.addEventListener("DOMContentLoaded", Game.init);
+document.addEventListener("DOMContentLoaded", () => Game.init.all());

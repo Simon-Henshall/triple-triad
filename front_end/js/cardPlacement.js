@@ -8,7 +8,7 @@ class CardPlacer {
   // Place a card onto the board (triggered when player or AI selects a slot)
   // ======================================================================
   static placeCard(card, placementX, placementY) {
-    checkSelectedSquare();
+    Game.board.checkSelectedSquare();
 
     // Determine the offscreen exit direction based on player turn
     const offscreenX =
@@ -68,10 +68,10 @@ class CardPlacer {
     Game.stage.update();
 
     // Debug
-    logCell(card.inCell); // logs the specific cell
-    logBoard(); // logs the whole board
-    logHands(); // logs remaining cards in hands
-    logTurn(); // logs current turn and totals
+    Game.debug.logCell(card.inCell);
+    Game.debug.logBoard();
+    Game.debug.logHands();
+    Game.debug.logTurn();
 
     // Determine if the game has ended, otherwise swap turn
     if (CardPlacer.isGameOver()) {
@@ -179,7 +179,7 @@ class CardPlacer {
     CardPlacer.swapPlayerTurn();
 
     // Debugging
-    logTurn(); // shows whose turn, card totals, free cells
+    Game.debug.logTurn();
 
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===

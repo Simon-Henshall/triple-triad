@@ -88,9 +88,9 @@ function flipCardOver(card, direction) {
   }
 
   // Debugging
-  logCell(targetCard.inCell);
-  logBoard();
-  logTurn();
+  Game.debug.logCell(targetCard.inCell);
+  Game.debug.logBoard();
+  Game.debug.logTurn();
 }
 
 // =======================================================

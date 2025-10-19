@@ -270,7 +270,7 @@ function moveGridCursor(direction) {
     return;
   }
 
-  checkSelectedSquare();
+  Game.board.checkSelectedSquare();
   Game.stage.update();
 
   console.log(`Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`);

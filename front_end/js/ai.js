@@ -15,7 +15,7 @@ function aiTurn() {
     Game.board.freeCells[
       Math.floor(Math.random() * Game.board.freeCells.length)
     ];
-  checkSelectedRowColumn();
+  Game.board.checkSelectedRowColumn();
 
   // Place The Card
   Game.ai.aiCardsAboveSelection = aiSelectedCardNumber;
