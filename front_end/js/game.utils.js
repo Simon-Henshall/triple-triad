@@ -126,7 +126,7 @@ Game.utils = {
       Game.stage.addChild(Game.ui.selectionBoard);
 
       // place selection cursor and allow user to pick
-      placePlayerHandSelectionCursor();
+      Game.cursors.selection.place();
       Game.ui.playerSelectingHand = true;
     }
   },

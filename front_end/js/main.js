@@ -1,5 +1,6 @@
 var Game = {};
 Game.cards = {};
+Game.cursors = {};
 
 (function (Game) {
   // safe guard: if previously initialized, destroy first
@@ -105,7 +106,7 @@ Game.startGame = function () {
   Game.player.populatePlayerCards(Game.player.playerCards);
   drawCardCounts();
   drawInfoBox();
-  placePlayerHandCursor();
+  Game.cursors.playerHand.place();
 };
 
 Game.endGame = function () {

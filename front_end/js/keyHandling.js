@@ -8,16 +8,16 @@ function checkKey(e) {
   if (Game.ui.playerSelectingHand) {
     // Left
     if (e.keyCode === 37) {
-      movePlayerHandSelectionCursor("left");
+      Game.cursors.selection.move("left");
       // Up
     } else if (e.keyCode === 38) {
-      movePlayerHandSelectionCursor("up");
+      Game.cursors.selection.move("up");
       // Right
     } else if (e.keyCode === 39) {
-      movePlayerHandSelectionCursor("right");
+      Game.cursors.selection.move("right");
       // Down
     } else if (e.keyCode === 40) {
-      movePlayerHandSelectionCursor("down");
+      Game.cursors.selection.move("down");
       // Enter
     } else if (e.keyCode === 13) {
       // Enter
@@ -41,15 +41,15 @@ function checkKey(e) {
   } else if (Game.ui.playerConfirming) {
     // Up
     if (e.keyCode === 38) {
-      moveConfirmationCursor("up");
+      Game.cursors.confirmation.move("up");
       // Down
     } else if (e.keyCode === 40) {
-      moveConfirmationCursor("down");
+      Game.cursors.confirmation.move("down");
       // Enter
     } else if (e.keyCode === 13 && Game.ui.selectedConfirmationChoice == 0) {
       Game.stage.removeChild(Game.ui.selectionBoard);
       Game.stage.removeChild(Game.ui.confirmation);
-      removeConfirmationCursor();
+      Game.cursors.confirmation.remove();
       Game.startGame();
       // Backspace, Esc, And 'No'
     } else if (
@@ -63,21 +63,21 @@ function checkKey(e) {
         Game.player.playerCards.pop();
       }
       Game.stage.removeChild(Game.ui.confirmation);
-      moveConfirmationCursor("up");
-      removeConfirmationCursor();
+      Game.cursors.confirmation.move("up");
+      Game.cursors.confirmation.remove();
       Game.ui.playerSelectingHand = true;
     }
   } else if (Game.ui.playerChoosingCard) {
     // Up
     if (e.keyCode === 38) {
-      movePlayerHandCursor("up");
+      Game.cursors.playerHand.move("up");
       // Down
     } else if (e.keyCode === 40) {
-      movePlayerHandCursor("down");
+      Game.cursors.playerHand.move("down");
       // Enter
     } else if (e.keyCode === 13) {
-      removePlayerHandCursor();
-      placeGridCursor();
+      Game.cursors.playerHand.remove();
+      Game.cursors.grid.place();
       Game.ui.selectedRow = 2;
       Game.ui.selectedColumn = 2;
       Game.stage.removeChild(Game.player.playerHandCursor);
@@ -86,21 +86,21 @@ function checkKey(e) {
     Game.ui.infoBox.visible = false;
     // Left
     if (e.keyCode === 37) {
-      moveGridCursor("left");
+      Game.cursors.grid.move("left");
       // Up
     } else if (e.keyCode === 38) {
-      moveGridCursor("up");
+      Game.cursors.grid.move("up");
       // Right
     } else if (e.keyCode === 39) {
-      moveGridCursor("right");
+      Game.cursors.grid.move("right");
       // Down
     } else if (e.keyCode === 40) {
-      moveGridCursor("down");
+      Game.cursors.grid.move("down");
       // Enter
     } else if (e.keyCode === 13) {
       if (!Game.board.cellOccupied()) {
         Game.player.cardsInPlayerHand.splice(Game.ui.selectedCardNumber, 1);
-        removeGridCursor();
+        Game.cursors.grid.remove();
         Game.cards.placement.placeCard(
           Game.ui.selectedCard,
           Game.offsets.gameOffsetX + Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) + Game.offsets.cardOffsetX,
@@ -109,8 +109,8 @@ function checkKey(e) {
       }
       // Backspace And Esc
     } else if (e.keyCode === 27 || e.keyCode === 8) {
-      removeGridCursor();
-      placePlayerHandCursor();
+      Game.cursors.grid.remove();
+      Game.cursors.playerHand.place();
     }
   }
 }

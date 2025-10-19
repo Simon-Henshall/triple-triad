@@ -63,7 +63,7 @@ function displayConfirmationBox() {
   );
 
   Game.stage.addChild(Game.ui.confirmation);
-  placeConfirmationCursor();
+  Game.cursors.confirmation.place();
   Game.stage.update();
 }
 
