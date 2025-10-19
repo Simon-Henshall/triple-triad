@@ -101,7 +101,7 @@ function checkKey(e) {
       if (!Game.board.cellOccupied()) {
         Game.player.cardsInPlayerHand.splice(Game.ui.selectedCardNumber, 1);
         removeGridCursor();
-        CardPlacer.placeCard(
+        Game.cards.placement.placeCard(
           Game.ui.selectedCard,
           Game.offsets.gameOffsetX + Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) + Game.offsets.cardOffsetX,
           Game.offsets.gameOffsetY + Game.offsets.cellHeight * (Game.ui.selectedRow - 1) + Game.offsets.cardOffsetY

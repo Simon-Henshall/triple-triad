@@ -1,4 +1,6 @@
-window.Game = window.Game || {};
+var Game = {};
+Game.cards = {};
+
 (function (Game) {
   // safe guard: if previously initialized, destroy first
   if (Game.initialized && typeof Game.destroy === "function") {

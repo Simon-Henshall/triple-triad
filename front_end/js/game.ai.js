@@ -31,7 +31,7 @@ function aiTurn() {
   Game.ai.aiCardsAboveSelection = aiSelectedCardNumber;
   Game.ai.cardsInAIHand.splice(aiSelectedCardNumber, 1);
   setTimeout(function () {
-    CardPlacer.placeCard(
+    Game.cards.placement.placeCard(
       aiSelectedCard,
       Game.offsets.gameOffsetX +
         Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) +
@@ -117,8 +117,8 @@ function populateAICards() {
 
   // Handle the "open" rule flip all AI hand behaviour
   if (Game.rules && Game.rules.indexOf("open") != -1) {
-    if (typeof window.flipAIHand === "function") {
-      flipAIHand();
+    if (typeof Game.cards.flipping.flipAIHand === "function") {
+      Game.cards.flipping.flipAIHand();
     }
   }
 }
