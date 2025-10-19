@@ -24,7 +24,7 @@ function checkKey(e) {
       if (Game.ui.displayedCards[Game.ui.selectedHandCardNumber].count > 0) {
         Game.ui.displayedCards[Game.ui.selectedHandCardNumber].count--;
         Game.player.playerCards.push(Game.ui.selectedHandCard);
-        updateHandCards();
+        Game.player.cardManagerInstance.updateHandCards();
       }
       if (Game.player.playerCards.length === 5) {
         Game.ui.playerSelectingHand = false;
@@ -34,7 +34,7 @@ function checkKey(e) {
       // Esc / Backspace
       if (Game.player.playerCards.length > 0) {
         Game.player.playerCards[Game.player.playerCards.length - 1].count++;
-        updateHandCards();
+        Game.player.cardManagerInstance.updateHandCards();
         Game.player.playerCards.pop();
       }
     }
@@ -59,7 +59,7 @@ function checkKey(e) {
     ) {
       for (let i = 0; i < 5; i++) {
         Game.player.playerCards[Game.player.playerCards.length - 1].count++;
-        updateHandCards();
+        Game.player.cardManagerInstance.updateHandCards();
         Game.player.playerCards.pop();
       }
       Game.stage.removeChild(Game.ui.confirmation);

@@ -23,7 +23,7 @@ function moveSelectionCursor(direction) {
     Game.player.playerHandSelectionCursor.y -= 35;
     Game.ui.selectedHandCardNumber -= 1;
     Game.ui.selectedHandCard = Game.player.ownedCards[Game.ui.selectedHandCardNumber];
-    this.updateDisplayedCard();
+    Game.player.cardManagerInstance.updateDisplayedCard();
   } else if (
     direction == "down" &&
     ((Game.ui.page != totalPages && Game.ui.selectedHandCardNumber % 11 != 10) ||
@@ -32,20 +32,20 @@ function moveSelectionCursor(direction) {
     Game.player.playerHandSelectionCursor.y += 35;
     Game.ui.selectedHandCardNumber += 1;
     Game.ui.selectedHandCard = Game.player.ownedCards[Game.ui.selectedHandCardNumber];
-    this.updateDisplayedCard();
+    Game.player.cardManagerInstance.updateDisplayedCard();
   } else if (direction == "left" && Game.ui.page != 1) {
     Game.ui.page--;
     Game.ui.selectedHandCardNumber -= 11;
     Game.ui.selectedHandCard = Game.player.ownedCards[Game.ui.selectedHandCardNumber];
-    this.updateHandCards();
-    this.updateDisplayedCard();
+    Game.player.cardManagerInstance.updateHandCards();
+    Game.player.cardManagerInstance.updateDisplayedCard();
   } else if (direction == "right" && Game.ui.page != Game.ui.totalPages - 1) {
     if (Game.ui.page != totalPages) {
       Game.ui.page++;
       Game.ui.selectedHandCardNumber += 11;
       Game.ui.selectedHandCard = Game.player.ownedCards[Game.ui.selectedHandCardNumber];
-      this.updateHandCards();
-      this.updateDisplayedCard();
+      Game.player.cardManagerInstance.updateHandCards();
+      Game.player.cardManagerInstance.updateDisplayedCard();
     }
   } else if (direction == "right" && Game.ui.page == Game.ui.totalPages - 1) {
     Game.ui.page++;
@@ -61,8 +61,8 @@ function moveSelectionCursor(direction) {
       Game.ui.selectedHandCardNumber += 11;
       Game.ui.selectedHandCard = Game.player.ownedCards[Game.ui.selectedHandCardNumber];
     }
-    this.updateHandCards();
-    this.updateDisplayedCard();
+    Game.player.cardManagerInstance.updateHandCards();
+    Game.player.cardManagerInstance.updateDisplayedCard();
   }
 
   Game.stage.update();
@@ -88,7 +88,7 @@ function movePlayerHandSelectionCursor(direction) {
     Game.player.playerHandSelectionCursor.y -= 35;
     Game.ui.selectedHandCardNumber -= 1;
     Game.ui.selectedHandCard = Game.player.ownedCards[Game.ui.selectedHandCardNumber];
-    updateDisplayedCard();
+    Game.player.cardManagerInstance.updateDisplayedCard();
     moved = true;
   } else if (
     direction == "down" &&
@@ -98,21 +98,21 @@ function movePlayerHandSelectionCursor(direction) {
     Game.player.playerHandSelectionCursor.y += 35;
     Game.ui.selectedHandCardNumber += 1;
     Game.ui.selectedHandCard = Game.player.ownedCards[Game.ui.selectedHandCardNumber];
-    updateDisplayedCard();
+    Game.player.cardManagerInstance.updateDisplayedCard();
     moved = true;
   } else if (direction == "left" && Game.ui.page != 1) {
     Game.ui.page--;
     Game.ui.selectedHandCardNumber -= 11;
     Game.ui.selectedHandCard = Game.player.ownedCards[Game.ui.selectedHandCardNumber];
-    updateHandCards();
-    updateDisplayedCard();
+    Game.player.cardManagerInstance.updateHandCards();
+    Game.player.cardManagerInstance.updateDisplayedCard();
     moved = true;
   } else if (direction == "right" && Game.ui.page != Game.ui.totalPages - 1) {
     Game.ui.page++;
     Game.ui.selectedHandCardNumber += 11;
     Game.ui.selectedHandCard = Game.player.ownedCards[Game.ui.selectedHandCardNumber];
-    updateHandCards();
-    updateDisplayedCard();
+    Game.player.cardManagerInstance.updateHandCards();
+    Game.player.cardManagerInstance.updateDisplayedCard();
     moved = true;
   }
 
