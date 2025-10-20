@@ -53,7 +53,7 @@ Game.init = {
     document.addEventListener("keydown", Game.input.checkKey);
   },
   loadInitialCards() {
-    addBackground();
+    Game.ui.addBackground();
 
     if (typeof ajaxCall === "function") {
       Game.utils.ajaxCall(Game.utils.pickPlayerCards);

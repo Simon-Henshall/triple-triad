@@ -177,7 +177,7 @@ Game.cursors.playerHand = {
     Game.ui.selectedCard =
       Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
 
-    updateInfoBox();
+    Game.ui.updateInfoBox();
     Game.player.indentSelectedCard();
 
     Game.stage.update();
