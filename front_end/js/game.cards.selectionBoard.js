@@ -1,102 +1,172 @@
-// -----------------------------
-// populateSelectionBoardCards - draw the selectable owned cards
-// -----------------------------
-function populateSelectionBoardCards() {
-  // Determine paging and which cards to display
-  Game.ui.selectionBoard.totalPages = Math.floor(Game.player.ownedCards.length / 11) + 1;
-  Game.ui.selectionBoard.remainingCards = Object.keys(Game.player.ownedCards).length % 11;
-  Game.ui.selectionBoard.displayedCards = $.extend({}, Game.player.ownedCards);
-  var offset = (Game.ui.selectionBoard.page - 1) * 11;
+// ------------------------------------
+// game.cards.selectionBoard.js
+// Handles population, pagination, and display of the deck selection screen
+// ------------------------------------
 
-  // Determine Game.ui.selectionBoard.displayedCards length exactly like original
-  if (Game.player.ownedCards.length >= 11) {
-    if (Game.ui.selectionBoard.page != Game.ui.selectionBoard.totalPages) {
-      Game.ui.selectionBoard.displayedCards.length = 11;
-    } else if (Game.ui.selectionBoard.page == Game.ui.selectionBoard.totalPages) {
-      // Safeguard for having a count perfectly divisble by 11
-      if (Game.ui.selectionBoard.remainingCards == 0) {
-        Game.ui.selectionBoard.remainingCards = 11;
+Game.cards = Game.cards || {};
+
+Game.cards.selectionBoard = {
+  /**
+   * Build and display the selectable owned cards on the board.
+   */
+  populate() {
+    const ui = Game.ui.selectionBoard;
+    const owned = Game.player.ownedCards;
+
+    // Determine pagination info
+    ui.totalPages = Math.ceil(owned.length / 11);
+    ui.remainingCards = owned.length % 11;
+    ui.displayedCards = $.extend({}, owned);
+
+    const offset = (ui.page - 1) * 11;
+
+    // Determine how many cards to show on this page
+    if (owned.length >= 11) {
+      if (ui.page !== ui.totalPages) {
+        ui.displayedCards.length = 11;
+      } else {
+        if (ui.remainingCards === 0) ui.remainingCards = 11;
+        ui.displayedCards.length = ui.remainingCards;
       }
-      Game.ui.selectionBoard.displayedCards.length = Game.ui.selectionBoard.remainingCards;
-    }
-  } else {
-    Game.ui.selectionBoard.displayedCards.length = Object.keys(Game.player.ownedCards).length;
-  }
-
-  // Draw the data entries onto Game.ui.selectionBoard.shownCards (createjs.Text and bitmaps)
-  var j = 0;
-  for (var i = offset; i < offset + Game.ui.selectionBoard.displayedCards.length; i++) {
-    Game.ui.cardName = new createjs.Text(
-      Game.ui.selectionBoard.displayedCards[i].displayName,
-      "26px Arial",
-      "#ffffff"
-    );
-    Game.ui.cardName.x = Game.ui.selectionBoard.background.x + 50;
-    Game.ui.cardName.y = Game.ui.selectionBoard.background.y + 35 * j + 60;
-    Game.ui.cardName.textBaseline = "alphabetic";
-
-    Game.ui.cardCount = new createjs.Text(
-      Game.ui.selectionBoard.displayedCards[i].count,
-      "26px Arial",
-      "#ffffff"
-    );
-    Game.ui.cardCount.x = Game.ui.selectionBoard.background.x + 380;
-    Game.ui.cardCount.y = Game.ui.selectionBoard.background.y + 35 * j + 60;
-    Game.ui.cardCount.textBaseline = "alphabetic";
-
-    // Guard THAT BREAKS THE UI
-    //Game.ui.selectionBoard.shownCards = Game.ui.selectionBoard.shownCards || new createjs.Container();
-    //Game.ui.selectionBoard.shownCards.removeAllChildren(); // Clear previous entries
-
-    Game.ui.selectionBoard.shownCards.addChild(Game.ui.cardName, Game.ui.cardCount);
-
-    // Small image icon for the row
-    var selectionBoardCardImage = new createjs.Bitmap(
-      "front_end/images/selection_card.png"
-    );
-    selectionBoardCardImage.x = Game.ui.selectionBoard.background.x + 15;
-    selectionBoardCardImage.y = Game.ui.selectionBoard.background.y + 35 * j + 35;
-
-    // Protect scale calculation if image not loaded yet
-    if (selectionBoardCardImage.image && selectionBoardCardImage.image.width) {
-      selectionBoardCardImage.scaleX = 30 / selectionBoardCardImage.image.width;
-      selectionBoardCardImage.scaleY =
-        30 / selectionBoardCardImage.image.height;
+    } else {
+      ui.displayedCards.length = owned.length;
     }
 
-    Game.ui.selectionBoard.shownCards.addChild(selectionBoardCardImage);
-    j++;
-  }
+    // --- Clear previous entries before redrawing ---
+    if (ui.shownCards) {
+      ui.shownCards.removeAllChildren();
+    } else {
+      ui.shownCards = new createjs.Container();
+    }
 
-  Game.ui.selectionBoard.container.addChild(Game.ui.selectionBoard.shownCards);
+    // --- Draw each card entry ---
+    for (
+      let j = 0, i = offset;
+      i < offset + ui.displayedCards.length;
+      i++, j++
+    ) {
+      const cardData = ui.displayedCards[i];
+      if (!cardData) continue;
 
-  // Select the top card by default
-  Game.ui.selectionBoard.selectedHandCardNumber = 0;
-  Game.ui.selectionBoard.selectedHandCard = Game.player.ownedCards[Game.ui.selectionBoard.selectedHandCardNumber] || null;
+      // Card name
+      const cardName = new createjs.Text(
+        cardData.displayName,
+        "26px Arial",
+        "#ffffff"
+      );
+      cardName.x = ui.background.x + 50;
+      cardName.y = ui.background.y + 35 * j + 60;
+      cardName.textBaseline = "alphabetic";
 
-  // Draw the displayed card on the right of the selection board
-  Game.ui.selectionBoard.displayedCardImage = new createjs.Bitmap(
-    Game.ui.selectionBoard.selectedHandCard ? Game.config.cardPath + Game.ui.selectionBoard.selectedHandCard.image + ".png" : ""
-  );
-  Game.ui.selectionBoard.displayedCardColour = new createjs.Bitmap(Game.config.cardPath + "blue.png");
-  Game.ui.selectionBoard.displayedCard = new createjs.Container();
-  Game.ui.selectionBoard.displayedCard.addChild(Game.ui.selectionBoard.displayedCardColour, Game.ui.selectionBoard.displayedCardImage);
-  Game.ui.selectionBoard.displayedCard.x = Game.ui.selectionBoard.background.x + 440;
-  Game.ui.selectionBoard.displayedCard.y = Game.ui.selectionBoard.background.y + 200;
+      // Card count
+      const cardCount = new createjs.Text(
+        cardData.count,
+        "26px Arial",
+        "#ffffff"
+      );
+      cardCount.x = ui.background.x + 380;
+      cardCount.y = ui.background.y + 35 * j + 60;
+      cardCount.textBaseline = "alphabetic";
 
-  // Scale accordingly (guard for missing image size)
-  if (
-    Game.ui.selectionBoard.displayedCard.children[0] &&
-    Game.ui.selectionBoard.displayedCard.children[0].image &&
-    Game.ui.selectionBoard.displayedCard.children[0].image.width
-  ) {
-    Game.ui.selectionBoard.displayedCard.scaleX =
-      (Game.offsets.cardWidth || Game.offsets.cellWidth - (Game.offsets.cardOffsetX || 3) * 2) /
-      Game.ui.selectionBoard.displayedCard.children[0].image.width;
-    Game.ui.selectionBoard.displayedCard.scaleY =
-      (Game.offsets.cardHeight || Game.offsets.cellHeight - (wGame.offsets.cardOffsetY || 3) * 2) /
-      Game.ui.selectionBoard.displayedCard.children[0].image.height;
-  }
+      // Card image icon (small thumbnail)
+      const icon = new createjs.Bitmap("front_end/images/selection_card.png");
+      icon.x = ui.background.x + 15;
+      icon.y = ui.background.y + 35 * j + 35;
 
-  Game.ui.selectionBoard.container.addChild(Game.ui.selectionBoard.displayedCard);
-}
+      // Safe scaling for icon
+      if (icon.image && icon.image.width) {
+        const scale = 30 / icon.image.width;
+        icon.scaleX = scale;
+        icon.scaleY = scale;
+      }
+
+      ui.shownCards.addChild(cardName, cardCount, icon);
+    }
+
+    // Attach updated card list to container
+    ui.container.addChild(ui.shownCards);
+
+    // --- Default selection ---
+    ui.selectedHandCardNumber = 0;
+    ui.selectedHandCard = owned[ui.selectedHandCardNumber] || null;
+
+    // --- Draw displayed card preview ---
+    this.updateDisplay();
+
+    Game.stage.update();
+  },
+
+  /**
+   * Update the large preview card on the right-hand side.
+   */
+  updateDisplay() {
+    const ui = Game.ui.selectionBoard;
+    const selectedCard = ui.selectedHandCard;
+
+    // Clear previous preview
+    if (ui.displayedCard) ui.container.removeChild(ui.displayedCard);
+
+    // Build new preview
+    const cardImagePath = selectedCard
+      ? Game.config.cardPath + selectedCard.image + ".png"
+      : "";
+    const cardColourPath = Game.config.cardPath + "blue.png";
+
+    ui.displayedCardImage = new createjs.Bitmap(cardImagePath);
+    ui.displayedCardColour = new createjs.Bitmap(cardColourPath);
+    ui.displayedCard = new createjs.Container();
+    ui.displayedCard.addChild(ui.displayedCardColour, ui.displayedCardImage);
+    ui.displayedCard.x = ui.background.x + 440;
+    ui.displayedCard.y = ui.background.y + 200;
+
+    // Scale safely
+    const baseImage = ui.displayedCard.children[0]?.image;
+    if (baseImage && baseImage.width) {
+      const targetW =
+        Game.offsets.cardWidth ||
+        Game.offsets.cellWidth - (Game.offsets.cardOffsetX || 3) * 2;
+      const targetH =
+        Game.offsets.cardHeight ||
+        Game.offsets.cellHeight - (Game.offsets.cardOffsetY || 3) * 2;
+
+      ui.displayedCard.scaleX = targetW / baseImage.width;
+      ui.displayedCard.scaleY = targetH / baseImage.height;
+    }
+
+    ui.container.addChild(ui.displayedCard);
+  },
+
+  /**
+   * Switch between pages of cards.
+   * @param {"left"|"right"} direction
+   */
+  paginate(direction) {
+    const sb = Game.ui.selectionBoard;
+
+    if (direction === "left" && sb.page > 1) {
+      sb.page--;
+    } else if (direction === "right" && sb.page < sb.totalPages) {
+      sb.page++;
+    } else {
+      return; // nothing to do
+    }
+
+    // Reset the selected card to the top of the new page
+    sb.selectedHandCardNumber = (sb.page - 1) * 11;
+    sb.selectedHandCard =
+      Game.player.ownedCards[sb.selectedHandCardNumber] || null;
+
+    // Update the displayed cards
+    Game.cards.selectionBoard.populate();
+
+    // Update the page number text
+    if (sb.pageDisplay) {
+      sb.pageDisplay.text = sb.page;
+    }
+
+    // Optionally, also move the hand cursor to the top row
+    Game.player.playerHandSelectionCursor.y = sb.background.y + 48;
+
+    Game.stage.update();
+  },
+};

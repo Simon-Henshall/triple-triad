@@ -117,7 +117,7 @@ Game.utils = {
       populateAICards();
 
       // Add selection board cards
-      populateSelectionBoardCards();
+      Game.cards.selectionBoard.populate();
 
       // Add container to stage and set up selection cursor
       if (Game.ui.selectionBoard.container.parent) {

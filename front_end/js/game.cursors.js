@@ -11,7 +11,9 @@ Game.cursors.selection = {
     Game.player.playerHandSelectionCursor.y =
       Game.ui.selectionBoard.background.y + 48;
 
-    Game.ui.selectionBoard.container.addChild(Game.player.playerHandSelectionCursor);
+    Game.ui.selectionBoard.container.addChild(
+      Game.player.playerHandSelectionCursor
+    );
     Game.stage.update();
 
     console.log(
@@ -23,50 +25,38 @@ Game.cursors.selection = {
    */
   move(direction) {
     let moved = false;
+    const sb = Game.ui.selectionBoard;
 
-    if (direction == "up" && Game.ui.selectionBoard.selectedHandCardNumber % 11 != 0) {
+    // Move within the current page
+    if (direction === "up" && sb.selectedHandCardNumber % 11 !== 0) {
       Game.player.playerHandSelectionCursor.y -= 35;
-      Game.ui.selectionBoard.selectedHandCardNumber -= 1;
-      Game.ui.selectionBoard.selectedHandCard =
-        Game.player.ownedCards[Game.ui.selectionBoard.selectedHandCardNumber];
-      Game.player.cardManagerInstance.updateDisplayedCard();
+      sb.selectedHandCardNumber -= 1;
       moved = true;
     } else if (
-      direction == "down" &&
-      ((Game.ui.selectionBoard.page != Game.ui.selectionBoard.totalPages &&
-        Game.ui.selectionBoard.selectedHandCardNumber % 11 != 10) ||
-        (Game.ui.selectionBoard.page == Game.ui.selectionBoard.totalPages &&
-          Game.ui.selectionBoard.selectedHandCardNumber % 11 < Game.ui.selectionBoard.remainingCards - 1))
+      direction === "down" &&
+      sb.selectedHandCardNumber % 11 <
+        (sb.page === sb.totalPages ? sb.remainingCards : 11) - 1
     ) {
       Game.player.playerHandSelectionCursor.y += 35;
-      Game.ui.selectionBoard.selectedHandCardNumber += 1;
-      Game.ui.selectionBoard.selectedHandCard =
-        Game.player.ownedCards[Game.ui.selectionBoard.selectedHandCardNumber];
-      Game.player.cardManagerInstance.updateDisplayedCard();
+      sb.selectedHandCardNumber += 1;
       moved = true;
-    } else if (direction == "left" && Game.ui.selectionBoard.page != 1) {
-      Game.ui.selectionBoard.page--;
-      Game.ui.selectionBoard.selectedHandCardNumber -= 11;
-      Game.ui.selectionBoard.selectedHandCard =
-        Game.player.ownedCards[Game.ui.selectionBoard.selectedHandCardNumber];
-      Game.player.cardManagerInstance.updateHandCards();
-      Game.player.cardManagerInstance.updateDisplayedCard();
+    }
+    // Move pages
+    else if (direction === "left" && sb.page > 1) {
+      Game.cards.selectionBoard.paginate("left");
       moved = true;
-    } else if (direction == "right" && Game.ui.selectionBoard.page != Game.ui.selectionBoard.totalPages - 1) {
-      Game.ui.selectionBoard.page++;
-      Game.ui.selectionBoard.selectedHandCardNumber += 11;
-      Game.ui.selectionBoard.selectedHandCard =
-        Game.player.ownedCards[Game.ui.selectionBoard.selectedHandCardNumber];
-      Game.player.cardManagerInstance.updateHandCards();
-      Game.player.cardManagerInstance.updateDisplayedCard();
+    } else if (direction === "right" && sb.page < sb.totalPages) {
+      Game.cards.selectionBoard.paginate("right");
       moved = true;
     }
 
-    Game.stage.update();
-
+    // Update selected card after movement
     if (moved) {
+      sb.selectedHandCard = Game.player.ownedCards[sb.selectedHandCardNumber];
+      Game.player.cardManagerInstance.updateDisplayedCard();
+      Game.stage.update();
       console.log(
-        `Moved hand selection cursor ${direction} -> Card index: ${Game.ui.selectionBoard.selectedHandCardNumber}`
+        `Moved hand selection cursor ${direction} -> Card index: ${sb.selectedHandCardNumber}, page: ${sb.page}`
       );
     } else {
       console.warn(
