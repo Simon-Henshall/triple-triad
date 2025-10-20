@@ -53,10 +53,10 @@ Game.input = {
 
     // Enter key
     if (e.key === "Enter") {
-      const card = Game.ui.displayedCards[Game.ui.selectedHandCardNumber];
+      const card = Game.ui.selectionBoard.displayedCards[Game.ui.selectionBoard.selectedHandCardNumber];
       if (card.count > 0) {
         card.count--;
-        Game.player.playerCards.push(Game.ui.selectedHandCard);
+        Game.player.playerCards.push(Game.ui.selectionBoard.selectedHandCard);
         Game.player.cardManagerInstance.updateHandCards();
       }
       if (Game.player.playerCards.length === 5) {
@@ -82,21 +82,21 @@ Game.input = {
       down: () => Game.cursors.confirmation.move("down"),
     });
 
-    if (e.key === "Enter" && Game.ui.selectedConfirmationChoice === 0) {
-      Game.stage.removeChild(Game.ui.selectionBoard);
-      Game.stage.removeChild(Game.ui.confirmation);
+    if (e.key === "Enter" && Game.ui.confirmation.selectedChoice === 0) {
+      Game.stage.removeChild(Game.ui.selectionBoard.container);
+      Game.stage.removeChild(Game.ui.confirmation.container);
       Game.cursors.confirmation.remove();
       Game.startGame();
     } else if (
       this._isCancelKey(e.key) ||
-      (e.key === "Enter" && Game.ui.selectedConfirmationChoice === 1)
+      (e.key === "Enter" && Game.ui.confirmation.selectedChoice === 1)
     ) {
       for (let i = 0; i < 5; i++) {
         const lastCard = Game.player.playerCards.pop();
         lastCard.count++;
         Game.player.cardManagerInstance.updateHandCards();
       }
-      Game.stage.removeChild(Game.ui.confirmation);
+      Game.stage.removeChild(Game.ui.confirmation.container);
       Game.cursors.confirmation.remove();
       Game.ui.playerSelectingHand = true;
     }
@@ -120,7 +120,7 @@ Game.input = {
 
   /** @private */
   _handlePlacement(e) {
-    Game.ui.infoBox.visible = false;
+    Game.ui.infoBox.container.visible = false;
 
     Game.input._handleArrowKeys(e.key, {
       left: () => Game.cursors.grid.move("left"),

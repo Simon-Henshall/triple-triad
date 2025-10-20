@@ -130,21 +130,21 @@ Game.player.CardManager = class {
    * Update the hand cards shown on the selection board.
    */
   updateHandCards() {
-    const offset = (Game.ui.page - 1) * 11;
+    const offset = (Game.ui.selectionBoard.page - 1) * 11;
 
     if (Game.player.ownedCards.length >= 11) {
-      if (Game.ui.page !== Game.ui.totalPages) {
-        Game.ui.displayedCards.length = 11;
+      if (Game.ui.selectionBoard.page !== Game.ui.selectionBoard.totalPages) {
+        Game.ui.selectionBoard.displayedCards.length = 11;
       } else {
-        Game.ui.displayedCards.length = Game.ui.remainingCards;
+        Game.ui.selectionBoard.displayedCards.length = Game.ui.selectionBoard.remainingCards;
       }
     } else {
-      Game.ui.displayedCards.length = Object.keys(Game.player.ownedCards).length;
+      Game.ui.selectionBoard.displayedCards.length = Object.keys(Game.player.ownedCards).length;
     }
 
     // Update card colors
-    if (Game.ui.displayedCards[Game.ui.selectedHandCardNumber].count === 0) {
-      Game.ui.displayedCards[Game.ui.selectedHandCardNumber].colour = "#909497";
+    if (Game.ui.selectionBoard.displayedCards[Game.ui.selectionBoard.selectedHandCardNumber].count === 0) {
+      Game.ui.selectionBoard.displayedCards[Game.ui.selectionBoard.selectedHandCardNumber].colour = "#909497";
     }
 
     if (Game.player.playerCards.length > 0) {
@@ -159,19 +159,19 @@ Game.player.CardManager = class {
     let k = 1;
     let l = 2;
 
-    for (let i = 0; i < Game.ui.displayedCards.length; i++) {
-      if (Game.ui.shownCards.children[j]) {
-        Game.ui.shownCards.children[j].text = Game.player.ownedCards[i + offset].displayName;
-        Game.ui.shownCards.children[j].color = Game.player.ownedCards[i + offset].colour;
-        Game.ui.shownCards.children[j].visible = true;
+    for (let i = 0; i < Game.ui.selectionBoard.displayedCards.length; i++) {
+      if (Game.ui.selectionBoard.shownCards.children[j]) {
+        Game.ui.selectionBoard.shownCards.children[j].text = Game.player.ownedCards[i + offset].displayName;
+        Game.ui.selectionBoard.shownCards.children[j].color = Game.player.ownedCards[i + offset].colour;
+        Game.ui.selectionBoard.shownCards.children[j].visible = true;
       }
-      if (Game.ui.shownCards.children[k]) {
-        Game.ui.shownCards.children[k].text = Game.player.ownedCards[i + offset].count;
-        Game.ui.shownCards.children[k].color = Game.player.ownedCards[i + offset].colour;
-        Game.ui.shownCards.children[k].visible = true;
+      if (Game.ui.selectionBoard.shownCards.children[k]) {
+        Game.ui.selectionBoard.shownCards.children[k].text = Game.player.ownedCards[i + offset].count;
+        Game.ui.selectionBoard.shownCards.children[k].color = Game.player.ownedCards[i + offset].colour;
+        Game.ui.selectionBoard.shownCards.children[k].visible = true;
       }
-      if (Game.ui.shownCards.children[l]) {
-        Game.ui.shownCards.children[l].visible = true;
+      if (Game.ui.selectionBoard.shownCards.children[l]) {
+        Game.ui.selectionBoard.shownCards.children[l].visible = true;
       }
       j += 3;
       k += 3;
@@ -179,23 +179,23 @@ Game.player.CardManager = class {
     }
 
     // Hide excess lines
-    for (let m = Game.ui.displayedCards.length * 3; m < 31; m++) {
-      if (Game.ui.shownCards.children[j]) {
-        Game.ui.shownCards.children[j].text = "";
+    for (let m = Game.ui.selectionBoard.displayedCards.length * 3; m < 31; m++) {
+      if (Game.ui.selectionBoard.shownCards.children[j]) {
+        Game.ui.selectionBoard.shownCards.children[j].text = "";
       }
-      if (Game.ui.shownCards.children[k]) {
-        Game.ui.shownCards.children[k].text = "";
+      if (Game.ui.selectionBoard.shownCards.children[k]) {
+        Game.ui.selectionBoard.shownCards.children[k].text = "";
       }
-      if (Game.ui.shownCards.children[l]) {
-        Game.ui.shownCards.children[l].visible = false;
+      if (Game.ui.selectionBoard.shownCards.children[l]) {
+        Game.ui.selectionBoard.shownCards.children[l].visible = false;
       }
       j++;
       k++;
       l++;
     }
 
-    if (Game.ui.pageDisplay) {
-      Game.ui.pageDisplay.text = Game.ui.page;
+    if (Game.ui.selectionBoard.pageDisplay) {
+      Game.ui.selectionBoard.pageDisplay.text = Game.ui.selectionBoard.page;
     }
   }
 
@@ -203,22 +203,22 @@ Game.player.CardManager = class {
    * Update the preview image for the currently selected card.
    */
   updateDisplayedCard() {
-    if (!Game.ui.displayedCard) {
+    if (!Game.ui.selectionBoard.displayedCard) {
       return;
     }
 
-    Game.ui.displayedCard.y = 700;
+    Game.ui.selectionBoard.displayedCard.y = 700;
 
-    if (Game.ui.displayedCard.children && Game.ui.displayedCard.children[1] &&
-        Game.ui.displayedCard.children[1].image && Game.ui.selectedHandCard) {
-      Game.ui.displayedCard.children[1].image.src =
-        Game.config.cardPath + Game.ui.selectedHandCard.image + ".png";
+    if (Game.ui.selectionBoard.displayedCard.children && Game.ui.selectionBoard.displayedCard.children[1] &&
+        Game.ui.selectionBoard.displayedCard.children[1].image && Game.ui.selectionBoard.selectedHandCard) {
+      Game.ui.selectionBoard.displayedCard.children[1].image.src =
+        Game.config.cardPath + Game.ui.selectionBoard.selectedHandCard.image + ".png";
     }
 
-    createjs.Tween.get(Game.ui.displayedCard).to(
+    createjs.Tween.get(Game.ui.selectionBoard.displayedCard).to(
       {
-        x: Game.ui.displayedCard.x,
-        y: Game.ui.selectionBoardBackground.y + 200
+        x: Game.ui.selectionBoard.displayedCard.x,
+        y: Game.ui.selectionBoard.background.y + 200
       },
       100
     );

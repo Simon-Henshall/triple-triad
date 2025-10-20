@@ -168,8 +168,8 @@ Game.cards.placement = class CardPlacer {
       Game.stage.addChild(Game.player.playerHandCursor);
       Game.ui.selectedCard.x -= 30;
 
-      Game.stage.setChildIndex(Game.ui.infoBox, Game.stage.getNumChildren() - 1);
-      Game.ui.infoBox.visible = true;
+      Game.stage.setChildIndex(Game.ui.infoBox.container, Game.stage.getNumChildren() - 1);
+      Game.ui.infoBox.container.visible = true;
       Game.ui.playerChoosingCard = true;
     } else if (Game.utils.getPlayerTurn() === "red") {
       aiTurn();

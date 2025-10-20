@@ -13,11 +13,10 @@
 <script type="text/javascript" src="front_end/js/game.debug.js"></script>
 <script type="text/javascript" src="front_end/js/game.ai.js"></script>
 <script type="text/javascript" src="front_end/js/game.ui.js"></script>
+<script type="text/javascript" src="front_end/js/game.ui.confirmation.js"></script>
 <script type="text/javascript" src="front_end/js/game.utils.js"></script>
 <script type="text/javascript" src="front_end/js/game.cards.flipping.js"></script>
 <script type="text/javascript" src="front_end/js/game.cards.placement.js"></script>
+<script type="text/javascript" src="front_end/js/game.cards.selectionBoard.js"></script>
 <script type="text/javascript" src="front_end/js/game.cursors.js"></script>
 <script type="text/javascript" src="front_end/js/game.input.js"></script>
-
-<script type="text/javascript" src="front_end/js/selectionBoardCards.js"></script>
-<script type="text/javascript" src="front_end/js/cardSelectionConfirmation.js"></script>

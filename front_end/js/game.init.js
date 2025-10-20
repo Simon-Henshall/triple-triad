@@ -38,14 +38,14 @@ Game.init = {
   },
   uiContainers() {
     // Main containers
-    Game.ui.selectionBoard = new createjs.Container();
-    Game.ui.shownCards = new createjs.Container();
-    Game.ui.confirmation = new createjs.Container();
-    Game.ui.infoBox = new createjs.Container();
+    Game.ui.selectionBoard.container = new createjs.Container();
+    Game.ui.selectionBoard.shownCards = new createjs.Container();
+    Game.ui.confirmation.container = new createjs.Container();
+    Game.ui.infoBox.container = new createjs.Container();
     Game.ui.previouslySelectedCard = [];
 
-    Game.ui.confirmationBackground = new createjs.Shape();
-    Game.ui.confirmationCursor = new createjs.Bitmap(
+    Game.ui.confirmation.background = new createjs.Shape();
+    Game.ui.confirmation.cursor = new createjs.Bitmap(
       Game.config.imagePath + "cursor.png"
     );
   },

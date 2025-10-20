@@ -13,25 +13,31 @@ Game.ui = {
   squareRight: undefined,
   squareDown: undefined,
   gridCursor: null,
-  selectionBoard: null,
-  selectionBoardBackground: undefined,
-  shownCards: null,
-  page: undefined,
-  pageDisplay: undefined,
-  totalPages: undefined,
-  displayedCards: undefined,
-  displayedCard: undefined,
-  displayedCardImage: undefined,
-  displayedCardColour: undefined,
-  remainingCards: undefined,
-  selectedHandCardNumber: undefined,
-  selectedHandCard: undefined,
-  confirmation: null,
-  confirmationBackground: null,
-  confirmationCursor: null,
-  selectedConfirmationChoice: 0,
-  infoBox: null,
-  infoBoxCardName: undefined,
+  selectionBoard: {
+    container: null,
+    background: null,
+    shownCards: null,
+    page: 1,
+    pageDisplay: null,
+    totalPages: undefined,
+    remainingCards: undefined,
+    displayedCards: undefined,
+    displayedCard: null,
+    displayedCardImage: null,
+    displayedCardColour: null,
+    selectedHandCardNumber: 0,
+    selectedHandCard: null,
+  },
+  confirmation: {
+    container: null,
+    background: null,
+    cursor: null,
+    selectedChoice: 0,
+  },
+  infoBox: {
+    container: null,
+    cardName: null,
+  },
   cardName: undefined,
   cardCount: undefined,
   selectedCardNumber: 0,
@@ -93,10 +99,10 @@ function drawCardCounts() {
 // Draw The Info Box
 // -------------------------
 function drawInfoBox() {
-  if (!Game.ui.infoBox) {
-    Game.ui.infoBox = new createjs.Container();
+  if (!Game.ui.infoBox.container) {
+    Game.ui.infoBox.container = new createjs.Container();
   } else {
-    Game.ui.infoBox.removeAllChildren();
+    Game.ui.infoBox.container.removeAllChildren();
   }
 
   // Background
@@ -115,39 +121,39 @@ function drawInfoBox() {
     INFO_BOX_HEIGHT
   );
 
-  Game.ui.infoBox.addChild(infoBoxBackground);
+  Game.ui.infoBox.container.addChild(infoBoxBackground);
 
   // "INFO." label
   const infoBoxText = new createjs.Text("INFO.", "18px Arial", "#ffffff");
   infoBoxText.x = infoBoxBackground.x + 10;
   infoBoxText.y = infoBoxBackground.y + 15;
   infoBoxText.textBaseline = "alphabetic";
-  Game.ui.infoBox.addChild(infoBoxText);
+  Game.ui.infoBox.container.addChild(infoBoxText);
 
   // Card name text
-  if (!Game.ui.infoBoxCardName) {
-    Game.ui.infoBoxCardName = new createjs.Text(
+  if (!Game.ui.infoBox.cardName) {
+    Game.ui.infoBox.cardName = new createjs.Text(
       Game.ui.selectedCard?.name || "",
       "30px Arial",
       "#ffffff"
     );
-    Game.ui.infoBoxCardName.textBaseline = "alphabetic";
+    Game.ui.infoBox.cardName.textBaseline = "alphabetic";
   }
-  Game.ui.infoBoxCardName.text = Game.ui.selectedCard?.name || "";
+  Game.ui.infoBox.cardName.text = Game.ui.selectedCard?.name || "";
 
   // Center card name inside the info box (horizontal and vertical)
   const verticalOffset = 30 / 2 + 10; // half of font size + 10px downward nudge
-  Game.ui.infoBoxCardName.x =
-    INFO_BOX_X + INFO_BOX_WIDTH / 2 - Game.ui.infoBoxCardName.getMeasuredWidth() / 2;
-  Game.ui.infoBoxCardName.y =
+  Game.ui.infoBox.cardName.x =
+    INFO_BOX_X + INFO_BOX_WIDTH / 2 - Game.ui.infoBox.cardName.getMeasuredWidth() / 2;
+  Game.ui.infoBox.cardName.y =
     INFO_BOX_Y +
     INFO_BOX_HEIGHT / 2 -
-    Game.ui.infoBoxCardName.getMeasuredHeight() / 2 +
+    Game.ui.infoBox.cardName.getMeasuredHeight() / 2 +
     verticalOffset;
 
-  Game.ui.infoBox.addChild(Game.ui.infoBoxCardName);
+  Game.ui.infoBox.container.addChild(Game.ui.infoBox.cardName);
 
-  Game.stage.addChild(Game.ui.infoBox);
+  Game.stage.addChild(Game.ui.infoBox.container);
   Game.stage.update();
 }
 
@@ -155,15 +161,15 @@ function drawInfoBox() {
 // Update The Info Box
 // -------------------------
 function updateInfoBox() {
-  if (Game.ui.infoBoxCardName && Game.ui.selectedCard) {
-    Game.ui.infoBoxCardName.text = Game.ui.selectedCard.name;
+  if (Game.ui.infoBox.cardName && Game.ui.selectedCard) {
+    Game.ui.infoBox.cardName.text = Game.ui.selectedCard.name;
     const verticalOffset = 30 / 2 + 10; // half of font size + 10px downward nudge
-    Game.ui.infoBoxCardName.x =
-      INFO_BOX_X + INFO_BOX_WIDTH / 2 - Game.ui.infoBoxCardName.getMeasuredWidth() / 2;
-    Game.ui.infoBoxCardName.y =
+    Game.ui.infoBox.cardName.x =
+      INFO_BOX_X + INFO_BOX_WIDTH / 2 - Game.ui.infoBox.cardName.getMeasuredWidth() / 2;
+    Game.ui.infoBox.cardName.y =
       INFO_BOX_Y +
       INFO_BOX_HEIGHT / 2 -
-      Game.ui.infoBoxCardName.getMeasuredHeight() / 2 +
+      Game.ui.infoBox.cardName.getMeasuredHeight() / 2 +
       verticalOffset;
   }
 

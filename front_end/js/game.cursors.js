@@ -7,11 +7,11 @@ Game.cursors.selection = {
    */
   place() {
     Game.player.playerHandSelectionCursor.x =
-      Game.ui.selectionBoardBackground.x - 40;
+      Game.ui.selectionBoard.background.x - 40;
     Game.player.playerHandSelectionCursor.y =
-      Game.ui.selectionBoardBackground.y + 48;
+      Game.ui.selectionBoard.background.y + 48;
 
-    Game.ui.selectionBoard.addChild(Game.player.playerHandSelectionCursor);
+    Game.ui.selectionBoard.container.addChild(Game.player.playerHandSelectionCursor);
     Game.stage.update();
 
     console.log(
@@ -24,39 +24,39 @@ Game.cursors.selection = {
   move(direction) {
     let moved = false;
 
-    if (direction == "up" && Game.ui.selectedHandCardNumber % 11 != 0) {
+    if (direction == "up" && Game.ui.selectionBoard.selectedHandCardNumber % 11 != 0) {
       Game.player.playerHandSelectionCursor.y -= 35;
-      Game.ui.selectedHandCardNumber -= 1;
-      Game.ui.selectedHandCard =
-        Game.player.ownedCards[Game.ui.selectedHandCardNumber];
+      Game.ui.selectionBoard.selectedHandCardNumber -= 1;
+      Game.ui.selectionBoard.selectedHandCard =
+        Game.player.ownedCards[Game.ui.selectionBoard.selectedHandCardNumber];
       Game.player.cardManagerInstance.updateDisplayedCard();
       moved = true;
     } else if (
       direction == "down" &&
-      ((Game.ui.page != Game.ui.totalPages &&
-        Game.ui.selectedHandCardNumber % 11 != 10) ||
-        (Game.ui.page == Game.ui.totalPages &&
-          Game.ui.selectedHandCardNumber % 11 < Game.ui.remainingCards - 1))
+      ((Game.ui.selectionBoard.page != Game.ui.selectionBoard.totalPages &&
+        Game.ui.selectionBoard.selectedHandCardNumber % 11 != 10) ||
+        (Game.ui.selectionBoard.page == Game.ui.selectionBoard.totalPages &&
+          Game.ui.selectionBoard.selectedHandCardNumber % 11 < Game.ui.selectionBoard.remainingCards - 1))
     ) {
       Game.player.playerHandSelectionCursor.y += 35;
-      Game.ui.selectedHandCardNumber += 1;
-      Game.ui.selectedHandCard =
-        Game.player.ownedCards[Game.ui.selectedHandCardNumber];
+      Game.ui.selectionBoard.selectedHandCardNumber += 1;
+      Game.ui.selectionBoard.selectedHandCard =
+        Game.player.ownedCards[Game.ui.selectionBoard.selectedHandCardNumber];
       Game.player.cardManagerInstance.updateDisplayedCard();
       moved = true;
-    } else if (direction == "left" && Game.ui.page != 1) {
-      Game.ui.page--;
-      Game.ui.selectedHandCardNumber -= 11;
-      Game.ui.selectedHandCard =
-        Game.player.ownedCards[Game.ui.selectedHandCardNumber];
+    } else if (direction == "left" && Game.ui.selectionBoard.page != 1) {
+      Game.ui.selectionBoard.page--;
+      Game.ui.selectionBoard.selectedHandCardNumber -= 11;
+      Game.ui.selectionBoard.selectedHandCard =
+        Game.player.ownedCards[Game.ui.selectionBoard.selectedHandCardNumber];
       Game.player.cardManagerInstance.updateHandCards();
       Game.player.cardManagerInstance.updateDisplayedCard();
       moved = true;
-    } else if (direction == "right" && Game.ui.page != Game.ui.totalPages - 1) {
-      Game.ui.page++;
-      Game.ui.selectedHandCardNumber += 11;
-      Game.ui.selectedHandCard =
-        Game.player.ownedCards[Game.ui.selectedHandCardNumber];
+    } else if (direction == "right" && Game.ui.selectionBoard.page != Game.ui.selectionBoard.totalPages - 1) {
+      Game.ui.selectionBoard.page++;
+      Game.ui.selectionBoard.selectedHandCardNumber += 11;
+      Game.ui.selectionBoard.selectedHandCard =
+        Game.player.ownedCards[Game.ui.selectionBoard.selectedHandCardNumber];
       Game.player.cardManagerInstance.updateHandCards();
       Game.player.cardManagerInstance.updateDisplayedCard();
       moved = true;
@@ -66,7 +66,7 @@ Game.cursors.selection = {
 
     if (moved) {
       console.log(
-        `Moved hand selection cursor ${direction} -> Card index: ${Game.ui.selectedHandCardNumber}`
+        `Moved hand selection cursor ${direction} -> Card index: ${Game.ui.selectionBoard.selectedHandCardNumber}`
       );
     } else {
       console.warn(
@@ -93,38 +93,47 @@ Game.cursors.confirmation = {
    * Place the confirmation cursor at the default position
    */
   place() {
-    Game.ui.confirmationCursor.x = Game.ui.confirmationBackground.x + 50;
-    Game.ui.confirmationCursor.y = Game.ui.confirmationBackground.y + 60;
+    Game.ui.confirmation.cursor.x = Game.ui.confirmation.background.x + 50;
+    Game.ui.confirmation.cursor.y = Game.ui.confirmation.background.y + 60;
 
-    Game.stage.addChild(Game.ui.confirmationCursor);
+    Game.stage.addChild(Game.ui.confirmation.cursor);
     Game.stage.update();
 
     console.log(
-      `Confirmation cursor placed at X:${Game.ui.confirmationCursor.x}, Y:${Game.ui.confirmationCursor.y}`
+      `Confirmation cursor placed at X:${Game.ui.confirmation.cursor.x}, Y:${Game.ui.confirmation.cursor.y}`
     );
   },
   /**
    * Move the confirmation cursor up/down between Yes/No
    */
   move(direction) {
-    if (direction == "up" && Game.ui.selectedConfirmationChoice != 0) {
-      Game.ui.confirmationCursor.y -= 30;
-      Game.ui.selectedConfirmationChoice -= 1;
-    } else if (direction == "down" && Game.ui.selectedConfirmationChoice != 1) {
-      Game.ui.confirmationCursor.y += 30;
-      Game.ui.selectedConfirmationChoice += 1;
+    if (direction === "up" && Game.ui.confirmation.selectedChoice > 0) {
+      Game.ui.confirmation.cursor.y -= 30;
+      Game.ui.confirmation.selectedChoice -= 1;
+    } else if (
+      direction === "down" &&
+      Game.ui.confirmation.selectedChoice < 1
+    ) {
+      Game.ui.confirmation.cursor.y += 30;
+      Game.ui.confirmation.selectedChoice += 1;
     }
+
+    // Ensure the selectedChoice never goes out of bounds
+    Game.ui.confirmation.selectedChoice = Math.max(
+      0,
+      Math.min(1, Game.ui.confirmation.selectedChoice)
+    );
 
     Game.stage.update();
     console.log(
-      `Confirmation cursor moved ${direction} -> Choice index: ${Game.ui.selectedConfirmationChoice}`
+      `Confirmation cursor moved ${direction} -> Choice index: ${Game.ui.confirmation.selectedChoice}`
     );
   },
   /**
    * Remove the confirmation cursor
    */
   remove() {
-    Game.stage.removeChild(Game.ui.confirmationCursor);
+    Game.stage.removeChild(Game.ui.confirmation.cursor);
     Game.stage.update();
 
     console.log("Confirmation cursor removed");
