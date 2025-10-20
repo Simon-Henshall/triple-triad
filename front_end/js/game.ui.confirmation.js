@@ -1,78 +1,71 @@
-// -----------------------------
-// displayConfirmationBox - UI for "Are you sure?" dialog
-// -----------------------------
-function displayConfirmationBox() {
-  Game.ui.playerConfirming = true;
+Game.ui.confirmationBox = {
+  /**
+   * Display the "Are you sure?" confirmation dialog
+   */
+  show() {
+    const conf = Game.ui.confirmation;
+    Game.ui.playerConfirming = true;
 
-  // Reset to the default selection (in the event of cancellation then reconfirmation)
-  Game.ui.confirmation.selectedChoice = 0;
-  Game.ui.confirmation.cursor.y = Game.ui.confirmation.background.y + 60;
+    // Reset to default selection
+    conf.selectedChoice = 0;
+    conf.cursor.y = conf.background.y + 60;
 
-  // Background rectangle
-  Game.ui.confirmation.background.width = 300;
-  Game.ui.confirmation.background.height = 120;
-  Game.ui.confirmation.background.graphics
-    .beginFill("#666666")
-    .drawRect(
-      0,
-      0,
-      Game.ui.confirmation.background.width,
-      Game.ui.confirmation.background.height
-    );
-  Game.ui.confirmation.background.x = 380;
-  Game.ui.confirmation.background.y = 285;
+    // Background rectangle
+    conf.background.width = 300;
+    conf.background.height = 120;
+    conf.background.graphics
+      .beginFill("#666666")
+      .drawRect(0, 0, conf.background.width, conf.background.height);
+    conf.background.x = 380;
+    conf.background.y = 285;
 
-  // Border (black)
-  var confirmationBorder = new createjs.Shape();
-  confirmationBorder.width = Game.ui.confirmation.background.width + 2;
-  confirmationBorder.height = Game.ui.confirmation.background.height + 2;
-  confirmationBorder.graphics
-    .beginFill("#000000")
-    .drawRect(0, 0, confirmationBorder.width, confirmationBorder.height);
-  confirmationBorder.x = Game.ui.confirmation.background.x - 1;
-  confirmationBorder.y = Game.ui.confirmation.background.y - 1;
+    // Border
+    const border = new createjs.Shape();
+    border.width = conf.background.width + 2;
+    border.height = conf.background.height + 2;
+    border.graphics
+      .beginFill("#000000")
+      .drawRect(0, 0, border.width, border.height);
+    border.x = conf.background.x - 1;
+    border.y = conf.background.y - 1;
 
-  // Text elements
-  var confirmationChoice = new createjs.Text("CHOICE", "18px Arial", "#ffffff");
-  confirmationChoice.x = Game.ui.confirmation.background.x + 10;
-  confirmationChoice.y = Game.ui.confirmation.background.y + 15;
-  confirmationChoice.textBaseline = "alphabetic";
+    // Text elements
+    const choiceLabel = new createjs.Text("CHOICE", "18px Arial", "#ffffff");
+    choiceLabel.x = conf.background.x + 10;
+    choiceLabel.y = conf.background.y + 15;
+    choiceLabel.textBaseline = "alphabetic";
 
-  var confirmationSure = new createjs.Text(
-    "Are you sure?",
-    "28px Arial",
-    "#ffffff"
-  );
-  confirmationSure.x = Game.ui.confirmation.background.x + 60;
-  confirmationSure.y = Game.ui.confirmation.background.y + 40;
-  confirmationSure.textBaseline = "alphabetic";
+    const question = new createjs.Text("Are you sure?", "28px Arial", "#ffffff");
+    question.x = conf.background.x + 60;
+    question.y = conf.background.y + 40;
+    question.textBaseline = "alphabetic";
 
-  var confirmationYes = new createjs.Text("Yes", "28px Arial", "#ffffff");
-  confirmationYes.x = Game.ui.confirmation.background.x + 120;
-  confirmationYes.y = Game.ui.confirmation.background.y + 75;
-  confirmationYes.textBaseline = "alphabetic";
+    const yesText = new createjs.Text("Yes", "28px Arial", "#ffffff");
+    yesText.x = conf.background.x + 120;
+    yesText.y = conf.background.y + 75;
+    yesText.textBaseline = "alphabetic";
 
-  var confirmationNo = new createjs.Text("No", "28px Arial", "#ffffff");
-  confirmationNo.x = Game.ui.confirmation.background.x + 120;
-  confirmationNo.y = Game.ui.confirmation.background.y + 105;
-  confirmationNo.textBaseline = "alphabetic";
+    const noText = new createjs.Text("No", "28px Arial", "#ffffff");
+    noText.x = conf.background.x + 120;
+    noText.y = conf.background.y + 105;
+    noText.textBaseline = "alphabetic";
 
-  Game.ui.confirmation.container.addChild(
-    confirmationBorder,
-    Game.ui.confirmation.background,
-    confirmationChoice,
-    confirmationSure,
-    confirmationYes,
-    confirmationNo
-  );
+    // Clear previous children just in case
+    conf.container.removeAllChildren();
 
-  Game.stage.addChild(Game.ui.confirmation.container);
-  Game.cursors.confirmation.place();
-  Game.stage.update();
-}
+    conf.container.addChild(border, conf.background, choiceLabel, question, yesText, noText);
 
-function hideConfirmationBox() {
-  Game.ui.playerConfirming = false;
-  Game.stage.removeChild(Game.ui.confirmation.container);
-  Game.ui.playerSelectingHand = true;
-}
+    Game.stage.addChild(conf.container);
+    Game.cursors.confirmation.place();
+    Game.stage.update();
+  },
+
+  /**
+   * Hide the confirmation dialog
+   */
+  hide() {
+    Game.ui.playerConfirming = false;
+    Game.stage.removeChild(Game.ui.confirmation.container);
+    Game.ui.playerSelectingHand = true;
+  },
+};

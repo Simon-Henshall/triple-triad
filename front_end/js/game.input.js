@@ -61,7 +61,7 @@ Game.input = {
       }
       if (Game.player.playerCards.length === 5) {
         Game.ui.playerSelectingHand = false;
-        displayConfirmationBox();
+        Game.ui.confirmationBox.show();
       }
     }
 
