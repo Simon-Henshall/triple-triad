@@ -172,7 +172,7 @@ Game.cards.placement = class CardPlacer {
       Game.ui.infoBox.container.visible = true;
       Game.ui.playerChoosingCard = true;
     } else if (Game.utils.getPlayerTurn() === "red") {
-      aiTurn();
+      Game.ai.turn();
     }
   }
 

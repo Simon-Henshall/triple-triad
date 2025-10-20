@@ -1,4 +1,3 @@
-
 Game.ai = {
   handOffsetX: 0,
   cardsInAIHand: [],
@@ -6,42 +5,41 @@ Game.ai = {
   aiCardCount: 0,
   aiDelay: 1000,
   totalRedCards: 5,
+
+  // -------------------------
+  // AI TURN
+  // -------------------------
+  turn() {
+    // Pick A Card To Play (Currently Random)
+    var aiSelectedCard =
+      Game.ai.cardsInAIHand[
+        Math.floor(Math.random() * Game.ai.cardsInAIHand.length)
+      ];
+    var aiSelectedCardNumber = Game.ai.cardsInAIHand.indexOf(aiSelectedCard);
+
+    // Pick A Cell To Play In (Currently Random)
+    Game.ui.selectedAISquare =
+      Game.board.freeCells[
+        Math.floor(Math.random() * Game.board.freeCells.length)
+      ];
+    Game.board.checkSelectedRowColumn();
+
+    // Place The Card
+    Game.ai.aiCardsAboveSelection = aiSelectedCardNumber;
+    Game.ai.cardsInAIHand.splice(aiSelectedCardNumber, 1);
+    setTimeout(function () {
+      Game.cards.placement.placeCard(
+        aiSelectedCard,
+        Game.offsets.gameOffsetX +
+          Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) +
+          Game.offsets.cardOffsetX,
+        Game.offsets.gameOffsetY +
+          Game.offsets.cellHeight * (Game.ui.selectedRow - 1) +
+          Game.offsets.cardOffsetY
+      );
+    }, Game.ai.aiDelay);
+  },
 };
-
-// -------------------------
-// AI TURN
-// -------------------------
-
-function aiTurn() {
-  // Pick A Card To Play (Currently Random)
-  var aiSelectedCard =
-    Game.ai.cardsInAIHand[
-      Math.floor(Math.random() * Game.ai.cardsInAIHand.length)
-    ];
-  var aiSelectedCardNumber = Game.ai.cardsInAIHand.indexOf(aiSelectedCard);
-
-  // Pick A Cell To Play In (Currently Random)
-  Game.ui.selectedAISquare =
-    Game.board.freeCells[
-      Math.floor(Math.random() * Game.board.freeCells.length)
-    ];
-  Game.board.checkSelectedRowColumn();
-
-  // Place The Card
-  Game.ai.aiCardsAboveSelection = aiSelectedCardNumber;
-  Game.ai.cardsInAIHand.splice(aiSelectedCardNumber, 1);
-  setTimeout(function () {
-    Game.cards.placement.placeCard(
-      aiSelectedCard,
-      Game.offsets.gameOffsetX +
-        Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) +
-        Game.offsets.cardOffsetX,
-      Game.offsets.gameOffsetY +
-        Game.offsets.cellHeight * (Game.ui.selectedRow - 1) +
-        Game.offsets.cardOffsetY
-    );
-  }, Game.ai.aiDelay);
-}
 
 Game.cards = Game.cards || {};
 
@@ -73,8 +71,11 @@ Game.cards.aiHand = {
     Game.ai.cardsInAIHand = [];
 
     hand.forEach((chosenCard, i) => {
-      const targetW = offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
-      const targetH = offsets.cardHeight || offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
+      const targetW =
+        offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
+      const targetH =
+        offsets.cardHeight ||
+        offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
 
       const cardImage = this._createScaledBitmap(
         Game.config.cardPath + "back.png",
@@ -93,7 +94,8 @@ Game.cards.aiHand = {
       cardContainer.addChild(cardColour, cardImage);
 
       // Card properties
-      cardContainer.frontImage = Game.config.cardPath + chosenCard.image + ".png";
+      cardContainer.frontImage =
+        Game.config.cardPath + chosenCard.image + ".png";
       cardContainer.backImage = Game.config.cardPath + "back.png";
       cardContainer.name = chosenCard.displayName;
       cardContainer.strengthUp = chosenCard.strengthUp;
@@ -106,7 +108,8 @@ Game.cards.aiHand = {
 
       // Position in AI hand
       cardContainer.x = Game.ai.handOffsetX || offsets.gameOffsetX / 2 || 100;
-      cardContainer.y = (offsets.handOffsetY || 50) + i * (offsets.handCardOffset || 95);
+      cardContainer.y =
+        (offsets.handOffsetY || 50) + i * (offsets.handCardOffset || 95);
 
       // Add to AI hand and stage
       Game.ai.cardsInAIHand.push(cardContainer);
@@ -118,7 +121,11 @@ Game.cards.aiHand = {
     Game.ui.previouslySelectedCard = [];
 
     // Flip AI hand if "open" rule applies
-    if (Game.rules && Game.rules.indexOf("open") !== -1 && Game.cards.flipping.flipAIHand) {
+    if (
+      Game.rules &&
+      Game.rules.indexOf("open") !== -1 &&
+      Game.cards.flipping.flipAIHand
+    ) {
       Game.cards.flipping.flipAIHand();
     }
 
