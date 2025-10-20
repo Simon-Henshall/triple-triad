@@ -227,3 +227,92 @@ Game.player.CardManager = class {
 
 // Create single instance of card manager
 Game.player.cardManagerInstance = new Game.player.CardManager();
+
+Game.cards = Game.cards || {};
+
+Game.cards.playerHand = {
+  /**
+   * Helper: create a bitmap and scale once loaded.
+   */
+  _createScaledBitmap(src, targetW, targetH, onReady) {
+    const bmp = new createjs.Bitmap(src);
+    const applyScale = () => {
+      bmp.scaleX = targetW / bmp.image.width;
+      bmp.scaleY = targetH / bmp.image.height;
+      if (onReady) onReady(bmp);
+    };
+    if (!bmp.image.complete) {
+      bmp.image.onload = applyScale;
+    } else {
+      applyScale();
+    }
+    return bmp;
+  },
+
+  /**
+   * Populate the player's hand with cards.
+   * @param {Array<Object>} playerCardsParam - Array of player-owned cards.
+   */
+  populate(playerCardsParam) {
+    // Toggle player turn
+    Game.utils.togglePlayerTurn();
+
+    // Random hand of up to 5 cards
+    const hand = Game.utils.shuffle([...playerCardsParam]).slice(0, 5);
+    Game.player.cardsInPlayerHand = [];
+
+    hand.forEach((chosenCard, i) => {
+      const offsets = Game.offsets;
+      const targetW = offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
+      const targetH = offsets.cardHeight || offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
+
+      // Card images
+      const cardImage = this._createScaledBitmap(
+        `${Game.config.cardPath}${chosenCard.image}.png`,
+        targetW,
+        targetH,
+        () => Game.stage.update()
+      );
+      const cardColour = this._createScaledBitmap(
+        `${Game.config.cardPath}${Game.utils.getPlayerTurn()}.png`,
+        targetW,
+        targetH,
+        () => Game.stage.update()
+      );
+
+      // Card container
+      const cardContainer = new createjs.Container();
+      cardContainer.addChild(cardColour, cardImage);
+
+      // Card stats
+      cardContainer.name = chosenCard.displayName;
+      cardContainer.strengthUp = chosenCard.strengthUp;
+      cardContainer.strengthRight = chosenCard.strengthRight;
+      cardContainer.strengthDown = chosenCard.strengthDown;
+      cardContainer.strengthLeft = chosenCard.strengthLeft;
+      cardContainer.element = chosenCard.element;
+      cardContainer.owner = Game.utils.getPlayerTurn();
+      cardContainer.background = Game.utils.getPlayerTurn();
+
+      // Position in hand
+      cardContainer.x = Game.player.handOffsetX;
+      cardContainer.y = offsets.handOffsetY + i * (offsets.handCardOffset || 95);
+
+      Game.player.cardsInPlayerHand.push(cardContainer);
+      Game.stage.addChild(cardContainer);
+    });
+
+    // Default selection
+    Game.ui.selectedCard = Game.player.cardsInPlayerHand[0];
+    Game.ui.previouslySelectedCard = [];
+
+    // Indent chosen card
+    Game.player.indentSelectedCard();
+
+    // Ready for player to choose
+    Game.ui.playerConfirming = false;
+    Game.ui.playerChoosingCard = true;
+
+    Game.stage.update();
+  },
+};

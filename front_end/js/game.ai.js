@@ -43,82 +43,85 @@ function aiTurn() {
   }, Game.ai.aiDelay);
 }
 
-// -----------------------------
-// populateAICards
-// -----------------------------
-function populateAICards() {
-  // Setup AI hand
-  var aiHand = Game.utils.shuffle((window.cards || []).slice());
-  aiHand = aiHand.slice(0, 5); // 5 cards for AI
+Game.cards = Game.cards || {};
 
-  for (var i = 0; i < aiHand.length; i++) {
-    var chosen_card = aiHand[i];
+Game.cards.aiHand = {
+  /**
+   * Helper: create a bitmap and scale after it's loaded.
+   */
+  _createScaledBitmap(src, targetW, targetH, onReady) {
+    const bmp = new createjs.Bitmap(src);
+    const applyScale = () => {
+      bmp.scaleX = targetW / bmp.image.width;
+      bmp.scaleY = targetH / bmp.image.height;
+      if (onReady) onReady(bmp);
+    };
+    if (!bmp.image.complete) {
+      bmp.image.onload = applyScale;
+    } else {
+      applyScale();
+    }
+    return bmp;
+  },
 
-    // Default to a face-down card image
-    Game.ui.cardImage = new createjs.Bitmap(Game.config.cardPath + "back.png");
+  /**
+   * Populate the AI hand.
+   */
+  populate() {
+    const offsets = Game.offsets;
+    const hand = Game.utils.shuffle((window.cards || []).slice()).slice(0, 5); // 5 AI cards
+    Game.ai.cardsInAIHand = [];
 
-    // Card background colour (owner) - AI cards should be red
-    var cardColour = new createjs.Bitmap(Game.config.cardPath + "red.png");
+    hand.forEach((chosenCard, i) => {
+      const targetW = offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
+      const targetH = offsets.cardHeight || offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
 
-    // Card container
-    Game.ui.card = new createjs.Container();
-    Game.ui.card.addChild(cardColour, Game.ui.cardImage);
+      const cardImage = this._createScaledBitmap(
+        Game.config.cardPath + "back.png",
+        targetW,
+        targetH,
+        () => Game.stage.update()
+      );
+      const cardColour = this._createScaledBitmap(
+        Game.config.cardPath + "red.png",
+        targetW,
+        targetH,
+        () => Game.stage.update()
+      );
 
-    // Safely compute scale (fall back to 1 if images not loaded)
-    var baseWidth =
-      Game.ui.card.children[0] &&
-      Game.ui.card.children[0].image &&
-      Game.ui.card.children[0].image.width
-        ? Game.ui.card.children[0].image.width
-        : Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2 || 100;
-    var baseHeight =
-      Game.ui.card.children[0] &&
-      Game.ui.card.children[0].image &&
-      Game.ui.card.children[0].image.height
-        ? Game.ui.card.children[0].image.height
-        : Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2 || 140;
+      const cardContainer = new createjs.Container();
+      cardContainer.addChild(cardColour, cardImage);
 
-    Game.ui.card.scaleX =
-      (Game.offsets.cardWidth ||
-        Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2) / baseWidth;
-    Game.ui.card.scaleY =
-      (Game.offsets.cardHeight ||
-        Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2) / baseHeight;
+      // Card properties
+      cardContainer.frontImage = Game.config.cardPath + chosenCard.image + ".png";
+      cardContainer.backImage = Game.config.cardPath + "back.png";
+      cardContainer.name = chosenCard.displayName;
+      cardContainer.strengthUp = chosenCard.strengthUp;
+      cardContainer.strengthRight = chosenCard.strengthRight;
+      cardContainer.strengthDown = chosenCard.strengthDown;
+      cardContainer.strengthLeft = chosenCard.strengthLeft;
+      cardContainer.element = chosenCard.element;
+      cardContainer.owner = "red";
+      cardContainer.background = "red";
 
-    // Card imagery paths
-    Game.ui.card.frontImage = Game.config.cardPath + chosen_card.image + ".png";
-    Game.ui.card.backImage = Game.config.cardPath + "back.png";
+      // Position in AI hand
+      cardContainer.x = Game.ai.handOffsetX || offsets.gameOffsetX / 2 || 100;
+      cardContainer.y = (offsets.handOffsetY || 50) + i * (offsets.handCardOffset || 95);
 
-    // Card stats and ownership
-    Game.ui.card.name = chosen_card.displayName;
-    Game.ui.card.strengthUp = chosen_card.strengthUp;
-    Game.ui.card.strengthRight = chosen_card.strengthRight;
-    Game.ui.card.strengthDown = chosen_card.strengthDown;
-    Game.ui.card.strengthLeft = chosen_card.strengthLeft;
-    Game.ui.card.element = chosen_card.element;
-    Game.ui.card.owner = "red";
-    Game.ui.card.background = "red";
+      // Add to AI hand and stage
+      Game.ai.cardsInAIHand.push(cardContainer);
+      Game.stage.addChild(cardContainer);
+    });
 
-    // Position off to AI hand area
-    Game.ui.card.x = Game.ai.handOffsetX || Game.offsets.gameOffsetX / 2 || 100;
-    Game.ui.card.y =
-      (Game.offsets.handOffsetY || 50) +
-      i * (Game.offsets.handCardOffset || 95);
+    // Default selection
+    window.selectedCard = Game.ai.cardsInAIHand[0];
+    Game.ui.previouslySelectedCard = [];
 
-    // Add to AI hand and stage
-    Game.ai.cardsInAIHand.push(Game.ui.card);
-    Game.stage.addChild(Game.ui.card);
-    Game.stage.update();
-  }
-
-  // Select the top card by default (preserve original globals)
-  window.selectedCard = Game.ai.cardsInAIHand[Game.ui.selectedCardNumber];
-  Game.ui.previouslySelectedCard = [];
-
-  // Handle the "open" rule flip all AI hand behaviour
-  if (Game.rules && Game.rules.indexOf("open") != -1) {
-    if (typeof Game.cards.flipping.flipAIHand === "function") {
+    // Flip AI hand if "open" rule applies
+    if (Game.rules && Game.rules.indexOf("open") !== -1 && Game.cards.flipping.flipAIHand) {
       Game.cards.flipping.flipAIHand();
     }
-  }
-}
+
+    Game.stage.update();
+  },
+};

@@ -68,7 +68,7 @@ Game.utils = {
       );
       // populate AI cards and start game
       if (!Game.ai.cardsInAIHand || Game.ai.cardsInAIHand.length === 0) {
-        populateAICards();
+        Game.cards.aiHand.populate();
       }
       Game.startGame();
     } else {
@@ -113,8 +113,8 @@ Game.utils = {
       // default page and populate
       Game.ui.selectionBoard.page = 1;
 
-      // Add AI cards (original behaviour)
-      populateAICards();
+      // Add AI cards
+      Game.cards.aiHand.populate();
 
       // Add selection board cards
       Game.cards.selectionBoard.populate();
