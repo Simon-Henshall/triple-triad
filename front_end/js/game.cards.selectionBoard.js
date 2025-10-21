@@ -32,66 +32,102 @@ Game.cards.selectionBoard = {
   },
 
   /**
-   * Build and display the selectable owned cards on the board.
+   * Build and display the selectable owned cards on the selection board.
    */
   populate() {
-    const ui = Game.ui.selectionBoard;
-    const owned = Game.player.ownedCards;
+    const sb = Game.ui.selectionBoard;
+    const owned = Game.player.ownedCards || [];
+    const cardsPerPage = 11;
 
-    // Determine pagination info
-    ui.totalPages = Math.ceil(owned.length / 11);
-    ui.remainingCards = owned.length % 11;
-    ui.displayedCards = $.extend({}, owned);
+    sb.totalPages = Math.max(1, Math.ceil(owned.length / cardsPerPage));
+    sb.page = sb.page || 1;
+    const pageStart = (sb.page - 1) * cardsPerPage;
+    sb.pageStart = pageStart; // absolute index of the first item on this page
 
-    const offset = (ui.page - 1) * 11;
-    ui.displayedCards.length =
-      ui.page < ui.totalPages ? 11 : ui.remainingCards;
+    // displayedCards is a proper array slice of owned
+    sb.displayedCards = owned.slice(pageStart, pageStart + cardsPerPage);
+    sb.remainingCards = sb.displayedCards.length;
 
-    // Clear previous entries
+    // prepare shownCards container
+    if (!sb.shownCards) sb.shownCards = new createjs.Container();
+    else sb.shownCards.removeAllChildren();
 
-    if (ui.shownCards) {
-      ui.shownCards.removeAllChildren();
-    } else {
-      ui.shownCards = new createjs.Container();
-    }
-    // Draw each card entry
-    for (let j = 0, i = offset; i < offset + ui.displayedCards.length; i++, j++) {
-      const cardData = ui.displayedCards[i];
-      if (!cardData) continue;
+    // draw rows for displayedCards
+    sb.displayedCards.forEach((cardData, rowIndex) => {
+      // name
+      const nameText = new createjs.Text(
+        cardData.displayName,
+        "26px Arial",
+        "#ffffff"
+      );
+      nameText.x = sb.background.x + 50;
+      nameText.y = sb.background.y + 35 * rowIndex + 60;
+      nameText.textBaseline = "alphabetic";
 
-      // Card name
-      const cardName = new createjs.Text(cardData.displayName, "26px Arial", "#ffffff");
-      cardName.x = ui.background.x + 50;
-      cardName.y = ui.background.y + 35 * j + 60;
-      cardName.textBaseline = "alphabetic";
+      // count
+      const countText = new createjs.Text(
+        String(cardData.count),
+        "26px Arial",
+        "#ffffff"
+      );
+      countText.x = sb.background.x + 380;
+      countText.y = sb.background.y + 35 * rowIndex + 60;
+      countText.textBaseline = "alphabetic";
 
-      // Card count
-      const cardCount = new createjs.Text(cardData.count, "26px Arial", "#ffffff");
-      cardCount.x = ui.background.x + 380;
-      cardCount.y = ui.background.y + 35 * j + 60;
-      cardCount.textBaseline = "alphabetic";
-
-      // Card icon
+      // icon
       const icon = this._createScaledBitmap(
         "front_end/images/selection_card.png",
         30, // target width
         30, // target height
         (bmp) => Game.stage.update() // update stage when ready
       );
-      icon.x = ui.background.x + 15;
-      icon.y = ui.background.y + 35 * j + 35;
+      icon.x = sb.background.x + 15;
+      icon.y = sb.background.y + 35 * rowIndex + 35;
 
-      ui.shownCards.addChild(cardName, cardCount, icon);
+      // Correct scaling: maintain 30px width, proportional height
+      if (icon.image && icon.image.width && icon.image.height) {
+        const targetSize = 30;
+        const scaleX = targetSize / icon.image.width;
+        const scaleY = targetSize / icon.image.height;
+        icon.scaleX = scaleX;
+        icon.scaleY = scaleY;
+      }
+
+      sb.shownCards.addChild(nameText, countText, icon);
+    });
+
+    // attach to container (remove previous if present)
+    if (sb.container && sb.container.parent == null) {
+      sb.container.addChild(sb.shownCards);
+    } else {
+      // ensure it's present: remove prior and re-add to avoid duplicates
+      if (sb.container) {
+        try {
+          sb.container.removeChild(sb.shownCards);
+        } catch (e) {}
+        sb.container.addChild(sb.shownCards);
+      }
     }
 
-    ui.container.addChild(ui.shownCards);
+    // default selection: if selectedHandCardNumber is outside this page, clamp to pageStart
+    if (
+      typeof sb.selectedHandCardNumber !== "number" ||
+      sb.selectedHandCardNumber < pageStart ||
+      sb.selectedHandCardNumber >= pageStart + sb.displayedCards.length
+    ) {
+      sb.selectedHandCardNumber = pageStart;
+    }
 
-    // Default selection
-    ui.selectedHandCardNumber = 0;
-    ui.selectedHandCard = owned[0] || null;
+    sb.selectedHandCard =
+      Game.player.ownedCards[sb.selectedHandCardNumber] || null;
 
-    // Draw large preview
+    // Update the large preview display
     this.updateDisplay();
+
+    // update page display text if present
+    if (sb.pageDisplay) sb.pageDisplay.text = sb.page;
+
+    Game.stage.update();
   },
 
   /**
@@ -105,8 +141,12 @@ Game.cards.selectionBoard = {
 
     ui.displayedCard = new createjs.Container();
 
-    const targetW = Game.offsets.cardWidth || Game.offsets.cellWidth - (Game.offsets.cardOffsetX || 3) * 2;
-    const targetH = Game.offsets.cardHeight || Game.offsets.cellHeight - (Game.offsets.cardOffsetY || 3) * 2;
+    const targetW =
+      Game.offsets.cardWidth ||
+      Game.offsets.cellWidth - (Game.offsets.cardOffsetX || 3) * 2;
+    const targetH =
+      Game.offsets.cardHeight ||
+      Game.offsets.cellHeight - (Game.offsets.cardOffsetY || 3) * 2;
 
     // Card colour
     const colourBmp = this._createScaledBitmap(
@@ -141,23 +181,33 @@ Game.cards.selectionBoard = {
    */
   paginate(direction) {
     const sb = Game.ui.selectionBoard;
+    const cardsPerPage = 11;
 
-    if (direction === "left" && sb.page > 1) sb.page--;
-    else if (direction === "right" && sb.page < sb.totalPages) sb.page++;
-    else return;
+    if (direction === "left" && sb.page > 1) {
+      sb.page--;
+    } else if (direction === "right" && sb.page < sb.totalPages) {
+      sb.page++;
+    } else {
+      return;
+    }
 
-    sb.selectedHandCardNumber = (sb.page - 1) * 11;
-    sb.selectedHandCard = Game.player.ownedCards[sb.selectedHandCardNumber] || null;
+    // set pageStart and clamp the absolute selected index to the new page start
+    const pageStart = (sb.page - 1) * cardsPerPage;
+    sb.pageStart = pageStart;
+    // move selection to top of this new page (absolute index)
+    sb.selectedHandCardNumber = pageStart;
+    sb.selectedHandCard =
+      Game.player.ownedCards[sb.selectedHandCardNumber] || null;
 
-    // Populate page
+    // repopulate UI rows & preview
     this.populate();
 
-    // Update page display text
+    // move cursor visual to top row
+    if (Game.player.playerHandSelectionCursor && sb.background) {
+      Game.player.playerHandSelectionCursor.y = sb.background.y + 48;
+    }
+
     if (sb.pageDisplay) sb.pageDisplay.text = sb.page;
-
-    // Reset hand cursor to top
-    Game.player.playerHandSelectionCursor.y = sb.background.y + 48;
-
     Game.stage.update();
   },
 };

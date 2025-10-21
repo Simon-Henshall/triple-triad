@@ -66,8 +66,10 @@ Game.player = {
       Game.ui.card.addChild(cardColour, Game.ui.cardImage);
 
       // Adjust the card for the board
-      Game.ui.card.scaleX = Game.offsets.cardWidth / Game.ui.card.children[0].image.width;
-      Game.ui.card.scaleY = Game.offsets.cardHeight / Game.ui.card.children[0].image.height;
+      Game.ui.card.scaleX =
+        Game.offsets.cardWidth / Game.ui.card.children[0].image.width;
+      Game.ui.card.scaleY =
+        Game.offsets.cardHeight / Game.ui.card.children[0].image.height;
 
       // Assign stats
       Game.ui.card.name = chosenCard.displayName;
@@ -80,7 +82,8 @@ Game.player = {
 
       // Place the card
       Game.ui.card.x = this.handOffsetX;
-      Game.ui.card.y = Game.offsets.handOffsetY + i * Game.offsets.handCardOffset;
+      Game.ui.card.y =
+        Game.offsets.handOffsetY + i * Game.offsets.handCardOffset;
 
       this.cardsInPlayerHand.push(Game.ui.card);
       Game.stage.addChild(Game.ui.card);
@@ -104,22 +107,34 @@ Game.player = {
    */
   indentSelectedCard() {
     if (Game.utils.getPlayerTurn() === "red") {
-      if (Game.ui.selectedCard && typeof Game.ui.selectedCard.x !== "undefined") {
+      if (
+        Game.ui.selectedCard &&
+        typeof Game.ui.selectedCard.x !== "undefined"
+      ) {
         Game.ui.selectedCard.x += 30;
       }
-      if (Game.ui.previouslySelectedCard && typeof Game.ui.previouslySelectedCard.x !== "undefined") {
+      if (
+        Game.ui.previouslySelectedCard &&
+        typeof Game.ui.previouslySelectedCard.x !== "undefined"
+      ) {
         Game.ui.previouslySelectedCard.x -= 30;
       }
     } else if (Game.utils.getPlayerTurn() === "blue") {
-      if (Game.ui.selectedCard && typeof Game.ui.selectedCard.x !== "undefined") {
+      if (
+        Game.ui.selectedCard &&
+        typeof Game.ui.selectedCard.x !== "undefined"
+      ) {
         Game.ui.selectedCard.x -= 30;
       }
-      if (Game.ui.previouslySelectedCard && typeof Game.ui.previouslySelectedCard.x !== "undefined") {
+      if (
+        Game.ui.previouslySelectedCard &&
+        typeof Game.ui.previouslySelectedCard.x !== "undefined"
+      ) {
         Game.ui.previouslySelectedCard.x += 30;
       }
     }
     Game.stage.update();
-  }
+  },
 };
 
 /**
@@ -130,73 +145,113 @@ Game.player.CardManager = class {
    * Update the hand cards shown on the selection board.
    */
   updateHandCards() {
-    const offset = (Game.ui.selectionBoard.page - 1) * 11;
+    const sb = Game.ui.selectionBoard;
+    const owned = Game.player.ownedCards || [];
 
-    if (Game.player.ownedCards.length >= 11) {
-      if (Game.ui.selectionBoard.page !== Game.ui.selectionBoard.totalPages) {
-        Game.ui.selectionBoard.displayedCards.length = 11;
+    // Ensure paging is set up
+    const offset = (sb.page - 1) * 11;
+    if (owned.length >= 11) {
+      if (sb.page !== sb.totalPages) {
+        sb.displayedCards.length = 11;
       } else {
-        Game.ui.selectionBoard.displayedCards.length = Game.ui.selectionBoard.remainingCards;
+        sb.displayedCards.length = sb.remainingCards;
       }
     } else {
-      Game.ui.selectionBoard.displayedCards.length = Object.keys(Game.player.ownedCards).length;
+      sb.displayedCards.length = owned.length;
     }
 
-    // Update card colors
-    if (Game.ui.selectionBoard.displayedCards[Game.ui.selectionBoard.selectedHandCardNumber].count === 0) {
-      Game.ui.selectionBoard.displayedCards[Game.ui.selectionBoard.selectedHandCardNumber].colour = "#909497";
+    // compute index of selected card relative to the current page
+    const pageIndex = sb.selectedHandCardNumber - offset;
+    const validPageIndex =
+      typeof pageIndex === "number" &&
+      pageIndex >= 0 &&
+      pageIndex < (sb.displayedCards ? sb.displayedCards.length : 0)
+        ? pageIndex
+        : null;
+
+    // If the currently-selected card (relative) exists, update its colour if count === 0
+    if (validPageIndex !== null) {
+      const selectedDisplayed = sb.displayedCards[validPageIndex];
+      if (selectedDisplayed && selectedDisplayed.count === 0) {
+        selectedDisplayed.colour = "#909497";
+      }
     }
 
+    // If player has unconfirmed selections, restore their colour if needed
     if (Game.player.playerCards.length > 0) {
-      const lastCard = Game.player.playerCards[Game.player.playerCards.length - 1];
-      if (lastCard.count > 0) {
+      const lastCard =
+        Game.player.playerCards[Game.player.playerCards.length - 1];
+      if (lastCard && lastCard.count > 0) {
         lastCard.colour = "#ffffff";
       }
     }
 
-    // Display card text/icons
-    let j = 0;
-    let k = 1;
-    let l = 2;
-
-    for (let i = 0; i < Game.ui.selectionBoard.displayedCards.length; i++) {
-      if (Game.ui.selectionBoard.shownCards.children[j]) {
-        Game.ui.selectionBoard.shownCards.children[j].text = Game.player.ownedCards[i + offset].displayName;
-        Game.ui.selectionBoard.shownCards.children[j].color = Game.player.ownedCards[i + offset].colour;
-        Game.ui.selectionBoard.shownCards.children[j].visible = true;
-      }
-      if (Game.ui.selectionBoard.shownCards.children[k]) {
-        Game.ui.selectionBoard.shownCards.children[k].text = Game.player.ownedCards[i + offset].count;
-        Game.ui.selectionBoard.shownCards.children[k].color = Game.player.ownedCards[i + offset].colour;
-        Game.ui.selectionBoard.shownCards.children[k].visible = true;
-      }
-      if (Game.ui.selectionBoard.shownCards.children[l]) {
-        Game.ui.selectionBoard.shownCards.children[l].visible = true;
-      }
-      j += 3;
-      k += 3;
-      l += 3;
+    // Now update shownCards visual children.
+    // Expectation in the UI: each row has 3 children: [nameText, countText, icon]
+    // We'll iterate displayedCards and write into shownCards children accordingly.
+    if (!sb.shownCards) {
+      // nothing to update
+      return;
     }
 
-    // Hide excess lines
-    for (let m = Game.ui.selectionBoard.displayedCards.length * 3; m < 31; m++) {
-      if (Game.ui.selectionBoard.shownCards.children[j]) {
-        Game.ui.selectionBoard.shownCards.children[j].text = "";
+    let childIdx = 0; // child pointer into shownCards.children
+    const shownChildren = sb.shownCards.children || [];
+
+    for (
+      let i = 0;
+      i < (sb.displayedCards ? sb.displayedCards.length : 0);
+      i++
+    ) {
+      const absoluteIndex = offset + i;
+      const cardData = owned[absoluteIndex];
+
+      // name text
+      if (shownChildren[childIdx]) {
+        shownChildren[childIdx].text = cardData ? cardData.displayName : "";
+        shownChildren[childIdx].color = cardData
+          ? cardData.colour || "#ffffff"
+          : "#ffffff";
+        shownChildren[childIdx].visible = !!cardData;
       }
-      if (Game.ui.selectionBoard.shownCards.children[k]) {
-        Game.ui.selectionBoard.shownCards.children[k].text = "";
+      childIdx++;
+
+      // count text
+      if (shownChildren[childIdx]) {
+        shownChildren[childIdx].text = cardData ? String(cardData.count) : "";
+        shownChildren[childIdx].color = cardData
+          ? cardData.colour || "#ffffff"
+          : "#ffffff";
+        shownChildren[childIdx].visible = !!cardData;
       }
-      if (Game.ui.selectionBoard.shownCards.children[l]) {
-        Game.ui.selectionBoard.shownCards.children[l].visible = false;
+      childIdx++;
+
+      // icon
+      if (shownChildren[childIdx]) {
+        shownChildren[childIdx].visible = !!cardData;
       }
-      j++;
-      k++;
-      l++;
+      childIdx++;
     }
 
-    if (Game.ui.selectionBoard.pageDisplay) {
-      Game.ui.selectionBoard.pageDisplay.text = Game.ui.selectionBoard.page;
+    // Hide any remaining rows (there are up to 11 rows, i.e. 33 children expected)
+    for (; childIdx < shownChildren.length; childIdx++) {
+      const ch = shownChildren[childIdx];
+      if (!ch) continue;
+      // if it's a Text object, clear text; if Bitmap, hide it
+      if (typeof ch.text !== "undefined") {
+        ch.text = "";
+      }
+      ch.visible = false;
     }
+
+    // Update page display control if present
+    if (sb.pageDisplay) {
+      sb.pageDisplay.text = sb.page;
+    }
+
+    // Keep sb.selectedHandCard in sync (absolute index)
+    sb.selectedHandCard = owned[sb.selectedHandCardNumber] || null;
+
+    Game.stage.update();
   }
 
   /**
@@ -209,16 +264,22 @@ Game.player.CardManager = class {
 
     Game.ui.selectionBoard.displayedCard.y = 700;
 
-    if (Game.ui.selectionBoard.displayedCard.children && Game.ui.selectionBoard.displayedCard.children[1] &&
-        Game.ui.selectionBoard.displayedCard.children[1].image && Game.ui.selectionBoard.selectedHandCard) {
+    if (
+      Game.ui.selectionBoard.displayedCard.children &&
+      Game.ui.selectionBoard.displayedCard.children[1] &&
+      Game.ui.selectionBoard.displayedCard.children[1].image &&
+      Game.ui.selectionBoard.selectedHandCard
+    ) {
       Game.ui.selectionBoard.displayedCard.children[1].image.src =
-        Game.config.cardPath + Game.ui.selectionBoard.selectedHandCard.image + ".png";
+        Game.config.cardPath +
+        Game.ui.selectionBoard.selectedHandCard.image +
+        ".png";
     }
 
     createjs.Tween.get(Game.ui.selectionBoard.displayedCard).to(
       {
         x: Game.ui.selectionBoard.displayedCard.x,
-        y: Game.ui.selectionBoard.background.y + 200
+        y: Game.ui.selectionBoard.background.y + 200,
       },
       100
     );
@@ -263,8 +324,11 @@ Game.cards.playerHand = {
 
     hand.forEach((chosenCard, i) => {
       const offsets = Game.offsets;
-      const targetW = offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
-      const targetH = offsets.cardHeight || offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
+      const targetW =
+        offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
+      const targetH =
+        offsets.cardHeight ||
+        offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
 
       // Card images
       const cardImage = this._createScaledBitmap(
@@ -296,7 +360,8 @@ Game.cards.playerHand = {
 
       // Position in hand
       cardContainer.x = Game.player.handOffsetX;
-      cardContainer.y = offsets.handOffsetY + i * (offsets.handCardOffset || 95);
+      cardContainer.y =
+        offsets.handOffsetY + i * (offsets.handCardOffset || 95);
 
       Game.player.cardsInPlayerHand.push(cardContainer);
       Game.stage.addChild(cardContainer);

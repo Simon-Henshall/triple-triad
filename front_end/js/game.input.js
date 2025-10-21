@@ -43,7 +43,7 @@ Game.input = {
 
   /** @private */
   _handlePlayerHandSelection(e) {
-    // Use helper for arrow keys
+    // routing for arrow keys (left/up/right/down)
     Game.input._handleArrowKeys(e.key, {
       left: () => Game.cursors.selection.move("left"),
       up: () => Game.cursors.selection.move("up"),
@@ -51,27 +51,120 @@ Game.input = {
       down: () => Game.cursors.selection.move("down"),
     });
 
-    // Enter key
+    const sb = Game.ui.selectionBoard;
+
+    // ENTER: select the currently highlighted card (uses absolute index into ownedCards)
     if (e.key === "Enter") {
-      const card = Game.ui.selectionBoard.displayedCards[Game.ui.selectionBoard.selectedHandCardNumber];
+      const index = sb.selectedHandCardNumber;
+      const card = Game.player.ownedCards[index];
+
+      if (!card) {
+        console.warn("No card at selected index:", index);
+        return;
+      }
+
       if (card.count > 0) {
         card.count--;
-        Game.player.playerCards.push(Game.ui.selectionBoard.selectedHandCard);
-        Game.player.cardManagerInstance.updateHandCards();
+        // store the card object in the player's temporary selection
+        Game.player.playerCards.push(card);
+
+        // update visuals / counts on the selection board
+        if (
+          Game.player.cardManagerInstance &&
+          typeof Game.player.cardManagerInstance.updateHandCards === "function"
+        ) {
+          Game.player.cardManagerInstance.updateHandCards();
+        } else {
+          // fallback: repopulate the selection board if manager missing
+          if (
+            Game.cards &&
+            Game.cards.selectionBoard &&
+            typeof Game.cards.selectionBoard.populate === "function"
+          ) {
+            Game.cards.selectionBoard.populate();
+          }
+        }
+
+        // refresh the preview (in case it needs to show updated count/visuals)
+        sb.selectedHandCard =
+          Game.player.ownedCards[sb.selectedHandCardNumber] || null;
+        if (
+          Game.cards &&
+          Game.cards.selectionBoard &&
+          typeof Game.cards.selectionBoard.updateDisplay === "function"
+        ) {
+          Game.cards.selectionBoard.updateDisplay();
+        }
+
+        Game.stage.update();
+        if (Game.debug.active) {
+          console.log(
+            `Selected card: ${card.displayName} (remaining: ${card.count})`
+          );
+        }
+      } else {
+        if (Game.debug.active) {
+          console.warn(
+            "Attempted to select a card with zero count:",
+            card.displayName
+          );
+        }
       }
+
+      // If player has chosen 5 cards, move to confirmation
       if (Game.player.playerCards.length === 5) {
         Game.ui.playerSelectingHand = false;
-        Game.ui.confirmationBox.show();
+        if (
+          Game.ui.confirmationBox &&
+          typeof Game.ui.confirmationBox.show === "function"
+        ) {
+          Game.ui.confirmationBox.show();
+        } else if (
+          Game.ui.confirmation &&
+          typeof Game.ui.confirmation.container !== "undefined"
+        ) {
+          // fallback if you used a different API: show the confirmation container
+          Game.stage.addChild(Game.ui.confirmation.container);
+          Game.cursors.confirmation.place();
+        }
       }
+
+      return; // done handling Enter
     }
 
-    // Cancel key
-    else if (this._isCancelKey(e.key)) {
+    // CANCEL: Backspace / Escape — undo last selection
+    if (this._isCancelKey(e.key)) {
       if (Game.player.playerCards.length > 0) {
         const lastCard = Game.player.playerCards.pop();
-        lastCard.count++;
-        Game.player.cardManagerInstance.updateHandCards();
+        if (lastCard) {
+          lastCard.count++;
+          if (
+            Game.player.cardManagerInstance &&
+            typeof Game.player.cardManagerInstance.updateHandCards ===
+              "function"
+          ) {
+            Game.player.cardManagerInstance.updateHandCards();
+          } else if (
+            Game.cards &&
+            Game.cards.selectionBoard &&
+            typeof Game.cards.selectionBoard.populate === "function"
+          ) {
+            Game.cards.selectionBoard.populate();
+          }
+          // Refresh preview for current index (in case it changed)
+          sb.selectedHandCard =
+            Game.player.ownedCards[sb.selectedHandCardNumber] || null;
+          if (
+            Game.cards &&
+            Game.cards.selectionBoard &&
+            typeof Game.cards.selectionBoard.updateDisplay === "function"
+          ) {
+            Game.cards.selectionBoard.updateDisplay();
+          }
+          Game.stage.update();
+        }
       }
+      return;
     }
   },
 
