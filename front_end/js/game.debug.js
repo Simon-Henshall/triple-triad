@@ -1,4 +1,6 @@
 Game.debug = {
+  active: true, // Toggle for debug mode
+
   // -------------------------
   // DEBUG HELPERS
   // -------------------------
@@ -10,7 +12,7 @@ Game.debug = {
   logCell(eventOrSquare) {
     const squareID = eventOrSquare.name ?? eventOrSquare.id;
     const squareObj = Game.ui.squares[squareID - 1];
-    const cardHere = Game.board.boardArray[squareID - 1];
+    const cardHere = Game.board.boardArray[squareID - 1].occupant;
 
     console.log("======================================================");
     console.log(`CELL DEBUG | Square ID: ${squareID}`);
@@ -43,8 +45,9 @@ Game.debug = {
     console.log("--------------- BOARD STATE ---------------");
     for (let i = 0; i < 3; i++) {
       const row = Game.board.boardArray.slice(i * 3, i * 3 + 3).map((cell) => {
-        if (cell === "Empty") return "[Empty]";
-        return `[${cell.name} | ${cell.owner}]`;
+        const elem = cell.element ? `Cell Element: ${cell.element}` : "No Element";
+        if (!cell.occupant) return `[Empty | ${elem}]`;
+        return `[${cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.element} | Cell Element: ${elem}]`;
       });
       console.log(`Row ${i + 1}: ${row.join(" | ")}`);
     }
@@ -89,19 +92,19 @@ Game.debug = {
   /**
    * Combined full game debug log
    */
-  logFullState(eventOrSquare = null) {
-    if (eventOrSquare) {
-      this.logCell(eventOrSquare);
-    }
+  logFullState(target) {
+    console.log("Logging full state for:", target);
     this.logBoard();
-    this.logHands();
-    this.logTurn();
+    //this.logHands();
+    //this.logTurn();
   },
 
   /**
    * Click logging
    */
   clickHandler(event) {
-    this.logFullState(event.target);
+    if (Game.debug.active) {
+      Game.debug.logFullState(event.currentTarget);
+    }
   },
 };

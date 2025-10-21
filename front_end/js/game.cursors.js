@@ -15,10 +15,11 @@ Game.cursors.selection = {
       Game.player.playerHandSelectionCursor
     );
     Game.stage.update();
-
-    console.log(
-      `Player hand selection cursor placed at X:${Game.player.playerHandSelectionCursor.x}, Y:${Game.player.playerHandSelectionCursor.y}`
-    );
+    if (Game.debug.active) {
+      console.log(
+        `Player hand selection cursor placed at X:${Game.player.playerHandSelectionCursor.x}, Y:${Game.player.playerHandSelectionCursor.y}`
+      );
+    }
   },
   /**
    * Move the hand selection cursor up/down/left/right
@@ -55,9 +56,11 @@ Game.cursors.selection = {
       sb.selectedHandCard = Game.player.ownedCards[sb.selectedHandCardNumber];
       Game.player.cardManagerInstance.updateDisplayedCard();
       Game.stage.update();
-      console.log(
-        `Moved hand selection cursor ${direction} -> Card index: ${sb.selectedHandCardNumber}, page: ${sb.page}`
-      );
+      if (Game.debug.active) {
+        console.log(
+          `Moved hand selection cursor ${direction} -> Card index: ${sb.selectedHandCardNumber}, page: ${sb.page}`
+        );
+      }
     } else {
       console.warn(
         `Cannot move hand selection cursor ${direction} - out of bounds`
@@ -71,7 +74,9 @@ Game.cursors.selection = {
     Game.stage.removeChild(Game.player.playerHandSelectionCursor);
     Game.stage.update();
 
-    console.log("Player hand selection cursor removed");
+    if (Game.debug.active) {
+      console.log("Player hand selection cursor removed");
+    }
   },
 };
 
@@ -89,9 +94,11 @@ Game.cursors.confirmation = {
     Game.stage.addChild(Game.ui.confirmation.cursor);
     Game.stage.update();
 
-    console.log(
-      `Confirmation cursor placed at X:${Game.ui.confirmation.cursor.x}, Y:${Game.ui.confirmation.cursor.y}`
-    );
+    if (Game.debug.active) {
+      console.log(
+        `Confirmation cursor placed at X:${Game.ui.confirmation.cursor.x}, Y:${Game.ui.confirmation.cursor.y}`
+      );
+    }
   },
   /**
    * Move the confirmation cursor up/down between Yes/No
@@ -115,9 +122,11 @@ Game.cursors.confirmation = {
     );
 
     Game.stage.update();
-    console.log(
-      `Confirmation cursor moved ${direction} -> Choice index: ${Game.ui.confirmation.selectedChoice}`
-    );
+    if (Game.debug.active) {
+      console.log(
+        `Confirmation cursor moved ${direction} -> Choice index: ${Game.ui.confirmation.selectedChoice}`
+      );
+    }
   },
   /**
    * Remove the confirmation cursor
@@ -126,7 +135,9 @@ Game.cursors.confirmation = {
     Game.stage.removeChild(Game.ui.confirmation.cursor);
     Game.stage.update();
 
-    console.log("Confirmation cursor removed");
+    if (Game.debug.active) {
+      console.log("Confirmation cursor removed");
+    }
   },
 };
 
@@ -148,9 +159,11 @@ Game.cursors.playerHand = {
     Game.stage.addChild(Game.player.playerHandCursor);
     Game.stage.update();
 
-    console.log(
-      `Player hand cursor placed at X:${Game.player.playerHandCursor.x}, Y:${Game.player.playerHandCursor.y}`
-    );
+    if (Game.debug.active) {
+      console.log(
+        `Player hand cursor placed at X:${Game.player.playerHandCursor.x}, Y:${Game.player.playerHandCursor.y}`
+      );
+    }
   },
   /**
    * Move the player hand cursor up/down
@@ -181,9 +194,11 @@ Game.cursors.playerHand = {
     Game.player.indentSelectedCard();
 
     Game.stage.update();
-    console.log(
-      `Moved player hand cursor ${direction} -> Card index: ${Game.ui.selectedCardNumber}`
-    );
+    if (Game.debug.active) {
+        console.log(
+        `Moved player hand cursor ${direction} -> Card index: ${Game.ui.selectedCardNumber}`
+      );
+    }
   },
   /**
    * Remove the player hand cursor
@@ -193,7 +208,9 @@ Game.cursors.playerHand = {
     Game.stage.removeChild(Game.player.playerHandCursor);
     Game.stage.update();
 
-    console.log("Player hand cursor removed");
+    if (Game.debug.active) {
+      console.log("Player hand cursor removed");
+    }
   },
 };
 
@@ -214,9 +231,11 @@ Game.cursors.grid = {
     Game.stage.addChild(Game.ui.gridCursor);
     Game.stage.update();
 
-    console.log(
-      `Grid cursor placed at X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`
-    );
+    if (Game.debug.active) {
+      console.log(
+        `Grid cursor placed at X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`
+      );
+    }
   },
   /**
    * Move the grid cursor in one of four directions
@@ -260,9 +279,11 @@ Game.cursors.grid = {
     Game.board.checkSelectedSquare();
     Game.stage.update();
 
-    console.log(
-      `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`
-    );
+    if (Game.debug.active) {
+      console.log(
+        `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`
+      );
+    }
   },
   /**
    * Remove the selection cursor from the grid
@@ -272,6 +293,8 @@ Game.cursors.grid = {
     Game.stage.removeChild(Game.ui.gridCursor);
     Game.stage.update();
 
-    console.log("Grid cursor removed");
+    if (Game.debug.active) {
+      console.log("Grid cursor removed");
+    }
   },
 };

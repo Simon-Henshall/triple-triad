@@ -13,7 +13,12 @@ const squareMap = [
 ];
 
 Game.board = {
-  boardArray: Array(9).fill("Empty"),
+  boardArray: Array(9)
+    .fill(null)
+    .map((_, i) => ({
+      element: 0,
+      occupant: null,
+    })),
   freeCells: [1, 2, 3, 4, 5, 6, 7, 8, 9],
 
   // -------------------------
@@ -93,11 +98,22 @@ Game.board = {
           );
           squareElement.x = Game.offsets.gameOffsetX + 60;
           squareElement.y = Game.offsets.gameOffsetY + 70;
+          squareElement.mouseEnabled = false; // Allow clickthrough
+          Game.board.boardArray[squareID - 1].element = square.element;
           square.container.addChild(squareElement);
         }
 
+        // Transparent hit area
+        const hit = new createjs.Shape();
+        hit.graphics
+          .beginFill("#000")
+          .drawRect(0, 0, Game.offsets.cellWidth, Game.offsets.cellHeight);
+        square.container.hitArea = hit;
+
         // Click handler
-        square.container.addEventListener("click", Game.debug.clickHandler);
+        square.container.addEventListener("click", function (event) {
+          Game.debug.clickHandler(event);
+        });
 
         // Save to the squares array
         Game.ui.squares.push(square);
@@ -114,8 +130,7 @@ Game.board = {
   // CELL CHECKS
   // -------------------------
   cellOccupied() {
-    return Game.board.boardArray[Game.ui.selectedSquare - 1] === "Empty"
-      ? false
-      : Game.board.boardArray[Game.ui.selectedSquare - 1];
+    const cell = Game.board.boardArray[Game.ui.selectedSquare - 1];
+    return cell.occupant ? cell.occupant : false;
   },
 };

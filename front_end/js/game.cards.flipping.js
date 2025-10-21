@@ -96,11 +96,6 @@ Game.cards.flipping = {
     if (squareObj) {
       squareObj.card = targetCard;
     }
-
-    // Debug
-    Game.debug.logCell(targetCard.inCell);
-    Game.debug.logBoard();
-    Game.debug.logTurn();
   },
   /**
    * Update player and AI ownership totals

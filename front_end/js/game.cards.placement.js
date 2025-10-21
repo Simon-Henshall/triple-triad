@@ -68,12 +68,6 @@ Game.cards.placement = class CardPlacer {
     // Redraw the stage to show changes
     Game.stage.update();
 
-    // Debug
-    Game.debug.logCell(card.inCell);
-    Game.debug.logBoard();
-    Game.debug.logHands();
-    Game.debug.logTurn();
-
     // Determine if the game has ended, otherwise swap turn
     if (Game.cards.placement.isGameOver()) {
       Game.endGame();
@@ -86,10 +80,21 @@ Game.cards.placement = class CardPlacer {
    * Set adjacent card references
    */
   static setCardAdjacents(card) {
-    card.cardLeft = typeof squareLeft !== "undefined" && squareLeft !== "none" ? Game.board.boardArray[squareLeft - 1] : null;
-    card.cardUp = typeof squareUp !== "undefined" && squareUp !== "none" ? Game.board.boardArray[squareUp - 1] : null;
-    card.cardRight = typeof squareRight !== "undefined" && squareRight !== "none" ? Game.board.boardArray[squareRight - 1] : null;
-    card.cardDown = typeof squareDown !== "undefined" && squareDown !== "none" ? Game.board.boardArray[squareDown - 1] : null;
+    const board = Game.board.boardArray;
+
+    const getOccupant = (index) => {
+      const cell = board[index - 1];
+      return cell ? cell.occupant ?? null : null;
+    };
+
+    card.cardLeft = getOccupant(squareLeft);
+    card.cardUp = getOccupant(squareUp);
+    card.cardRight = getOccupant(squareRight);
+    card.cardDown = getOccupant(squareDown);
+
+    if (Game.debug.active) {
+      console.log(card);
+    }
   }
 
   /**
@@ -97,7 +102,7 @@ Game.cards.placement = class CardPlacer {
    */
   static addCardToBoard(card) {
     card.inCell = Game.ui.selectedSquare;
-    Game.board.boardArray[Game.ui.selectedSquare - 1] = card;
+    Game.board.boardArray[Game.ui.selectedSquare - 1].occupant = card;
 
     // Remove the used square from the list of available cells
     const freeCellIndex = Game.board.freeCells.indexOf(Game.ui.selectedSquare);
@@ -157,7 +162,9 @@ Game.cards.placement = class CardPlacer {
     this.swapPlayerTurn();
 
     // Debugging
-    Game.debug.logTurn();
+    if (Game.debug.active) {
+      Game.debug.logTurn();
+    }
 
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
@@ -187,7 +194,7 @@ Game.cards.placement = class CardPlacer {
    * Determine if game is over
    */
   static isGameOver() {
-    return Game.board.boardArray.indexOf("Empty") === -1;
+    return Game.board.boardArray.every(cell => cell.occupant);
   }
 
   /**
