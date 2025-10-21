@@ -56,51 +56,50 @@ Game.board = {
   // -------------------------
   generateGrid() {
     let squareID = 0;
-    Game.ui.squares = [];
 
-    // Determine elemental squares if "elemental" rule active
-    const possibleElements = [1, 2, 3, 4, 5, 6, 7, 8];
+    // Randomly pick elemental cells
+    const possibleElements = Object.keys(Game.config.elements);
     const elements = [];
     const numElements = Math.floor(Math.random() * 3) + 1;
 
     for (let i = 0; i < numElements; i++) {
-      elements.push(
-        possibleElements[Math.floor(Math.random() * possibleElements.length)]
-      );
+      const randomIndex = Math.floor(Math.random() * possibleElements.length);
+      elements.push(Number(possibleElements[randomIndex]));
     }
-    for (let i = numElements; i < 9; i++) elements.push(0);
+    for (let i = numElements; i < 9; i++) {
+      elements.push(0);
+    }
+
     Game.utils.shuffle(elements);
 
     for (let y = 0; y < 3; y++) {
       for (let x = 0; x < 3; x++) {
         squareID++;
+        const elemId = elements[squareID - 1];
 
-        // Keep a "square object" in memory with all required data
+        // Save element ID in boardArray
+        Game.board.boardArray[squareID - 1].element = elemId;
+
         const square = {
           id: squareID,
           x: x * Game.offsets.cellWidth,
           y: y * Game.offsets.cellHeight,
-          element: Game.rules.includes("elemental")
-            ? elements[squareID - 1]
-            : 0,
+          element: elemId,
           container: new createjs.Container(),
         };
 
-        // Position the container
         square.container.x = square.x;
         square.container.y = square.y;
         square.container.name = squareID;
 
-        // If elemental, add the bitmap visually
-        if (square.element !== 0) {
-          const squareElement = new createjs.Bitmap(
-            `front_end/images/elements/${square.element}.png`
+        // If the cell has an element, display the corresponding graphic
+        if (elemId !== 0) {
+          const elementGraphic = new createjs.Bitmap(
+            Game.config.imagePath + "/elements/" + Game.config.elements[elemId].imagePath
           );
-          squareElement.x = Game.offsets.gameOffsetX + 60;
-          squareElement.y = Game.offsets.gameOffsetY + 70;
-          squareElement.mouseEnabled = false; // Allow clickthrough
-          Game.board.boardArray[squareID - 1].element = square.element;
-          square.container.addChild(squareElement);
+          elementGraphic.x = Game.offsets.gameOffsetX + 60;
+          elementGraphic.y = Game.offsets.gameOffsetY + 70;
+          square.container.addChild(elementGraphic);
         }
 
         // Transparent hit area
@@ -111,14 +110,11 @@ Game.board = {
         square.container.hitArea = hit;
 
         // Click handler
-        square.container.addEventListener("click", function (event) {
+        square.container.addEventListener("click", (event) => {
           Game.debug.clickHandler(event);
         });
 
-        // Save to the squares array
         Game.ui.squares.push(square);
-
-        // Add container to stage
         Game.stage.addChild(square.container);
       }
     }

@@ -45,7 +45,7 @@ Game.debug = {
     console.log("--------------- BOARD STATE ---------------");
     for (let i = 0; i < 3; i++) {
       const row = Game.board.boardArray.slice(i * 3, i * 3 + 3).map((cell) => {
-        const elem = cell.element ? `Cell Element: ${cell.element}` : "No Element";
+        const elem = cell.element ? `Cell Element: ${Game.config.elements[cell.element].name}` : "No Element";
         if (!cell.occupant) return `[Empty | ${elem}]`;
         return `[${cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.element} | Cell Element: ${elem}]`;
       });
