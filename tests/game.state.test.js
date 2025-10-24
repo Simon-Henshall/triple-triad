@@ -1,4 +1,4 @@
-const GameState = require('../front_end/js/game.state.js');
+import GameState from '../front_end/js/game.state.js';
 
 describe('GameState', () => {
   const A = (stats = {}) => ({ owner: 'PLAYER', strengthUp: 5, strengthRight: 5, strengthDown: 5, strengthLeft: 5, ...stats });

@@ -1,30 +1,26 @@
-const {
-  canFlip,
-  getFlippableNeighbours,
-  applyFlips,
-  playCard
-} = require("../front_end/js/game.logic.js");
+import GameLogic from "../front_end/js/game.logic.js";
+const logic = new GameLogic();
 
 describe("canFlip", () => {
   test("returns true when attacker has higher opposing stat", () => {
     const attacker = { strengthRight: 5 };
     const defender = { strengthLeft: 3 };
-    expect(canFlip(attacker, defender, "right")).toBe(true);
+    expect(logic.canFlip(attacker, defender, "right")).toBe(true);
   });
 
   test("returns false when equal strengths", () => {
     const attacker = { strengthRight: 3 };
     const defender = { strengthLeft: 3 };
-    expect(canFlip(attacker, defender, "right")).toBe(false);
+    expect(logic.canFlip(attacker, defender, "right")).toBe(false);
   });
 
   test("returns false when defender missing", () => {
-    expect(canFlip({ strengthRight: 5 }, null, "right")).toBe(false);
+    expect(logic.canFlip({ strengthRight: 5 }, null, "right")).toBe(false);
   });
 
   test("throws on invalid direction", () => {
     expect(() =>
-      canFlip({ strengthUp: 1 }, { strengthDown: 1 }, "diagonal")
+      logic.canFlip({ strengthUp: 1 }, { strengthDown: 1 }, "diagonal")
     ).toThrow();
   });
 });
@@ -35,18 +31,18 @@ describe("getFlippableNeighbours", () => {
 
   test("flips a weaker enemy on the right", () => {
     const board = [[A({ strengthRight: 5 }), B({ strengthLeft: 3 })]];
-    const flips = getFlippableNeighbours(board, 0, 0);
+    const flips = logic.getFlippableNeighbours(board, 0, 0);
     expect(flips).toEqual([{ x: 1, y: 0 }]);
   });
 
   test("does not flip same-owner cards", () => {
     const board = [[A({ strengthRight: 5 }), A({ strengthLeft: 3 })]];
-    expect(getFlippableNeighbours(board, 0, 0)).toEqual([]);
+    expect(logic.getFlippableNeighbours(board, 0, 0)).toEqual([]);
   });
 
   test("ignores empty spaces and boundaries", () => {
     const board = [[A({ strengthRight: 5 }), null]];
-    expect(getFlippableNeighbours(board, 0, 0)).toEqual([]);
+    expect(logic.getFlippableNeighbours(board, 0, 0)).toEqual([]);
   });
 
   test("handles multiple directions (up, down, left, right)", () => {
@@ -64,7 +60,7 @@ describe("getFlippableNeighbours", () => {
       ],
       [null, B({ owner: "B", strengthUp: 2 }), null],
     ];
-    const flips = getFlippableNeighbours(board, 1, 1);
+    const flips = logic.getFlippableNeighbours(board, 1, 1);
     expect(flips).toHaveLength(4);
     expect(flips).toEqual(
       expect.arrayContaining([
@@ -86,7 +82,7 @@ describe('applyFlips', () => {
       [A(), B()],
     ];
     const flips = [{ x: 1, y: 0 }];
-    const result = applyFlips(board, flips, 'A');
+    const result = logic.applyFlips(board, flips, 'A');
     expect(result[0][1].owner).toBe('A');
   });
 
@@ -95,7 +91,7 @@ describe('applyFlips', () => {
       [A(), B()],
     ];
     const flips = [{ x: 1, y: 0 }];
-    const result = applyFlips(board, flips, 'A');
+    const result = logic.applyFlips(board, flips, 'A');
     expect(board[0][1].owner).toBe('B');
     expect(result).not.toBe(board);
   });
@@ -105,7 +101,7 @@ describe('applyFlips', () => {
       [A(), null],
     ];
     const flips = [{ x: 1, y: 0 }];
-    const result = applyFlips(board, flips, 'A');
+    const result = logic.applyFlips(board, flips, 'A');
     expect(result[0][0].owner).toBe('A');
     expect(result[0][1]).toBeNull();
   });
@@ -120,7 +116,7 @@ describe('playCard', () => {
       [null, null],
       [null, null],
     ];
-    const result = playCard(board, 0, 0, A(), 'A');
+    const result = logic.playCard(board, 0, 0, A(), 'A');
     expect(result[0][0].owner).toBe('A');
   });
 
@@ -129,7 +125,7 @@ describe('playCard', () => {
       [A(), null],
       [null, null],
     ];
-    expect(() => playCard(board, 0, 0, A(), 'A')).toThrow('Cell already occupied');
+    expect(() => logic.playCard(board, 0, 0, A(), 'A')).toThrow('Cell already occupied');
   });
 
   test('flips neighbouring opponent cards if stronger', () => {
@@ -138,7 +134,7 @@ describe('playCard', () => {
       [null, null],
     ];
     const card = A({ strengthRight: 5 });
-    const result = playCard(board, 0, 0, card, 'A');
+    const result = logic.playCard(board, 0, 0, card, 'A');
     expect(result[0][1].owner).toBe('A');
   });
 
@@ -148,7 +144,7 @@ describe('playCard', () => {
       [null, null],
     ];
     const card = A({ strengthRight: 5 });
-    const result = playCard(board, 0, 0, card, 'A');
+    const result = logic.playCard(board, 0, 0, card, 'A');
     expect(result[0][1].owner).toBe('B');
   });
 });

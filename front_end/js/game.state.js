@@ -1,7 +1,12 @@
-const { playCard } = require('./game.logic.js');
+import GameLogic from "./game.logic.js";
+const logic = new GameLogic();
 
 class GameState {
-  constructor({ playerHand, aiHand, startingPlayer = 'PLAYER' }) {
+  constructor({
+    playerHand = Game.state.hands.PLAYER,
+    aiHand = Game.state.hands.AI,
+    startingPlayer = "PLAYER",
+  }) {
     this.board = [
       [null, null, null],
       [null, null, null],
@@ -27,7 +32,7 @@ class GameState {
   }
 
   switchTurn() {
-    this.turn = this.turn === 'PLAYER' ? 'AI' : 'PLAYER';
+    this.turn = this.turn === "PLAYER" ? "AI" : "PLAYER";
   }
 
   playCardAt(x, y, cardIndex) {
@@ -42,7 +47,7 @@ class GameState {
     }
 
     // Play the card and update the board
-    this.board = playCard(this.board, x, y, card, player);
+    this.board = logic.playCard(this.board, x, y, card, player);
 
     // Remove the card from the player's hand
     this.hands[player].splice(cardIndex, 1);
@@ -61,10 +66,10 @@ class GameState {
     for (const row of this.board) {
       for (const cell of row) {
         if (cell) {
-          if (cell.owner === 'PLAYER') {
+          if (cell.owner === "PLAYER") {
             playerOwned++;
           }
-          if (cell.owner === 'AI') {
+          if (cell.owner === "AI") {
             aiOwned++;
           }
         }
@@ -84,22 +89,22 @@ class GameState {
       return null;
     }
     if (this.scores.PLAYER > this.scores.AI) {
-      return 'PLAYER';
+      return "PLAYER";
     }
     if (this.scores.AI > this.scores.PLAYER) {
-      return 'AI';
+      return "AI";
     }
-    return 'DRAW';
+    return "DRAW";
   }
 }
 
 // Simple AI move: picks random card + empty cell
 GameState.prototype.playAiTurn = function () {
-  if (this.turn !== 'AI') {
-    throw new Error('It is not the AI\'s turn');
+  if (this.turn !== "AI") {
+    throw new Error("It is not the AI's turn");
   }
   if (this.hands.AI.length === 0) {
-    throw new Error('AI has no cards left');
+    throw new Error("AI has no cards left");
   }
 
   // Collect all empty cells
@@ -113,7 +118,7 @@ GameState.prototype.playAiTurn = function () {
   }
 
   if (emptyCells.length === 0) {
-    throw new Error('No available cells for AI move');
+    throw new Error("No available cells for AI move");
   }
 
   // Randomly pick a card and cell
@@ -124,5 +129,4 @@ GameState.prototype.playAiTurn = function () {
   this.playCardAt(x, y, cardIndex);
 };
 
-
-module.exports = GameState;
+export default GameState;
