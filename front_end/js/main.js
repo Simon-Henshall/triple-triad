@@ -103,7 +103,7 @@ Game.stageHeight = 0;
 
 Game.startGame = function () {
   board.generateGrid();
-  Game.cards.playerHand.populate(Game.player.playerCards)
+  Game.cards.playerHand.populate(player.playerCards)
   Game.ui.drawCardCounts();
   Game.ui.drawInfoBox();
   Game.cursors.playerHand.place();
@@ -111,9 +111,9 @@ Game.startGame = function () {
 
 Game.endGame = function () {
   // Calculate The Winner
-  if (Game.ai.totalRedCards > Game.player.totalBlueCards) {
+  if (Game.ai.totalRedCards > player.totalBlueCards) {
     alert("lose");
-  } else if (Game.player.totalBlueCards > Game.ai.totalRedCards) {
+  } else if (player.totalBlueCards > Game.ai.totalRedCards) {
     alert("win");
   } else {
     alert("draw");

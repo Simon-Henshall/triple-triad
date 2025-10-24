@@ -1,5 +1,6 @@
 import { config } from './config.js';
 import { offsets } from './offsets.js';
+import { player } from './player.js';
 
 // -------------------------
 // CORE: Initialization
@@ -21,7 +22,7 @@ const GameInit = {
       offsets.cellHeight - offsets.cardOffsetY * 2;
   },
   handPositions() {
-    Game.player.handOffsetX =
+    player.handOffsetX =
       offsets.gameOffsetX +
       offsets.cellWidth * 3 +
       offsets.cardWidth / 4;
@@ -29,10 +30,10 @@ const GameInit = {
       offsets.gameOffsetX / 2 - offsets.cardWidth / 2;
   },
   cursors() {
-    Game.player.playerHandCursor = new createjs.Bitmap(
+    player.playerHandCursor = new createjs.Bitmap(
       config.imagePath + "cursor.png"
     );
-    Game.player.playerHandSelectionCursor = new createjs.Bitmap(
+    player.playerHandSelectionCursor = new createjs.Bitmap(
       config.imagePath + "cursor.png"
     );
     Game.ui.gridCursor = new createjs.Bitmap(

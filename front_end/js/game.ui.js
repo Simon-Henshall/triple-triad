@@ -1,5 +1,6 @@
 import { config } from './config.js';
 import { offsets } from './offsets.js';
+import { player } from './player.js';
 
 // Info box fixed dimensions
 const INFO_BOX_WIDTH = 420;
@@ -78,8 +79,8 @@ Game.ui = {
     if (Game.ai.aiCardCount) {
       Game.stage.removeChild(Game.ai.aiCardCount);
     }
-    if (Game.player.playerCardCount) {
-      Game.stage.removeChild(Game.player.playerCardCount);
+    if (player.playerCardCount) {
+      Game.stage.removeChild(player.playerCardCount);
     }
 
     Game.ai.aiCardCount = new createjs.Text(
@@ -92,16 +93,16 @@ Game.ui = {
     Game.ai.aiCardCount.textBaseline = "alphabetic";
     Game.stage.addChild(Game.ai.aiCardCount);
 
-    Game.player.playerCardCount = new createjs.Text(
-      Game.player.totalBlueCards,
+    player.playerCardCount = new createjs.Text(
+      player.totalBlueCards,
       "90px Arial",
       "#ffffff"
     );
-    Game.player.playerCardCount.x =
-      Game.player.handOffsetX + offsets.cardWidth / 3;
-    Game.player.playerCardCount.y = Game.stageHeight - 15;
-    Game.player.playerCardCount.textBaseline = "alphabetic";
-    Game.stage.addChild(Game.player.playerCardCount);
+    player.playerCardCount.x =
+      player.handOffsetX + offsets.cardWidth / 3;
+    player.playerCardCount.y = Game.stageHeight - 15;
+    player.playerCardCount.textBaseline = "alphabetic";
+    Game.stage.addChild(player.playerCardCount);
 
     Game.stage.update();
   },
@@ -191,8 +192,8 @@ Game.ui = {
     if (Game.ai.aiCardCount) {
       Game.ai.aiCardCount.text = Game.ai.totalRedCards;
     }
-    if (Game.player.playerCardCount) {
-      Game.player.playerCardCount.text = Game.player.totalBlueCards;
+    if (player.playerCardCount) {
+      player.playerCardCount.text = player.totalBlueCards;
     }
 
     Game.stage.update();

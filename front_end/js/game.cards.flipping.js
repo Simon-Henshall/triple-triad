@@ -1,3 +1,5 @@
+import { player } from './player.js';
+
 /**
  * @namespace Game.cards.flipping.js
  * @description Handles card flipping, animation, and ownership logic.
@@ -109,7 +111,7 @@ Game.cards.flipping = {
       red: { totalBlueCardsConfined: -1, totalRedCardsConfined: 1 },
     };
 
-    Game.player.totalBlueCards +=
+    player.totalBlueCards +=
       delta[playerColour].totalBlueCardsConfined * flippedCount;
     Game.ai.totalRedCards +=
       delta[playerColour].totalRedCardsConfined * flippedCount;
@@ -121,7 +123,7 @@ Game.cards.flipping = {
    */
   updateCardCounts() {
     Game.ai.aiCardCount.text = Game.ai.totalRedCards;
-    Game.player.playerCardCount.text = Game.player.totalBlueCards;
+    player.playerCardCount.text = player.totalBlueCards;
     Game.stage.update();
   },
   /**

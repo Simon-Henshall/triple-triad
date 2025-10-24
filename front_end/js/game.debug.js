@@ -1,3 +1,5 @@
+import { player } from './player.js';
+
 Game.debug = {
   active: true, // Toggle for debug mode
 
@@ -59,7 +61,7 @@ Game.debug = {
    */
   logHands() {
     console.log("=============== PLAYER HAND ===============");
-    Game.player.cardsInPlayerHand.forEach((card, i) => {
+    player.cardsInPlayerHand.forEach((card, i) => {
       console.log(
         `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`
       );
@@ -83,7 +85,7 @@ Game.debug = {
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`
     );
     console.log(
-      `SCORE | Player: ${Game.player.totalBlueCards} AI: ${Game.ai.totalRedCards}`
+      `SCORE | Player: ${player.totalBlueCards} AI: ${Game.ai.totalRedCards}`
     );
     console.log(`Free cells remaining: ${board.freeCells.join(", ")}`);
     console.log("*****************************************");

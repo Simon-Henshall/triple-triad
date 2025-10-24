@@ -1,5 +1,6 @@
 import { offsets } from './offsets.js';
 import { board } from './board.js';
+import { player } from './player.js';
 
 // -------------------------
 // PLAYER HAND SELECTION CURSOR
@@ -9,18 +10,18 @@ Game.cursors.selection = {
    * Place the small hand selection cursor at its initial position
    */
   place() {
-    Game.player.playerHandSelectionCursor.x =
+    player.playerHandSelectionCursor.x =
       Game.ui.selectionBoard.background.x - 40;
-    Game.player.playerHandSelectionCursor.y =
+    player.playerHandSelectionCursor.y =
       Game.ui.selectionBoard.background.y + 48;
 
     Game.ui.selectionBoard.container.addChild(
-      Game.player.playerHandSelectionCursor
+      player.playerHandSelectionCursor
     );
     Game.stage.update();
     if (Game.debug.active) {
       console.log(
-        `Player hand selection cursor placed at X:${Game.player.playerHandSelectionCursor.x}, Y:${Game.player.playerHandSelectionCursor.y}`
+        `Player hand selection cursor placed at X:${player.playerHandSelectionCursor.x}, Y:${player.playerHandSelectionCursor.y}`
       );
     }
   },
@@ -29,7 +30,7 @@ Game.cursors.selection = {
    */
   move(direction) {
     const sb = Game.ui.selectionBoard;
-    const totalCards = Game.player.ownedCards.length;
+    const totalCards = player.ownedCards.length;
 
     // Page boundaries
     const pageStart = (sb.page - 1) * 11;
@@ -43,9 +44,9 @@ Game.cursors.selection = {
       case "up":
         if (sb.selectedHandCardNumber > pageStart) {
           sb.selectedHandCardNumber--;
-          Game.player.playerHandSelectionCursor.y -= rowStep;
+          player.playerHandSelectionCursor.y -= rowStep;
           sb.selectedHandCard =
-            Game.player.ownedCards[sb.selectedHandCardNumber];
+            player.ownedCards[sb.selectedHandCardNumber];
           Game.cards.selectionBoard.updateDisplay();
         }
         break;
@@ -53,9 +54,9 @@ Game.cursors.selection = {
       case "down":
         if (sb.selectedHandCardNumber < pageEnd) {
           sb.selectedHandCardNumber++;
-          Game.player.playerHandSelectionCursor.y += rowStep;
+          player.playerHandSelectionCursor.y += rowStep;
           sb.selectedHandCard =
-            Game.player.ownedCards[sb.selectedHandCardNumber];
+            player.ownedCards[sb.selectedHandCardNumber];
           Game.cards.selectionBoard.updateDisplay();
         }
         break;
@@ -82,7 +83,7 @@ Game.cursors.selection = {
    * Remove the hand selection cursor
    */
   remove() {
-    Game.stage.removeChild(Game.player.playerHandSelectionCursor);
+    Game.stage.removeChild(player.playerHandSelectionCursor);
     Game.stage.update();
 
     if (Game.debug.active) {
@@ -161,18 +162,18 @@ Game.cursors.playerHand = {
    */
   place() {
     Game.ui.playerChoosingCard = true;
-    Game.player.playerHandCursor.x = Game.player.handOffsetX - 50;
-    Game.player.playerHandCursor.y =
+    player.playerHandCursor.x = player.handOffsetX - 50;
+    player.playerHandCursor.y =
       offsets.handOffsetY +
-      (Game.ui.selectedCardNumber + 1 + Game.player.playedPlayerCardCount) *
+      (Game.ui.selectedCardNumber + 1 + player.playedPlayerCardCount) *
         (offsets.cardHeight / 2);
 
-    Game.stage.addChild(Game.player.playerHandCursor);
+    Game.stage.addChild(player.playerHandCursor);
     Game.stage.update();
 
     if (Game.debug.active) {
       console.log(
-        `Player hand cursor placed at X:${Game.player.playerHandCursor.x}, Y:${Game.player.playerHandCursor.y}`
+        `Player hand cursor placed at X:${player.playerHandCursor.x}, Y:${player.playerHandCursor.y}`
       );
     }
   },
@@ -182,16 +183,16 @@ Game.cursors.playerHand = {
    */
   move(direction) {
     if (direction === "up" && Game.ui.selectedCardNumber > 0) {
-      Game.player.playerHandCursor.y -= offsets.handCardOffset;
+      player.playerHandCursor.y -= offsets.handCardOffset;
       Game.ui.selectedCardNumber--;
-      Game.player.cardsAboveSelection--;
+      player.cardsAboveSelection--;
     } else if (
       direction === "down" &&
-      Game.ui.selectedCardNumber < Game.player.cardsInPlayerHand.length - 1
+      Game.ui.selectedCardNumber < player.cardsInPlayerHand.length - 1
     ) {
-      Game.player.playerHandCursor.y += offsets.handCardOffset;
+      player.playerHandCursor.y += offsets.handCardOffset;
       Game.ui.selectedCardNumber++;
-      Game.player.cardsAboveSelection++;
+      player.cardsAboveSelection++;
     } else {
       console.warn(`Cannot move cursor ${direction} - out of bounds`);
       return;
@@ -199,10 +200,10 @@ Game.cursors.playerHand = {
 
     Game.ui.previouslySelectedCard = Game.ui.selectedCard;
     Game.ui.selectedCard =
-      Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+      player.cardsInPlayerHand[Game.ui.selectedCardNumber];
 
     Game.ui.updateInfoBox();
-    Game.player.indentSelectedCard();
+    player.indentSelectedCard();
 
     Game.stage.update();
     if (Game.debug.active) {
@@ -216,7 +217,7 @@ Game.cursors.playerHand = {
    */
   remove() {
     Game.ui.playerChoosingCard = false;
-    Game.stage.removeChild(Game.player.playerHandCursor);
+    Game.stage.removeChild(player.playerHandCursor);
     Game.stage.update();
 
     if (Game.debug.active) {

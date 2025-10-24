@@ -1,4 +1,5 @@
 import { cards } from './cards.js';
+import { player } from './player.js';
 
 Game.utils = {
   ajaxCall(whenDone) {
@@ -32,7 +33,7 @@ Game.utils = {
     });
   },
   pickPlayerCards(ownedCardsJSON) {
-    Game.player.ownedCards = [];
+    player.ownedCards = [];
     Game.ui.selectionBoard.page = 1;
     Game.ui.selectionBoard.selectedHandCardNumber = 0;
     Game.ui.selectionBoard.displayedCards = [];
@@ -58,15 +59,15 @@ Game.utils = {
         if (cardsCopy[i]) {
           cardsCopy[i].count = Game.ui.cardCount;
           cardsCopy[i].colour = "#ffffff";
-          Game.player.ownedCards.push(cardsCopy[i]);
+          player.ownedCards.push(cardsCopy[i]);
         }
       }
     }
 
     // Either pick random cards or show selection board
     if (Game.rules.indexOf("random") != -1) {
-      Game.player.playerCards = this.shuffle(
-        $.extend(true, [], Game.player.ownedCards)
+      player.playerCards = this.shuffle(
+        $.extend(true, [], player.ownedCards)
       );
       // populate AI cards and start game
       if (!Game.ai.cardsInAIHand || Game.ai.cardsInAIHand.length === 0) {

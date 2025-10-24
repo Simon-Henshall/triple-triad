@@ -1,5 +1,6 @@
 import { offsets } from './offsets.js';
 import { board } from './board.js';
+import { player } from './player.js';
 
 /**
  * @namespace Game.cards.placement
@@ -169,11 +170,11 @@ Game.cards.placement = class CardPlacer {
 
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
-      Game.player.playedPlayerCardCount++;
-      Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+      player.playedPlayerCardCount++;
+      Game.ui.selectedCard = player.cardsInPlayerHand[Game.ui.selectedCardNumber];
 
       // Reposition cursor and UI elements
-      Game.stage.addChild(Game.player.playerHandCursor);
+      Game.stage.addChild(player.playerHandCursor);
       Game.ui.selectedCard.x -= 30;
 
       Game.stage.setChildIndex(Game.ui.infoBox.container, Game.stage.getNumChildren() - 1);
@@ -215,17 +216,17 @@ Game.cards.placement = class CardPlacer {
 
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER HAND ===
-      animateHandCardsDown(Game.player.cardsInPlayerHand, Game.player.cardsAboveSelection);
+      animateHandCardsDown(player.cardsInPlayerHand, player.cardsAboveSelection);
 
       if (Game.ui.selectedCardNumber === 0) {
         // Top card was played; move cursor down
-        Game.player.playerHandCursor.y += offsets.handCardOffset;
-        Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+        player.playerHandCursor.y += offsets.handCardOffset;
+        Game.ui.selectedCard = player.cardsInPlayerHand[Game.ui.selectedCardNumber];
       } else {
         // Adjust selection to the next card
         Game.ui.selectedCardNumber--;
-        Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
-        Game.player.cardsAboveSelection--;
+        Game.ui.selectedCard = player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+        player.cardsAboveSelection--;
       }
     } else if (Game.utils.getPlayerTurn() === "red") {
       // === AI HAND ===

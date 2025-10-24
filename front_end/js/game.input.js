@@ -1,4 +1,5 @@
 import { offsets } from './offsets.js';
+import { player } from './player.js';
 
 // -------------------------
 // GAME INPUT HANDLING
@@ -58,7 +59,7 @@ Game.input = {
     // ENTER: select the currently highlighted card (uses absolute index into ownedCards)
     if (e.key === "Enter") {
       const index = sb.selectedHandCardNumber;
-      const card = Game.player.ownedCards[index];
+      const card = player.ownedCards[index];
 
       if (!card) {
         console.warn("No card at selected index:", index);
@@ -68,14 +69,14 @@ Game.input = {
       if (card.count > 0) {
         card.count--;
         // store the card object in the player's temporary selection
-        Game.player.playerCards.push(card);
+        player.playerCards.push(card);
 
         // update visuals / counts on the selection board
         if (
-          Game.player.cardManagerInstance &&
-          typeof Game.player.cardManagerInstance.updateHandCards === "function"
+          player.cardManagerInstance &&
+          typeof player.cardManagerInstance.updateHandCards === "function"
         ) {
-          Game.player.cardManagerInstance.updateHandCards();
+          player.cardManagerInstance.updateHandCards();
         } else {
           // fallback: repopulate the selection board if manager missing
           if (
@@ -89,7 +90,7 @@ Game.input = {
 
         // refresh the preview (in case it needs to show updated count/visuals)
         sb.selectedHandCard =
-          Game.player.ownedCards[sb.selectedHandCardNumber] || null;
+          player.ownedCards[sb.selectedHandCardNumber] || null;
         if (
           Game.cards &&
           Game.cards.selectionBoard &&
@@ -114,7 +115,7 @@ Game.input = {
       }
 
       // If player has chosen 5 cards, move to confirmation
-      if (Game.player.playerCards.length === 5) {
+      if (player.playerCards.length === 5) {
         Game.ui.playerSelectingHand = false;
         if (
           Game.ui.confirmationBox &&
@@ -136,16 +137,16 @@ Game.input = {
 
     // CANCEL: Backspace / Escape — undo last selection
     if (this._isCancelKey(e.key)) {
-      if (Game.player.playerCards.length > 0) {
-        const lastCard = Game.player.playerCards.pop();
+      if (player.playerCards.length > 0) {
+        const lastCard = player.playerCards.pop();
         if (lastCard) {
           lastCard.count++;
           if (
-            Game.player.cardManagerInstance &&
-            typeof Game.player.cardManagerInstance.updateHandCards ===
+            player.cardManagerInstance &&
+            typeof player.cardManagerInstance.updateHandCards ===
               "function"
           ) {
-            Game.player.cardManagerInstance.updateHandCards();
+            player.cardManagerInstance.updateHandCards();
           } else if (
             Game.cards &&
             Game.cards.selectionBoard &&
@@ -155,7 +156,7 @@ Game.input = {
           }
           // Refresh preview for current index (in case it changed)
           sb.selectedHandCard =
-            Game.player.ownedCards[sb.selectedHandCardNumber] || null;
+            player.ownedCards[sb.selectedHandCardNumber] || null;
           if (
             Game.cards &&
             Game.cards.selectionBoard &&
@@ -187,9 +188,9 @@ Game.input = {
       (e.key === "Enter" && Game.ui.confirmation.selectedChoice === 1)
     ) {
       for (let i = 0; i < 5; i++) {
-        const lastCard = Game.player.playerCards.pop();
+        const lastCard = player.playerCards.pop();
         lastCard.count++;
-        Game.player.cardManagerInstance.updateHandCards();
+        player.cardManagerInstance.updateHandCards();
       }
       Game.stage.removeChild(Game.ui.confirmation.container);
       Game.cursors.confirmation.remove();
@@ -209,7 +210,7 @@ Game.input = {
       Game.cursors.grid.place();
       Game.ui.selectedRow = 2;
       Game.ui.selectedColumn = 2;
-      Game.stage.removeChild(Game.player.playerHandCursor);
+      Game.stage.removeChild(player.playerHandCursor);
     }
   },
 
@@ -226,7 +227,7 @@ Game.input = {
 
     if (e.key === "Enter") {
       if (!board.cellOccupied()) {
-        Game.player.cardsInPlayerHand.splice(Game.ui.selectedCardNumber, 1);
+        player.cardsInPlayerHand.splice(Game.ui.selectedCardNumber, 1);
         Game.cursors.grid.remove();
         Game.cards.placement.placeCard(
           Game.ui.selectedCard,

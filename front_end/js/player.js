@@ -2,10 +2,10 @@ import { config } from './config.js';
 import { offsets } from './offsets.js';
 
 /**
- * @namespace Game.player
+ * @namespace player
  * @description Contains all player-related data, logic, and card handling.
  */
-Game.player = {
+export const player = {
   /** @type {number} Horizontal offset for player hand rendering */
   handOffsetX: 0,
 
@@ -143,13 +143,13 @@ Game.player = {
 /**
  * Class handling selection board card display and updates
  */
-Game.player.CardManager = class {
+player.CardManager = class {
   /**
    * Update the hand cards shown on the selection board.
    */
   updateHandCards() {
     const sb = Game.ui.selectionBoard;
-    const owned = Game.player.ownedCards || [];
+    const owned = player.ownedCards || [];
 
     // Ensure paging is set up
     const offset = (sb.page - 1) * 11;
@@ -181,9 +181,9 @@ Game.player.CardManager = class {
     }
 
     // If player has unconfirmed selections, restore their colour if needed
-    if (Game.player.playerCards.length > 0) {
+    if (player.playerCards.length > 0) {
       const lastCard =
-        Game.player.playerCards[Game.player.playerCards.length - 1];
+        player.playerCards[player.playerCards.length - 1];
       if (lastCard && lastCard.count > 0) {
         lastCard.colour = "#ffffff";
       }
@@ -290,7 +290,7 @@ Game.player.CardManager = class {
 };
 
 // Create single instance of card manager
-Game.player.cardManagerInstance = new Game.player.CardManager();
+player.cardManagerInstance = new player.CardManager();
 
 Game.cards = Game.cards || {};
 
@@ -323,7 +323,7 @@ Game.cards.playerHand = {
 
     // Random hand of up to 5 cards
     const hand = Game.utils.shuffle([...playerCardsParam]).slice(0, 5);
-    Game.player.cardsInPlayerHand = [];
+    player.cardsInPlayerHand = [];
 
     hand.forEach((chosenCard, i) => {
       const targetW =
@@ -361,20 +361,20 @@ Game.cards.playerHand = {
       cardContainer.background = Game.utils.getPlayerTurn();
 
       // Position in hand
-      cardContainer.x = Game.player.handOffsetX;
+      cardContainer.x = player.handOffsetX;
       cardContainer.y =
         offsets.handOffsetY + i * (offsets.handCardOffset || 95);
 
-      Game.player.cardsInPlayerHand.push(cardContainer);
+      player.cardsInPlayerHand.push(cardContainer);
       Game.stage.addChild(cardContainer);
     });
 
     // Default selection
-    Game.ui.selectedCard = Game.player.cardsInPlayerHand[0];
+    Game.ui.selectedCard = player.cardsInPlayerHand[0];
     Game.ui.previouslySelectedCard = [];
 
     // Indent chosen card
-    Game.player.indentSelectedCard();
+    player.indentSelectedCard();
 
     // Ready for player to choose
     Game.ui.playerConfirming = false;
@@ -383,3 +383,5 @@ Game.cards.playerHand = {
     Game.stage.update();
   },
 };
+
+window.player = player;

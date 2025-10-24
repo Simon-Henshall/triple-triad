@@ -1,5 +1,6 @@
 import { config } from './config.js';
 import { offsets } from './offsets.js';
+import { player } from './player.js';
 
 // ------------------------------------
 // game.cards.selectionBoard.js
@@ -39,7 +40,7 @@ Game.cards.selectionBoard = {
    */
   populate() {
     const sb = Game.ui.selectionBoard;
-    const owned = Game.player.ownedCards || [];
+    const owned = player.ownedCards || [];
     const cardsPerPage = 11;
 
     sb.totalPages = Math.max(1, Math.ceil(owned.length / cardsPerPage));
@@ -122,7 +123,7 @@ Game.cards.selectionBoard = {
     }
 
     sb.selectedHandCard =
-      Game.player.ownedCards[sb.selectedHandCardNumber] || null;
+      player.ownedCards[sb.selectedHandCardNumber] || null;
 
     // Update the large preview display
     this.updateDisplay();
@@ -200,14 +201,14 @@ Game.cards.selectionBoard = {
     // move selection to top of this new page (absolute index)
     sb.selectedHandCardNumber = pageStart;
     sb.selectedHandCard =
-      Game.player.ownedCards[sb.selectedHandCardNumber] || null;
+      player.ownedCards[sb.selectedHandCardNumber] || null;
 
     // repopulate UI rows & preview
     this.populate();
 
     // move cursor visual to top row
-    if (Game.player.playerHandSelectionCursor && sb.background) {
-      Game.player.playerHandSelectionCursor.y = sb.background.y + 48;
+    if (player.playerHandSelectionCursor && sb.background) {
+      player.playerHandSelectionCursor.y = sb.background.y + 48;
     }
 
     if (sb.pageDisplay) sb.pageDisplay.text = sb.page;
