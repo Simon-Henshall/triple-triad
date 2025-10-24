@@ -1,3 +1,5 @@
+import { offsets } from './offsets.js';
+
 // -------------------------
 // GAME INPUT HANDLING
 // -------------------------
@@ -228,12 +230,12 @@ Game.input = {
         Game.cursors.grid.remove();
         Game.cards.placement.placeCard(
           Game.ui.selectedCard,
-          Game.offsets.gameOffsetX +
-            Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) +
-            Game.offsets.cardOffsetX,
-          Game.offsets.gameOffsetY +
-            Game.offsets.cellHeight * (Game.ui.selectedRow - 1) +
-            Game.offsets.cardOffsetY
+          offsets.gameOffsetX +
+            offsets.cellWidth * (Game.ui.selectedColumn - 1) +
+            offsets.cardOffsetX,
+          offsets.gameOffsetY +
+            offsets.cellHeight * (Game.ui.selectedRow - 1) +
+            offsets.cardOffsetY
         );
       }
     } else if (this._isCancelKey(e.key)) {

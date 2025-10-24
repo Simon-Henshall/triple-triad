@@ -1,4 +1,5 @@
 import { config } from './config.js';
+import { offsets } from './offsets.js';
 
 // ------------------------------------
 // game.cards.selectionBoard.js
@@ -144,11 +145,11 @@ Game.cards.selectionBoard = {
     ui.displayedCard = new createjs.Container();
 
     const targetW =
-      Game.offsets.cardWidth ||
-      Game.offsets.cellWidth - (Game.offsets.cardOffsetX || 3) * 2;
+      offsets.cardWidth ||
+      offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
     const targetH =
-      Game.offsets.cardHeight ||
-      Game.offsets.cellHeight - (Game.offsets.cardOffsetY || 3) * 2;
+      offsets.cardHeight ||
+      offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
 
     // Card colour
     const colourBmp = this._createScaledBitmap(

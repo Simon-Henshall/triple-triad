@@ -1,5 +1,6 @@
 import { config } from './config.js';
 import { cards } from './cards.js';
+import { offsets } from './offsets.js';
 
 Game.ai = {
   handOffsetX: 0,
@@ -33,12 +34,12 @@ Game.ai = {
     setTimeout(function () {
       Game.cards.placement.placeCard(
         aiSelectedCard,
-        Game.offsets.gameOffsetX +
-          Game.offsets.cellWidth * (Game.ui.selectedColumn - 1) +
-          Game.offsets.cardOffsetX,
-        Game.offsets.gameOffsetY +
-          Game.offsets.cellHeight * (Game.ui.selectedRow - 1) +
-          Game.offsets.cardOffsetY
+        offsets.gameOffsetX +
+          offsets.cellWidth * (Game.ui.selectedColumn - 1) +
+          offsets.cardOffsetX,
+        offsets.gameOffsetY +
+          offsets.cellHeight * (Game.ui.selectedRow - 1) +
+          offsets.cardOffsetY
       );
     }, Game.ai.aiDelay);
   },
@@ -69,7 +70,6 @@ Game.cards.aiHand = {
    * Populate the AI hand.
    */
   populate() {
-    const offsets = Game.offsets;
     const hand = Game.utils.shuffle((cards || []).slice()).slice(0, 5); // 5 AI cards
     Game.ai.cardsInAIHand = [];
 

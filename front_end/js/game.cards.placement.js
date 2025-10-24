@@ -1,3 +1,5 @@
+import { offsets } from './offsets.js';
+
 /**
  * @namespace Game.cards.placement
  * @description Handles card placement, adjacency, turn switching, and element effects.
@@ -147,8 +149,8 @@ Game.cards.placement = class CardPlacer {
 
     // Create and position the effect indicator
     const effectBmp = new createjs.Bitmap(effectImage);
-    effectBmp.x = card.x + Game.offsets.cardWidth / 4;
-    effectBmp.y = card.y + Game.offsets.cardHeight / 3;
+    effectBmp.x = card.x + offsets.cardWidth / 4;
+    effectBmp.y = card.y + offsets.cardHeight / 3;
     Game.stage.addChild(effectBmp);
 
     // Ensure the image appears on top
@@ -208,7 +210,7 @@ Game.cards.placement = class CardPlacer {
      */
     function animateHandCardsDown(hand, count) {
       for (let i = 0; i < count; i++) {
-        createjs.Tween.get(hand[i]).to({ y: hand[i].y + Game.offsets.handCardOffset }, 200);
+        createjs.Tween.get(hand[i]).to({ y: hand[i].y + offsets.handCardOffset }, 200);
       }
     }
 
@@ -218,7 +220,7 @@ Game.cards.placement = class CardPlacer {
 
       if (Game.ui.selectedCardNumber === 0) {
         // Top card was played; move cursor down
-        Game.player.playerHandCursor.y += Game.offsets.handCardOffset;
+        Game.player.playerHandCursor.y += offsets.handCardOffset;
         Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
       } else {
         // Adjust selection to the next card

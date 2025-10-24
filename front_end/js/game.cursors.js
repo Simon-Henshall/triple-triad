@@ -1,3 +1,5 @@
+import { offsets } from './offsets.js';
+
 // -------------------------
 // PLAYER HAND SELECTION CURSOR
 // -------------------------
@@ -160,9 +162,9 @@ Game.cursors.playerHand = {
     Game.ui.playerChoosingCard = true;
     Game.player.playerHandCursor.x = Game.player.handOffsetX - 50;
     Game.player.playerHandCursor.y =
-      Game.offsets.handOffsetY +
+      offsets.handOffsetY +
       (Game.ui.selectedCardNumber + 1 + Game.player.playedPlayerCardCount) *
-        (Game.offsets.cardHeight / 2);
+        (offsets.cardHeight / 2);
 
     Game.stage.addChild(Game.player.playerHandCursor);
     Game.stage.update();
@@ -179,14 +181,14 @@ Game.cursors.playerHand = {
    */
   move(direction) {
     if (direction === "up" && Game.ui.selectedCardNumber > 0) {
-      Game.player.playerHandCursor.y -= Game.offsets.handCardOffset;
+      Game.player.playerHandCursor.y -= offsets.handCardOffset;
       Game.ui.selectedCardNumber--;
       Game.player.cardsAboveSelection--;
     } else if (
       direction === "down" &&
       Game.ui.selectedCardNumber < Game.player.cardsInPlayerHand.length - 1
     ) {
-      Game.player.playerHandCursor.y += Game.offsets.handCardOffset;
+      Game.player.playerHandCursor.y += offsets.handCardOffset;
       Game.ui.selectedCardNumber++;
       Game.player.cardsAboveSelection++;
     } else {
@@ -232,9 +234,9 @@ Game.cursors.grid = {
   place() {
     Game.ui.playerSelectingPlacement = true;
     Game.ui.gridCursor.x =
-      Game.offsets.gameOffsetX + Game.offsets.cellWidth + 16;
+      offsets.gameOffsetX + offsets.cellWidth + 16;
     Game.ui.gridCursor.y =
-      Game.offsets.gameOffsetY + Game.offsets.cellHeight + 80;
+      offsets.gameOffsetY + offsets.cellHeight + 80;
 
     Game.stage.addChild(Game.ui.gridCursor);
     Game.stage.update();
@@ -255,29 +257,29 @@ Game.cursors.grid = {
 
     if (
       direction === "left" &&
-      Game.ui.gridCursor.x > Game.offsets.gameOffsetX + 16
+      Game.ui.gridCursor.x > offsets.gameOffsetX + 16
     ) {
-      Game.ui.gridCursor.x -= Game.offsets.cellWidth;
+      Game.ui.gridCursor.x -= offsets.cellWidth;
       Game.ui.selectedColumn--;
     } else if (
       direction === "up" &&
-      Game.ui.gridCursor.y > Game.offsets.gameOffsetY + 80
+      Game.ui.gridCursor.y > offsets.gameOffsetY + 80
     ) {
-      Game.ui.gridCursor.y -= Game.offsets.cellHeight;
+      Game.ui.gridCursor.y -= offsets.cellHeight;
       Game.ui.selectedRow--;
     } else if (
       direction === "right" &&
       Game.ui.gridCursor.x <
-        Game.offsets.gameOffsetX + Game.offsets.cellWidth * 2 + 16
+        offsets.gameOffsetX + offsets.cellWidth * 2 + 16
     ) {
-      Game.ui.gridCursor.x += Game.offsets.cellWidth;
+      Game.ui.gridCursor.x += offsets.cellWidth;
       Game.ui.selectedColumn++;
     } else if (
       direction === "down" &&
       Game.ui.gridCursor.y <
-        Game.offsets.gameOffsetY + Game.offsets.cellHeight * 2 + 80
+        offsets.gameOffsetY + offsets.cellHeight * 2 + 80
     ) {
-      Game.ui.gridCursor.y += Game.offsets.cellHeight;
+      Game.ui.gridCursor.y += offsets.cellHeight;
       Game.ui.selectedRow++;
     } else {
       console.warn(`Cannot move grid cursor ${direction} - out of bounds`);

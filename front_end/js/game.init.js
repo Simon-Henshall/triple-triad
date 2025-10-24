@@ -1,4 +1,5 @@
 import { config } from './config.js';
+import { offsets } from './offsets.js';
 
 // -------------------------
 // CORE: Initialization
@@ -14,18 +15,18 @@ const GameInit = {
   },
   offsets() {
     // Card size
-    Game.offsets.cardWidth =
-      Game.offsets.cellWidth - Game.offsets.cardOffsetX * 2;
-    Game.offsets.cardHeight =
-      Game.offsets.cellHeight - Game.offsets.cardOffsetY * 2;
+    offsets.cardWidth =
+      offsets.cellWidth - offsets.cardOffsetX * 2;
+    offsets.cardHeight =
+      offsets.cellHeight - offsets.cardOffsetY * 2;
   },
   handPositions() {
     Game.player.handOffsetX =
-      Game.offsets.gameOffsetX +
-      Game.offsets.cellWidth * 3 +
-      Game.offsets.cardWidth / 4;
+      offsets.gameOffsetX +
+      offsets.cellWidth * 3 +
+      offsets.cardWidth / 4;
     Game.ai.handOffsetX =
-      Game.offsets.gameOffsetX / 2 - Game.offsets.cardWidth / 2;
+      offsets.gameOffsetX / 2 - offsets.cardWidth / 2;
   },
   cursors() {
     Game.player.playerHandCursor = new createjs.Bitmap(

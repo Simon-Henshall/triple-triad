@@ -1,4 +1,5 @@
 import { config } from './config.js';
+import { offsets } from './offsets.js';
 
 /**
  * @namespace Game.player
@@ -69,9 +70,9 @@ Game.player = {
 
       // Adjust the card for the board
       Game.ui.card.scaleX =
-        Game.offsets.cardWidth / Game.ui.card.children[0].image.width;
+        offsets.cardWidth / Game.ui.card.children[0].image.width;
       Game.ui.card.scaleY =
-        Game.offsets.cardHeight / Game.ui.card.children[0].image.height;
+        offsets.cardHeight / Game.ui.card.children[0].image.height;
 
       // Assign stats
       Game.ui.card.name = chosenCard.displayName;
@@ -85,7 +86,7 @@ Game.player = {
       // Place the card
       Game.ui.card.x = this.handOffsetX;
       Game.ui.card.y =
-        Game.offsets.handOffsetY + i * Game.offsets.handCardOffset;
+        offsets.handOffsetY + i * offsets.handCardOffset;
 
       this.cardsInPlayerHand.push(Game.ui.card);
       Game.stage.addChild(Game.ui.card);
@@ -325,7 +326,6 @@ Game.cards.playerHand = {
     Game.player.cardsInPlayerHand = [];
 
     hand.forEach((chosenCard, i) => {
-      const offsets = Game.offsets;
       const targetW =
         offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
       const targetH =

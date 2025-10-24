@@ -1,4 +1,5 @@
 import { config } from './config.js';
+import { offsets } from './offsets.js';
 
 // Info box fixed dimensions
 const INFO_BOX_WIDTH = 420;
@@ -86,7 +87,7 @@ Game.ui = {
       "90px Arial",
       "#ffffff"
     );
-    Game.ai.aiCardCount.x = Game.ai.handOffsetX + Game.offsets.cardWidth / 3;
+    Game.ai.aiCardCount.x = Game.ai.handOffsetX + offsets.cardWidth / 3;
     Game.ai.aiCardCount.y = Game.stageHeight - 15;
     Game.ai.aiCardCount.textBaseline = "alphabetic";
     Game.stage.addChild(Game.ai.aiCardCount);
@@ -97,7 +98,7 @@ Game.ui = {
       "#ffffff"
     );
     Game.player.playerCardCount.x =
-      Game.player.handOffsetX + Game.offsets.cardWidth / 3;
+      Game.player.handOffsetX + offsets.cardWidth / 3;
     Game.player.playerCardCount.y = Game.stageHeight - 15;
     Game.player.playerCardCount.textBaseline = "alphabetic";
     Game.stage.addChild(Game.player.playerCardCount);

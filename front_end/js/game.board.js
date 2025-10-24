@@ -1,4 +1,5 @@
 import { config } from './config.js';
+import { offsets } from './offsets.js';
 
 // Lookup table for square positions and adjacency
 // Index corresponds to squareID - 1
@@ -84,8 +85,8 @@ Game.board = {
 
         const square = {
           id: squareID,
-          x: x * Game.offsets.cellWidth,
-          y: y * Game.offsets.cellHeight,
+          x: x * offsets.cellWidth,
+          y: y * offsets.cellHeight,
           element: elemId,
           container: new createjs.Container(),
         };
@@ -99,8 +100,8 @@ Game.board = {
           const elementGraphic = new createjs.Bitmap(
             config.imagePath + "/elements/" + config.elements[elemId].imagePath
           );
-          elementGraphic.x = Game.offsets.gameOffsetX + 60;
-          elementGraphic.y = Game.offsets.gameOffsetY + 70;
+          elementGraphic.x = offsets.gameOffsetX + 60;
+          elementGraphic.y = offsets.gameOffsetY + 70;
           square.container.addChild(elementGraphic);
         }
 
@@ -108,7 +109,7 @@ Game.board = {
         const hit = new createjs.Shape();
         hit.graphics
           .beginFill("#000")
-          .drawRect(0, 0, Game.offsets.cellWidth, Game.offsets.cellHeight);
+          .drawRect(0, 0, offsets.cellWidth, offsets.cellHeight);
         square.container.hitArea = hit;
 
         // Click handler
