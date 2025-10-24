@@ -1,4 +1,4 @@
-var cards = [
+export const cards = [
   {
     displayName: "Geezard",
     image: "card0",

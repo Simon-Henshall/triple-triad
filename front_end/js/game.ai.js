@@ -1,3 +1,5 @@
+import { cards } from './cards.js';
+
 Game.ai = {
   handOffsetX: 0,
   cardsInAIHand: [],
@@ -67,7 +69,7 @@ Game.cards.aiHand = {
    */
   populate() {
     const offsets = Game.offsets;
-    const hand = Game.utils.shuffle((window.cards || []).slice()).slice(0, 5); // 5 AI cards
+    const hand = Game.utils.shuffle((cards || []).slice()).slice(0, 5); // 5 AI cards
     Game.ai.cardsInAIHand = [];
 
     hand.forEach((chosenCard, i) => {
