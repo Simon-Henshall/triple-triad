@@ -1,5 +1,6 @@
 import { offsets } from './offsets.js';
 import { player } from './player.js';
+import { confirmationBox } from './confirmationBox.js';
 
 // -------------------------
 // GAME INPUT HANDLING
@@ -117,19 +118,7 @@ Game.input = {
       // If player has chosen 5 cards, move to confirmation
       if (player.playerCards.length === 5) {
         Game.ui.playerSelectingHand = false;
-        if (
-          Game.ui.confirmationBox &&
-          typeof Game.ui.confirmationBox.show === "function"
-        ) {
-          Game.ui.confirmationBox.show();
-        } else if (
-          Game.ui.confirmation &&
-          typeof Game.ui.confirmation.container !== "undefined"
-        ) {
-          // fallback if you used a different API: show the confirmation container
-          Game.stage.addChild(Game.ui.confirmation.container);
-          Game.cursors.confirmation.place();
-        }
+        confirmationBox.show();
       }
 
       return; // done handling Enter

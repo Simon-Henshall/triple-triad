@@ -1,4 +1,4 @@
-Game.ui.confirmationBox = {
+export const confirmationBox = {
   /**
    * Display the "Are you sure?" confirmation dialog
    */
