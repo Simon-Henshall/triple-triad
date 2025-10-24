@@ -87,10 +87,10 @@ Game.cards.placement = class CardPlacer {
       return cell ? cell.occupant ?? null : null;
     };
 
-    card.cardLeft = getOccupant(squareLeft);
-    card.cardUp = getOccupant(squareUp);
-    card.cardRight = getOccupant(squareRight);
-    card.cardDown = getOccupant(squareDown);
+    card.cardLeft = getOccupant(Game.ui.squareLeft);
+    card.cardUp = getOccupant(Game.ui.squareUp);
+    card.cardRight = getOccupant(Game.ui.squareRight);
+    card.cardDown = getOccupant(Game.ui.squareDown);
 
     if (Game.debug.active) {
       console.log(card);

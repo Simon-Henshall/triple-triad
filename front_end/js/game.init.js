@@ -1,10 +1,12 @@
+import { config } from './config.js';
+
 // -------------------------
 // CORE: Initialization
 // -------------------------
-Game.init = {
+const GameInit = {
   stage() {
     Game.stage = new createjs.Stage("gameArea");
-    createjs.Ticker.setFPS(Game.config.fps);
+    createjs.Ticker.setFPS(config.fps);
     createjs.Ticker.addEventListener("tick", () => Game.stage.update());
 
     Game.stageWidth = Game.stage.canvas.width;
@@ -27,13 +29,13 @@ Game.init = {
   },
   cursors() {
     Game.player.playerHandCursor = new createjs.Bitmap(
-      Game.config.imagePath + "cursor.png"
+      config.imagePath + "cursor.png"
     );
     Game.player.playerHandSelectionCursor = new createjs.Bitmap(
-      Game.config.imagePath + "cursor.png"
+      config.imagePath + "cursor.png"
     );
     Game.ui.gridCursor = new createjs.Bitmap(
-      Game.config.imagePath + "cursor.png"
+      config.imagePath + "cursor.png"
     );
   },
   uiContainers() {
@@ -46,7 +48,7 @@ Game.init = {
 
     Game.ui.confirmation.background = new createjs.Shape();
     Game.ui.confirmation.cursor = new createjs.Bitmap(
-      Game.config.imagePath + "cursor.png"
+      config.imagePath + "cursor.png"
     );
   },
   events() {
@@ -71,3 +73,6 @@ Game.init = {
     this.loadInitialCards();
   },
 };
+
+//export default GameInit;
+window.Game.init = GameInit;

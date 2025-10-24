@@ -1,3 +1,5 @@
+import { config } from './config.js';
+
 // Lookup table for square positions and adjacency
 // Index corresponds to squareID - 1
 const squareMap = [
@@ -29,10 +31,10 @@ Game.board = {
       const s = squareMap[i];
       if (s.row === Game.ui.selectedRow && s.col === Game.ui.selectedColumn) {
         Game.ui.selectedSquare = i + 1;
-        squareLeft = s.left;
-        squareUp = s.up;
-        squareRight = s.right;
-        squareDown = s.down;
+        Game.ui.squareLeft = s.left;
+        Game.ui.squareUp = s.up;
+        Game.ui.squareRight = s.right;
+        Game.ui.squareDown = s.down;
         break;
       }
     }
@@ -45,10 +47,10 @@ Game.board = {
     const s = squareMap[Game.ui.selectedAISquare - 1];
     Game.ui.selectedRow = s.row;
     Game.ui.selectedColumn = s.col;
-    squareLeft = s.left;
-    squareUp = s.up;
-    squareRight = s.right;
-    squareDown = s.down;
+    Game.ui.squareLeft = s.left;
+    Game.ui.squareUp = s.up;
+    Game.ui.squareRight = s.right;
+    Game.ui.squareDown = s.down;
   },
 
   // -------------------------
@@ -58,7 +60,7 @@ Game.board = {
     let squareID = 0;
 
     // Randomly pick elemental cells
-    const possibleElements = Object.keys(Game.config.elements);
+    const possibleElements = Object.keys(config.elements);
     const elements = [];
     const numElements = Math.floor(Math.random() * 3) + 1;
 
@@ -95,7 +97,7 @@ Game.board = {
         // If the cell has an element, display the corresponding graphic
         if (elemId !== 0) {
           const elementGraphic = new createjs.Bitmap(
-            Game.config.imagePath + "/elements/" + Game.config.elements[elemId].imagePath
+            config.imagePath + "/elements/" + config.elements[elemId].imagePath
           );
           elementGraphic.x = Game.offsets.gameOffsetX + 60;
           elementGraphic.y = Game.offsets.gameOffsetY + 70;

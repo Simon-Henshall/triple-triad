@@ -1,3 +1,5 @@
+import { config } from './config.js';
+
 /**
  * @namespace Game.player
  * @description Contains all player-related data, logic, and card handling.
@@ -53,12 +55,12 @@ Game.player = {
 
       // Transparent card data
       Game.ui.cardImage = new createjs.Bitmap(
-        `${Game.config.cardPath}${chosenCard.image}.png`
+        `${config.cardPath}${chosenCard.image}.png`
       );
 
       // Card Background Colour
       const cardColour = new createjs.Bitmap(
-        `${Game.config.cardPath}${Game.utils.getPlayerTurn()}.png`
+        `${config.cardPath}${Game.utils.getPlayerTurn()}.png`
       );
 
       // Card Container
@@ -271,7 +273,7 @@ Game.player.CardManager = class {
       Game.ui.selectionBoard.selectedHandCard
     ) {
       Game.ui.selectionBoard.displayedCard.children[1].image.src =
-        Game.config.cardPath +
+        config.cardPath +
         Game.ui.selectionBoard.selectedHandCard.image +
         ".png";
     }
@@ -332,13 +334,13 @@ Game.cards.playerHand = {
 
       // Card images
       const cardImage = this._createScaledBitmap(
-        `${Game.config.cardPath}${chosenCard.image}.png`,
+        `${config.cardPath}${chosenCard.image}.png`,
         targetW,
         targetH,
         () => Game.stage.update()
       );
       const cardColour = this._createScaledBitmap(
-        `${Game.config.cardPath}${Game.utils.getPlayerTurn()}.png`,
+        `${config.cardPath}${Game.utils.getPlayerTurn()}.png`,
         targetW,
         targetH,
         () => Game.stage.update()

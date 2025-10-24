@@ -1,3 +1,5 @@
+import { config } from './config.js';
+
 // ------------------------------------
 // game.cards.selectionBoard.js
 // Handles population, pagination, and display of the deck selection screen
@@ -150,7 +152,7 @@ Game.cards.selectionBoard = {
 
     // Card colour
     const colourBmp = this._createScaledBitmap(
-      Game.config.cardPath + "blue.png",
+      config.cardPath + "blue.png",
       targetW,
       targetH
     );
@@ -158,7 +160,7 @@ Game.cards.selectionBoard = {
 
     // Card image
     const cardBmp = this._createScaledBitmap(
-      selectedCard ? Game.config.cardPath + selectedCard.image + ".png" : "",
+      selectedCard ? config.cardPath + selectedCard.image + ".png" : "",
       targetW,
       targetH,
       () => Game.stage.update() // update stage after loaded

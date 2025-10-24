@@ -1,3 +1,5 @@
+import { config } from './config.js';
+
 // Info box fixed dimensions
 const INFO_BOX_WIDTH = 420;
 const INFO_BOX_HEIGHT = 65;
@@ -61,7 +63,7 @@ Game.ui = {
   // Add Background
   // -------------------------
   addBackground() {
-    const background = new createjs.Bitmap(Game.config.imagePath + "board.png");
+    const background = new createjs.Bitmap(config.imagePath + "board.png");
     background.x = 0;
     background.y = 0;
     Game.stage.addChild(background);

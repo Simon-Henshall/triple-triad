@@ -1,3 +1,4 @@
+import { config } from './config.js';
 import { cards } from './cards.js';
 
 Game.ai = {
@@ -80,13 +81,13 @@ Game.cards.aiHand = {
         offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
 
       const cardImage = this._createScaledBitmap(
-        Game.config.cardPath + "back.png",
+        config.cardPath + "back.png",
         targetW,
         targetH,
         () => Game.stage.update()
       );
       const cardColour = this._createScaledBitmap(
-        Game.config.cardPath + "red.png",
+        config.cardPath + "red.png",
         targetW,
         targetH,
         () => Game.stage.update()
@@ -97,8 +98,8 @@ Game.cards.aiHand = {
 
       // Card properties
       cardContainer.frontImage =
-        Game.config.cardPath + chosenCard.image + ".png";
-      cardContainer.backImage = Game.config.cardPath + "back.png";
+        config.cardPath + chosenCard.image + ".png";
+      cardContainer.backImage = config.cardPath + "back.png";
       cardContainer.name = chosenCard.displayName;
       cardContainer.strengthUp = chosenCard.strengthUp;
       cardContainer.strengthRight = chosenCard.strengthRight;
