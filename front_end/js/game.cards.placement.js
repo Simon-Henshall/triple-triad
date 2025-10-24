@@ -1,4 +1,5 @@
 import { offsets } from './offsets.js';
+import { board } from './board.js';
 
 /**
  * @namespace Game.cards.placement
@@ -13,7 +14,7 @@ Game.cards.placement = class CardPlacer {
    * @param {number} placementY
    */
   static placeCard(card, placementX, placementY) {
-    Game.board.checkSelectedSquare();
+    board.checkSelectedSquare();
 
     // Determine the offscreen exit direction based on player turn
     const offscreenX = Game.utils.getPlayerTurn() === "red" ? card.x + 40 : card.x - 40;
@@ -82,10 +83,8 @@ Game.cards.placement = class CardPlacer {
    * Set adjacent card references
    */
   static setCardAdjacents(card) {
-    const board = Game.board.boardArray;
-
     const getOccupant = (index) => {
-      const cell = board[index - 1];
+      const cell = board.boardArray[index - 1];
       return cell ? cell.occupant ?? null : null;
     };
 
@@ -104,12 +103,12 @@ Game.cards.placement = class CardPlacer {
    */
   static addCardToBoard(card) {
     card.inCell = Game.ui.selectedSquare;
-    Game.board.boardArray[Game.ui.selectedSquare - 1].occupant = card;
+    board.boardArray[Game.ui.selectedSquare - 1].occupant = card;
 
     // Remove the used square from the list of available cells
-    const freeCellIndex = Game.board.freeCells.indexOf(Game.ui.selectedSquare);
+    const freeCellIndex = board.freeCells.indexOf(Game.ui.selectedSquare);
     if (freeCellIndex > -1) {
-      Game.board.freeCells.splice(freeCellIndex, 1);
+      board.freeCells.splice(freeCellIndex, 1);
     }
 
     // Ensure ownership background is correct after placement
@@ -196,7 +195,7 @@ Game.cards.placement = class CardPlacer {
    * Determine if game is over
    */
   static isGameOver() {
-    return Game.board.boardArray.every(cell => cell.occupant);
+    return board.boardArray.every(cell => cell.occupant);
   }
 
   /**

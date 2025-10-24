@@ -225,7 +225,7 @@ Game.input = {
     });
 
     if (e.key === "Enter") {
-      if (!Game.board.cellOccupied()) {
+      if (!board.cellOccupied()) {
         Game.player.cardsInPlayerHand.splice(Game.ui.selectedCardNumber, 1);
         Game.cursors.grid.remove();
         Game.cards.placement.placeCard(

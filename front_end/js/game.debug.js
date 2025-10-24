@@ -12,7 +12,7 @@ Game.debug = {
   logCell(eventOrSquare) {
     const squareID = eventOrSquare.name ?? eventOrSquare.id;
     const squareObj = Game.ui.squares[squareID - 1];
-    const cardHere = Game.board.boardArray[squareID - 1].occupant;
+    const cardHere = board.boardArray[squareID - 1].occupant;
 
     console.log("======================================================");
     console.log(`CELL DEBUG | Square ID: ${squareID}`);
@@ -44,7 +44,7 @@ Game.debug = {
   logBoard() {
     console.log("--------------- BOARD STATE ---------------");
     for (let i = 0; i < 3; i++) {
-      const row = Game.board.boardArray.slice(i * 3, i * 3 + 3).map((cell) => {
+      const row = board.boardArray.slice(i * 3, i * 3 + 3).map((cell) => {
         const elem = cell.element ? `Cell Element: ${config.elements[cell.element].name}` : "No Element";
         if (!cell.occupant) return `[Empty | ${elem}]`;
         return `[${cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.element} | Cell Element: ${elem}]`;
@@ -85,7 +85,7 @@ Game.debug = {
     console.log(
       `SCORE | Player: ${Game.player.totalBlueCards} AI: ${Game.ai.totalRedCards}`
     );
-    console.log(`Free cells remaining: ${Game.board.freeCells.join(", ")}`);
+    console.log(`Free cells remaining: ${board.freeCells.join(", ")}`);
     console.log("*****************************************");
   },
 

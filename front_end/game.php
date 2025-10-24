@@ -5,7 +5,6 @@
 <script type="text/javascript" src="front_end/js/main.js"></script>
 
 <script type="module" src="front_end/js/game.init.js"></script>
-<script type="module" src="front_end/js/game.board.js"></script>
 <script type="module" src="front_end/js/game.player.js"></script>
 <script type="text/javascript" src="front_end/js/game.debug.js"></script>
 <script type="module" src="front_end/js/game.ai.js"></script>

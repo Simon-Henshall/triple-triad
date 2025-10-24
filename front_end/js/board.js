@@ -15,7 +15,7 @@ const squareMap = [
   { row: 3, col: 3, left: 8, up: 6, right: "none", down: "none" },
 ];
 
-Game.board = {
+export const board = {
   boardArray: Array(9)
     .fill(null)
     .map((_, i) => ({
@@ -81,7 +81,7 @@ Game.board = {
         const elemId = elements[squareID - 1];
 
         // Save element ID in boardArray
-        Game.board.boardArray[squareID - 1].element = elemId;
+        this.boardArray[squareID - 1].element = elemId;
 
         const square = {
           id: squareID,
@@ -129,7 +129,9 @@ Game.board = {
   // CELL CHECKS
   // -------------------------
   cellOccupied() {
-    const cell = Game.board.boardArray[Game.ui.selectedSquare - 1];
+    const cell = this.boardArray[Game.ui.selectedSquare - 1];
     return cell.occupant ? cell.occupant : false;
   },
 };
+
+window.board = board;

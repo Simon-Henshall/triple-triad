@@ -1,4 +1,5 @@
 import { offsets } from './offsets.js';
+import { board } from './board.js';
 
 // -------------------------
 // PLAYER HAND SELECTION CURSOR
@@ -286,7 +287,7 @@ Game.cursors.grid = {
       return;
     }
 
-    Game.board.checkSelectedSquare();
+    board.checkSelectedSquare();
     Game.stage.update();
 
     if (Game.debug.active) {

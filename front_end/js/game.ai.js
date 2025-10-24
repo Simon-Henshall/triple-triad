@@ -1,6 +1,7 @@
 import { config } from './config.js';
 import { cards } from './cards.js';
 import { offsets } from './offsets.js';
+import { board } from './board.js';
 
 Game.ai = {
   handOffsetX: 0,
@@ -23,10 +24,10 @@ Game.ai = {
 
     // Pick A Cell To Play In (Currently Random)
     Game.ui.selectedAISquare =
-      Game.board.freeCells[
-        Math.floor(Math.random() * Game.board.freeCells.length)
+      board.freeCells[
+        Math.floor(Math.random() * board.freeCells.length)
       ];
-    Game.board.checkSelectedRowColumn();
+    board.checkSelectedRowColumn();
 
     // Place The Card
     Game.ai.aiCardsAboveSelection = aiSelectedCardNumber;
