@@ -5,6 +5,7 @@ import { ui } from './ui.js';
 import { utils } from './utils.js';
 import { debug } from './debug.js';
 import { ai } from './ai.js';
+import { flippingController } from './flippingController.js';
 
 /**
  * @namespace Game.cards.placement
@@ -46,7 +47,7 @@ Game.cards.placement = class CardPlacer {
     if (utils.getPlayerTurn() === "red") {
       card.children[1].image.src = card.frontImage;
       // Ensure ownership background is correct
-      Game.cards.flipping.replaceCard(card);
+      flippingController.replaceCard(card);
     }
 
     // Animate the card into its final placement position on the board
@@ -71,7 +72,7 @@ Game.cards.placement = class CardPlacer {
     Game.cards.placement.applyElementEffects(card);
 
     // Check if adjacent cards should flip ownership
-    Game.cards.flipping.flipCardsCheck(card);
+    flippingController.flipCardsCheck(card);
 
     // Redraw the stage to show changes
     Game.stage.update();
@@ -117,7 +118,7 @@ Game.cards.placement = class CardPlacer {
     }
 
     // Ensure ownership background is correct after placement
-    Game.cards.flipping.replaceCard(card);
+    flippingController.replaceCard(card);
   }
 
   /**

@@ -4,6 +4,7 @@ import { offsets } from './offsets.js';
 import { board } from './board.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
+import { flippingController } from './flippingController.js';
 
 export const ai = {
   handOffsetX: 0,
@@ -130,9 +131,9 @@ Game.cards.aiHand = {
     if (
       Game.rules &&
       Game.rules.indexOf("open") !== -1 &&
-      Game.cards.flipping.flipAIHand
+      flippingController.flipAIHand
     ) {
-      Game.cards.flipping.flipAIHand();
+      flippingController.flipAIHand();
     }
 
     Game.stage.update();

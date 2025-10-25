@@ -37,7 +37,7 @@ const directionMap = {
   },
 };
 
-Game.cards.flipping = {
+export const flippingController = {
   /**
    * Flip the entire AI hand at the start of the game.
    */
