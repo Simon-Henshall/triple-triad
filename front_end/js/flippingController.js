@@ -1,3 +1,9 @@
+import { player } from './player.js';
+import { utils } from './utils.js';
+import { ui } from './ui.js';
+import { ai } from './ai.js';
+import { Game } from './game.js';
+
 /**
  * @namespace Game.cards.flipping.js
  * @description Handles card flipping, animation, and ownership logic.
@@ -33,13 +39,13 @@ const directionMap = {
   },
 };
 
-Game.cards.flipping = {
+export const flippingController = {
   /**
    * Flip the entire AI hand at the start of the game.
    */
   flipAIHand() {
     // Reverse copy ensures visual flip starts from last to first
-    Game.ai.cardsInAIHand
+    ai.cardsInAIHand
       .slice()
       .reverse()
       .forEach((card, index) => {
@@ -72,7 +78,7 @@ Game.cards.flipping = {
    * @returns {string} Player colour ("red" or "blue")
    */
   getCurrentPlayerColour() {
-    return Game.utils.getPlayerTurn();
+    return utils.getPlayerTurn();
   },
   /**
    * Flip a single adjacent card over to the current player's side.
@@ -92,7 +98,7 @@ Game.cards.flipping = {
     this.updateOwnershipCounts(1);
 
     // Maintain board consistency
-    const squareObj = Game.ui.squares[targetCard.inCell - 1];
+    const squareObj = ui.squares[targetCard.inCell - 1];
     if (squareObj) {
       squareObj.card = targetCard;
     }
@@ -109,9 +115,9 @@ Game.cards.flipping = {
       red: { totalBlueCardsConfined: -1, totalRedCardsConfined: 1 },
     };
 
-    Game.player.totalBlueCards +=
+    player.totalBlueCards +=
       delta[playerColour].totalBlueCardsConfined * flippedCount;
-    Game.ai.totalRedCards +=
+    ai.totalRedCards +=
       delta[playerColour].totalRedCardsConfined * flippedCount;
 
     this.updateCardCounts();
@@ -120,8 +126,8 @@ Game.cards.flipping = {
    * Update the displayed card counts on UI.
    */
   updateCardCounts() {
-    Game.ai.aiCardCount.text = Game.ai.totalRedCards;
-    Game.player.playerCardCount.text = Game.player.totalBlueCards;
+    ai.aiCardCount.text = ai.totalRedCards;
+    player.playerCardCount.text = player.totalBlueCards;
     Game.stage.update();
   },
   /**

@@ -1,3 +1,10 @@
+import { config } from './config.js';
+import { offsets } from './offsets.js';
+import { ui } from './ui.js';
+import { utils } from './utils.js';
+import { debug } from './debug.js';
+import { Game } from './game.js';
+
 // Lookup table for square positions and adjacency
 // Index corresponds to squareID - 1
 const squareMap = [
@@ -12,7 +19,7 @@ const squareMap = [
   { row: 3, col: 3, left: 8, up: 6, right: "none", down: "none" },
 ];
 
-Game.board = {
+export const board = {
   boardArray: Array(9)
     .fill(null)
     .map((_, i) => ({
@@ -27,12 +34,12 @@ Game.board = {
   checkSelectedSquare() {
     for (let i = 0; i < squareMap.length; i++) {
       const s = squareMap[i];
-      if (s.row === Game.ui.selectedRow && s.col === Game.ui.selectedColumn) {
-        Game.ui.selectedSquare = i + 1;
-        squareLeft = s.left;
-        squareUp = s.up;
-        squareRight = s.right;
-        squareDown = s.down;
+      if (s.row === ui.selectedRow && s.col === ui.selectedColumn) {
+        ui.selectedSquare = i + 1;
+        ui.squareLeft = s.left;
+        ui.squareUp = s.up;
+        ui.squareRight = s.right;
+        ui.squareDown = s.down;
         break;
       }
     }
@@ -42,13 +49,13 @@ Game.board = {
   // Determine row & column from selected square
   // -------------------------
   checkSelectedRowColumn() {
-    const s = squareMap[Game.ui.selectedAISquare - 1];
-    Game.ui.selectedRow = s.row;
-    Game.ui.selectedColumn = s.col;
-    squareLeft = s.left;
-    squareUp = s.up;
-    squareRight = s.right;
-    squareDown = s.down;
+    const s = squareMap[ui.selectedAISquare - 1];
+    ui.selectedRow = s.row;
+    ui.selectedColumn = s.col;
+    ui.squareLeft = s.left;
+    ui.squareUp = s.up;
+    ui.squareRight = s.right;
+    ui.squareDown = s.down;
   },
 
   // -------------------------
@@ -58,7 +65,7 @@ Game.board = {
     let squareID = 0;
 
     // Randomly pick elemental cells
-    const possibleElements = Object.keys(Game.config.elements);
+    const possibleElements = Object.keys(config.elements);
     const elements = [];
     const numElements = Math.floor(Math.random() * 3) + 1;
 
@@ -70,7 +77,7 @@ Game.board = {
       elements.push(0);
     }
 
-    Game.utils.shuffle(elements);
+    utils.shuffle(elements);
 
     for (let y = 0; y < 3; y++) {
       for (let x = 0; x < 3; x++) {
@@ -78,12 +85,12 @@ Game.board = {
         const elemId = elements[squareID - 1];
 
         // Save element ID in boardArray
-        Game.board.boardArray[squareID - 1].element = elemId;
+        this.boardArray[squareID - 1].element = elemId;
 
         const square = {
           id: squareID,
-          x: x * Game.offsets.cellWidth,
-          y: y * Game.offsets.cellHeight,
+          x: x * offsets.cellWidth,
+          y: y * offsets.cellHeight,
           element: elemId,
           container: new createjs.Container(),
         };
@@ -95,10 +102,10 @@ Game.board = {
         // If the cell has an element, display the corresponding graphic
         if (elemId !== 0) {
           const elementGraphic = new createjs.Bitmap(
-            Game.config.imagePath + "/elements/" + Game.config.elements[elemId].imagePath
+            config.imagePath + "/elements/" + config.elements[elemId].imagePath
           );
-          elementGraphic.x = Game.offsets.gameOffsetX + 60;
-          elementGraphic.y = Game.offsets.gameOffsetY + 70;
+          elementGraphic.x = offsets.gameOffsetX + 60;
+          elementGraphic.y = offsets.gameOffsetY + 70;
           square.container.addChild(elementGraphic);
         }
 
@@ -106,15 +113,15 @@ Game.board = {
         const hit = new createjs.Shape();
         hit.graphics
           .beginFill("#000")
-          .drawRect(0, 0, Game.offsets.cellWidth, Game.offsets.cellHeight);
+          .drawRect(0, 0, offsets.cellWidth, offsets.cellHeight);
         square.container.hitArea = hit;
 
         // Click handler
         square.container.addEventListener("click", (event) => {
-          Game.debug.clickHandler(event);
+          debug.clickHandler(event);
         });
 
-        Game.ui.squares.push(square);
+        ui.squares.push(square);
         Game.stage.addChild(square.container);
       }
     }
@@ -126,7 +133,7 @@ Game.board = {
   // CELL CHECKS
   // -------------------------
   cellOccupied() {
-    const cell = Game.board.boardArray[Game.ui.selectedSquare - 1];
+    const cell = this.boardArray[ui.selectedSquare - 1];
     return cell.occupant ? cell.occupant : false;
   },
 };

@@ -1,11 +1,14 @@
+import { config } from './config.js';
+import { offsets } from './offsets.js';
+import { player } from './player.js';
+import { ui } from './ui.js';
+import { Game } from './game.js';
+
 // ------------------------------------
-// game.cards.selectionBoard.js
+// selectionBoard
 // Handles population, pagination, and display of the deck selection screen
 // ------------------------------------
-
-Game.cards = Game.cards || {};
-
-Game.cards.selectionBoard = {
+export const selectionBoard = {
   /**
    * Helper: create a bitmap and ensure it is scaled before adding to container.
    * @param {string} src - image path
@@ -35,8 +38,8 @@ Game.cards.selectionBoard = {
    * Build and display the selectable owned cards on the selection board.
    */
   populate() {
-    const sb = Game.ui.selectionBoard;
-    const owned = Game.player.ownedCards || [];
+    const sb = ui.selectionBoard;
+    const owned = player.ownedCards || [];
     const cardsPerPage = 11;
 
     sb.totalPages = Math.max(1, Math.ceil(owned.length / cardsPerPage));
@@ -119,7 +122,7 @@ Game.cards.selectionBoard = {
     }
 
     sb.selectedHandCard =
-      Game.player.ownedCards[sb.selectedHandCardNumber] || null;
+      player.ownedCards[sb.selectedHandCardNumber] || null;
 
     // Update the large preview display
     this.updateDisplay();
@@ -134,42 +137,42 @@ Game.cards.selectionBoard = {
    * Update the large preview card on the right-hand side.
    */
   updateDisplay() {
-    const ui = Game.ui.selectionBoard;
-    const selectedCard = ui.selectedHandCard;
+    const sb = ui.selectionBoard;
+    const selectedCard = sb.selectedHandCard;
 
-    if (ui.displayedCard) ui.container.removeChild(ui.displayedCard);
+    if (sb.displayedCard) sb.container.removeChild(sb.displayedCard);
 
-    ui.displayedCard = new createjs.Container();
+    sb.displayedCard = new createjs.Container();
 
     const targetW =
-      Game.offsets.cardWidth ||
-      Game.offsets.cellWidth - (Game.offsets.cardOffsetX || 3) * 2;
+      offsets.cardWidth ||
+      offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
     const targetH =
-      Game.offsets.cardHeight ||
-      Game.offsets.cellHeight - (Game.offsets.cardOffsetY || 3) * 2;
+      offsets.cardHeight ||
+      offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
 
     // Card colour
     const colourBmp = this._createScaledBitmap(
-      Game.config.cardPath + "blue.png",
+      config.cardPath + "blue.png",
       targetW,
       targetH
     );
-    ui.displayedCardColour = colourBmp;
+    sb.displayedCardColour = colourBmp;
 
     // Card image
     const cardBmp = this._createScaledBitmap(
-      selectedCard ? Game.config.cardPath + selectedCard.image + ".png" : "",
+      selectedCard ? config.cardPath + selectedCard.image + ".png" : "",
       targetW,
       targetH,
       () => Game.stage.update() // update stage after loaded
     );
-    ui.displayedCardImage = cardBmp;
+    sb.displayedCardImage = cardBmp;
 
-    ui.displayedCard.addChild(ui.displayedCardColour, ui.displayedCardImage);
-    ui.displayedCard.x = ui.background.x + 440;
-    ui.displayedCard.y = ui.background.y + 200;
+    sb.displayedCard.addChild(sb.displayedCardColour, sb.displayedCardImage);
+    sb.displayedCard.x = sb.background.x + 440;
+    sb.displayedCard.y = sb.background.y + 200;
 
-    ui.container.addChild(ui.displayedCard);
+    sb.container.addChild(sb.displayedCard);
 
     // Stage update
     Game.stage.update();
@@ -180,7 +183,7 @@ Game.cards.selectionBoard = {
    * @param {"left"|"right"} direction
    */
   paginate(direction) {
-    const sb = Game.ui.selectionBoard;
+    const sb = ui.selectionBoard;
     const cardsPerPage = 11;
 
     if (direction === "left" && sb.page > 1) {
@@ -197,14 +200,14 @@ Game.cards.selectionBoard = {
     // move selection to top of this new page (absolute index)
     sb.selectedHandCardNumber = pageStart;
     sb.selectedHandCard =
-      Game.player.ownedCards[sb.selectedHandCardNumber] || null;
+      player.ownedCards[sb.selectedHandCardNumber] || null;
 
     // repopulate UI rows & preview
     this.populate();
 
     // move cursor visual to top row
-    if (Game.player.playerHandSelectionCursor && sb.background) {
-      Game.player.playerHandSelectionCursor.y = sb.background.y + 48;
+    if (player.playerHandSelectionCursor && sb.background) {
+      player.playerHandSelectionCursor.y = sb.background.y + 48;
     }
 
     if (sb.pageDisplay) sb.pageDisplay.text = sb.page;

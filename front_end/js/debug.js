@@ -1,4 +1,10 @@
-Game.debug = {
+import { player } from './player.js';
+import { board } from './board.js';
+import { ui } from './ui.js';
+import { utils } from './utils.js';
+import { ai } from './ai.js';
+
+export const debug = {
   active: true, // Toggle for debug mode
 
   // -------------------------
@@ -11,8 +17,8 @@ Game.debug = {
    */
   logCell(eventOrSquare) {
     const squareID = eventOrSquare.name ?? eventOrSquare.id;
-    const squareObj = Game.ui.squares[squareID - 1];
-    const cardHere = Game.board.boardArray[squareID - 1].occupant;
+    const squareObj = ui.squares[squareID - 1];
+    const cardHere = board.boardArray[squareID - 1].occupant;
 
     console.log("======================================================");
     console.log(`CELL DEBUG | Square ID: ${squareID}`);
@@ -44,8 +50,8 @@ Game.debug = {
   logBoard() {
     console.log("--------------- BOARD STATE ---------------");
     for (let i = 0; i < 3; i++) {
-      const row = Game.board.boardArray.slice(i * 3, i * 3 + 3).map((cell) => {
-        const elem = cell.element ? `Cell Element: ${Game.config.elements[cell.element].name}` : "No Element";
+      const row = board.boardArray.slice(i * 3, i * 3 + 3).map((cell) => {
+        const elem = cell.element ? `Cell Element: ${config.elements[cell.element].name}` : "No Element";
         if (!cell.occupant) return `[Empty | ${elem}]`;
         return `[${cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.element} | Cell Element: ${elem}]`;
       });
@@ -59,14 +65,14 @@ Game.debug = {
    */
   logHands() {
     console.log("=============== PLAYER HAND ===============");
-    Game.player.cardsInPlayerHand.forEach((card, i) => {
+    player.cardsInPlayerHand.forEach((card, i) => {
       console.log(
         `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`
       );
     });
 
     console.log("=============== AI HAND ===================");
-    Game.ai.cardsInAIHand.forEach((card, i) => {
+    ai.cardsInAIHand.forEach((card, i) => {
       console.log(
         `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`
       );
@@ -78,19 +84,19 @@ Game.debug = {
    * Logs current turn info
    */
   logTurn() {
-    const currentPlayer = Game.utils.getPlayerTurn();
+    const currentPlayer = utils.getPlayerTurn();
     console.log(
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`
     );
     console.log(
-      `SCORE | Player: ${Game.player.totalBlueCards} AI: ${Game.ai.totalRedCards}`
+      `SCORE | Player: ${player.totalBlueCards} AI: ${ai.totalRedCards}`
     );
-    console.log(`Free cells remaining: ${Game.board.freeCells.join(", ")}`);
+    console.log(`Free cells remaining: ${board.freeCells.join(", ")}`);
     console.log("*****************************************");
   },
 
   /**
-   * Combined full game debug log
+   * Combined full debug log
    */
   logFullState(target) {
     console.log("Logging full state for:", target);
@@ -103,8 +109,8 @@ Game.debug = {
    * Click logging
    */
   clickHandler(event) {
-    if (Game.debug.active) {
-      Game.debug.logFullState(event.currentTarget);
+    if (debug.active) {
+      debug.logFullState(event.currentTarget);
     }
   },
 };

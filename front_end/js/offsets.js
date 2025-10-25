@@ -1,4 +1,4 @@
-Game.offsets = {
+export const offsets = {
   gameOffsetX: 236,
   gameOffsetY: 50,
   handOffsetY: 50,

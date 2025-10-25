@@ -1,9 +1,19 @@
+import { offsets } from './offsets.js';
+import { board } from './board.js';
+import { player } from './player.js';
+import { ui } from './ui.js';
+import { utils } from './utils.js';
+import { debug } from './debug.js';
+import { ai } from './ai.js';
+import { flippingController } from './flippingController.js';
+import { Game } from './game.js';
+
 /**
- * @namespace Game.cards.placement
+ * @namespace placementController
  * @description Handles card placement, adjacency, turn switching, and element effects.
  */
 
-Game.cards.placement = class CardPlacer {
+export const placementController = class CardPlacer {
   /**
    * Place a card onto the board (player or AI action)
    * @param {Object} card
@@ -11,20 +21,20 @@ Game.cards.placement = class CardPlacer {
    * @param {number} placementY
    */
   static placeCard(card, placementX, placementY) {
-    Game.board.checkSelectedSquare();
+    board.checkSelectedSquare();
 
     // Determine the offscreen exit direction based on player turn
-    const offscreenX = Game.utils.getPlayerTurn() === "red" ? card.x + 40 : card.x - 40;
+    const offscreenX = utils.getPlayerTurn() === "red" ? card.x + 40 : card.x - 40;
     const offscreenY = -200;
 
     // Animate the card offscreen before placing
     createjs.Tween.get(card)
       .to({ x: offscreenX, y: offscreenY }, 500)
       .call(() => {
-        Game.cards.placement.onCardOffscreenComplete(card, placementX, placementY);
+        this.onCardOffscreenComplete(card, placementX, placementY);
       });
 
-    Game.cards.placement.shiftHandCardsDown();
+    this.shiftHandCardsDown();
   }
 
   /**
@@ -35,17 +45,17 @@ Game.cards.placement = class CardPlacer {
     Game.stage.setChildIndex(card, Game.stage.getNumChildren() - 1);
 
     // Reveal the card face for AI cards if needed
-    if (Game.utils.getPlayerTurn() === "red") {
+    if (utils.getPlayerTurn() === "red") {
       card.children[1].image.src = card.frontImage;
       // Ensure ownership background is correct
-      Game.cards.flipping.replaceCard(card);
+      flippingController.replaceCard(card);
     }
 
     // Animate the card into its final placement position on the board
     createjs.Tween.get(card)
       .to({ x: placementX, y: placementY }, 500)
       .call(() => {
-        Game.cards.placement.onCardPlacementComplete(card);
+        this.onCardPlacementComplete(card);
       });
   }
 
@@ -54,25 +64,25 @@ Game.cards.placement = class CardPlacer {
    */
   static onCardPlacementComplete(card) {
     // Establish links to adjacent cards
-    Game.cards.placement.setCardAdjacents(card);
+    this.setCardAdjacents(card);
 
     // Register this card in the board array and remove the cell from freeCells
-    Game.cards.placement.addCardToBoard(card);
+    this.addCardToBoard(card);
 
     // Apply elemental bonuses or penalties if applicable
-    Game.cards.placement.applyElementEffects(card);
+    this.applyElementEffects(card);
 
     // Check if adjacent cards should flip ownership
-    Game.cards.flipping.flipCardsCheck(card);
+    flippingController.flipCardsCheck(card);
 
     // Redraw the stage to show changes
     Game.stage.update();
 
     // Determine if the game has ended, otherwise swap turn
-    if (Game.cards.placement.isGameOver()) {
+    if (this.isGameOver()) {
       Game.endGame();
     } else {
-      Game.cards.placement.playerTurnSwitch();
+      this.playerTurnSwitch();
     }
   }
 
@@ -80,19 +90,17 @@ Game.cards.placement = class CardPlacer {
    * Set adjacent card references
    */
   static setCardAdjacents(card) {
-    const board = Game.board.boardArray;
-
     const getOccupant = (index) => {
-      const cell = board[index - 1];
+      const cell = board.boardArray[index - 1];
       return cell ? cell.occupant ?? null : null;
     };
 
-    card.cardLeft = getOccupant(squareLeft);
-    card.cardUp = getOccupant(squareUp);
-    card.cardRight = getOccupant(squareRight);
-    card.cardDown = getOccupant(squareDown);
+    card.cardLeft = getOccupant(ui.squareLeft);
+    card.cardUp = getOccupant(ui.squareUp);
+    card.cardRight = getOccupant(ui.squareRight);
+    card.cardDown = getOccupant(ui.squareDown);
 
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log(card);
     }
   }
@@ -101,26 +109,26 @@ Game.cards.placement = class CardPlacer {
    * Add card to board array and remove cell from freeCells
    */
   static addCardToBoard(card) {
-    card.inCell = Game.ui.selectedSquare;
-    Game.board.boardArray[Game.ui.selectedSquare - 1].occupant = card;
+    card.inCell = ui.selectedSquare;
+    board.boardArray[ui.selectedSquare - 1].occupant = card;
 
     // Remove the used square from the list of available cells
-    const freeCellIndex = Game.board.freeCells.indexOf(Game.ui.selectedSquare);
+    const freeCellIndex = board.freeCells.indexOf(ui.selectedSquare);
     if (freeCellIndex > -1) {
-      Game.board.freeCells.splice(freeCellIndex, 1);
+      board.freeCells.splice(freeCellIndex, 1);
     }
 
     // Ensure ownership background is correct after placement
-    Game.cards.flipping.replaceCard(card);
+    flippingController.replaceCard(card);
   }
 
   /**
    * Apply element effects
    */
   static applyElementEffects(card) {
-    const squareObj = Game.ui.squares[Game.ui.selectedSquare - 1];
+    const squareObj = ui.squares[ui.selectedSquare - 1];
     if (!squareObj || typeof squareObj.element === "undefined") {
-      console.warn("Square missing or element undefined:", Game.ui.selectedSquare);
+      console.warn("Square missing or element undefined:", ui.selectedSquare);
       return;
     }
 
@@ -147,8 +155,8 @@ Game.cards.placement = class CardPlacer {
 
     // Create and position the effect indicator
     const effectBmp = new createjs.Bitmap(effectImage);
-    effectBmp.x = card.x + Game.offsets.cardWidth / 4;
-    effectBmp.y = card.y + Game.offsets.cardHeight / 3;
+    effectBmp.x = card.x + offsets.cardWidth / 4;
+    effectBmp.y = card.y + offsets.cardHeight / 3;
     Game.stage.addChild(effectBmp);
 
     // Ensure the image appears on top
@@ -162,24 +170,24 @@ Game.cards.placement = class CardPlacer {
     this.swapPlayerTurn();
 
     // Debugging
-    if (Game.debug.active) {
-      Game.debug.logTurn();
+    if (debug.active) {
+      debug.logTurn();
     }
 
-    if (Game.utils.getPlayerTurn() === "blue") {
+    if (utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
-      Game.player.playedPlayerCardCount++;
-      Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+      player.playedPlayerCardCount++;
+      ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
 
       // Reposition cursor and UI elements
-      Game.stage.addChild(Game.player.playerHandCursor);
-      Game.ui.selectedCard.x -= 30;
+      Game.stage.addChild(player.playerHandCursor);
+      ui.selectedCard.x -= 30;
 
-      Game.stage.setChildIndex(Game.ui.infoBox.container, Game.stage.getNumChildren() - 1);
-      Game.ui.infoBox.container.visible = true;
-      Game.ui.playerChoosingCard = true;
-    } else if (Game.utils.getPlayerTurn() === "red") {
-      Game.ai.turn();
+      Game.stage.setChildIndex(ui.infoBox.container, Game.stage.getNumChildren() - 1);
+      ui.infoBox.container.visible = true;
+      ui.playerChoosingCard = true;
+    } else if (utils.getPlayerTurn() === "red") {
+      ai.turn();
     }
   }
 
@@ -187,14 +195,14 @@ Game.cards.placement = class CardPlacer {
    * Swap current active player
    */
   static swapPlayerTurn() {
-    Game.ui.playerTurn = Game.utils.getPlayerTurn() === "blue" ? "red" : "blue";
+    ui.playerTurn = utils.getPlayerTurn() === "blue" ? "red" : "blue";
   }
 
   /**
    * Determine if game is over
    */
   static isGameOver() {
-    return Game.board.boardArray.every(cell => cell.occupant);
+    return board.boardArray.every(cell => cell.occupant);
   }
 
   /**
@@ -208,27 +216,27 @@ Game.cards.placement = class CardPlacer {
      */
     function animateHandCardsDown(hand, count) {
       for (let i = 0; i < count; i++) {
-        createjs.Tween.get(hand[i]).to({ y: hand[i].y + Game.offsets.handCardOffset }, 200);
+        createjs.Tween.get(hand[i]).to({ y: hand[i].y + offsets.handCardOffset }, 200);
       }
     }
 
-    if (Game.utils.getPlayerTurn() === "blue") {
+    if (utils.getPlayerTurn() === "blue") {
       // === PLAYER HAND ===
-      animateHandCardsDown(Game.player.cardsInPlayerHand, Game.player.cardsAboveSelection);
+      animateHandCardsDown(player.cardsInPlayerHand, player.cardsAboveSelection);
 
-      if (Game.ui.selectedCardNumber === 0) {
+      if (ui.selectedCardNumber === 0) {
         // Top card was played; move cursor down
-        Game.player.playerHandCursor.y += Game.offsets.handCardOffset;
-        Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+        player.playerHandCursor.y += offsets.handCardOffset;
+        ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
       } else {
         // Adjust selection to the next card
-        Game.ui.selectedCardNumber--;
-        Game.ui.selectedCard = Game.player.cardsInPlayerHand[Game.ui.selectedCardNumber];
-        Game.player.cardsAboveSelection--;
+        ui.selectedCardNumber--;
+        ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
+        player.cardsAboveSelection--;
       }
-    } else if (Game.utils.getPlayerTurn() === "red") {
+    } else if (utils.getPlayerTurn() === "red") {
       // === AI HAND ===
-      animateHandCardsDown(Game.ai.cardsInAIHand, Game.ai.aiCardsAboveSelection);
+      animateHandCardsDown(ai.cardsInAIHand, ai.aiCardsAboveSelection);
     }
   }
 };

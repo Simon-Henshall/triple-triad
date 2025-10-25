@@ -1,3 +1,9 @@
+import { config } from './config.js';
+import { offsets } from './offsets.js';
+import { player } from './player.js';
+import { ai } from './ai.js';
+import { Game } from './game.js';
+
 // Info box fixed dimensions
 const INFO_BOX_WIDTH = 420;
 const INFO_BOX_HEIGHT = 65;
@@ -8,7 +14,7 @@ const INFO_BOX_Y = 540;
 // Rendering / UI
 // -------------------------
 
-Game.ui = {
+export const ui = {
   squares: [],
   selectedRow: 2,
   selectedColumn: 2,
@@ -61,7 +67,7 @@ Game.ui = {
   // Add Background
   // -------------------------
   addBackground() {
-    const background = new createjs.Bitmap(Game.config.imagePath + "board.png");
+    const background = new createjs.Bitmap(config.imagePath + "board.png");
     background.x = 0;
     background.y = 0;
     Game.stage.addChild(background);
@@ -72,33 +78,33 @@ Game.ui = {
   // Draw The Card Count For Each Player
   // -------------------------
   drawCardCounts() {
-    if (Game.ai.aiCardCount) {
-      Game.stage.removeChild(Game.ai.aiCardCount);
+    if (ai.aiCardCount) {
+      Game.stage.removeChild(ai.aiCardCount);
     }
-    if (Game.player.playerCardCount) {
-      Game.stage.removeChild(Game.player.playerCardCount);
+    if (player.playerCardCount) {
+      Game.stage.removeChild(player.playerCardCount);
     }
 
-    Game.ai.aiCardCount = new createjs.Text(
-      Game.ai.totalRedCards,
+    ai.aiCardCount = new createjs.Text(
+      ai.totalRedCards,
       "90px Arial",
       "#ffffff"
     );
-    Game.ai.aiCardCount.x = Game.ai.handOffsetX + Game.offsets.cardWidth / 3;
-    Game.ai.aiCardCount.y = Game.stageHeight - 15;
-    Game.ai.aiCardCount.textBaseline = "alphabetic";
-    Game.stage.addChild(Game.ai.aiCardCount);
+    ai.aiCardCount.x = ai.handOffsetX + offsets.cardWidth / 3;
+    ai.aiCardCount.y = Game.stageHeight - 15;
+    ai.aiCardCount.textBaseline = "alphabetic";
+    Game.stage.addChild(ai.aiCardCount);
 
-    Game.player.playerCardCount = new createjs.Text(
-      Game.player.totalBlueCards,
+    player.playerCardCount = new createjs.Text(
+      player.totalBlueCards,
       "90px Arial",
       "#ffffff"
     );
-    Game.player.playerCardCount.x =
-      Game.player.handOffsetX + Game.offsets.cardWidth / 3;
-    Game.player.playerCardCount.y = Game.stageHeight - 15;
-    Game.player.playerCardCount.textBaseline = "alphabetic";
-    Game.stage.addChild(Game.player.playerCardCount);
+    player.playerCardCount.x =
+      player.handOffsetX + offsets.cardWidth / 3;
+    player.playerCardCount.y = Game.stageHeight - 15;
+    player.playerCardCount.textBaseline = "alphabetic";
+    Game.stage.addChild(player.playerCardCount);
 
     Game.stage.update();
   },
@@ -107,10 +113,10 @@ Game.ui = {
   // Draw The Info Box
   // -------------------------
   drawInfoBox() {
-    if (!Game.ui.infoBox.container) {
-      Game.ui.infoBox.container = new createjs.Container();
+    if (!ui.infoBox.container) {
+      ui.infoBox.container = new createjs.Container();
     } else {
-      Game.ui.infoBox.container.removeAllChildren();
+      ui.infoBox.container.removeAllChildren();
     }
 
     // Background
@@ -129,41 +135,41 @@ Game.ui = {
       INFO_BOX_HEIGHT
     );
 
-    Game.ui.infoBox.container.addChild(infoBoxBackground);
+    ui.infoBox.container.addChild(infoBoxBackground);
 
     // "INFO." label
     const infoBoxText = new createjs.Text("INFO.", "18px Arial", "#ffffff");
     infoBoxText.x = infoBoxBackground.x + 10;
     infoBoxText.y = infoBoxBackground.y + 15;
     infoBoxText.textBaseline = "alphabetic";
-    Game.ui.infoBox.container.addChild(infoBoxText);
+    ui.infoBox.container.addChild(infoBoxText);
 
     // Card name text
-    if (!Game.ui.infoBox.cardName) {
-      Game.ui.infoBox.cardName = new createjs.Text(
-        Game.ui.selectedCard?.name || "",
+    if (!ui.infoBox.cardName) {
+      ui.infoBox.cardName = new createjs.Text(
+        ui.selectedCard?.name || "",
         "30px Arial",
         "#ffffff"
       );
-      Game.ui.infoBox.cardName.textBaseline = "alphabetic";
+      ui.infoBox.cardName.textBaseline = "alphabetic";
     }
-    Game.ui.infoBox.cardName.text = Game.ui.selectedCard?.name || "";
+    ui.infoBox.cardName.text = ui.selectedCard?.name || "";
 
     // Center card name inside the info box (horizontal and vertical)
     const verticalOffset = 30 / 2 + 10; // half of font size + 10px downward nudge
-    Game.ui.infoBox.cardName.x =
+    ui.infoBox.cardName.x =
       INFO_BOX_X +
       INFO_BOX_WIDTH / 2 -
-      Game.ui.infoBox.cardName.getMeasuredWidth() / 2;
-    Game.ui.infoBox.cardName.y =
+      ui.infoBox.cardName.getMeasuredWidth() / 2;
+    ui.infoBox.cardName.y =
       INFO_BOX_Y +
       INFO_BOX_HEIGHT / 2 -
-      Game.ui.infoBox.cardName.getMeasuredHeight() / 2 +
+      ui.infoBox.cardName.getMeasuredHeight() / 2 +
       verticalOffset;
 
-    Game.ui.infoBox.container.addChild(Game.ui.infoBox.cardName);
+    ui.infoBox.container.addChild(ui.infoBox.cardName);
 
-    Game.stage.addChild(Game.ui.infoBox.container);
+    Game.stage.addChild(ui.infoBox.container);
     Game.stage.update();
   },
 
@@ -171,25 +177,25 @@ Game.ui = {
   // Update The Info Box
   // -------------------------
   updateInfoBox() {
-    if (Game.ui.infoBox.cardName && Game.ui.selectedCard) {
-      Game.ui.infoBox.cardName.text = Game.ui.selectedCard.name;
+    if (ui.infoBox.cardName && ui.selectedCard) {
+      ui.infoBox.cardName.text = ui.selectedCard.name;
       const verticalOffset = 30 / 2 + 10; // half of font size + 10px downward nudge
-      Game.ui.infoBox.cardName.x =
+      ui.infoBox.cardName.x =
         INFO_BOX_X +
         INFO_BOX_WIDTH / 2 -
-        Game.ui.infoBox.cardName.getMeasuredWidth() / 2;
-      Game.ui.infoBox.cardName.y =
+        ui.infoBox.cardName.getMeasuredWidth() / 2;
+      ui.infoBox.cardName.y =
         INFO_BOX_Y +
         INFO_BOX_HEIGHT / 2 -
-        Game.ui.infoBox.cardName.getMeasuredHeight() / 2 +
+        ui.infoBox.cardName.getMeasuredHeight() / 2 +
         verticalOffset;
     }
 
-    if (Game.ai.aiCardCount) {
-      Game.ai.aiCardCount.text = Game.ai.totalRedCards;
+    if (ai.aiCardCount) {
+      ai.aiCardCount.text = ai.totalRedCards;
     }
-    if (Game.player.playerCardCount) {
-      Game.player.playerCardCount.text = Game.player.totalBlueCards;
+    if (player.playerCardCount) {
+      player.playerCardCount.text = player.totalBlueCards;
     }
 
     Game.stage.update();
