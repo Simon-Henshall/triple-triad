@@ -5,6 +5,7 @@ import { ui } from './ui.js';
 import { utils } from './utils.js';
 import { ai } from './ai.js';
 import { inputController } from './inputController.js';
+import { Game } from './game.js';
 
 // -------------------------
 // CORE: Initialization

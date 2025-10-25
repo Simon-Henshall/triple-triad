@@ -2,15 +2,12 @@ import { config } from './config.js';
 import { offsets } from './offsets.js';
 import { player } from './player.js';
 import { ui } from './ui.js';
+import { Game } from './game.js';
 
 // ------------------------------------
 // selectionBoard
 // Handles population, pagination, and display of the deck selection screen
 // ------------------------------------
-
-const Game = window.Game || (window.Game = {});
-Game.cards = Game.cards || {};
-
 export const selectionBoard = {
   /**
    * Helper: create a bitmap and ensure it is scaled before adding to container.

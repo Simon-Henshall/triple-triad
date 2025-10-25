@@ -1,4 +1,5 @@
 import { offsets } from './offsets.js';
+import { board } from './board.js';
 import { player } from './player.js';
 import { confirmationBox } from './confirmationBox.js';
 import { ui } from './ui.js';
@@ -6,6 +7,7 @@ import { debug } from './debug.js';
 import { placementController } from './placementController.js';
 import { selectionBoard } from './selectionBoard.js';
 import { cursors } from './cursors.js';
+import { Game } from './game.js';
 
 // -------------------------
 // GAME INPUT HANDLING

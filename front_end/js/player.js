@@ -2,6 +2,7 @@ import { config } from "./config.js";
 import { offsets } from "./offsets.js";
 import { ui } from "./ui.js";
 import { utils } from "./utils.js";
+import { Game } from './game.js';
 
 /**
  * @namespace player
@@ -307,5 +308,3 @@ player.CardManager = class {
 
 // Create single instance of card manager
 player.cardManagerInstance = new player.CardManager();
-
-window.player = player;

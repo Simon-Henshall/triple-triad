@@ -1,6 +1,8 @@
 import { player } from './player.js';
 import { utils } from './utils.js';
+import { ui } from './ui.js';
 import { ai } from './ai.js';
+import { Game } from './game.js';
 
 /**
  * @namespace Game.cards.flipping.js

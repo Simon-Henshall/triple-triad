@@ -2,6 +2,7 @@ import { config } from './config.js';
 import { offsets } from './offsets.js';
 import { player } from './player.js';
 import { ai } from './ai.js';
+import { Game } from './game.js';
 
 // Info box fixed dimensions
 const INFO_BOX_WIDTH = 420;
@@ -200,5 +201,3 @@ export const ui = {
     Game.stage.update();
   },
 };
-
-window.ui = ui;

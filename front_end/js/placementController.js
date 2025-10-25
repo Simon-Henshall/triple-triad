@@ -6,6 +6,7 @@ import { utils } from './utils.js';
 import { debug } from './debug.js';
 import { ai } from './ai.js';
 import { flippingController } from './flippingController.js';
+import { Game } from './game.js';
 
 /**
  * @namespace placementController

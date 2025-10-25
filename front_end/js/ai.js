@@ -6,6 +6,7 @@ import { ui } from "./ui.js";
 import { utils } from "./utils.js";
 import { flippingController } from "./flippingController.js";
 import { placementController } from "./placementController.js";
+import { Game } from './game.js';
 
 export const ai = {
   handOffsetX: 0,
@@ -86,10 +87,6 @@ export const ai = {
         Game.stage.addChild(cardContainer);
       });
 
-      // Default selection
-      window.selectedCard = ai.cardsInAIHand[0];
-      ui.previouslySelectedCard = [];
-
       // Flip AI hand if "open" rule applies
       if (
         Game.rules &&
@@ -132,5 +129,3 @@ export const ai = {
     }, ai.aiDelay);
   },
 };
-
-window.ai = ai;

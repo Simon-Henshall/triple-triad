@@ -1,4 +1,5 @@
 import { player } from './player.js';
+import { board } from './board.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
 import { ai } from './ai.js';

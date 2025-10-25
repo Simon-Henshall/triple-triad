@@ -4,6 +4,7 @@ import { ui } from './ui.js';
 import { ai } from './ai.js';
 import { selectionBoard } from './selectionBoard.js';
 import { cursors } from './cursors.js';
+import { Game } from './game.js';
 
 export const utils = {
   ajaxCall(whenDone) {

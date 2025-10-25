@@ -3,6 +3,7 @@ import { offsets } from './offsets.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
 import { debug } from './debug.js';
+import { Game } from './game.js';
 
 // Lookup table for square positions and adjacency
 // Index corresponds to squareID - 1
@@ -136,5 +137,3 @@ export const board = {
     return cell.occupant ? cell.occupant : false;
   },
 };
-
-window.board = board;
