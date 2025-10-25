@@ -1,5 +1,4 @@
 import { ui } from "./ui.js";
-import { utils } from "./utils.js";
 import { Game } from "./game.js";
 import { getGameStateInstance } from "./game.state.js";
 import { player } from "./player.js";
@@ -11,11 +10,14 @@ export const playerHand = {
    */
   populate() {
     const GameStateInstance = getGameStateInstance();
-    utils.togglePlayerTurn(); // TODO: Remove
+
+    // Draw player hand from the current cards in GameState
     player.cardsInPlayerHand = GameStateInstance.getPlayerHandContainers(player.playerCards);
     player.cardsInPlayerHand.forEach((container) =>
       Game.stage.addChild(container)
     );
+
+    // TODO: Move this logic
 
     // Default selection
     ui.selectedCard = player.cardsInPlayerHand[0];
@@ -27,6 +29,8 @@ export const playerHand = {
     // Ready for player to choose
     ui.playerConfirming = false;
     ui.playerChoosingCard = true;
+
+    // END TODO
 
     Game.stage.update();
   },

@@ -61,7 +61,7 @@ export const ui = {
   playerConfirming: false,
   playerChoosingCard: false,
   playerSelectingPlacement: false,
-  playerTurn: "red",
+  playerTurn: "blue",
 
   // -------------------------
   // Add Background
