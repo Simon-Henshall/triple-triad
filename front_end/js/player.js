@@ -1,7 +1,7 @@
-import { config } from './config.js';
-import { offsets } from './offsets.js';
-import { ui } from './ui.js';
-import { utils } from './utils.js';
+import { config } from "./config.js";
+import { offsets } from "./offsets.js";
+import { ui } from "./ui.js";
+import { utils } from "./utils.js";
 
 /**
  * @namespace player
@@ -21,7 +21,96 @@ export const player = {
   cardsInPlayerHand: [],
 
   /** @type {Array<Object>} Current randomised hand */
-  playerHand: [],
+  playerHand: {
+    /**
+     * Helper: create a bitmap and scale once loaded.
+     */
+    _createScaledBitmap(src, targetW, targetH, onReady) {
+      const bmp = new createjs.Bitmap(src);
+      const applyScale = () => {
+        bmp.scaleX = targetW / bmp.image.width;
+        bmp.scaleY = targetH / bmp.image.height;
+        if (onReady) onReady(bmp);
+      };
+      if (!bmp.image.complete) {
+        bmp.image.onload = applyScale;
+      } else {
+        applyScale();
+      }
+      return bmp;
+    },
+
+    /**
+     * Populate the player's hand with cards.
+     * @param {Array<Object>} playerCardsParam - Array of player-owned cards.
+     */
+    populate(playerCardsParam) {
+      // Toggle player turn
+      utils.togglePlayerTurn();
+
+      // Random hand of up to 5 cards
+      const hand = utils.shuffle([...playerCardsParam]).slice(0, 5);
+      player.cardsInPlayerHand = [];
+
+      hand.forEach((chosenCard, i) => {
+        const targetW =
+          offsets.cardWidth ||
+          offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
+        const targetH =
+          offsets.cardHeight ||
+          offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
+
+        // Card images
+        const cardImage = this._createScaledBitmap(
+          `${config.cardPath}${chosenCard.image}.png`,
+          targetW,
+          targetH,
+          () => Game.stage.update()
+        );
+        const cardColour = this._createScaledBitmap(
+          `${config.cardPath}${utils.getPlayerTurn()}.png`,
+          targetW,
+          targetH,
+          () => Game.stage.update()
+        );
+
+        // Card container
+        const cardContainer = new createjs.Container();
+        cardContainer.addChild(cardColour, cardImage);
+
+        // Card stats
+        cardContainer.name = chosenCard.displayName;
+        cardContainer.strengthUp = chosenCard.strengthUp;
+        cardContainer.strengthRight = chosenCard.strengthRight;
+        cardContainer.strengthDown = chosenCard.strengthDown;
+        cardContainer.strengthLeft = chosenCard.strengthLeft;
+        cardContainer.element = chosenCard.element;
+        cardContainer.owner = utils.getPlayerTurn();
+        cardContainer.background = utils.getPlayerTurn();
+
+        // Position in hand
+        cardContainer.x = player.handOffsetX;
+        cardContainer.y =
+          offsets.handOffsetY + i * (offsets.handCardOffset || 95);
+
+        player.cardsInPlayerHand.push(cardContainer);
+        Game.stage.addChild(cardContainer);
+      });
+
+      // Default selection
+      ui.selectedCard = player.cardsInPlayerHand[0];
+      ui.previouslySelectedCard = [];
+
+      // Indent chosen card
+      player.indentSelectedCard();
+
+      // Ready for player to choose
+      ui.playerConfirming = false;
+      ui.playerChoosingCard = true;
+
+      Game.stage.update();
+    },
+  },
 
   /** @type {number} Number of cards above current selection */
   cardsAboveSelection: 0,
@@ -42,80 +131,11 @@ export const player = {
   playerHandSelectionCursor: null,
 
   /**
-   * Populate the player's hand with cards.
-   * Currently selects a randomised hand of up to 5 cards.
-   * @param {Array<Object>} playerCardsParam - Array of cards available to the player.
-   */
-  populatePlayerCards(playerCardsParam) {
-    // Calculate the current player turn
-    utils.togglePlayerTurn();
-
-    // Shuffle and copy hand
-    this.playerHand = utils.shuffle([...playerCardsParam]).slice(0, 5);
-
-    for (let i = 0; i < this.playerHand.length; i++) {
-      const chosenCard = this.playerHand[i];
-
-      // Transparent card data
-      ui.cardImage = new createjs.Bitmap(
-        `${config.cardPath}${chosenCard.image}.png`
-      );
-
-      // Card Background Colour
-      const cardColour = new createjs.Bitmap(
-        `${config.cardPath}${utils.getPlayerTurn()}.png`
-      );
-
-      // Card Container
-      ui.card = new createjs.Container();
-      ui.card.addChild(cardColour, ui.cardImage);
-
-      // Adjust the card for the board
-      ui.card.scaleX =
-        offsets.cardWidth / ui.card.children[0].image.width;
-      ui.card.scaleY =
-        offsets.cardHeight / ui.card.children[0].image.height;
-
-      // Assign stats
-      ui.card.name = chosenCard.displayName;
-      ui.card.strengthUp = chosenCard.strengthUp;
-      ui.card.strengthRight = chosenCard.strengthRight;
-      ui.card.strengthDown = chosenCard.strengthDown;
-      ui.card.strengthLeft = chosenCard.strengthLeft;
-      ui.card.element = chosenCard.element;
-      ui.card.owner = ui.card.background = utils.getPlayerTurn();
-
-      // Place the card
-      ui.card.x = this.handOffsetX;
-      ui.card.y =
-        offsets.handOffsetY + i * offsets.handCardOffset;
-
-      this.cardsInPlayerHand.push(ui.card);
-      Game.stage.addChild(ui.card);
-      Game.stage.update();
-    }
-
-    // Select the top card by default
-    ui.selectedCard = this.cardsInPlayerHand[ui.selectedCardNumber];
-    ui.previouslySelectedCard = [];
-
-    // Indent the chosen card
-    this.indentSelectedCard();
-
-    // Ready for the player to choose which card to play
-    ui.playerConfirming = false;
-    ui.playerChoosingCard = true;
-  },
-
-  /**
    * Indent the selected card to visually indicate selection.
    */
   indentSelectedCard() {
     if (utils.getPlayerTurn() === "red") {
-      if (
-        ui.selectedCard &&
-        typeof ui.selectedCard.x !== "undefined"
-      ) {
+      if (ui.selectedCard && typeof ui.selectedCard.x !== "undefined") {
         ui.selectedCard.x += 30;
       }
       if (
@@ -125,10 +145,7 @@ export const player = {
         ui.previouslySelectedCard.x -= 30;
       }
     } else if (utils.getPlayerTurn() === "blue") {
-      if (
-        ui.selectedCard &&
-        typeof ui.selectedCard.x !== "undefined"
-      ) {
+      if (ui.selectedCard && typeof ui.selectedCard.x !== "undefined") {
         ui.selectedCard.x -= 30;
       }
       if (
@@ -184,8 +201,7 @@ player.CardManager = class {
 
     // If player has unconfirmed selections, restore their colour if needed
     if (player.playerCards.length > 0) {
-      const lastCard =
-        player.playerCards[player.playerCards.length - 1];
+      const lastCard = player.playerCards[player.playerCards.length - 1];
       if (lastCard && lastCard.count > 0) {
         lastCard.colour = "#ffffff";
       }
@@ -276,9 +292,7 @@ player.CardManager = class {
       ui.selectionBoard.selectedHandCard
     ) {
       ui.selectionBoard.displayedCard.children[1].image.src =
-        config.cardPath +
-        ui.selectionBoard.selectedHandCard.image +
-        ".png";
+        config.cardPath + ui.selectionBoard.selectedHandCard.image + ".png";
     }
 
     createjs.Tween.get(ui.selectionBoard.displayedCard).to(
@@ -293,97 +307,5 @@ player.CardManager = class {
 
 // Create single instance of card manager
 player.cardManagerInstance = new player.CardManager();
-
-Game.cards = Game.cards || {};
-
-Game.cards.playerHand = {
-  /**
-   * Helper: create a bitmap and scale once loaded.
-   */
-  _createScaledBitmap(src, targetW, targetH, onReady) {
-    const bmp = new createjs.Bitmap(src);
-    const applyScale = () => {
-      bmp.scaleX = targetW / bmp.image.width;
-      bmp.scaleY = targetH / bmp.image.height;
-      if (onReady) onReady(bmp);
-    };
-    if (!bmp.image.complete) {
-      bmp.image.onload = applyScale;
-    } else {
-      applyScale();
-    }
-    return bmp;
-  },
-
-  /**
-   * Populate the player's hand with cards.
-   * @param {Array<Object>} playerCardsParam - Array of player-owned cards.
-   */
-  populate(playerCardsParam) {
-    // Toggle player turn
-    utils.togglePlayerTurn();
-
-    // Random hand of up to 5 cards
-    const hand = utils.shuffle([...playerCardsParam]).slice(0, 5);
-    player.cardsInPlayerHand = [];
-
-    hand.forEach((chosenCard, i) => {
-      const targetW =
-        offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
-      const targetH =
-        offsets.cardHeight ||
-        offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
-
-      // Card images
-      const cardImage = this._createScaledBitmap(
-        `${config.cardPath}${chosenCard.image}.png`,
-        targetW,
-        targetH,
-        () => Game.stage.update()
-      );
-      const cardColour = this._createScaledBitmap(
-        `${config.cardPath}${utils.getPlayerTurn()}.png`,
-        targetW,
-        targetH,
-        () => Game.stage.update()
-      );
-
-      // Card container
-      const cardContainer = new createjs.Container();
-      cardContainer.addChild(cardColour, cardImage);
-
-      // Card stats
-      cardContainer.name = chosenCard.displayName;
-      cardContainer.strengthUp = chosenCard.strengthUp;
-      cardContainer.strengthRight = chosenCard.strengthRight;
-      cardContainer.strengthDown = chosenCard.strengthDown;
-      cardContainer.strengthLeft = chosenCard.strengthLeft;
-      cardContainer.element = chosenCard.element;
-      cardContainer.owner = utils.getPlayerTurn();
-      cardContainer.background = utils.getPlayerTurn();
-
-      // Position in hand
-      cardContainer.x = player.handOffsetX;
-      cardContainer.y =
-        offsets.handOffsetY + i * (offsets.handCardOffset || 95);
-
-      player.cardsInPlayerHand.push(cardContainer);
-      Game.stage.addChild(cardContainer);
-    });
-
-    // Default selection
-    ui.selectedCard = player.cardsInPlayerHand[0];
-    ui.previouslySelectedCard = [];
-
-    // Indent chosen card
-    player.indentSelectedCard();
-
-    // Ready for player to choose
-    ui.playerConfirming = false;
-    ui.playerChoosingCard = true;
-
-    Game.stage.update();
-  },
-};
 
 window.player = player;

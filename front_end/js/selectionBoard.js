@@ -8,6 +8,7 @@ import { ui } from './ui.js';
 // Handles population, pagination, and display of the deck selection screen
 // ------------------------------------
 
+const Game = window.Game || (window.Game = {});
 Game.cards = Game.cards || {};
 
 export const selectionBoard = {

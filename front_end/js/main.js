@@ -1,6 +1,12 @@
-var Game = {};
+import { gameInit } from './gameInit.js';
+
+window.Game = window.Game || {};
+const Game = window.Game;
+
+window.cursors = window.cursors || {};
+const cursors = window.cursors;
+
 Game.cards = {};
-cursors = {};
 
 (function (Game) {
   // safe guard: if previously initialized, destroy first
@@ -103,7 +109,7 @@ Game.stageHeight = 0;
 
 Game.startGame = function () {
   board.generateGrid();
-  Game.cards.playerHand.populate(player.playerCards)
+  player.playerHand.populate(player.playerCards)
   ui.drawCardCounts();
   ui.drawInfoBox();
   cursors.playerHand.place();
@@ -127,4 +133,4 @@ Game.endGame = function () {
 // DOCUMENT READY
 // -------------------------
 
-document.addEventListener("DOMContentLoaded", () => Game.init.all());
+document.addEventListener("DOMContentLoaded", () => gameInit.all());

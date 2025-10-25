@@ -9,7 +9,7 @@ import { inputController } from './inputController.js';
 // -------------------------
 // CORE: Initialization
 // -------------------------
-const GameInit = {
+export const gameInit = {
   stage() {
     Game.stage = new createjs.Stage("gameArea");
     createjs.Ticker.setFPS(config.fps);
@@ -79,6 +79,3 @@ const GameInit = {
     this.loadInitialCards();
   },
 };
-
-//export default GameInit;
-window.Game.init = GameInit;

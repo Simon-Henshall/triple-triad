@@ -75,7 +75,7 @@ export const utils = {
       );
       // populate AI cards and start game
       if (!ai.cardsInAIHand || ai.cardsInAIHand.length === 0) {
-        Game.cards.aiHand.populate();
+        ai.aiHand.populate();
       }
       Game.startGame();
     } else {
@@ -121,7 +121,7 @@ export const utils = {
       ui.selectionBoard.page = 1;
 
       // Add AI cards
-      Game.cards.aiHand.populate();
+      ai.aiHand.populate();
 
       // Add selection board cards
       selectionBoard.populate();
