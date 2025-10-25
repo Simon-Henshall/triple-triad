@@ -114,27 +114,38 @@ export const selectionBoard = {
   updateDisplay() {
     const sb = ui.selectionBoard;
     const selectedCard = sb.selectedHandCard;
-
     if (!selectedCard) return;
 
-    // Remove previous displayed card
-    if (sb.displayedCard) {
-      sb.container.removeChild(sb.displayedCard);
+    const targetW =
+      offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
+    const targetH =
+      offsets.cardHeight || offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
+
+    // --- If this is the first card display ---
+    if (!sb.displayedCard) {
+      sb.displayedCard = utils.createCardContainer(
+        selectedCard,
+        "blue",
+        sb.background.x + 440,
+        sb.background.y + 700 // start from offscreen
+      );
+      sb.container.addChild(sb.displayedCard);
+      sb.displayedCardColour = sb.displayedCard.getChildAt(0);
+      sb.displayedCardImage = sb.displayedCard.getChildAt(1);
+    } else {
+      // --- Update existing card images ---
+      sb.displayedCardImage.image.src =
+        config.cardPath + selectedCard.image + ".png";
+      sb.displayedCardColour.image.src = config.cardPath + "blue.png";
+      // reset position before tweening again
+      sb.displayedCard.y = 700;
     }
 
-    // Use utils helper to create the card container
-    sb.displayedCard = utils.createCardContainer(
-      selectedCard, // card data
-      "blue", // ownerColour for preview
-      sb.background.x + 440, // x position
-      sb.background.y + 200, // y position
-      () => Game.stage.update() // onReady callback
-    );
+    // --- Tween the card into view ---
+    createjs.Tween.get(sb.displayedCard, { override: true })
+      .to({ y: sb.background.y + 200 }, 300, createjs.Ease.quadOut)
+      .call(() => console.log("Card tween complete"));
 
-    // Add to selectionBoard container
-    sb.container.addChild(sb.displayedCard);
-
-    // Stage update
     Game.stage.update();
   },
 

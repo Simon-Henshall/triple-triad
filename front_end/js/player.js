@@ -186,35 +186,6 @@ player.CardManager = class {
 
     Game.stage.update();
   }
-
-  /**
-   * Update the preview image for the currently selected card.
-   */
-  updateDisplayedCard() {
-    if (!ui.selectionBoard.displayedCard) {
-      return;
-    }
-
-    ui.selectionBoard.displayedCard.y = 700;
-
-    if (
-      ui.selectionBoard.displayedCard.children &&
-      ui.selectionBoard.displayedCard.children[1] &&
-      ui.selectionBoard.displayedCard.children[1].image &&
-      ui.selectionBoard.selectedHandCard
-    ) {
-      ui.selectionBoard.displayedCard.children[1].image.src =
-        config.cardPath + ui.selectionBoard.selectedHandCard.image + ".png";
-    }
-
-    createjs.Tween.get(ui.selectionBoard.displayedCard).to(
-      {
-        x: ui.selectionBoard.displayedCard.x,
-        y: ui.selectionBoard.background.y + 200,
-      },
-      100
-    );
-  }
 };
 
 // Create single instance of card manager
