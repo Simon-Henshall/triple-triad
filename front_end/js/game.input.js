@@ -4,6 +4,7 @@ import { confirmationBox } from './confirmationBox.js';
 import { ui } from './ui.js';
 import { debug } from './debug.js';
 import { placementController } from './placementController.js';
+import { selectionBoard } from './selectionBoard.js';
 
 // -------------------------
 // GAME INPUT HANDLING
@@ -85,10 +86,10 @@ Game.input = {
           // fallback: repopulate the selection board if manager missing
           if (
             Game.cards &&
-            Game.cards.selectionBoard &&
-            typeof Game.cards.selectionBoard.populate === "function"
+            selectionBoard &&
+            typeof selectionBoard.populate === "function"
           ) {
-            Game.cards.selectionBoard.populate();
+            selectionBoard.populate();
           }
         }
 
@@ -97,10 +98,10 @@ Game.input = {
           player.ownedCards[sb.selectedHandCardNumber] || null;
         if (
           Game.cards &&
-          Game.cards.selectionBoard &&
-          typeof Game.cards.selectionBoard.updateDisplay === "function"
+          selectionBoard &&
+          typeof selectionBoard.updateDisplay === "function"
         ) {
-          Game.cards.selectionBoard.updateDisplay();
+          selectionBoard.updateDisplay();
         }
 
         Game.stage.update();
@@ -141,20 +142,20 @@ Game.input = {
             player.cardManagerInstance.updateHandCards();
           } else if (
             Game.cards &&
-            Game.cards.selectionBoard &&
-            typeof Game.cards.selectionBoard.populate === "function"
+            selectionBoard &&
+            typeof selectionBoard.populate === "function"
           ) {
-            Game.cards.selectionBoard.populate();
+            selectionBoard.populate();
           }
           // Refresh preview for current index (in case it changed)
           sb.selectedHandCard =
             player.ownedCards[sb.selectedHandCardNumber] || null;
           if (
             Game.cards &&
-            Game.cards.selectionBoard &&
-            typeof Game.cards.selectionBoard.updateDisplay === "function"
+            selectionBoard &&
+            typeof selectionBoard.updateDisplay === "function"
           ) {
-            Game.cards.selectionBoard.updateDisplay();
+            selectionBoard.updateDisplay();
           }
           Game.stage.update();
         }

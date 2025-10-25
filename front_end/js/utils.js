@@ -2,6 +2,7 @@ import { cards } from './cards.js';
 import { player } from './player.js';
 import { ui } from './ui.js';
 import { ai } from './ai.js';
+import { selectionBoard } from './selectionBoard.js';
 
 export const utils = {
   ajaxCall(whenDone) {
@@ -122,7 +123,7 @@ export const utils = {
       Game.cards.aiHand.populate();
 
       // Add selection board cards
-      Game.cards.selectionBoard.populate();
+      selectionBoard.populate();
 
       // Add container to stage and set up selection cursor
       if (ui.selectionBoard.container.parent) {

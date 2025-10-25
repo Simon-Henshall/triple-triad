@@ -4,13 +4,13 @@ import { player } from './player.js';
 import { ui } from './ui.js';
 
 // ------------------------------------
-// game.cards.selectionBoard.js
+// selectionBoard
 // Handles population, pagination, and display of the deck selection screen
 // ------------------------------------
 
 Game.cards = Game.cards || {};
 
-Game.cards.selectionBoard = {
+export const selectionBoard = {
   /**
    * Helper: create a bitmap and ensure it is scaled before adding to container.
    * @param {string} src - image path

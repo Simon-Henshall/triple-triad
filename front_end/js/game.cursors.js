@@ -3,6 +3,7 @@ import { board } from './board.js';
 import { player } from './player.js';
 import { ui } from './ui.js';
 import { debug } from './debug.js';
+import { selectionBoard } from './selectionBoard.js';
 
 // -------------------------
 // PLAYER HAND SELECTION CURSOR
@@ -49,7 +50,7 @@ Game.cursors.selection = {
           player.playerHandSelectionCursor.y -= rowStep;
           sb.selectedHandCard =
             player.ownedCards[sb.selectedHandCardNumber];
-          Game.cards.selectionBoard.updateDisplay();
+          selectionBoard.updateDisplay();
         }
         break;
 
@@ -59,19 +60,19 @@ Game.cursors.selection = {
           player.playerHandSelectionCursor.y += rowStep;
           sb.selectedHandCard =
             player.ownedCards[sb.selectedHandCardNumber];
-          Game.cards.selectionBoard.updateDisplay();
+          selectionBoard.updateDisplay();
         }
         break;
 
       case "left":
         if (sb.page > 1) {
-          Game.cards.selectionBoard.paginate("left");
+          selectionBoard.paginate("left");
         }
         break;
 
       case "right":
         if (sb.page < sb.totalPages) {
-          Game.cards.selectionBoard.paginate("right");
+          selectionBoard.paginate("right");
         }
         break;
 
