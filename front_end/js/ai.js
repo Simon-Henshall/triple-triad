@@ -5,6 +5,7 @@ import { board } from './board.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
 import { flippingController } from './flippingController.js';
+import { placementController } from './placementController.js';
 
 export const ai = {
   handOffsetX: 0,
@@ -36,7 +37,7 @@ export const ai = {
     ai.aiCardsAboveSelection = aiSelectedCardNumber;
     ai.cardsInAIHand.splice(aiSelectedCardNumber, 1);
     setTimeout(function () {
-      Game.cards.placement.placeCard(
+      placementController.placeCard(
         aiSelectedCard,
         offsets.gameOffsetX +
           offsets.cellWidth * (ui.selectedColumn - 1) +

@@ -3,6 +3,7 @@ import { player } from './player.js';
 import { confirmationBox } from './confirmationBox.js';
 import { ui } from './ui.js';
 import { debug } from './debug.js';
+import { placementController } from './placementController.js';
 
 // -------------------------
 // GAME INPUT HANDLING
@@ -220,7 +221,7 @@ Game.input = {
       if (!board.cellOccupied()) {
         player.cardsInPlayerHand.splice(ui.selectedCardNumber, 1);
         Game.cursors.grid.remove();
-        Game.cards.placement.placeCard(
+        placementController.placeCard(
           ui.selectedCard,
           offsets.gameOffsetX +
             offsets.cellWidth * (ui.selectedColumn - 1) +

@@ -8,11 +8,11 @@ import { ai } from './ai.js';
 import { flippingController } from './flippingController.js';
 
 /**
- * @namespace Game.cards.placement
+ * @namespace placementController
  * @description Handles card placement, adjacency, turn switching, and element effects.
  */
 
-Game.cards.placement = class CardPlacer {
+export const placementController = class CardPlacer {
   /**
    * Place a card onto the board (player or AI action)
    * @param {Object} card
@@ -30,10 +30,10 @@ Game.cards.placement = class CardPlacer {
     createjs.Tween.get(card)
       .to({ x: offscreenX, y: offscreenY }, 500)
       .call(() => {
-        Game.cards.placement.onCardOffscreenComplete(card, placementX, placementY);
+        this.onCardOffscreenComplete(card, placementX, placementY);
       });
 
-    Game.cards.placement.shiftHandCardsDown();
+    this.shiftHandCardsDown();
   }
 
   /**
@@ -54,7 +54,7 @@ Game.cards.placement = class CardPlacer {
     createjs.Tween.get(card)
       .to({ x: placementX, y: placementY }, 500)
       .call(() => {
-        Game.cards.placement.onCardPlacementComplete(card);
+        this.onCardPlacementComplete(card);
       });
   }
 
@@ -63,13 +63,13 @@ Game.cards.placement = class CardPlacer {
    */
   static onCardPlacementComplete(card) {
     // Establish links to adjacent cards
-    Game.cards.placement.setCardAdjacents(card);
+    this.setCardAdjacents(card);
 
     // Register this card in the board array and remove the cell from freeCells
-    Game.cards.placement.addCardToBoard(card);
+    this.addCardToBoard(card);
 
     // Apply elemental bonuses or penalties if applicable
-    Game.cards.placement.applyElementEffects(card);
+    this.applyElementEffects(card);
 
     // Check if adjacent cards should flip ownership
     flippingController.flipCardsCheck(card);
@@ -78,10 +78,10 @@ Game.cards.placement = class CardPlacer {
     Game.stage.update();
 
     // Determine if the game has ended, otherwise swap turn
-    if (Game.cards.placement.isGameOver()) {
+    if (this.isGameOver()) {
       Game.endGame();
     } else {
-      Game.cards.placement.playerTurnSwitch();
+      this.playerTurnSwitch();
     }
   }
 
