@@ -1,4 +1,5 @@
 import { player } from './player.js';
+import { ui } from './ui.js';
 
 Game.debug = {
   active: true, // Toggle for debug mode
@@ -13,7 +14,7 @@ Game.debug = {
    */
   logCell(eventOrSquare) {
     const squareID = eventOrSquare.name ?? eventOrSquare.id;
-    const squareObj = Game.ui.squares[squareID - 1];
+    const squareObj = ui.squares[squareID - 1];
     const cardHere = board.boardArray[squareID - 1].occupant;
 
     console.log("======================================================");

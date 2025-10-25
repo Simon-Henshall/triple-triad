@@ -1,10 +1,12 @@
+import { ui } from './ui.js';
+
 export const confirmationBox = {
   /**
    * Display the "Are you sure?" confirmation dialog
    */
   show() {
-    const conf = Game.ui.confirmation;
-    Game.ui.playerConfirming = true;
+    const conf = ui.confirmation;
+    ui.playerConfirming = true;
 
     // Reset to default selection
     conf.selectedChoice = 0;
@@ -64,8 +66,8 @@ export const confirmationBox = {
    * Hide the confirmation dialog
    */
   hide() {
-    Game.ui.playerConfirming = false;
-    Game.stage.removeChild(Game.ui.confirmation.container);
-    Game.ui.playerSelectingHand = true;
+    ui.playerConfirming = false;
+    Game.stage.removeChild(ui.confirmation.container);
+    ui.playerSelectingHand = true;
   },
 };

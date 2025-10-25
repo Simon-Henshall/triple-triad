@@ -12,7 +12,7 @@ const INFO_BOX_Y = 540;
 // Rendering / UI
 // -------------------------
 
-Game.ui = {
+export const ui = {
   squares: [],
   selectedRow: 2,
   selectedColumn: 2,
@@ -111,10 +111,10 @@ Game.ui = {
   // Draw The Info Box
   // -------------------------
   drawInfoBox() {
-    if (!Game.ui.infoBox.container) {
-      Game.ui.infoBox.container = new createjs.Container();
+    if (!ui.infoBox.container) {
+      ui.infoBox.container = new createjs.Container();
     } else {
-      Game.ui.infoBox.container.removeAllChildren();
+      ui.infoBox.container.removeAllChildren();
     }
 
     // Background
@@ -133,41 +133,41 @@ Game.ui = {
       INFO_BOX_HEIGHT
     );
 
-    Game.ui.infoBox.container.addChild(infoBoxBackground);
+    ui.infoBox.container.addChild(infoBoxBackground);
 
     // "INFO." label
     const infoBoxText = new createjs.Text("INFO.", "18px Arial", "#ffffff");
     infoBoxText.x = infoBoxBackground.x + 10;
     infoBoxText.y = infoBoxBackground.y + 15;
     infoBoxText.textBaseline = "alphabetic";
-    Game.ui.infoBox.container.addChild(infoBoxText);
+    ui.infoBox.container.addChild(infoBoxText);
 
     // Card name text
-    if (!Game.ui.infoBox.cardName) {
-      Game.ui.infoBox.cardName = new createjs.Text(
-        Game.ui.selectedCard?.name || "",
+    if (!ui.infoBox.cardName) {
+      ui.infoBox.cardName = new createjs.Text(
+        ui.selectedCard?.name || "",
         "30px Arial",
         "#ffffff"
       );
-      Game.ui.infoBox.cardName.textBaseline = "alphabetic";
+      ui.infoBox.cardName.textBaseline = "alphabetic";
     }
-    Game.ui.infoBox.cardName.text = Game.ui.selectedCard?.name || "";
+    ui.infoBox.cardName.text = ui.selectedCard?.name || "";
 
     // Center card name inside the info box (horizontal and vertical)
     const verticalOffset = 30 / 2 + 10; // half of font size + 10px downward nudge
-    Game.ui.infoBox.cardName.x =
+    ui.infoBox.cardName.x =
       INFO_BOX_X +
       INFO_BOX_WIDTH / 2 -
-      Game.ui.infoBox.cardName.getMeasuredWidth() / 2;
-    Game.ui.infoBox.cardName.y =
+      ui.infoBox.cardName.getMeasuredWidth() / 2;
+    ui.infoBox.cardName.y =
       INFO_BOX_Y +
       INFO_BOX_HEIGHT / 2 -
-      Game.ui.infoBox.cardName.getMeasuredHeight() / 2 +
+      ui.infoBox.cardName.getMeasuredHeight() / 2 +
       verticalOffset;
 
-    Game.ui.infoBox.container.addChild(Game.ui.infoBox.cardName);
+    ui.infoBox.container.addChild(ui.infoBox.cardName);
 
-    Game.stage.addChild(Game.ui.infoBox.container);
+    Game.stage.addChild(ui.infoBox.container);
     Game.stage.update();
   },
 
@@ -175,17 +175,17 @@ Game.ui = {
   // Update The Info Box
   // -------------------------
   updateInfoBox() {
-    if (Game.ui.infoBox.cardName && Game.ui.selectedCard) {
-      Game.ui.infoBox.cardName.text = Game.ui.selectedCard.name;
+    if (ui.infoBox.cardName && ui.selectedCard) {
+      ui.infoBox.cardName.text = ui.selectedCard.name;
       const verticalOffset = 30 / 2 + 10; // half of font size + 10px downward nudge
-      Game.ui.infoBox.cardName.x =
+      ui.infoBox.cardName.x =
         INFO_BOX_X +
         INFO_BOX_WIDTH / 2 -
-        Game.ui.infoBox.cardName.getMeasuredWidth() / 2;
-      Game.ui.infoBox.cardName.y =
+        ui.infoBox.cardName.getMeasuredWidth() / 2;
+      ui.infoBox.cardName.y =
         INFO_BOX_Y +
         INFO_BOX_HEIGHT / 2 -
-        Game.ui.infoBox.cardName.getMeasuredHeight() / 2 +
+        ui.infoBox.cardName.getMeasuredHeight() / 2 +
         verticalOffset;
     }
 
@@ -199,3 +199,5 @@ Game.ui = {
     Game.stage.update();
   },
 };
+
+window.ui = ui;

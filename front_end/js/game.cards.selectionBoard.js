@@ -1,6 +1,7 @@
 import { config } from './config.js';
 import { offsets } from './offsets.js';
 import { player } from './player.js';
+import { ui } from './ui.js';
 
 // ------------------------------------
 // game.cards.selectionBoard.js
@@ -39,7 +40,7 @@ Game.cards.selectionBoard = {
    * Build and display the selectable owned cards on the selection board.
    */
   populate() {
-    const sb = Game.ui.selectionBoard;
+    const sb = ui.selectionBoard;
     const owned = player.ownedCards || [];
     const cardsPerPage = 11;
 
@@ -138,12 +139,12 @@ Game.cards.selectionBoard = {
    * Update the large preview card on the right-hand side.
    */
   updateDisplay() {
-    const ui = Game.ui.selectionBoard;
-    const selectedCard = ui.selectedHandCard;
+    const sb = ui.selectionBoard;
+    const selectedCard = sb.selectedHandCard;
 
-    if (ui.displayedCard) ui.container.removeChild(ui.displayedCard);
+    if (sb.displayedCard) sb.container.removeChild(sb.displayedCard);
 
-    ui.displayedCard = new createjs.Container();
+    sb.displayedCard = new createjs.Container();
 
     const targetW =
       offsets.cardWidth ||
@@ -158,7 +159,7 @@ Game.cards.selectionBoard = {
       targetW,
       targetH
     );
-    ui.displayedCardColour = colourBmp;
+    sb.displayedCardColour = colourBmp;
 
     // Card image
     const cardBmp = this._createScaledBitmap(
@@ -167,13 +168,13 @@ Game.cards.selectionBoard = {
       targetH,
       () => Game.stage.update() // update stage after loaded
     );
-    ui.displayedCardImage = cardBmp;
+    sb.displayedCardImage = cardBmp;
 
-    ui.displayedCard.addChild(ui.displayedCardColour, ui.displayedCardImage);
-    ui.displayedCard.x = ui.background.x + 440;
-    ui.displayedCard.y = ui.background.y + 200;
+    sb.displayedCard.addChild(sb.displayedCardColour, sb.displayedCardImage);
+    sb.displayedCard.x = sb.background.x + 440;
+    sb.displayedCard.y = sb.background.y + 200;
 
-    ui.container.addChild(ui.displayedCard);
+    sb.container.addChild(sb.displayedCard);
 
     // Stage update
     Game.stage.update();
@@ -184,7 +185,7 @@ Game.cards.selectionBoard = {
    * @param {"left"|"right"} direction
    */
   paginate(direction) {
-    const sb = Game.ui.selectionBoard;
+    const sb = ui.selectionBoard;
     const cardsPerPage = 11;
 
     if (direction === "left" && sb.page > 1) {

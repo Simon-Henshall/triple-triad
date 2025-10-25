@@ -1,5 +1,6 @@
 import { config } from './config.js';
 import { offsets } from './offsets.js';
+import { ui } from './ui.js';
 
 /**
  * @namespace player
@@ -55,7 +56,7 @@ export const player = {
       const chosenCard = this.playerHand[i];
 
       // Transparent card data
-      Game.ui.cardImage = new createjs.Bitmap(
+      ui.cardImage = new createjs.Bitmap(
         `${config.cardPath}${chosenCard.image}.png`
       );
 
@@ -65,44 +66,44 @@ export const player = {
       );
 
       // Card Container
-      Game.ui.card = new createjs.Container();
-      Game.ui.card.addChild(cardColour, Game.ui.cardImage);
+      ui.card = new createjs.Container();
+      ui.card.addChild(cardColour, ui.cardImage);
 
       // Adjust the card for the board
-      Game.ui.card.scaleX =
-        offsets.cardWidth / Game.ui.card.children[0].image.width;
-      Game.ui.card.scaleY =
-        offsets.cardHeight / Game.ui.card.children[0].image.height;
+      ui.card.scaleX =
+        offsets.cardWidth / ui.card.children[0].image.width;
+      ui.card.scaleY =
+        offsets.cardHeight / ui.card.children[0].image.height;
 
       // Assign stats
-      Game.ui.card.name = chosenCard.displayName;
-      Game.ui.card.strengthUp = chosenCard.strengthUp;
-      Game.ui.card.strengthRight = chosenCard.strengthRight;
-      Game.ui.card.strengthDown = chosenCard.strengthDown;
-      Game.ui.card.strengthLeft = chosenCard.strengthLeft;
-      Game.ui.card.element = chosenCard.element;
-      Game.ui.card.owner = Game.ui.card.background = Game.utils.getPlayerTurn();
+      ui.card.name = chosenCard.displayName;
+      ui.card.strengthUp = chosenCard.strengthUp;
+      ui.card.strengthRight = chosenCard.strengthRight;
+      ui.card.strengthDown = chosenCard.strengthDown;
+      ui.card.strengthLeft = chosenCard.strengthLeft;
+      ui.card.element = chosenCard.element;
+      ui.card.owner = ui.card.background = Game.utils.getPlayerTurn();
 
       // Place the card
-      Game.ui.card.x = this.handOffsetX;
-      Game.ui.card.y =
+      ui.card.x = this.handOffsetX;
+      ui.card.y =
         offsets.handOffsetY + i * offsets.handCardOffset;
 
-      this.cardsInPlayerHand.push(Game.ui.card);
-      Game.stage.addChild(Game.ui.card);
+      this.cardsInPlayerHand.push(ui.card);
+      Game.stage.addChild(ui.card);
       Game.stage.update();
     }
 
     // Select the top card by default
-    Game.ui.selectedCard = this.cardsInPlayerHand[Game.ui.selectedCardNumber];
-    Game.ui.previouslySelectedCard = [];
+    ui.selectedCard = this.cardsInPlayerHand[ui.selectedCardNumber];
+    ui.previouslySelectedCard = [];
 
     // Indent the chosen card
     this.indentSelectedCard();
 
     // Ready for the player to choose which card to play
-    Game.ui.playerConfirming = false;
-    Game.ui.playerChoosingCard = true;
+    ui.playerConfirming = false;
+    ui.playerChoosingCard = true;
   },
 
   /**
@@ -111,29 +112,29 @@ export const player = {
   indentSelectedCard() {
     if (Game.utils.getPlayerTurn() === "red") {
       if (
-        Game.ui.selectedCard &&
-        typeof Game.ui.selectedCard.x !== "undefined"
+        ui.selectedCard &&
+        typeof ui.selectedCard.x !== "undefined"
       ) {
-        Game.ui.selectedCard.x += 30;
+        ui.selectedCard.x += 30;
       }
       if (
-        Game.ui.previouslySelectedCard &&
-        typeof Game.ui.previouslySelectedCard.x !== "undefined"
+        ui.previouslySelectedCard &&
+        typeof ui.previouslySelectedCard.x !== "undefined"
       ) {
-        Game.ui.previouslySelectedCard.x -= 30;
+        ui.previouslySelectedCard.x -= 30;
       }
     } else if (Game.utils.getPlayerTurn() === "blue") {
       if (
-        Game.ui.selectedCard &&
-        typeof Game.ui.selectedCard.x !== "undefined"
+        ui.selectedCard &&
+        typeof ui.selectedCard.x !== "undefined"
       ) {
-        Game.ui.selectedCard.x -= 30;
+        ui.selectedCard.x -= 30;
       }
       if (
-        Game.ui.previouslySelectedCard &&
-        typeof Game.ui.previouslySelectedCard.x !== "undefined"
+        ui.previouslySelectedCard &&
+        typeof ui.previouslySelectedCard.x !== "undefined"
       ) {
-        Game.ui.previouslySelectedCard.x += 30;
+        ui.previouslySelectedCard.x += 30;
       }
     }
     Game.stage.update();
@@ -148,7 +149,7 @@ player.CardManager = class {
    * Update the hand cards shown on the selection board.
    */
   updateHandCards() {
-    const sb = Game.ui.selectionBoard;
+    const sb = ui.selectionBoard;
     const owned = player.ownedCards || [];
 
     // Ensure paging is set up
@@ -261,28 +262,28 @@ player.CardManager = class {
    * Update the preview image for the currently selected card.
    */
   updateDisplayedCard() {
-    if (!Game.ui.selectionBoard.displayedCard) {
+    if (!ui.selectionBoard.displayedCard) {
       return;
     }
 
-    Game.ui.selectionBoard.displayedCard.y = 700;
+    ui.selectionBoard.displayedCard.y = 700;
 
     if (
-      Game.ui.selectionBoard.displayedCard.children &&
-      Game.ui.selectionBoard.displayedCard.children[1] &&
-      Game.ui.selectionBoard.displayedCard.children[1].image &&
-      Game.ui.selectionBoard.selectedHandCard
+      ui.selectionBoard.displayedCard.children &&
+      ui.selectionBoard.displayedCard.children[1] &&
+      ui.selectionBoard.displayedCard.children[1].image &&
+      ui.selectionBoard.selectedHandCard
     ) {
-      Game.ui.selectionBoard.displayedCard.children[1].image.src =
+      ui.selectionBoard.displayedCard.children[1].image.src =
         config.cardPath +
-        Game.ui.selectionBoard.selectedHandCard.image +
+        ui.selectionBoard.selectedHandCard.image +
         ".png";
     }
 
-    createjs.Tween.get(Game.ui.selectionBoard.displayedCard).to(
+    createjs.Tween.get(ui.selectionBoard.displayedCard).to(
       {
-        x: Game.ui.selectionBoard.displayedCard.x,
-        y: Game.ui.selectionBoard.background.y + 200,
+        x: ui.selectionBoard.displayedCard.x,
+        y: ui.selectionBoard.background.y + 200,
       },
       100
     );
@@ -370,15 +371,15 @@ Game.cards.playerHand = {
     });
 
     // Default selection
-    Game.ui.selectedCard = player.cardsInPlayerHand[0];
-    Game.ui.previouslySelectedCard = [];
+    ui.selectedCard = player.cardsInPlayerHand[0];
+    ui.previouslySelectedCard = [];
 
     // Indent chosen card
     player.indentSelectedCard();
 
     // Ready for player to choose
-    Game.ui.playerConfirming = false;
-    Game.ui.playerChoosingCard = true;
+    ui.playerConfirming = false;
+    ui.playerChoosingCard = true;
 
     Game.stage.update();
   },

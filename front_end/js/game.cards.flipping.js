@@ -94,7 +94,7 @@ Game.cards.flipping = {
     this.updateOwnershipCounts(1);
 
     // Maintain board consistency
-    const squareObj = Game.ui.squares[targetCard.inCell - 1];
+    const squareObj = ui.squares[targetCard.inCell - 1];
     if (squareObj) {
       squareObj.card = targetCard;
     }

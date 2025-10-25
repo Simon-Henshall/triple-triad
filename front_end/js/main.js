@@ -104,8 +104,8 @@ Game.stageHeight = 0;
 Game.startGame = function () {
   board.generateGrid();
   Game.cards.playerHand.populate(player.playerCards)
-  Game.ui.drawCardCounts();
-  Game.ui.drawInfoBox();
+  ui.drawCardCounts();
+  ui.drawInfoBox();
   Game.cursors.playerHand.place();
 };
 

@@ -1,5 +1,6 @@
 import { config } from './config.js';
 import { offsets } from './offsets.js';
+import { ui } from './ui.js';
 
 // Lookup table for square positions and adjacency
 // Index corresponds to squareID - 1
@@ -30,12 +31,12 @@ export const board = {
   checkSelectedSquare() {
     for (let i = 0; i < squareMap.length; i++) {
       const s = squareMap[i];
-      if (s.row === Game.ui.selectedRow && s.col === Game.ui.selectedColumn) {
-        Game.ui.selectedSquare = i + 1;
-        Game.ui.squareLeft = s.left;
-        Game.ui.squareUp = s.up;
-        Game.ui.squareRight = s.right;
-        Game.ui.squareDown = s.down;
+      if (s.row === ui.selectedRow && s.col === ui.selectedColumn) {
+        ui.selectedSquare = i + 1;
+        ui.squareLeft = s.left;
+        ui.squareUp = s.up;
+        ui.squareRight = s.right;
+        ui.squareDown = s.down;
         break;
       }
     }
@@ -45,13 +46,13 @@ export const board = {
   // Determine row & column from selected square
   // -------------------------
   checkSelectedRowColumn() {
-    const s = squareMap[Game.ui.selectedAISquare - 1];
-    Game.ui.selectedRow = s.row;
-    Game.ui.selectedColumn = s.col;
-    Game.ui.squareLeft = s.left;
-    Game.ui.squareUp = s.up;
-    Game.ui.squareRight = s.right;
-    Game.ui.squareDown = s.down;
+    const s = squareMap[ui.selectedAISquare - 1];
+    ui.selectedRow = s.row;
+    ui.selectedColumn = s.col;
+    ui.squareLeft = s.left;
+    ui.squareUp = s.up;
+    ui.squareRight = s.right;
+    ui.squareDown = s.down;
   },
 
   // -------------------------
@@ -117,7 +118,7 @@ export const board = {
           Game.debug.clickHandler(event);
         });
 
-        Game.ui.squares.push(square);
+        ui.squares.push(square);
         Game.stage.addChild(square.container);
       }
     }
@@ -129,7 +130,7 @@ export const board = {
   // CELL CHECKS
   // -------------------------
   cellOccupied() {
-    const cell = this.boardArray[Game.ui.selectedSquare - 1];
+    const cell = this.boardArray[ui.selectedSquare - 1];
     return cell.occupant ? cell.occupant : false;
   },
 };

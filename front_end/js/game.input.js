@@ -1,6 +1,7 @@
 import { offsets } from './offsets.js';
 import { player } from './player.js';
 import { confirmationBox } from './confirmationBox.js';
+import { ui } from './ui.js';
 
 // -------------------------
 // GAME INPUT HANDLING
@@ -13,13 +14,13 @@ Game.input = {
   checkKey(e) {
     "use strict";
 
-    if (Game.ui.playerSelectingHand) {
+    if (ui.playerSelectingHand) {
       Game.input._handlePlayerHandSelection(e);
-    } else if (Game.ui.playerConfirming) {
+    } else if (ui.playerConfirming) {
       Game.input._handleConfirmation(e);
-    } else if (Game.ui.playerChoosingCard) {
+    } else if (ui.playerChoosingCard) {
       Game.input._handlePlayerCardChoice(e);
-    } else if (Game.ui.playerSelectingPlacement) {
+    } else if (ui.playerSelectingPlacement) {
       Game.input._handlePlacement(e);
     }
   },
@@ -55,7 +56,7 @@ Game.input = {
       down: () => Game.cursors.selection.move("down"),
     });
 
-    const sb = Game.ui.selectionBoard;
+    const sb = ui.selectionBoard;
 
     // ENTER: select the currently highlighted card (uses absolute index into ownedCards)
     if (e.key === "Enter") {
@@ -117,7 +118,7 @@ Game.input = {
 
       // If player has chosen 5 cards, move to confirmation
       if (player.playerCards.length === 5) {
-        Game.ui.playerSelectingHand = false;
+        ui.playerSelectingHand = false;
         confirmationBox.show();
       }
 
@@ -167,23 +168,23 @@ Game.input = {
       down: () => Game.cursors.confirmation.move("down"),
     });
 
-    if (e.key === "Enter" && Game.ui.confirmation.selectedChoice === 0) {
-      Game.stage.removeChild(Game.ui.selectionBoard.container);
-      Game.stage.removeChild(Game.ui.confirmation.container);
+    if (e.key === "Enter" && ui.confirmation.selectedChoice === 0) {
+      Game.stage.removeChild(ui.selectionBoard.container);
+      Game.stage.removeChild(ui.confirmation.container);
       Game.cursors.confirmation.remove();
       Game.startGame();
     } else if (
       this._isCancelKey(e.key) ||
-      (e.key === "Enter" && Game.ui.confirmation.selectedChoice === 1)
+      (e.key === "Enter" && ui.confirmation.selectedChoice === 1)
     ) {
       for (let i = 0; i < 5; i++) {
         const lastCard = player.playerCards.pop();
         lastCard.count++;
         player.cardManagerInstance.updateHandCards();
       }
-      Game.stage.removeChild(Game.ui.confirmation.container);
+      Game.stage.removeChild(ui.confirmation.container);
       Game.cursors.confirmation.remove();
-      Game.ui.playerSelectingHand = true;
+      ui.playerSelectingHand = true;
     }
   },
 
@@ -197,15 +198,15 @@ Game.input = {
     if (e.key === "Enter") {
       Game.cursors.playerHand.remove();
       Game.cursors.grid.place();
-      Game.ui.selectedRow = 2;
-      Game.ui.selectedColumn = 2;
+      ui.selectedRow = 2;
+      ui.selectedColumn = 2;
       Game.stage.removeChild(player.playerHandCursor);
     }
   },
 
   /** @private */
   _handlePlacement(e) {
-    Game.ui.infoBox.container.visible = false;
+    ui.infoBox.container.visible = false;
 
     Game.input._handleArrowKeys(e.key, {
       left: () => Game.cursors.grid.move("left"),
@@ -216,15 +217,15 @@ Game.input = {
 
     if (e.key === "Enter") {
       if (!board.cellOccupied()) {
-        player.cardsInPlayerHand.splice(Game.ui.selectedCardNumber, 1);
+        player.cardsInPlayerHand.splice(ui.selectedCardNumber, 1);
         Game.cursors.grid.remove();
         Game.cards.placement.placeCard(
-          Game.ui.selectedCard,
+          ui.selectedCard,
           offsets.gameOffsetX +
-            offsets.cellWidth * (Game.ui.selectedColumn - 1) +
+            offsets.cellWidth * (ui.selectedColumn - 1) +
             offsets.cardOffsetX,
           offsets.gameOffsetY +
-            offsets.cellHeight * (Game.ui.selectedRow - 1) +
+            offsets.cellHeight * (ui.selectedRow - 1) +
             offsets.cardOffsetY
         );
       }

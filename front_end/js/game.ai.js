@@ -2,6 +2,7 @@ import { config } from './config.js';
 import { cards } from './cards.js';
 import { offsets } from './offsets.js';
 import { board } from './board.js';
+import { ui } from './ui.js';
 
 Game.ai = {
   handOffsetX: 0,
@@ -23,7 +24,7 @@ Game.ai = {
     var aiSelectedCardNumber = Game.ai.cardsInAIHand.indexOf(aiSelectedCard);
 
     // Pick A Cell To Play In (Currently Random)
-    Game.ui.selectedAISquare =
+    ui.selectedAISquare =
       board.freeCells[
         Math.floor(Math.random() * board.freeCells.length)
       ];
@@ -36,10 +37,10 @@ Game.ai = {
       Game.cards.placement.placeCard(
         aiSelectedCard,
         offsets.gameOffsetX +
-          offsets.cellWidth * (Game.ui.selectedColumn - 1) +
+          offsets.cellWidth * (ui.selectedColumn - 1) +
           offsets.cardOffsetX,
         offsets.gameOffsetY +
-          offsets.cellHeight * (Game.ui.selectedRow - 1) +
+          offsets.cellHeight * (ui.selectedRow - 1) +
           offsets.cardOffsetY
       );
     }, Game.ai.aiDelay);
@@ -122,7 +123,7 @@ Game.cards.aiHand = {
 
     // Default selection
     window.selectedCard = Game.ai.cardsInAIHand[0];
-    Game.ui.previouslySelectedCard = [];
+    ui.previouslySelectedCard = [];
 
     // Flip AI hand if "open" rule applies
     if (

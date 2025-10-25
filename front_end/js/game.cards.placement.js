@@ -1,6 +1,7 @@
 import { offsets } from './offsets.js';
 import { board } from './board.js';
 import { player } from './player.js';
+import { ui } from './ui.js';
 
 /**
  * @namespace Game.cards.placement
@@ -89,10 +90,10 @@ Game.cards.placement = class CardPlacer {
       return cell ? cell.occupant ?? null : null;
     };
 
-    card.cardLeft = getOccupant(Game.ui.squareLeft);
-    card.cardUp = getOccupant(Game.ui.squareUp);
-    card.cardRight = getOccupant(Game.ui.squareRight);
-    card.cardDown = getOccupant(Game.ui.squareDown);
+    card.cardLeft = getOccupant(ui.squareLeft);
+    card.cardUp = getOccupant(ui.squareUp);
+    card.cardRight = getOccupant(ui.squareRight);
+    card.cardDown = getOccupant(ui.squareDown);
 
     if (Game.debug.active) {
       console.log(card);
@@ -103,11 +104,11 @@ Game.cards.placement = class CardPlacer {
    * Add card to board array and remove cell from freeCells
    */
   static addCardToBoard(card) {
-    card.inCell = Game.ui.selectedSquare;
-    board.boardArray[Game.ui.selectedSquare - 1].occupant = card;
+    card.inCell = ui.selectedSquare;
+    board.boardArray[ui.selectedSquare - 1].occupant = card;
 
     // Remove the used square from the list of available cells
-    const freeCellIndex = board.freeCells.indexOf(Game.ui.selectedSquare);
+    const freeCellIndex = board.freeCells.indexOf(ui.selectedSquare);
     if (freeCellIndex > -1) {
       board.freeCells.splice(freeCellIndex, 1);
     }
@@ -120,9 +121,9 @@ Game.cards.placement = class CardPlacer {
    * Apply element effects
    */
   static applyElementEffects(card) {
-    const squareObj = Game.ui.squares[Game.ui.selectedSquare - 1];
+    const squareObj = ui.squares[ui.selectedSquare - 1];
     if (!squareObj || typeof squareObj.element === "undefined") {
-      console.warn("Square missing or element undefined:", Game.ui.selectedSquare);
+      console.warn("Square missing or element undefined:", ui.selectedSquare);
       return;
     }
 
@@ -171,15 +172,15 @@ Game.cards.placement = class CardPlacer {
     if (Game.utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
       player.playedPlayerCardCount++;
-      Game.ui.selectedCard = player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+      ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
 
       // Reposition cursor and UI elements
       Game.stage.addChild(player.playerHandCursor);
-      Game.ui.selectedCard.x -= 30;
+      ui.selectedCard.x -= 30;
 
-      Game.stage.setChildIndex(Game.ui.infoBox.container, Game.stage.getNumChildren() - 1);
-      Game.ui.infoBox.container.visible = true;
-      Game.ui.playerChoosingCard = true;
+      Game.stage.setChildIndex(ui.infoBox.container, Game.stage.getNumChildren() - 1);
+      ui.infoBox.container.visible = true;
+      ui.playerChoosingCard = true;
     } else if (Game.utils.getPlayerTurn() === "red") {
       Game.ai.turn();
     }
@@ -189,7 +190,7 @@ Game.cards.placement = class CardPlacer {
    * Swap current active player
    */
   static swapPlayerTurn() {
-    Game.ui.playerTurn = Game.utils.getPlayerTurn() === "blue" ? "red" : "blue";
+    ui.playerTurn = Game.utils.getPlayerTurn() === "blue" ? "red" : "blue";
   }
 
   /**
@@ -218,14 +219,14 @@ Game.cards.placement = class CardPlacer {
       // === PLAYER HAND ===
       animateHandCardsDown(player.cardsInPlayerHand, player.cardsAboveSelection);
 
-      if (Game.ui.selectedCardNumber === 0) {
+      if (ui.selectedCardNumber === 0) {
         // Top card was played; move cursor down
         player.playerHandCursor.y += offsets.handCardOffset;
-        Game.ui.selectedCard = player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+        ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
       } else {
         // Adjust selection to the next card
-        Game.ui.selectedCardNumber--;
-        Game.ui.selectedCard = player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+        ui.selectedCardNumber--;
+        ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
         player.cardsAboveSelection--;
       }
     } else if (Game.utils.getPlayerTurn() === "red") {

@@ -1,6 +1,7 @@
 import { config } from './config.js';
 import { offsets } from './offsets.js';
 import { player } from './player.js';
+import { ui } from './ui.js';
 
 // -------------------------
 // CORE: Initialization
@@ -36,20 +37,20 @@ const GameInit = {
     player.playerHandSelectionCursor = new createjs.Bitmap(
       config.imagePath + "cursor.png"
     );
-    Game.ui.gridCursor = new createjs.Bitmap(
+    ui.gridCursor = new createjs.Bitmap(
       config.imagePath + "cursor.png"
     );
   },
   uiContainers() {
     // Main containers
-    Game.ui.selectionBoard.container = new createjs.Container();
-    Game.ui.selectionBoard.shownCards = new createjs.Container();
-    Game.ui.confirmation.container = new createjs.Container();
-    Game.ui.infoBox.container = new createjs.Container();
-    Game.ui.previouslySelectedCard = [];
+    ui.selectionBoard.container = new createjs.Container();
+    ui.selectionBoard.shownCards = new createjs.Container();
+    ui.confirmation.container = new createjs.Container();
+    ui.infoBox.container = new createjs.Container();
+    ui.previouslySelectedCard = [];
 
-    Game.ui.confirmation.background = new createjs.Shape();
-    Game.ui.confirmation.cursor = new createjs.Bitmap(
+    ui.confirmation.background = new createjs.Shape();
+    ui.confirmation.cursor = new createjs.Bitmap(
       config.imagePath + "cursor.png"
     );
   },
@@ -57,7 +58,7 @@ const GameInit = {
     document.addEventListener("keydown", Game.input.checkKey);
   },
   loadInitialCards() {
-    Game.ui.addBackground();
+    ui.addBackground();
 
     if (typeof ajaxCall === "function") {
       Game.utils.ajaxCall(Game.utils.pickPlayerCards);

@@ -1,6 +1,7 @@
 import { offsets } from './offsets.js';
 import { board } from './board.js';
 import { player } from './player.js';
+import { ui } from './ui.js';
 
 // -------------------------
 // PLAYER HAND SELECTION CURSOR
@@ -11,11 +12,11 @@ Game.cursors.selection = {
    */
   place() {
     player.playerHandSelectionCursor.x =
-      Game.ui.selectionBoard.background.x - 40;
+      ui.selectionBoard.background.x - 40;
     player.playerHandSelectionCursor.y =
-      Game.ui.selectionBoard.background.y + 48;
+      ui.selectionBoard.background.y + 48;
 
-    Game.ui.selectionBoard.container.addChild(
+    ui.selectionBoard.container.addChild(
       player.playerHandSelectionCursor
     );
     Game.stage.update();
@@ -29,7 +30,7 @@ Game.cursors.selection = {
    * Move the hand selection cursor up/down/left/right
    */
   move(direction) {
-    const sb = Game.ui.selectionBoard;
+    const sb = ui.selectionBoard;
     const totalCards = player.ownedCards.length;
 
     // Page boundaries
@@ -100,15 +101,15 @@ Game.cursors.confirmation = {
    * Place the confirmation cursor at the default position
    */
   place() {
-    Game.ui.confirmation.cursor.x = Game.ui.confirmation.background.x + 50;
-    Game.ui.confirmation.cursor.y = Game.ui.confirmation.background.y + 60;
+    ui.confirmation.cursor.x = ui.confirmation.background.x + 50;
+    ui.confirmation.cursor.y = ui.confirmation.background.y + 60;
 
-    Game.stage.addChild(Game.ui.confirmation.cursor);
+    Game.stage.addChild(ui.confirmation.cursor);
     Game.stage.update();
 
     if (Game.debug.active) {
       console.log(
-        `Confirmation cursor placed at X:${Game.ui.confirmation.cursor.x}, Y:${Game.ui.confirmation.cursor.y}`
+        `Confirmation cursor placed at X:${ui.confirmation.cursor.x}, Y:${ui.confirmation.cursor.y}`
       );
     }
   },
@@ -116,27 +117,27 @@ Game.cursors.confirmation = {
    * Move the confirmation cursor up/down between Yes/No
    */
   move(direction) {
-    if (direction === "up" && Game.ui.confirmation.selectedChoice > 0) {
-      Game.ui.confirmation.cursor.y -= 30;
-      Game.ui.confirmation.selectedChoice -= 1;
+    if (direction === "up" && ui.confirmation.selectedChoice > 0) {
+      ui.confirmation.cursor.y -= 30;
+      ui.confirmation.selectedChoice -= 1;
     } else if (
       direction === "down" &&
-      Game.ui.confirmation.selectedChoice < 1
+      ui.confirmation.selectedChoice < 1
     ) {
-      Game.ui.confirmation.cursor.y += 30;
-      Game.ui.confirmation.selectedChoice += 1;
+      ui.confirmation.cursor.y += 30;
+      ui.confirmation.selectedChoice += 1;
     }
 
     // Ensure the selectedChoice never goes out of bounds
-    Game.ui.confirmation.selectedChoice = Math.max(
+    ui.confirmation.selectedChoice = Math.max(
       0,
-      Math.min(1, Game.ui.confirmation.selectedChoice)
+      Math.min(1, ui.confirmation.selectedChoice)
     );
 
     Game.stage.update();
     if (Game.debug.active) {
       console.log(
-        `Confirmation cursor moved ${direction} -> Choice index: ${Game.ui.confirmation.selectedChoice}`
+        `Confirmation cursor moved ${direction} -> Choice index: ${ui.confirmation.selectedChoice}`
       );
     }
   },
@@ -144,7 +145,7 @@ Game.cursors.confirmation = {
    * Remove the confirmation cursor
    */
   remove() {
-    Game.stage.removeChild(Game.ui.confirmation.cursor);
+    Game.stage.removeChild(ui.confirmation.cursor);
     Game.stage.update();
 
     if (Game.debug.active) {
@@ -161,11 +162,11 @@ Game.cursors.playerHand = {
    * Place the player hand cursor at its initial position
    */
   place() {
-    Game.ui.playerChoosingCard = true;
+    ui.playerChoosingCard = true;
     player.playerHandCursor.x = player.handOffsetX - 50;
     player.playerHandCursor.y =
       offsets.handOffsetY +
-      (Game.ui.selectedCardNumber + 1 + player.playedPlayerCardCount) *
+      (ui.selectedCardNumber + 1 + player.playedPlayerCardCount) *
         (offsets.cardHeight / 2);
 
     Game.stage.addChild(player.playerHandCursor);
@@ -182,33 +183,33 @@ Game.cursors.playerHand = {
    * @param {"up"|"down"} direction
    */
   move(direction) {
-    if (direction === "up" && Game.ui.selectedCardNumber > 0) {
+    if (direction === "up" && ui.selectedCardNumber > 0) {
       player.playerHandCursor.y -= offsets.handCardOffset;
-      Game.ui.selectedCardNumber--;
+      ui.selectedCardNumber--;
       player.cardsAboveSelection--;
     } else if (
       direction === "down" &&
-      Game.ui.selectedCardNumber < player.cardsInPlayerHand.length - 1
+      ui.selectedCardNumber < player.cardsInPlayerHand.length - 1
     ) {
       player.playerHandCursor.y += offsets.handCardOffset;
-      Game.ui.selectedCardNumber++;
+      ui.selectedCardNumber++;
       player.cardsAboveSelection++;
     } else {
       console.warn(`Cannot move cursor ${direction} - out of bounds`);
       return;
     }
 
-    Game.ui.previouslySelectedCard = Game.ui.selectedCard;
-    Game.ui.selectedCard =
-      player.cardsInPlayerHand[Game.ui.selectedCardNumber];
+    ui.previouslySelectedCard = ui.selectedCard;
+    ui.selectedCard =
+      player.cardsInPlayerHand[ui.selectedCardNumber];
 
-    Game.ui.updateInfoBox();
+    ui.updateInfoBox();
     player.indentSelectedCard();
 
     Game.stage.update();
     if (Game.debug.active) {
       console.log(
-        `Moved player hand cursor ${direction} -> Card index: ${Game.ui.selectedCardNumber}`
+        `Moved player hand cursor ${direction} -> Card index: ${ui.selectedCardNumber}`
       );
     }
   },
@@ -216,7 +217,7 @@ Game.cursors.playerHand = {
    * Remove the player hand cursor
    */
   remove() {
-    Game.ui.playerChoosingCard = false;
+    ui.playerChoosingCard = false;
     Game.stage.removeChild(player.playerHandCursor);
     Game.stage.update();
 
@@ -234,18 +235,18 @@ Game.cursors.grid = {
    * Place the selection cursor on the grid
    */
   place() {
-    Game.ui.playerSelectingPlacement = true;
-    Game.ui.gridCursor.x =
+    ui.playerSelectingPlacement = true;
+    ui.gridCursor.x =
       offsets.gameOffsetX + offsets.cellWidth + 16;
-    Game.ui.gridCursor.y =
+    ui.gridCursor.y =
       offsets.gameOffsetY + offsets.cellHeight + 80;
 
-    Game.stage.addChild(Game.ui.gridCursor);
+    Game.stage.addChild(ui.gridCursor);
     Game.stage.update();
 
     if (Game.debug.active) {
       console.log(
-        `Grid cursor placed at X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`
+        `Grid cursor placed at X:${ui.gridCursor.x}, Y:${ui.gridCursor.y}`
       );
     }
   },
@@ -254,35 +255,35 @@ Game.cursors.grid = {
    * @param {"left"|"up"|"right"|"down"} direction
    */
   move(direction) {
-    const oldX = Game.ui.gridCursor.x;
-    const oldY = Game.ui.gridCursor.y;
+    const oldX = ui.gridCursor.x;
+    const oldY = ui.gridCursor.y;
 
     if (
       direction === "left" &&
-      Game.ui.gridCursor.x > offsets.gameOffsetX + 16
+      ui.gridCursor.x > offsets.gameOffsetX + 16
     ) {
-      Game.ui.gridCursor.x -= offsets.cellWidth;
-      Game.ui.selectedColumn--;
+      ui.gridCursor.x -= offsets.cellWidth;
+      ui.selectedColumn--;
     } else if (
       direction === "up" &&
-      Game.ui.gridCursor.y > offsets.gameOffsetY + 80
+      ui.gridCursor.y > offsets.gameOffsetY + 80
     ) {
-      Game.ui.gridCursor.y -= offsets.cellHeight;
-      Game.ui.selectedRow--;
+      ui.gridCursor.y -= offsets.cellHeight;
+      ui.selectedRow--;
     } else if (
       direction === "right" &&
-      Game.ui.gridCursor.x <
+      ui.gridCursor.x <
         offsets.gameOffsetX + offsets.cellWidth * 2 + 16
     ) {
-      Game.ui.gridCursor.x += offsets.cellWidth;
-      Game.ui.selectedColumn++;
+      ui.gridCursor.x += offsets.cellWidth;
+      ui.selectedColumn++;
     } else if (
       direction === "down" &&
-      Game.ui.gridCursor.y <
+      ui.gridCursor.y <
         offsets.gameOffsetY + offsets.cellHeight * 2 + 80
     ) {
-      Game.ui.gridCursor.y += offsets.cellHeight;
-      Game.ui.selectedRow++;
+      ui.gridCursor.y += offsets.cellHeight;
+      ui.selectedRow++;
     } else {
       console.warn(`Cannot move grid cursor ${direction} - out of bounds`);
       return;
@@ -293,7 +294,7 @@ Game.cursors.grid = {
 
     if (Game.debug.active) {
       console.log(
-        `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${Game.ui.gridCursor.x}, Y:${Game.ui.gridCursor.y}`
+        `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${ui.gridCursor.x}, Y:${ui.gridCursor.y}`
       );
     }
   },
@@ -301,8 +302,8 @@ Game.cursors.grid = {
    * Remove the selection cursor from the grid
    */
   remove() {
-    Game.ui.playerSelectingPlacement = false;
-    Game.stage.removeChild(Game.ui.gridCursor);
+    ui.playerSelectingPlacement = false;
+    Game.stage.removeChild(ui.gridCursor);
     Game.stage.update();
 
     if (Game.debug.active) {
