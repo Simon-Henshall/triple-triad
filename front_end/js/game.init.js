@@ -3,6 +3,7 @@ import { offsets } from './offsets.js';
 import { player } from './player.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
+import { ai } from './ai.js';
 
 // -------------------------
 // CORE: Initialization
@@ -28,7 +29,7 @@ const GameInit = {
       offsets.gameOffsetX +
       offsets.cellWidth * 3 +
       offsets.cardWidth / 4;
-    Game.ai.handOffsetX =
+    ai.handOffsetX =
       offsets.gameOffsetX / 2 - offsets.cardWidth / 2;
   },
   cursors() {

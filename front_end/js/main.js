@@ -111,9 +111,9 @@ Game.startGame = function () {
 
 Game.endGame = function () {
   // Calculate The Winner
-  if (Game.ai.totalRedCards > player.totalBlueCards) {
+  if (ai.totalRedCards > player.totalBlueCards) {
     alert("lose");
-  } else if (player.totalBlueCards > Game.ai.totalRedCards) {
+  } else if (player.totalBlueCards > ai.totalRedCards) {
     alert("win");
   } else {
     alert("draw");

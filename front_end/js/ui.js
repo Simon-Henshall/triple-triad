@@ -1,6 +1,7 @@
 import { config } from './config.js';
 import { offsets } from './offsets.js';
 import { player } from './player.js';
+import { ai } from './ai.js';
 
 // Info box fixed dimensions
 const INFO_BOX_WIDTH = 420;
@@ -76,22 +77,22 @@ export const ui = {
   // Draw The Card Count For Each Player
   // -------------------------
   drawCardCounts() {
-    if (Game.ai.aiCardCount) {
-      Game.stage.removeChild(Game.ai.aiCardCount);
+    if (ai.aiCardCount) {
+      Game.stage.removeChild(ai.aiCardCount);
     }
     if (player.playerCardCount) {
       Game.stage.removeChild(player.playerCardCount);
     }
 
-    Game.ai.aiCardCount = new createjs.Text(
-      Game.ai.totalRedCards,
+    ai.aiCardCount = new createjs.Text(
+      ai.totalRedCards,
       "90px Arial",
       "#ffffff"
     );
-    Game.ai.aiCardCount.x = Game.ai.handOffsetX + offsets.cardWidth / 3;
-    Game.ai.aiCardCount.y = Game.stageHeight - 15;
-    Game.ai.aiCardCount.textBaseline = "alphabetic";
-    Game.stage.addChild(Game.ai.aiCardCount);
+    ai.aiCardCount.x = ai.handOffsetX + offsets.cardWidth / 3;
+    ai.aiCardCount.y = Game.stageHeight - 15;
+    ai.aiCardCount.textBaseline = "alphabetic";
+    Game.stage.addChild(ai.aiCardCount);
 
     player.playerCardCount = new createjs.Text(
       player.totalBlueCards,
@@ -189,8 +190,8 @@ export const ui = {
         verticalOffset;
     }
 
-    if (Game.ai.aiCardCount) {
-      Game.ai.aiCardCount.text = Game.ai.totalRedCards;
+    if (ai.aiCardCount) {
+      ai.aiCardCount.text = ai.totalRedCards;
     }
     if (player.playerCardCount) {
       player.playerCardCount.text = player.totalBlueCards;

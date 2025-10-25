@@ -5,7 +5,7 @@ import { board } from './board.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
 
-Game.ai = {
+export const ai = {
   handOffsetX: 0,
   cardsInAIHand: [],
   aiCardsAboveSelection: 0,
@@ -19,10 +19,10 @@ Game.ai = {
   turn() {
     // Pick A Card To Play (Currently Random)
     var aiSelectedCard =
-      Game.ai.cardsInAIHand[
-        Math.floor(Math.random() * Game.ai.cardsInAIHand.length)
+      ai.cardsInAIHand[
+        Math.floor(Math.random() * ai.cardsInAIHand.length)
       ];
-    var aiSelectedCardNumber = Game.ai.cardsInAIHand.indexOf(aiSelectedCard);
+    var aiSelectedCardNumber = ai.cardsInAIHand.indexOf(aiSelectedCard);
 
     // Pick A Cell To Play In (Currently Random)
     ui.selectedAISquare =
@@ -32,8 +32,8 @@ Game.ai = {
     board.checkSelectedRowColumn();
 
     // Place The Card
-    Game.ai.aiCardsAboveSelection = aiSelectedCardNumber;
-    Game.ai.cardsInAIHand.splice(aiSelectedCardNumber, 1);
+    ai.aiCardsAboveSelection = aiSelectedCardNumber;
+    ai.cardsInAIHand.splice(aiSelectedCardNumber, 1);
     setTimeout(function () {
       Game.cards.placement.placeCard(
         aiSelectedCard,
@@ -44,7 +44,7 @@ Game.ai = {
           offsets.cellHeight * (ui.selectedRow - 1) +
           offsets.cardOffsetY
       );
-    }, Game.ai.aiDelay);
+    }, ai.aiDelay);
   },
 };
 
@@ -74,7 +74,7 @@ Game.cards.aiHand = {
    */
   populate() {
     const hand = utils.shuffle((cards || []).slice()).slice(0, 5); // 5 AI cards
-    Game.ai.cardsInAIHand = [];
+    ai.cardsInAIHand = [];
 
     hand.forEach((chosenCard, i) => {
       const targetW =
@@ -113,17 +113,17 @@ Game.cards.aiHand = {
       cardContainer.background = "red";
 
       // Position in AI hand
-      cardContainer.x = Game.ai.handOffsetX || offsets.gameOffsetX / 2 || 100;
+      cardContainer.x = ai.handOffsetX || offsets.gameOffsetX / 2 || 100;
       cardContainer.y =
         (offsets.handOffsetY || 50) + i * (offsets.handCardOffset || 95);
 
       // Add to AI hand and stage
-      Game.ai.cardsInAIHand.push(cardContainer);
+      ai.cardsInAIHand.push(cardContainer);
       Game.stage.addChild(cardContainer);
     });
 
     // Default selection
-    window.selectedCard = Game.ai.cardsInAIHand[0];
+    window.selectedCard = ai.cardsInAIHand[0];
     ui.previouslySelectedCard = [];
 
     // Flip AI hand if "open" rule applies
@@ -138,3 +138,5 @@ Game.cards.aiHand = {
     Game.stage.update();
   },
 };
+
+window.ai = ai;

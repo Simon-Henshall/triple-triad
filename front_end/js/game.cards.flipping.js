@@ -1,5 +1,6 @@
 import { player } from './player.js';
 import { utils } from './utils.js';
+import { ai } from './ai.js';
 
 /**
  * @namespace Game.cards.flipping.js
@@ -42,7 +43,7 @@ Game.cards.flipping = {
    */
   flipAIHand() {
     // Reverse copy ensures visual flip starts from last to first
-    Game.ai.cardsInAIHand
+    ai.cardsInAIHand
       .slice()
       .reverse()
       .forEach((card, index) => {
@@ -114,7 +115,7 @@ Game.cards.flipping = {
 
     player.totalBlueCards +=
       delta[playerColour].totalBlueCardsConfined * flippedCount;
-    Game.ai.totalRedCards +=
+    ai.totalRedCards +=
       delta[playerColour].totalRedCardsConfined * flippedCount;
 
     this.updateCardCounts();
@@ -123,7 +124,7 @@ Game.cards.flipping = {
    * Update the displayed card counts on UI.
    */
   updateCardCounts() {
-    Game.ai.aiCardCount.text = Game.ai.totalRedCards;
+    ai.aiCardCount.text = ai.totalRedCards;
     player.playerCardCount.text = player.totalBlueCards;
     Game.stage.update();
   },

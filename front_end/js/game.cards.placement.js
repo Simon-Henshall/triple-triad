@@ -4,6 +4,7 @@ import { player } from './player.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
 import { debug } from './debug.js';
+import { ai } from './ai.js';
 
 /**
  * @namespace Game.cards.placement
@@ -184,7 +185,7 @@ Game.cards.placement = class CardPlacer {
       ui.infoBox.container.visible = true;
       ui.playerChoosingCard = true;
     } else if (utils.getPlayerTurn() === "red") {
-      Game.ai.turn();
+      ai.turn();
     }
   }
 
@@ -233,7 +234,7 @@ Game.cards.placement = class CardPlacer {
       }
     } else if (utils.getPlayerTurn() === "red") {
       // === AI HAND ===
-      animateHandCardsDown(Game.ai.cardsInAIHand, Game.ai.aiCardsAboveSelection);
+      animateHandCardsDown(ai.cardsInAIHand, ai.aiCardsAboveSelection);
     }
   }
 };

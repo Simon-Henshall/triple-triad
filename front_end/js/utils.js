@@ -1,6 +1,7 @@
 import { cards } from './cards.js';
 import { player } from './player.js';
 import { ui } from './ui.js';
+import { ai } from './ai.js';
 
 export const utils = {
   ajaxCall(whenDone) {
@@ -71,7 +72,7 @@ export const utils = {
         $.extend(true, [], player.ownedCards)
       );
       // populate AI cards and start game
-      if (!Game.ai.cardsInAIHand || Game.ai.cardsInAIHand.length === 0) {
+      if (!ai.cardsInAIHand || ai.cardsInAIHand.length === 0) {
         Game.cards.aiHand.populate();
       }
       Game.startGame();

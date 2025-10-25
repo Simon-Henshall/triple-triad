@@ -1,6 +1,7 @@
 import { player } from './player.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
+import { ai } from './ai.js';
 
 export const debug = {
   active: true, // Toggle for debug mode
@@ -70,7 +71,7 @@ export const debug = {
     });
 
     console.log("=============== AI HAND ===================");
-    Game.ai.cardsInAIHand.forEach((card, i) => {
+    ai.cardsInAIHand.forEach((card, i) => {
       console.log(
         `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`
       );
@@ -87,7 +88,7 @@ export const debug = {
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`
     );
     console.log(
-      `SCORE | Player: ${player.totalBlueCards} AI: ${Game.ai.totalRedCards}`
+      `SCORE | Player: ${player.totalBlueCards} AI: ${ai.totalRedCards}`
     );
     console.log(`Free cells remaining: ${board.freeCells.join(", ")}`);
     console.log("*****************************************");
