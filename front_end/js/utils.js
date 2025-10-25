@@ -1,12 +1,91 @@
-import { cards } from './cards.js';
-import { player } from './player.js';
-import { ui } from './ui.js';
-import { ai } from './ai.js';
-import { selectionBoard } from './selectionBoard.js';
-import { cursors } from './cursors.js';
-import { Game } from './game.js';
+import { cards } from "./cards.js";
+import { player } from "./player.js";
+import { ui } from "./ui.js";
+import { ai } from "./ai.js";
+import { selectionBoard } from "./selectionBoard.js";
+import { cursors } from "./cursors.js";
+import { Game } from "./game.js";
+import { config } from "./config.js";
+import { offsets } from "./offsets.js";
 
 export const utils = {
+  /**
+   * Helper: create a bitmap and ensure it is scaled before adding to container.
+   * @param {string} src - image path
+   * @param {number} targetWidth
+   * @param {number} targetHeight
+   * @param {function} onReady - callback with bitmap once scaled
+   */
+  _createScaledBitmap(src, targetWidth, targetHeight, onReady) {
+    const bmp = new createjs.Bitmap(src);
+
+    const applyScale = () => {
+      bmp.scaleX = targetWidth / bmp.image.width;
+      bmp.scaleY = targetHeight / bmp.image.height;
+      if (onReady) {
+        onReady(bmp);
+      }
+    };
+
+    if (!bmp.image.complete) {
+      bmp.image.onload = applyScale;
+    } else {
+      applyScale();
+    }
+
+    return bmp;
+  },
+  createCardContainer(
+    cardData,
+    ownerColour,
+    x,
+    y,
+    { showBack = false, frontImageSrc, backImageSrc, onReady } = {}
+  ) {
+    const targetW =
+      offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
+    const targetH =
+      offsets.cardHeight || offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
+
+    const cardImage = this._createScaledBitmap(
+      showBack
+        ? backImageSrc
+        : frontImageSrc || `${config.cardPath}${cardData.image}.png`,
+      targetW,
+      targetH,
+      onReady
+    );
+
+    const cardColour = this._createScaledBitmap(
+      `${config.cardPath}${ownerColour}.png`,
+      targetW,
+      targetH,
+      onReady
+    );
+
+    const container = new createjs.Container();
+    container.addChild(cardColour, cardImage);
+
+    // Stats & metadata
+    container.name = cardData.displayName;
+    container.strengthUp = cardData.strengthUp;
+    container.strengthRight = cardData.strengthRight;
+    container.strengthDown = cardData.strengthDown;
+    container.strengthLeft = cardData.strengthLeft;
+    container.element = cardData.element;
+    container.owner = ownerColour;
+    container.background = ownerColour;
+    if (showBack) {
+      container.frontImage =
+        frontImageSrc || `${config.cardPath}${cardData.image}.png`;
+      container.backImage = backImageSrc || `${config.cardPath}back.png`;
+    }
+
+    container.x = x;
+    container.y = y;
+
+    return container;
+  },
   ajaxCall(whenDone) {
     var ownedCardsJSON;
     $.ajax({
@@ -71,9 +150,7 @@ export const utils = {
 
     // Either pick random cards or show selection board
     if (Game.rules.indexOf("random") != -1) {
-      player.playerCards = this.shuffle(
-        $.extend(true, [], player.ownedCards)
-      );
+      player.playerCards = this.shuffle($.extend(true, [], player.ownedCards));
       // populate AI cards and start game
       if (!ai.cardsInAIHand || ai.cardsInAIHand.length === 0) {
         ai.aiHand.populate();
@@ -101,7 +178,11 @@ export const utils = {
       pageText.textBaseline = "alphabetic";
 
       // ui.pageDisplay should be a createjs.Text object
-      ui.selectionBoard.pageDisplay = new createjs.Text("1", "20px Arial", "#ffffff");
+      ui.selectionBoard.pageDisplay = new createjs.Text(
+        "1",
+        "20px Arial",
+        "#ffffff"
+      );
       ui.selectionBoard.pageDisplay.x = ui.selectionBoard.background.x + 150;
       ui.selectionBoard.pageDisplay.y = ui.selectionBoard.background.y + 20;
       ui.selectionBoard.pageDisplay.textBaseline = "alphabetic";
@@ -129,7 +210,9 @@ export const utils = {
 
       // Add container to stage and set up selection cursor
       if (ui.selectionBoard.container.parent) {
-        ui.selectionBoard.container.parent.removeChild(ui.selectionBoard.container);
+        ui.selectionBoard.container.parent.removeChild(
+          ui.selectionBoard.container
+        );
       }
       Game.stage.addChild(ui.selectionBoard.container);
 
@@ -152,9 +235,6 @@ export const utils = {
   },
   getPlayerTurn() {
     return ui.playerTurn;
-  },
-  setPlayerTurn(value) {
-    ui.playerTurn = value;
   },
   togglePlayerTurn() {
     ui.playerTurn = ui.playerTurn === "red" ? "blue" : "red";

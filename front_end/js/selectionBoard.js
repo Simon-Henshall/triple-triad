@@ -1,39 +1,15 @@
-import { config } from './config.js';
-import { offsets } from './offsets.js';
-import { player } from './player.js';
-import { ui } from './ui.js';
-import { Game } from './game.js';
+import { config } from "./config.js";
+import { offsets } from "./offsets.js";
+import { player } from "./player.js";
+import { ui } from "./ui.js";
+import { Game } from "./game.js";
+import { utils } from "./utils.js";
 
 // ------------------------------------
 // selectionBoard
 // Handles population, pagination, and display of the deck selection screen
 // ------------------------------------
 export const selectionBoard = {
-  /**
-   * Helper: create a bitmap and ensure it is scaled before adding to container.
-   * @param {string} src - image path
-   * @param {number} targetWidth
-   * @param {number} targetHeight
-   * @param {function} onReady - callback with bitmap once scaled
-   */
-  _createScaledBitmap(src, targetWidth, targetHeight, onReady) {
-    const bmp = new createjs.Bitmap(src);
-
-    const applyScale = () => {
-      bmp.scaleX = targetWidth / bmp.image.width;
-      bmp.scaleY = targetHeight / bmp.image.height;
-      if (onReady) onReady(bmp);
-    };
-
-    if (!bmp.image.complete) {
-      bmp.image.onload = applyScale;
-    } else {
-      applyScale();
-    }
-
-    return bmp;
-  },
-
   /**
    * Build and display the selectable owned cards on the selection board.
    */
@@ -78,7 +54,7 @@ export const selectionBoard = {
       countText.textBaseline = "alphabetic";
 
       // icon
-      const icon = this._createScaledBitmap(
+      const icon = utils._createScaledBitmap(
         "front_end/images/selection_card.png",
         30, // target width
         30, // target height
@@ -121,8 +97,7 @@ export const selectionBoard = {
       sb.selectedHandCardNumber = pageStart;
     }
 
-    sb.selectedHandCard =
-      player.ownedCards[sb.selectedHandCardNumber] || null;
+    sb.selectedHandCard = player.ownedCards[sb.selectedHandCardNumber] || null;
 
     // Update the large preview display
     this.updateDisplay();
@@ -140,38 +115,23 @@ export const selectionBoard = {
     const sb = ui.selectionBoard;
     const selectedCard = sb.selectedHandCard;
 
-    if (sb.displayedCard) sb.container.removeChild(sb.displayedCard);
+    if (!selectedCard) return;
 
-    sb.displayedCard = new createjs.Container();
+    // Remove previous displayed card
+    if (sb.displayedCard) {
+      sb.container.removeChild(sb.displayedCard);
+    }
 
-    const targetW =
-      offsets.cardWidth ||
-      offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
-    const targetH =
-      offsets.cardHeight ||
-      offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
-
-    // Card colour
-    const colourBmp = this._createScaledBitmap(
-      config.cardPath + "blue.png",
-      targetW,
-      targetH
+    // Use utils helper to create the card container
+    sb.displayedCard = utils.createCardContainer(
+      selectedCard, // card data
+      "blue", // ownerColour for preview
+      sb.background.x + 440, // x position
+      sb.background.y + 200, // y position
+      () => Game.stage.update() // onReady callback
     );
-    sb.displayedCardColour = colourBmp;
 
-    // Card image
-    const cardBmp = this._createScaledBitmap(
-      selectedCard ? config.cardPath + selectedCard.image + ".png" : "",
-      targetW,
-      targetH,
-      () => Game.stage.update() // update stage after loaded
-    );
-    sb.displayedCardImage = cardBmp;
-
-    sb.displayedCard.addChild(sb.displayedCardColour, sb.displayedCardImage);
-    sb.displayedCard.x = sb.background.x + 440;
-    sb.displayedCard.y = sb.background.y + 200;
-
+    // Add to selectionBoard container
     sb.container.addChild(sb.displayedCard);
 
     // Stage update
@@ -199,8 +159,7 @@ export const selectionBoard = {
     sb.pageStart = pageStart;
     // move selection to top of this new page (absolute index)
     sb.selectedHandCardNumber = pageStart;
-    sb.selectedHandCard =
-      player.ownedCards[sb.selectedHandCardNumber] || null;
+    sb.selectedHandCard = player.ownedCards[sb.selectedHandCardNumber] || null;
 
     // repopulate UI rows & preview
     this.populate();
