@@ -2,7 +2,7 @@ import { cards } from './cards.js';
 import { player } from './player.js';
 import { ui } from './ui.js';
 
-Game.utils = {
+export const utils = {
   ajaxCall(whenDone) {
     var ownedCardsJSON;
     $.ajax({

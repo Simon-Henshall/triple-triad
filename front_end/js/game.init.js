@@ -2,6 +2,7 @@ import { config } from './config.js';
 import { offsets } from './offsets.js';
 import { player } from './player.js';
 import { ui } from './ui.js';
+import { utils } from './utils.js';
 
 // -------------------------
 // CORE: Initialization
@@ -61,9 +62,9 @@ const GameInit = {
     ui.addBackground();
 
     if (typeof ajaxCall === "function") {
-      Game.utils.ajaxCall(Game.utils.pickPlayerCards);
-    } else if (typeof Game.utils.pickPlayerCards === "function") {
-      Game.utils.pickPlayerCards();
+      utils.ajaxCall(utils.pickPlayerCards);
+    } else if (typeof utils.pickPlayerCards === "function") {
+      utils.pickPlayerCards();
     }
   },
   all() {

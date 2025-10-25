@@ -1,4 +1,5 @@
 import { player } from './player.js';
+import { utils } from './utils.js';
 
 /**
  * @namespace Game.cards.flipping.js
@@ -74,7 +75,7 @@ Game.cards.flipping = {
    * @returns {string} Player colour ("red" or "blue")
    */
   getCurrentPlayerColour() {
-    return Game.utils.getPlayerTurn();
+    return utils.getPlayerTurn();
   },
   /**
    * Flip a single adjacent card over to the current player's side.

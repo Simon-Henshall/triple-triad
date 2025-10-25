@@ -2,6 +2,7 @@ import { offsets } from './offsets.js';
 import { board } from './board.js';
 import { player } from './player.js';
 import { ui } from './ui.js';
+import { utils } from './utils.js';
 
 /**
  * @namespace Game.cards.placement
@@ -19,7 +20,7 @@ Game.cards.placement = class CardPlacer {
     board.checkSelectedSquare();
 
     // Determine the offscreen exit direction based on player turn
-    const offscreenX = Game.utils.getPlayerTurn() === "red" ? card.x + 40 : card.x - 40;
+    const offscreenX = utils.getPlayerTurn() === "red" ? card.x + 40 : card.x - 40;
     const offscreenY = -200;
 
     // Animate the card offscreen before placing
@@ -40,7 +41,7 @@ Game.cards.placement = class CardPlacer {
     Game.stage.setChildIndex(card, Game.stage.getNumChildren() - 1);
 
     // Reveal the card face for AI cards if needed
-    if (Game.utils.getPlayerTurn() === "red") {
+    if (utils.getPlayerTurn() === "red") {
       card.children[1].image.src = card.frontImage;
       // Ensure ownership background is correct
       Game.cards.flipping.replaceCard(card);
@@ -169,7 +170,7 @@ Game.cards.placement = class CardPlacer {
       Game.debug.logTurn();
     }
 
-    if (Game.utils.getPlayerTurn() === "blue") {
+    if (utils.getPlayerTurn() === "blue") {
       // === PLAYER TURN ===
       player.playedPlayerCardCount++;
       ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
@@ -181,7 +182,7 @@ Game.cards.placement = class CardPlacer {
       Game.stage.setChildIndex(ui.infoBox.container, Game.stage.getNumChildren() - 1);
       ui.infoBox.container.visible = true;
       ui.playerChoosingCard = true;
-    } else if (Game.utils.getPlayerTurn() === "red") {
+    } else if (utils.getPlayerTurn() === "red") {
       Game.ai.turn();
     }
   }
@@ -190,7 +191,7 @@ Game.cards.placement = class CardPlacer {
    * Swap current active player
    */
   static swapPlayerTurn() {
-    ui.playerTurn = Game.utils.getPlayerTurn() === "blue" ? "red" : "blue";
+    ui.playerTurn = utils.getPlayerTurn() === "blue" ? "red" : "blue";
   }
 
   /**
@@ -215,7 +216,7 @@ Game.cards.placement = class CardPlacer {
       }
     }
 
-    if (Game.utils.getPlayerTurn() === "blue") {
+    if (utils.getPlayerTurn() === "blue") {
       // === PLAYER HAND ===
       animateHandCardsDown(player.cardsInPlayerHand, player.cardsAboveSelection);
 
@@ -229,7 +230,7 @@ Game.cards.placement = class CardPlacer {
         ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
         player.cardsAboveSelection--;
       }
-    } else if (Game.utils.getPlayerTurn() === "red") {
+    } else if (utils.getPlayerTurn() === "red") {
       // === AI HAND ===
       animateHandCardsDown(Game.ai.cardsInAIHand, Game.ai.aiCardsAboveSelection);
     }

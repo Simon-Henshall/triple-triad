@@ -1,6 +1,7 @@
 import { config } from './config.js';
 import { offsets } from './offsets.js';
 import { ui } from './ui.js';
+import { utils } from './utils.js';
 
 /**
  * @namespace player
@@ -47,10 +48,10 @@ export const player = {
    */
   populatePlayerCards(playerCardsParam) {
     // Calculate the current player turn
-    Game.utils.togglePlayerTurn();
+    utils.togglePlayerTurn();
 
     // Shuffle and copy hand
-    this.playerHand = Game.utils.shuffle([...playerCardsParam]).slice(0, 5);
+    this.playerHand = utils.shuffle([...playerCardsParam]).slice(0, 5);
 
     for (let i = 0; i < this.playerHand.length; i++) {
       const chosenCard = this.playerHand[i];
@@ -62,7 +63,7 @@ export const player = {
 
       // Card Background Colour
       const cardColour = new createjs.Bitmap(
-        `${config.cardPath}${Game.utils.getPlayerTurn()}.png`
+        `${config.cardPath}${utils.getPlayerTurn()}.png`
       );
 
       // Card Container
@@ -82,7 +83,7 @@ export const player = {
       ui.card.strengthDown = chosenCard.strengthDown;
       ui.card.strengthLeft = chosenCard.strengthLeft;
       ui.card.element = chosenCard.element;
-      ui.card.owner = ui.card.background = Game.utils.getPlayerTurn();
+      ui.card.owner = ui.card.background = utils.getPlayerTurn();
 
       // Place the card
       ui.card.x = this.handOffsetX;
@@ -110,7 +111,7 @@ export const player = {
    * Indent the selected card to visually indicate selection.
    */
   indentSelectedCard() {
-    if (Game.utils.getPlayerTurn() === "red") {
+    if (utils.getPlayerTurn() === "red") {
       if (
         ui.selectedCard &&
         typeof ui.selectedCard.x !== "undefined"
@@ -123,7 +124,7 @@ export const player = {
       ) {
         ui.previouslySelectedCard.x -= 30;
       }
-    } else if (Game.utils.getPlayerTurn() === "blue") {
+    } else if (utils.getPlayerTurn() === "blue") {
       if (
         ui.selectedCard &&
         typeof ui.selectedCard.x !== "undefined"
@@ -320,10 +321,10 @@ Game.cards.playerHand = {
    */
   populate(playerCardsParam) {
     // Toggle player turn
-    Game.utils.togglePlayerTurn();
+    utils.togglePlayerTurn();
 
     // Random hand of up to 5 cards
-    const hand = Game.utils.shuffle([...playerCardsParam]).slice(0, 5);
+    const hand = utils.shuffle([...playerCardsParam]).slice(0, 5);
     player.cardsInPlayerHand = [];
 
     hand.forEach((chosenCard, i) => {
@@ -341,7 +342,7 @@ Game.cards.playerHand = {
         () => Game.stage.update()
       );
       const cardColour = this._createScaledBitmap(
-        `${config.cardPath}${Game.utils.getPlayerTurn()}.png`,
+        `${config.cardPath}${utils.getPlayerTurn()}.png`,
         targetW,
         targetH,
         () => Game.stage.update()
@@ -358,8 +359,8 @@ Game.cards.playerHand = {
       cardContainer.strengthDown = chosenCard.strengthDown;
       cardContainer.strengthLeft = chosenCard.strengthLeft;
       cardContainer.element = chosenCard.element;
-      cardContainer.owner = Game.utils.getPlayerTurn();
-      cardContainer.background = Game.utils.getPlayerTurn();
+      cardContainer.owner = utils.getPlayerTurn();
+      cardContainer.background = utils.getPlayerTurn();
 
       // Position in hand
       cardContainer.x = player.handOffsetX;

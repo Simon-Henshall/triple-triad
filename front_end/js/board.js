@@ -1,6 +1,7 @@
 import { config } from './config.js';
 import { offsets } from './offsets.js';
 import { ui } from './ui.js';
+import { utils } from './utils.js';
 
 // Lookup table for square positions and adjacency
 // Index corresponds to squareID - 1
@@ -74,7 +75,7 @@ export const board = {
       elements.push(0);
     }
 
-    Game.utils.shuffle(elements);
+    utils.shuffle(elements);
 
     for (let y = 0; y < 3; y++) {
       for (let x = 0; x < 3; x++) {

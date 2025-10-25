@@ -1,5 +1,6 @@
 import { player } from './player.js';
 import { ui } from './ui.js';
+import { utils } from './utils.js';
 
 Game.debug = {
   active: true, // Toggle for debug mode
@@ -81,7 +82,7 @@ Game.debug = {
    * Logs current turn info
    */
   logTurn() {
-    const currentPlayer = Game.utils.getPlayerTurn();
+    const currentPlayer = utils.getPlayerTurn();
     console.log(
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`
     );
