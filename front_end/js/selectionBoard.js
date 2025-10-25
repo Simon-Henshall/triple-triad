@@ -143,8 +143,7 @@ export const selectionBoard = {
 
     // --- Tween the card into view ---
     createjs.Tween.get(sb.displayedCard, { override: true })
-      .to({ y: sb.background.y + 200 }, 300, createjs.Ease.quadOut)
-      .call(() => console.log("Card tween complete"));
+      .to({ y: sb.background.y + 200 }, 300, createjs.Ease.quadOut);
 
     Game.stage.update();
   },

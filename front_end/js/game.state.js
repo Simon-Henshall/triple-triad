@@ -1,12 +1,27 @@
 import GameLogic from "./game.logic.js";
+import { utils } from './utils.js';
+import { player } from './player.js';
+import { ai } from './ai.js';
+import { config } from './config.js';
+import { offsets } from './offsets.js';
+
 const logic = new GameLogic();
 
-class GameState {
+let _gameStateInstance;
+
+export function getGameStateInstance() {
+  if (!_gameStateInstance) {
+    _gameStateInstance = new GameState();
+  }
+  return _gameStateInstance;
+}
+
+export class GameState {
   constructor({
-    playerHand = Game.state.hands.PLAYER,
-    aiHand = Game.state.hands.AI,
+    playerHand = [],
+    aiHand = [],
     startingPlayer = "PLAYER",
-  }) {
+  } = {}) {
     this.board = [
       [null, null, null],
       [null, null, null],
@@ -96,6 +111,28 @@ class GameState {
     }
     return "DRAW";
   }
+
+  getPlayerHandContainers(cards = this.hands.PLAYER) {
+    return cards.map((card, index) =>
+      utils.createCardContainer(card, "blue", player.handOffsetX, offsets.handOffsetY + index * (offsets.handCardOffset || 95))
+    );
+  }
+
+  getAiHandContainers() {
+    return this.hands.AI.map((card, index) =>
+      utils.createCardContainer(
+        card,
+        "red",
+        ai.handOffsetX || offsets.gameOffsetX / 2,
+        (offsets.handOffsetY || 50) + index * (offsets.handCardOffset || 95),
+        {
+          showBack: true,
+          frontImageSrc: config.cardPath + card.image + ".png",
+          backImageSrc: config.cardPath + "back.png",
+        }
+      )
+    );
+  }
 }
 
 // Simple AI move: picks random card + empty cell
@@ -128,5 +165,3 @@ GameState.prototype.playAiTurn = function () {
   // Play using existing logic
   this.playCardAt(x, y, cardIndex);
 };
-
-export default GameState;

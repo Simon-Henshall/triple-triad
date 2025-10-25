@@ -56,7 +56,11 @@ export const Game = {
 
   startGame() {
     board.generateGrid();
-    player.playerHand.populate(player.playerCards);
+    
+    // Populate both hands from GameState
+    player.playerHand.populate();
+    ai.aiHand.populate();
+
     ui.drawCardCounts();
     ui.drawInfoBox();
     cursors.playerHand.place();
