@@ -2,6 +2,7 @@ import { offsets } from './offsets.js';
 import { player } from './player.js';
 import { confirmationBox } from './confirmationBox.js';
 import { ui } from './ui.js';
+import { debug } from './debug.js';
 
 // -------------------------
 // GAME INPUT HANDLING
@@ -102,13 +103,13 @@ Game.input = {
         }
 
         Game.stage.update();
-        if (Game.debug.active) {
+        if (debug.active) {
           console.log(
             `Selected card: ${card.displayName} (remaining: ${card.count})`
           );
         }
       } else {
-        if (Game.debug.active) {
+        if (debug.active) {
           console.warn(
             "Attempted to select a card with zero count:",
             card.displayName

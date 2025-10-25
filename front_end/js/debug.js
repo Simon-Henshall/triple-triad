@@ -2,7 +2,7 @@ import { player } from './player.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
 
-Game.debug = {
+export const debug = {
   active: true, // Toggle for debug mode
 
   // -------------------------
@@ -94,7 +94,7 @@ Game.debug = {
   },
 
   /**
-   * Combined full game debug log
+   * Combined full debug log
    */
   logFullState(target) {
     console.log("Logging full state for:", target);
@@ -107,8 +107,8 @@ Game.debug = {
    * Click logging
    */
   clickHandler(event) {
-    if (Game.debug.active) {
-      Game.debug.logFullState(event.currentTarget);
+    if (debug.active) {
+      debug.logFullState(event.currentTarget);
     }
   },
 };

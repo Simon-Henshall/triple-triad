@@ -2,6 +2,7 @@ import { offsets } from './offsets.js';
 import { board } from './board.js';
 import { player } from './player.js';
 import { ui } from './ui.js';
+import { debug } from './debug.js';
 
 // -------------------------
 // PLAYER HAND SELECTION CURSOR
@@ -20,7 +21,7 @@ Game.cursors.selection = {
       player.playerHandSelectionCursor
     );
     Game.stage.update();
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log(
         `Player hand selection cursor placed at X:${player.playerHandSelectionCursor.x}, Y:${player.playerHandSelectionCursor.y}`
       );
@@ -87,7 +88,7 @@ Game.cursors.selection = {
     Game.stage.removeChild(player.playerHandSelectionCursor);
     Game.stage.update();
 
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log("Player hand selection cursor removed");
     }
   },
@@ -107,7 +108,7 @@ Game.cursors.confirmation = {
     Game.stage.addChild(ui.confirmation.cursor);
     Game.stage.update();
 
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log(
         `Confirmation cursor placed at X:${ui.confirmation.cursor.x}, Y:${ui.confirmation.cursor.y}`
       );
@@ -135,7 +136,7 @@ Game.cursors.confirmation = {
     );
 
     Game.stage.update();
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log(
         `Confirmation cursor moved ${direction} -> Choice index: ${ui.confirmation.selectedChoice}`
       );
@@ -148,7 +149,7 @@ Game.cursors.confirmation = {
     Game.stage.removeChild(ui.confirmation.cursor);
     Game.stage.update();
 
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log("Confirmation cursor removed");
     }
   },
@@ -172,7 +173,7 @@ Game.cursors.playerHand = {
     Game.stage.addChild(player.playerHandCursor);
     Game.stage.update();
 
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log(
         `Player hand cursor placed at X:${player.playerHandCursor.x}, Y:${player.playerHandCursor.y}`
       );
@@ -207,7 +208,7 @@ Game.cursors.playerHand = {
     player.indentSelectedCard();
 
     Game.stage.update();
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log(
         `Moved player hand cursor ${direction} -> Card index: ${ui.selectedCardNumber}`
       );
@@ -221,7 +222,7 @@ Game.cursors.playerHand = {
     Game.stage.removeChild(player.playerHandCursor);
     Game.stage.update();
 
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log("Player hand cursor removed");
     }
   },
@@ -244,7 +245,7 @@ Game.cursors.grid = {
     Game.stage.addChild(ui.gridCursor);
     Game.stage.update();
 
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log(
         `Grid cursor placed at X:${ui.gridCursor.x}, Y:${ui.gridCursor.y}`
       );
@@ -292,7 +293,7 @@ Game.cursors.grid = {
     board.checkSelectedSquare();
     Game.stage.update();
 
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log(
         `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${ui.gridCursor.x}, Y:${ui.gridCursor.y}`
       );
@@ -306,7 +307,7 @@ Game.cursors.grid = {
     Game.stage.removeChild(ui.gridCursor);
     Game.stage.update();
 
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log("Grid cursor removed");
     }
   },

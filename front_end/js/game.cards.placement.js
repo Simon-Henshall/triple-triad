@@ -3,6 +3,7 @@ import { board } from './board.js';
 import { player } from './player.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
+import { debug } from './debug.js';
 
 /**
  * @namespace Game.cards.placement
@@ -96,7 +97,7 @@ Game.cards.placement = class CardPlacer {
     card.cardRight = getOccupant(ui.squareRight);
     card.cardDown = getOccupant(ui.squareDown);
 
-    if (Game.debug.active) {
+    if (debug.active) {
       console.log(card);
     }
   }
@@ -166,8 +167,8 @@ Game.cards.placement = class CardPlacer {
     this.swapPlayerTurn();
 
     // Debugging
-    if (Game.debug.active) {
-      Game.debug.logTurn();
+    if (debug.active) {
+      debug.logTurn();
     }
 
     if (utils.getPlayerTurn() === "blue") {

@@ -2,6 +2,7 @@ import { config } from './config.js';
 import { offsets } from './offsets.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
+import { debug } from './debug.js';
 
 // Lookup table for square positions and adjacency
 // Index corresponds to squareID - 1
@@ -116,7 +117,7 @@ export const board = {
 
         // Click handler
         square.container.addEventListener("click", (event) => {
-          Game.debug.clickHandler(event);
+          debug.clickHandler(event);
         });
 
         ui.squares.push(square);
