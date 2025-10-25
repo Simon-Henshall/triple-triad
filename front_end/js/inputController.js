@@ -10,7 +10,7 @@ import { cursors } from './cursors.js';
 // -------------------------
 // GAME INPUT HANDLING
 // -------------------------
-Game.input = {
+export const inputController = {
   /**
    * Handle keydown events and delegate to game modules.
    * @param {KeyboardEvent} e
@@ -18,14 +18,18 @@ Game.input = {
   checkKey(e) {
     "use strict";
 
+    if (debug.active) {
+      console.log(e);
+    }
+
     if (ui.playerSelectingHand) {
-      Game.input._handlePlayerHandSelection(e);
+      this._handlePlayerHandSelection(e);
     } else if (ui.playerConfirming) {
-      Game.input._handleConfirmation(e);
+      this._handleConfirmation(e);
     } else if (ui.playerChoosingCard) {
-      Game.input._handlePlayerCardChoice(e);
+      this._handlePlayerCardChoice(e);
     } else if (ui.playerSelectingPlacement) {
-      Game.input._handlePlacement(e);
+      this._handlePlacement(e);
     }
   },
 
@@ -53,7 +57,7 @@ Game.input = {
   /** @private */
   _handlePlayerHandSelection(e) {
     // routing for arrow keys (left/up/right/down)
-    Game.input._handleArrowKeys(e.key, {
+    this._handleArrowKeys(e.key, {
       left: () => cursors.selection.move("left"),
       up: () => cursors.selection.move("up"),
       right: () => cursors.selection.move("right"),
@@ -167,7 +171,7 @@ Game.input = {
 
   /** @private */
   _handleConfirmation(e) {
-    Game.input._handleArrowKeys(e.key, {
+    this._handleArrowKeys(e.key, {
       up: () => cursors.confirmation.move("up"),
       down: () => cursors.confirmation.move("down"),
     });
@@ -194,7 +198,7 @@ Game.input = {
 
   /** @private */
   _handlePlayerCardChoice(e) {
-    Game.input._handleArrowKeys(e.key, {
+    this._handleArrowKeys(e.key, {
       up: () => cursors.playerHand.move("up"),
       down: () => cursors.playerHand.move("down"),
     });
@@ -212,7 +216,7 @@ Game.input = {
   _handlePlacement(e) {
     ui.infoBox.container.visible = false;
 
-    Game.input._handleArrowKeys(e.key, {
+    this._handleArrowKeys(e.key, {
       left: () => cursors.grid.move("left"),
       up: () => cursors.grid.move("up"),
       right: () => cursors.grid.move("right"),

@@ -4,6 +4,7 @@ import { player } from './player.js';
 import { ui } from './ui.js';
 import { utils } from './utils.js';
 import { ai } from './ai.js';
+import { inputController } from './inputController.js';
 
 // -------------------------
 // CORE: Initialization
@@ -57,7 +58,7 @@ const GameInit = {
     );
   },
   events() {
-    document.addEventListener("keydown", Game.input.checkKey);
+    document.addEventListener("keydown", (e) => inputController.checkKey(e));
   },
   loadInitialCards() {
     ui.addBackground();
