@@ -1,4 +1,5 @@
 import { ui } from './ui.js';
+import { cursors } from './cursors.js';
 
 export const confirmationBox = {
   /**
@@ -58,7 +59,7 @@ export const confirmationBox = {
     conf.container.addChild(border, conf.background, choiceLabel, question, yesText, noText);
 
     Game.stage.addChild(conf.container);
-    Game.cursors.confirmation.place();
+    cursors.confirmation.place();
     Game.stage.update();
   },
 

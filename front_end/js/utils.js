@@ -3,6 +3,7 @@ import { player } from './player.js';
 import { ui } from './ui.js';
 import { ai } from './ai.js';
 import { selectionBoard } from './selectionBoard.js';
+import { cursors } from './cursors.js';
 
 export const utils = {
   ajaxCall(whenDone) {
@@ -132,7 +133,7 @@ export const utils = {
       Game.stage.addChild(ui.selectionBoard.container);
 
       // place selection cursor and allow user to pick
-      Game.cursors.selection.place();
+      cursors.selection.place();
       ui.playerSelectingHand = true;
     }
   },

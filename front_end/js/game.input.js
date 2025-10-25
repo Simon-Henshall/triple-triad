@@ -5,6 +5,7 @@ import { ui } from './ui.js';
 import { debug } from './debug.js';
 import { placementController } from './placementController.js';
 import { selectionBoard } from './selectionBoard.js';
+import { cursors } from './cursors.js';
 
 // -------------------------
 // GAME INPUT HANDLING
@@ -53,10 +54,10 @@ Game.input = {
   _handlePlayerHandSelection(e) {
     // routing for arrow keys (left/up/right/down)
     Game.input._handleArrowKeys(e.key, {
-      left: () => Game.cursors.selection.move("left"),
-      up: () => Game.cursors.selection.move("up"),
-      right: () => Game.cursors.selection.move("right"),
-      down: () => Game.cursors.selection.move("down"),
+      left: () => cursors.selection.move("left"),
+      up: () => cursors.selection.move("up"),
+      right: () => cursors.selection.move("right"),
+      down: () => cursors.selection.move("down"),
     });
 
     const sb = ui.selectionBoard;
@@ -167,14 +168,14 @@ Game.input = {
   /** @private */
   _handleConfirmation(e) {
     Game.input._handleArrowKeys(e.key, {
-      up: () => Game.cursors.confirmation.move("up"),
-      down: () => Game.cursors.confirmation.move("down"),
+      up: () => cursors.confirmation.move("up"),
+      down: () => cursors.confirmation.move("down"),
     });
 
     if (e.key === "Enter" && ui.confirmation.selectedChoice === 0) {
       Game.stage.removeChild(ui.selectionBoard.container);
       Game.stage.removeChild(ui.confirmation.container);
-      Game.cursors.confirmation.remove();
+      cursors.confirmation.remove();
       Game.startGame();
     } else if (
       this._isCancelKey(e.key) ||
@@ -186,7 +187,7 @@ Game.input = {
         player.cardManagerInstance.updateHandCards();
       }
       Game.stage.removeChild(ui.confirmation.container);
-      Game.cursors.confirmation.remove();
+      cursors.confirmation.remove();
       ui.playerSelectingHand = true;
     }
   },
@@ -194,13 +195,13 @@ Game.input = {
   /** @private */
   _handlePlayerCardChoice(e) {
     Game.input._handleArrowKeys(e.key, {
-      up: () => Game.cursors.playerHand.move("up"),
-      down: () => Game.cursors.playerHand.move("down"),
+      up: () => cursors.playerHand.move("up"),
+      down: () => cursors.playerHand.move("down"),
     });
 
     if (e.key === "Enter") {
-      Game.cursors.playerHand.remove();
-      Game.cursors.grid.place();
+      cursors.playerHand.remove();
+      cursors.grid.place();
       ui.selectedRow = 2;
       ui.selectedColumn = 2;
       Game.stage.removeChild(player.playerHandCursor);
@@ -212,16 +213,16 @@ Game.input = {
     ui.infoBox.container.visible = false;
 
     Game.input._handleArrowKeys(e.key, {
-      left: () => Game.cursors.grid.move("left"),
-      up: () => Game.cursors.grid.move("up"),
-      right: () => Game.cursors.grid.move("right"),
-      down: () => Game.cursors.grid.move("down"),
+      left: () => cursors.grid.move("left"),
+      up: () => cursors.grid.move("up"),
+      right: () => cursors.grid.move("right"),
+      down: () => cursors.grid.move("down"),
     });
 
     if (e.key === "Enter") {
       if (!board.cellOccupied()) {
         player.cardsInPlayerHand.splice(ui.selectedCardNumber, 1);
-        Game.cursors.grid.remove();
+        cursors.grid.remove();
         placementController.placeCard(
           ui.selectedCard,
           offsets.gameOffsetX +
@@ -233,8 +234,8 @@ Game.input = {
         );
       }
     } else if (this._isCancelKey(e.key)) {
-      Game.cursors.grid.remove();
-      Game.cursors.playerHand.place();
+      cursors.grid.remove();
+      cursors.playerHand.place();
     }
   },
 };
