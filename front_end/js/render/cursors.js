@@ -4,7 +4,7 @@ import { player } from "./player.js";
 import { ui } from "./ui.js";
 import { debug } from "../debug.js";
 import { selectionBoard } from "./selectionBoard.js";
-import { Game } from '../game/game.js';
+import { Game } from "../game/game.js";
 
 export const cursors = {
   // -------------------------
@@ -31,50 +31,44 @@ export const cursors = {
      * Move the hand selection cursor up/down/left/right
      */
     move(direction) {
-      const sb = ui.selectionBoard;
-      const totalCards = player.ownedCards.length;
+      const controller = selectionBoard.controller;
+      if (!controller) return;
 
-      // Page boundaries
-      const pageStart = (sb.page - 1) * 11;
-      const cardsOnPage = sb.page === sb.totalPages ? sb.remainingCards : 11;
-      const pageEnd = pageStart + cardsOnPage - 1;
-
-      // Movement per row (vertical spacing)
-      const rowStep = 35;
+      const currentPageStart = controller.pageStart;
+      const currentPageEnd =
+        currentPageStart + controller.displayedCards.length - 1;
 
       switch (direction) {
         case "up":
-          if (sb.selectedHandCardNumber > pageStart) {
-            sb.selectedHandCardNumber--;
-            player.playerHandSelectionCursor.y -= rowStep;
-            sb.selectedHandCard = player.ownedCards[sb.selectedHandCardNumber];
-            selectionBoard.updateDisplay();
+          if (controller.selectedIndex > currentPageStart) {
+            controller.selectPrevious();
           }
           break;
 
         case "down":
-          if (sb.selectedHandCardNumber < pageEnd) {
-            sb.selectedHandCardNumber++;
-            player.playerHandSelectionCursor.y += rowStep;
-            sb.selectedHandCard = player.ownedCards[sb.selectedHandCardNumber];
-            selectionBoard.updateDisplay();
+          if (controller.selectedIndex < currentPageEnd) {
+            controller.selectNext();
           }
           break;
 
         case "left":
-          if (sb.page > 1) {
-            selectionBoard.paginate("left");
-          }
+          controller.paginate("left");
           break;
 
         case "right":
-          if (sb.page < sb.totalPages) {
-            selectionBoard.paginate("right");
-          }
+          controller.paginate("right");
           break;
+      }
 
-        default:
-          break;
+      selectionBoard.populate();
+
+      // Move cursor container visually
+      const sb = ui.selectionBoard;
+      if (player.playerHandSelectionCursor && sb.shownCards && sb.background) {
+        const relativeIndex = controller.selectedIndex - controller.pageStart;
+        const rowStep = 35;
+        player.playerHandSelectionCursor.y =
+          sb.background.y + 48 + rowStep * relativeIndex;
       }
 
       Game.stage.update();

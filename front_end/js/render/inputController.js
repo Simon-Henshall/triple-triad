@@ -71,8 +71,7 @@ export const inputController = {
 
     // ENTER: select the currently highlighted card
     if (e.key === "Enter") {
-      const index = sb.selectedHandCardNumber;
-      const card = player.ownedCards[index];
+      const card = selectionBoard.controller.selectedCard;
 
       if (!card) {
         console.warn("No card at selected index:", index);

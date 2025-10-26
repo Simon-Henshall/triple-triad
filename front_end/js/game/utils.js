@@ -206,7 +206,7 @@ export const utils = {
       ai.aiHand.populate();
 
       // Add selection board cards
-      selectionBoard.populate();
+      selectionBoard.initialise(player.ownedCards);
 
       // Add container to stage and set up selection cursor
       if (ui.selectionBoard.container.parent) {
