@@ -5,8 +5,12 @@ import { ui } from '../render/ui.js';
 import { utils } from './utils.js';
 import { debug } from '../debug.js';
 import { ai } from './ai.js';
-import { flippingController } from '../render/flippingController.js';
+import { FlippingController } from '../controllers/FlippingController.js';
+import { FlippingRenderer } from '../ui/FlippingRenderer.js';
 import { Game } from './game.js';
+
+const flippingController = new FlippingController;
+const flippingRenderer = new FlippingRenderer;
 
 /**
  * @namespace placementController
@@ -48,7 +52,7 @@ export const placementController = class CardPlacer {
     if (utils.getPlayerTurn() === "red") {
       card.children[1].image.src = card.frontImage;
       // Ensure ownership background is correct
-      flippingController.replaceCard(card);
+      flippingRenderer.replaceCard(card);
     }
 
     // Animate the card into its final placement position on the board
@@ -119,7 +123,7 @@ export const placementController = class CardPlacer {
     }
 
     // Ensure ownership background is correct after placement
-    flippingController.replaceCard(card);
+    flippingRenderer.replaceCard(card);
   }
 
   /**

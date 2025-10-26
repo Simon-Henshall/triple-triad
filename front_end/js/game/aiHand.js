@@ -1,11 +1,13 @@
 import { getGameStateInstance } from "./game.state.js";
 import { ai } from "./ai.js";
 import { Game } from "./game.js";
-import { flippingController } from "../render/flippingController.js";
+import { FlippingRenderer } from "../ui/FlippingRenderer.js";
 import { utils } from "./utils.js";
 import { offsets } from "../render/offsets.js";
 import { config } from "../config.js";
 import { player } from "../render/player.js";
+
+const flippingRenderer = new FlippingRenderer();
 
 export const aiHand = {
   /**
@@ -48,8 +50,8 @@ export const aiHand = {
     });
 
     // Flip AI hand if "open" rule applies
-    if (Game.rules?.includes("open") && flippingController.flipAIHand) {
-      flippingController.flipAIHand();
+    if (Game.rules?.includes("open")) {
+      flippingRenderer.flipAIHand();
     }
 
     Game.stage.update();
