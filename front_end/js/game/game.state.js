@@ -1,9 +1,4 @@
 import GameLogic from "./game.logic.js";
-import { utils } from './utils.js';
-import { player } from '../render/player.js';
-import { ai } from './ai.js';
-import { config } from '../config.js';
-import { offsets } from '../render/offsets.js';
 
 const logic = new GameLogic();
 
@@ -112,26 +107,12 @@ export class GameState {
     return "DRAW";
   }
 
-  getPlayerHandContainers(cards = this.hands.PLAYER) {
-    return cards.map((card, index) =>
-      utils.createCardContainer(card, "blue", player.handOffsetX, offsets.handOffsetY + index * (offsets.handCardOffset || 95))
-    );
+  getPlayerHand() {
+    return this.hands.PLAYER;
   }
 
-  getAiHandContainers() {
-    return this.hands.AI.map((card, index) =>
-      utils.createCardContainer(
-        card,
-        "red",
-        ai.handOffsetX || offsets.gameOffsetX / 2,
-        (offsets.handOffsetY || 50) + index * (offsets.handCardOffset || 95),
-        {
-          showBack: true,
-          frontImageSrc: config.cardPath + card.image + ".png",
-          backImageSrc: config.cardPath + "back.png",
-        }
-      )
-    );
+  getAiHand() {
+    return this.hands.AI;
   }
 }
 

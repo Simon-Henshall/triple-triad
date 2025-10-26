@@ -3,6 +3,7 @@ import { board } from "../render/board.js";
 import { ui } from "../render/ui.js";
 import { placementController } from "./placementController.js";
 import { aiHand } from "./aiHand.js";
+import { getGameStateInstance } from "./game.state.js";
 
 export const ai = {
   handOffsetX: 0,
@@ -17,9 +18,20 @@ export const ai = {
   // -------------------------
   turn() {
     // Pick A Card To Play (Currently Random)
-    const aiSelectedCard =
-      ai.cardsInAIHand[Math.floor(Math.random() * ai.cardsInAIHand.length)];
-    const aiSelectedCardNumber = ai.cardsInAIHand.indexOf(aiSelectedCard);
+    if (this.cardsInAIHand.length === 0) {
+      console.warn("AI has no cards to play!");
+      return;
+    }
+
+    const aiSelectedCardIndex = Math.floor(
+      Math.random() * this.cardsInAIHand.length
+    );
+    const aiSelectedCard = this.cardsInAIHand[aiSelectedCardIndex];
+
+    if (!board.freeCells.length) {
+      console.warn("No free cells available for AI move!");
+      return;
+    }
 
     // Pick A Cell To Play In (Currently Random)
     ui.selectedAISquare =
@@ -27,9 +39,11 @@ export const ai = {
     board.checkSelectedRowColumn();
 
     // Place The Card
-    ai.aiCardsAboveSelection = aiSelectedCardNumber;
-    ai.cardsInAIHand.splice(aiSelectedCardNumber, 1);
-    setTimeout(function () {
+    this.aiCardsAboveSelection = aiSelectedCardIndex;
+
+    const GameStateInstance = getGameStateInstance();
+
+    setTimeout(() => {
       placementController.placeCard(
         aiSelectedCard,
         offsets.gameOffsetX +
@@ -39,6 +53,10 @@ export const ai = {
           offsets.cellHeight * (ui.selectedRow - 1) +
           offsets.cardOffsetY
       );
-    }, ai.aiDelay);
+
+      // Only remove from logical hand array here; visuals are handled in placeCard()
+      GameStateInstance.hands.AI.splice(aiSelectedCardIndex, 1);
+      this.cardsInAIHand.splice(aiSelectedCardIndex, 1);
+    }, this.aiDelay);
   },
 };

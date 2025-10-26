@@ -1,8 +1,8 @@
 import { ui } from "./ui.js";
 import { Game } from "../game/game.js";
-import { getGameStateInstance } from "../game/game.state.js";
 import { player } from "./player.js";
 import { offsets } from "./offsets.js";
+import { utils } from "../game/utils.js";
 
 export const playerHand = {
   cardsInPlayerHand: [],
@@ -15,11 +15,9 @@ export const playerHand = {
    * @param {Array<Object>} playerCards - Array of player-owned cards.
    */
   populate() {
-    const GameStateInstance = getGameStateInstance();
-
-    // Draw player hand from the current cards in GameState
-    player.cardsInPlayerHand = GameStateInstance.getPlayerHandContainers(
-      player.playerCards
+    // Draw player hand from the current cards
+    player.cardsInPlayerHand = player.playerCards.map((card, index) =>
+      utils.createCardContainer(card, "blue", player.handOffsetX, offsets.handOffsetY + index * (offsets.handCardOffset || 95))
     );
     player.cardsInPlayerHand.forEach((container) =>
       Game.stage.addChild(container)
