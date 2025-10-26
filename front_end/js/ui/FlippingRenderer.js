@@ -85,19 +85,19 @@ export class FlippingRenderer {
       const slice = container.getChildAt(i);
 
       slice.y =
-        (Math.sin(value * DEG_TO_RAD) * factor * card.children[1].image.width) /
+        (Math.sin(value * Math.PI / 180) * factor * card.children[1].image.width) /
         2;
       slice.skewY = (i % 2 === 0 ? -1 : 1) * value * factor;
 
       if (i % 2 === 0) {
         slice.y -=
-          card.children[1].image.width * Math.sin(slice.skewY * DEG_TO_RAD);
+          card.children[1].image.width * Math.sin(slice.skewY * Math.PI / 180);
       }
 
       slice.x =
         card.children[1].image.width *
         (i - totalSlices / 2) *
-        Math.cos(slice.skewY * DEG_TO_RAD);
+        Math.cos(slice.skewY * Math.PI / 180);
       slice.updateCache();
     }
 
