@@ -1,12 +1,12 @@
 import { cards } from "./cards.js";
-import { player } from "./player.js";
-import { ui } from "./ui.js";
+import { player } from "../render/player.js";
+import { ui } from "../render/ui.js";
 import { ai } from "./ai.js";
-import { selectionBoard } from "./selectionBoard.js";
-import { cursors } from "./cursors.js";
+import { selectionBoard } from "../render/selectionBoard.js";
+import { cursors } from "../render/cursors.js";
 import { Game } from "./game.js";
-import { config } from "./config.js";
-import { offsets } from "./offsets.js";
+import { config } from "../config.js";
+import { offsets } from "../render/offsets.js";
 
 export const utils = {
   /**

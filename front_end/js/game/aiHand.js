@@ -1,8 +1,8 @@
 import { getGameStateInstance } from "./game.state.js";
 import { ai } from "./ai.js";
-import { player } from "./player.js";
+import { player } from "../render/player.js";
 import { Game } from "./game.js";
-import { flippingController } from "./flippingController.js";
+import { flippingController } from "../render/flippingController.js";
 import { utils } from "./utils.js";
 
 export const aiHand = {

@@ -1,9 +1,9 @@
-import { config } from './config.js';
+import { config } from '../config.js';
 import { offsets } from './offsets.js';
 import { ui } from './ui.js';
-import { utils } from './utils.js';
-import { debug } from './debug.js';
-import { Game } from './game.js';
+import { utils } from '../game/utils.js';
+import { debug } from '../debug.js';
+import { Game } from '../game/game.js';
 
 // Lookup table for square positions and adjacency
 // Index corresponds to squareID - 1

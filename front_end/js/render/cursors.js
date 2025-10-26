@@ -2,9 +2,9 @@ import { offsets } from "./offsets.js";
 import { board } from "./board.js";
 import { player } from "./player.js";
 import { ui } from "./ui.js";
-import { debug } from "./debug.js";
+import { debug } from "../debug.js";
 import { selectionBoard } from "./selectionBoard.js";
-import { Game } from './game.js';
+import { Game } from '../game/game.js';
 
 export const cursors = {
   // -------------------------

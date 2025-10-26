@@ -1,8 +1,8 @@
-import { player } from './player.js';
-import { board } from './board.js';
-import { ui } from './ui.js';
-import { utils } from './utils.js';
-import { ai } from './ai.js';
+import { player } from './render/player.js';
+import { board } from './render/board.js';
+import { ui } from './render/ui.js';
+import { utils } from './game/utils.js';
+import { ai } from './game/ai.js';
 
 export const debug = {
   active: true, // Toggle for debug mode

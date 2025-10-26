@@ -1,7 +1,6 @@
-import { config } from "./config.js";
 import { ui } from "./ui.js";
-import { utils } from "./utils.js";
-import { Game } from './game.js';
+import { utils } from "../game/utils.js";
+import { Game } from '../game/game.js';
 import { playerHand } from './playerHand.js';
 
 /**

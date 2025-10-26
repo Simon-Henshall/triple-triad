@@ -1,6 +1,6 @@
 import { ui } from './ui.js';
 import { cursors } from './cursors.js';
-import { Game } from './game.js';
+import { Game } from '../game/game.js';
 
 export const confirmationBox = {
   /**

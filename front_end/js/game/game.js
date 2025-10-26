@@ -1,8 +1,8 @@
 // game.js
-import { board } from './board.js';
-import { player } from './player.js';
-import { cursors } from './cursors.js';
-import { ui } from './ui.js';
+import { board } from '../render/board.js';
+import { player } from '../render/player.js';
+import { cursors } from '../render/cursors.js';
+import { ui } from '../render/ui.js';
 import { ai } from './ai.js';
 
 export const Game = {

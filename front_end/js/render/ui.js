@@ -1,8 +1,8 @@
-import { config } from "./config.js";
+import { config } from "../config.js";
 import { offsets } from "./offsets.js";
 import { player } from "./player.js";
-import { ai } from "./ai.js";
-import { Game } from "./game.js";
+import { ai } from "../game/ai.js";
+import { Game } from "../game/game.js";
 
 // Info box fixed dimensions
 const INFO_BOX_WIDTH = 420;

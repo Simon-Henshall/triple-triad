@@ -1,6 +1,6 @@
 import { ui } from "./ui.js";
-import { Game } from "./game.js";
-import { getGameStateInstance } from "./game.state.js";
+import { Game } from "../game/game.js";
+import { getGameStateInstance } from "../game/game.state.js";
 import { player } from "./player.js";
 import { offsets } from "./offsets.js";
 

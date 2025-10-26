@@ -1,9 +1,9 @@
 import GameLogic from "./game.logic.js";
 import { utils } from './utils.js';
-import { player } from './player.js';
+import { player } from '../render/player.js';
 import { ai } from './ai.js';
-import { config } from './config.js';
-import { offsets } from './offsets.js';
+import { config } from '../config.js';
+import { offsets } from '../render/offsets.js';
 
 const logic = new GameLogic();
 

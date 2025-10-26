@@ -1,8 +1,8 @@
-import { offsets } from "./offsets.js";
-import { board } from "./board.js";
-import { ui } from "./ui.js";
+import { offsets } from "../render/offsets.js";
+import { board } from "../render/board.js";
+import { ui } from "../render/ui.js";
 import { placementController } from "./placementController.js";
-import { aiHand } from './aiHand.js';
+import { aiHand } from "./aiHand.js";
 
 export const ai = {
   handOffsetX: 0,

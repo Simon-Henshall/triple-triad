@@ -1,11 +1,11 @@
 import { config } from './config.js';
-import { offsets } from './offsets.js';
-import { player } from './player.js';
-import { ui } from './ui.js';
-import { utils } from './utils.js';
-import { ai } from './ai.js';
-import { inputController } from './inputController.js';
-import { Game } from './game.js';
+import { offsets } from './render/offsets.js';
+import { player } from './render/player.js';
+import { ui } from './render/ui.js';
+import { utils } from './game/utils.js';
+import { ai } from './game/ai.js';
+import { inputController } from './render/inputController.js';
+import { Game } from './game/game.js';
 
 // -------------------------
 // CORE: Initialization

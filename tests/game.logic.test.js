@@ -1,4 +1,4 @@
-import GameLogic from "../front_end/js/game.logic.js";
+import GameLogic from "../front_end/js/game/game.logic.js";
 const logic = new GameLogic();
 
 describe("canFlip", () => {

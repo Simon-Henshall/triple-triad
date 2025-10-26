@@ -1,11 +1,11 @@
-import { offsets } from './offsets.js';
-import { board } from './board.js';
-import { player } from './player.js';
-import { ui } from './ui.js';
+import { offsets } from '../render/offsets.js';
+import { board } from '../render/board.js';
+import { player } from '../render/player.js';
+import { ui } from '../render/ui.js';
 import { utils } from './utils.js';
-import { debug } from './debug.js';
+import { debug } from '../debug.js';
 import { ai } from './ai.js';
-import { flippingController } from './flippingController.js';
+import { flippingController } from '../render/flippingController.js';
 import { Game } from './game.js';
 
 /**

@@ -1,8 +1,8 @@
-import { config } from "./config.js";
+import { config } from "../config.js";
 import { player } from "./player.js";
 import { ui } from "./ui.js";
-import { Game } from "./game.js";
-import { utils } from "./utils.js";
+import { Game } from "../game/game.js";
+import { utils } from "../game/utils.js";
 
 // ------------------------------------
 // selectionBoard
