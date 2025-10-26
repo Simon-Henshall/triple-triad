@@ -1,5 +1,4 @@
 import { config } from "./config.js";
-import { offsets } from "./offsets.js";
 import { player } from "./player.js";
 import { ui } from "./ui.js";
 import { Game } from "./game.js";
@@ -10,6 +9,10 @@ import { utils } from "./utils.js";
 // Handles population, pagination, and display of the deck selection screen
 // ------------------------------------
 export const selectionBoard = {
+  displayedCard: null,
+  displayedCardColour: null,
+  displayedCardImage: null,
+
   /**
    * Build and display the selectable owned cards on the selection board.
    */
@@ -111,39 +114,47 @@ export const selectionBoard = {
   /**
    * Update the large preview card on the right-hand side.
    */
-  updateDisplay() {
+  updateDisplay({ skipTween = false } = {}) {
     const sb = ui.selectionBoard;
     const selectedCard = sb.selectedHandCard;
     if (!selectedCard) return;
 
-    const targetW =
-      offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
-    const targetH =
-      offsets.cardHeight || offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
+    const targetX = sb.background.x + 440;
+    const targetY = sb.background.y + 200;
+    const offscreenY = Game.stage.canvas.height + 50;
 
-    // --- If this is the first card display ---
+    // --- First time creation ---
     if (!sb.displayedCard) {
       sb.displayedCard = utils.createCardContainer(
         selectedCard,
         "blue",
-        sb.background.x + 440,
-        sb.background.y + 700 // start from offscreen
+        targetX,
+        offscreenY
       );
-      sb.container.addChild(sb.displayedCard);
+      Game.stage.addChild(sb.displayedCard);
       sb.displayedCardColour = sb.displayedCard.getChildAt(0);
       sb.displayedCardImage = sb.displayedCard.getChildAt(1);
     } else {
       // --- Update existing card images ---
-      sb.displayedCardImage.image.src =
-        config.cardPath + selectedCard.image + ".png";
-      sb.displayedCardColour.image.src = config.cardPath + "blue.png";
-      // reset position before tweening again
-      sb.displayedCard.y = 700;
+      if (sb.displayedCardColour)
+        sb.displayedCardColour.image.src = config.cardPath + "blue.png";
+      if (sb.displayedCardImage)
+        sb.displayedCardImage.image.src =
+          config.cardPath + selectedCard.image + ".png";
+      sb.displayedCard.x = targetX;
+      sb.displayedCard.y = offscreenY;
     }
 
-    // --- Tween the card into view ---
-    createjs.Tween.get(sb.displayedCard, { override: true })
-      .to({ y: sb.background.y + 200 }, 300, createjs.Ease.quadOut);
+    // --- Tween / static placement ---
+    if (!skipTween) {
+      createjs.Tween.get(sb.displayedCard, { override: true }).to(
+        { y: targetY },
+        300,
+        createjs.Ease.quadOut
+      );
+    } else {
+      sb.displayedCard.y = targetY;
+    }
 
     Game.stage.update();
   },

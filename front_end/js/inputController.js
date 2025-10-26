@@ -1,13 +1,14 @@
-import { offsets } from './offsets.js';
-import { board } from './board.js';
-import { player } from './player.js';
-import { confirmationBox } from './confirmationBox.js';
-import { ui } from './ui.js';
-import { debug } from './debug.js';
-import { placementController } from './placementController.js';
-import { selectionBoard } from './selectionBoard.js';
-import { cursors } from './cursors.js';
-import { Game } from './game.js';
+import { offsets } from "./offsets.js";
+import { board } from "./board.js";
+import { player } from "./player.js";
+import { confirmationBox } from "./confirmationBox.js";
+import { ui } from "./ui.js";
+import { debug } from "./debug.js";
+import { placementController } from "./placementController.js";
+import { selectionBoard } from "./selectionBoard.js";
+import { cursors } from "./cursors.js";
+import { Game } from "./game.js";
+import { utils } from "./utils.js";
 
 // -------------------------
 // GAME INPUT HANDLING
@@ -68,7 +69,7 @@ export const inputController = {
 
     const sb = ui.selectionBoard;
 
-    // ENTER: select the currently highlighted card (uses absolute index into ownedCards)
+    // ENTER: select the currently highlighted card
     if (e.key === "Enter") {
       const index = sb.selectedHandCardNumber;
       const card = player.ownedCards[index];
@@ -80,38 +81,24 @@ export const inputController = {
 
       if (card.count > 0) {
         card.count--;
-        // store the card object in the player's temporary selection
+        // Store the card object in the player's temporary selection
         player.playerCards.push(card);
+        const newCardContainer = utils.createCardContainer(
+          card,
+          "blue",
+          player.handOffsetX, // roughly where player hand lives, you can adjust
+          Game.stage.canvas.height + 200 // start off-screen (bottom)
+        );
 
-        // update visuals / counts on the selection board
-        if (
-          player.cardManagerInstance &&
-          typeof player.cardManagerInstance.updateHandCards === "function"
-        ) {
-          player.cardManagerInstance.updateHandCards();
-        } else {
-          // fallback: repopulate the selection board if manager missing
-          if (
-            Game.cards &&
-            selectionBoard &&
-            typeof selectionBoard.populate === "function"
-          ) {
-            selectionBoard.populate();
-          }
-        }
+        // Animate the card getting added to the hand
+        player.playerHand.animateCardToHand(
+          newCardContainer,
+          player.playerHand.cardsInPlayerHand.length
+        );
 
-        // refresh the preview (in case it needs to show updated count/visuals)
-        sb.selectedHandCard =
-          player.ownedCards[sb.selectedHandCardNumber] || null;
-        if (
-          Game.cards &&
-          selectionBoard &&
-          typeof selectionBoard.updateDisplay === "function"
-        ) {
-          selectionBoard.updateDisplay();
-        }
+        // Update visuals / counts on the selection board
+        player.cardManagerInstance.updateHandCards();
 
-        Game.stage.update();
         if (debug.active) {
           console.log(
             `Selected card: ${card.displayName} (remaining: ${card.count})`
@@ -138,32 +125,12 @@ export const inputController = {
     // CANCEL: Backspace / Escape — undo last selection
     if (this._isCancelKey(e.key)) {
       if (player.playerCards.length > 0) {
+        player.playerHand.removeCardFromHand();
         const lastCard = player.playerCards.pop();
         if (lastCard) {
           lastCard.count++;
-          if (
-            player.cardManagerInstance &&
-            typeof player.cardManagerInstance.updateHandCards ===
-              "function"
-          ) {
-            player.cardManagerInstance.updateHandCards();
-          } else if (
-            Game.cards &&
-            selectionBoard &&
-            typeof selectionBoard.populate === "function"
-          ) {
-            selectionBoard.populate();
-          }
-          // Refresh preview for current index (in case it changed)
-          sb.selectedHandCard =
-            player.ownedCards[sb.selectedHandCardNumber] || null;
-          if (
-            Game.cards &&
-            selectionBoard &&
-            typeof selectionBoard.updateDisplay === "function"
-          ) {
-            selectionBoard.updateDisplay();
-          }
+          player.cardManagerInstance.updateHandCards();
+          selectionBoard.updateDisplay({ skipTween: true });
           Game.stage.update();
         }
       }
@@ -178,12 +145,15 @@ export const inputController = {
       down: () => cursors.confirmation.move("down"),
     });
 
+    // Yes
     if (e.key === "Enter" && ui.confirmation.selectedChoice === 0) {
       Game.stage.removeChild(ui.selectionBoard.container);
       Game.stage.removeChild(ui.confirmation.container);
       cursors.confirmation.remove();
       Game.startGame();
-    } else if (
+    } 
+    // No
+    else if (
       this._isCancelKey(e.key) ||
       (e.key === "Enter" && ui.confirmation.selectedChoice === 1)
     ) {
@@ -192,8 +162,18 @@ export const inputController = {
         lastCard.count++;
         player.cardManagerInstance.updateHandCards();
       }
+      // Remove the confirmation UI
       Game.stage.removeChild(ui.confirmation.container);
       cursors.confirmation.remove();
+
+      // Clear the player hand
+      player.playerHand.resetAnimatedHand();
+
+      // Show the preview card again
+      ui.selectionBoard.showPreviewCard();
+
+      // Restore hand selection state
+      ui.playerConfirming = false;
       ui.playerSelectingHand = true;
     }
   },

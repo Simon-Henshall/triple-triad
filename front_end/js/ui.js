@@ -1,8 +1,8 @@
-import { config } from './config.js';
-import { offsets } from './offsets.js';
-import { player } from './player.js';
-import { ai } from './ai.js';
-import { Game } from './game.js';
+import { config } from "./config.js";
+import { offsets } from "./offsets.js";
+import { player } from "./player.js";
+import { ai } from "./ai.js";
+import { Game } from "./game.js";
 
 // Info box fixed dimensions
 const INFO_BOX_WIDTH = 420;
@@ -39,6 +39,17 @@ export const ui = {
     displayedCardColour: null,
     selectedHandCardNumber: 0,
     selectedHandCard: null,
+    hidePreviewCard() {
+      if (this.displayedCard && this.displayedCard.parent) {
+        this.displayedCard.parent.removeChild(this.displayedCard);
+      }
+    },
+
+    showPreviewCard() {
+      if (this.displayedCard && !this.displayedCard.parent) {
+        Game.stage.addChild(this.displayedCard);
+      }
+    },
   },
   confirmation: {
     container: null,
@@ -100,8 +111,7 @@ export const ui = {
       "90px Arial",
       "#ffffff"
     );
-    player.playerCardCount.x =
-      player.handOffsetX + offsets.cardWidth / 3;
+    player.playerCardCount.x = player.handOffsetX + offsets.cardWidth / 3;
     player.playerCardCount.y = Game.stageHeight - 15;
     player.playerCardCount.textBaseline = "alphabetic";
     Game.stage.addChild(player.playerCardCount);

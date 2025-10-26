@@ -54,22 +54,16 @@ export const confirmationBox = {
     noText.y = conf.background.y + 105;
     noText.textBaseline = "alphabetic";
 
-    // Clear previous children just in case
+    // Clear previous children, just in case it was triggered multiple times
     conf.container.removeAllChildren();
 
     conf.container.addChild(border, conf.background, choiceLabel, question, yesText, noText);
-
     Game.stage.addChild(conf.container);
     cursors.confirmation.place();
-    Game.stage.update();
-  },
 
-  /**
-   * Hide the confirmation dialog
-   */
-  hide() {
-    ui.playerConfirming = false;
-    Game.stage.removeChild(ui.confirmation.container);
-    ui.playerSelectingHand = true;
+    // Hide the preview card while confirmation is up
+    ui.selectionBoard.hidePreviewCard();
+
+    Game.stage.update();
   },
 };

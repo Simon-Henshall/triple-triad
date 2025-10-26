@@ -57,6 +57,18 @@ export const Game = {
   startGame() {
     board.generateGrid();
     
+    // Clear the 'selection' hand
+    player.playerHand.resetAnimatedHand();
+
+    // Remove the preview card
+    const sb = ui.selectionBoard;
+    if (sb.displayedCard && Game.stage.contains(sb.displayedCard)) {
+      Game.stage.removeChild(sb.displayedCard);
+      sb.displayedCard = null;
+      sb.displayedCardColour = null;
+      sb.displayedCardImage = null;
+    }
+
     // Populate both hands from GameState
     player.playerHand.populate();
     ai.aiHand.populate();
