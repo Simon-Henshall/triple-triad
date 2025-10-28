@@ -1,9 +1,11 @@
 import { offsets } from "../render/offsets.js";
 import { board } from "../render/board.js";
 import { ui } from "../render/ui.js";
-import { placementController } from "./placementController.js";
+import { PlacementController } from "../controllers/PlacementController.js";
 import { aiHand } from "./aiHand.js";
 import { getGameStateInstance } from "./game.state.js";
+
+const placementController = new PlacementController();
 
 export const ai = {
   handOffsetX: 0,

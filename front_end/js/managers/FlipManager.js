@@ -1,3 +1,6 @@
+/*
+TODO: Make use of this
+*/
 export class FlipManager {
   constructor(controller, renderer) {
     this.controller = controller;

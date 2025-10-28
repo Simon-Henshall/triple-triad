@@ -4,11 +4,13 @@ import { player } from "./player.js";
 import { confirmationBox } from "./confirmationBox.js";
 import { ui } from "./ui.js";
 import { debug } from "../debug.js";
-import { placementController } from "../game/placementController.js";
+import { PlacementController } from "../controllers/PlacementController.js";
 import { selectionBoard } from "./selectionBoard.js";
 import { cursors } from "./cursors.js";
 import { Game } from "../game/game.js";
 import { utils } from "../game/utils.js";
+
+const placementController = new PlacementController();
 
 // -------------------------
 // GAME INPUT HANDLING
