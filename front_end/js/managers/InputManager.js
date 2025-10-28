@@ -79,7 +79,7 @@ export class InputManager {
    * Handle player hand cursor movement and card play selection.
    * @param {KeyboardEvent} e
    */
-  handlePlayerCardChoice(e) {
+  handlePlayerCardChoice(e, renderer) {
     switch (e.key) {
       case "ArrowUp":
         cursors.playerHand.move("up");
@@ -88,7 +88,7 @@ export class InputManager {
         cursors.playerHand.move("down");
         break;
       case "Enter":
-        this.playSelectedCard();
+        this.playSelectedCard(renderer);
         break;
     }
   }
@@ -230,12 +230,25 @@ export class InputManager {
    * Play the selected card from the player's hand.
    * Moves cursors and prepares for placement.
    */
-  playSelectedCard() {
+  playSelectedCard(renderer) {
+    // Remove hand cursor
     cursors.playerHand.remove();
-    cursors.grid.place();
+
+    // Set default selected cell BEFORE placing the cursor
     ui.selectedRow = 2;
     ui.selectedColumn = 2;
+
+    // Place grid cursor using current selectedRow/Column
+    cursors.grid.place();
+
+    // Immediately hide info box now that placement is active
+    renderer.toggleInfoBox(false);
+
+    // Remove hand cursor from stage
     Game.stage.removeChild(player.playerHandCursor);
+
+    // Enter placement mode
+    ui.playerSelectingPlacement = true;
   }
 
   /**
