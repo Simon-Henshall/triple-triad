@@ -3,7 +3,7 @@ import { player } from "../render/player.js";
 import { ui } from "../render/ui.js";
 import { ai } from "./ai.js";
 import { selectionBoard } from "../render/selectionBoard.js";
-import { cursors } from "../render/cursors.js";
+import { CursorController } from "../controllers/CursorController.js";
 import { Game } from "./game.js";
 import { config } from "../config.js";
 import { offsets } from "../render/offsets.js";
@@ -217,7 +217,7 @@ export const utils = {
       Game.stage.addChild(ui.selectionBoard.container);
 
       // place selection cursor and allow user to pick
-      cursors.selection.place();
+      CursorController.selection.place();
       ui.playerSelectingHand = true;
     }
   },

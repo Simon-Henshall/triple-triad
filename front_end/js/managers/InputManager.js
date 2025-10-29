@@ -2,7 +2,7 @@ import { player } from "../render/player.js";
 import { selectionBoard } from "../render/selectionBoard.js";
 import { ui } from "../render/ui.js";
 import { utils } from "../game/utils.js";
-import { cursors } from "../render/cursors.js";
+import { CursorController } from "../controllers/CursorController.js";
 import { confirmationBox } from "../render/confirmationBox.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
@@ -82,10 +82,10 @@ export class InputManager {
   handlePlayerCardChoice(e, renderer) {
     switch (e.key) {
       case "ArrowUp":
-        cursors.playerHand.move("up");
+        CursorController.playerHand.move("up");
         break;
       case "ArrowDown":
-        cursors.playerHand.move("down");
+        CursorController.playerHand.move("down");
         break;
       case "Enter":
         this.playSelectedCard(renderer);
@@ -103,16 +103,16 @@ export class InputManager {
 
     switch (e.key) {
       case "ArrowLeft":
-        cursors.grid.move("left");
+        CursorController.grid.move("left");
         break;
       case "ArrowRight":
-        cursors.grid.move("right");
+        CursorController.grid.move("right");
         break;
       case "ArrowUp":
-        cursors.grid.move("up");
+        CursorController.grid.move("up");
         break;
       case "ArrowDown":
-        cursors.grid.move("down");
+        CursorController.grid.move("down");
         break;
       case "Enter":
         this.placeCardOnBoard();
@@ -120,7 +120,7 @@ export class InputManager {
       case "Backspace":
       case "Escape":
         renderer.restorePlayerHandCursor();
-        cursors.grid.remove();
+        CursorController.grid.remove();
         break;
     }
   }
@@ -206,7 +206,7 @@ export class InputManager {
     if (choice === "yes") {
       Game.stage.removeChild(ui.selectionBoard.container);
       Game.stage.removeChild(ui.confirmation.container);
-      cursors.confirmation.remove();
+      CursorController.confirmation.remove();
       Game.startGame();
     } else {
       for (let i = 0; i < 5; i++) {
@@ -216,7 +216,7 @@ export class InputManager {
       }
 
       Game.stage.removeChild(ui.confirmation.container);
-      cursors.confirmation.remove();
+      CursorController.confirmation.remove();
 
       player.playerHand.resetAnimatedHand();
       ui.selectionBoard.showPreviewCard();
@@ -232,14 +232,14 @@ export class InputManager {
    */
   playSelectedCard(renderer) {
     // Remove hand cursor
-    cursors.playerHand.remove();
+    CursorController.playerHand.remove();
 
     // Set default selected cell BEFORE placing the cursor
     ui.selectedRow = 2;
     ui.selectedColumn = 2;
 
     // Place grid cursor using current selectedRow/Column
-    cursors.grid.place();
+    CursorController.grid.place();
 
     // Immediately hide info box now that placement is active
     renderer.toggleInfoBox(false);
@@ -257,7 +257,7 @@ export class InputManager {
   placeCardOnBoard() {
     if (!board.cellOccupied()) {
       player.cardsInPlayerHand.splice(ui.selectedCardNumber, 1);
-      cursors.grid.remove();
+      CursorController.grid.remove();
 
       placementController.placeCard(
         ui.selectedCard,

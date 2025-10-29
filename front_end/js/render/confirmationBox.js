@@ -1,5 +1,5 @@
 import { ui } from './ui.js';
-import { cursors } from './cursors.js';
+import { CursorController } from '../controllers/CursorController.js';
 import { Game } from '../game/game.js';
 
 export const confirmationBox = {
@@ -59,7 +59,7 @@ export const confirmationBox = {
 
     conf.container.addChild(border, conf.background, choiceLabel, question, yesText, noText);
     Game.stage.addChild(conf.container);
-    cursors.confirmation.place();
+    CursorController.confirmation.place();
 
     // Hide the preview card while confirmation is up
     ui.selectionBoard.hidePreviewCard();
