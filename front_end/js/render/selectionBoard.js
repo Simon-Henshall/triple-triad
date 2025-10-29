@@ -2,7 +2,7 @@ import { config } from "../config.js";
 import { ui } from "./ui.js";
 import { Game } from "../game/game.js";
 import { utils } from "../game/utils.js";
-import { SelectionBoardController } from "../game/selectionBoardController.js";
+import { SelectionBoardController } from "../controllers/SelectionBoardController.js";
 import { player } from "./player.js";
 
 // ------------------------------------
