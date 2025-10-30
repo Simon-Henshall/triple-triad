@@ -2,7 +2,7 @@ import { cards } from "./cards.js";
 import { player } from "../render/player.js";
 import { UIManager } from "../managers/UIManager.js";
 import { ai } from "./ai.js";
-import { selectionBoard } from "../render/selectionBoard.js";
+import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
 import { CursorController } from "../controllers/CursorController.js";
 import { Game } from "./game.js";
 import { config } from "../config.js";
@@ -205,7 +205,7 @@ export const utils = {
       ai.aiHand.populate();
 
       // Add selection board cards
-      selectionBoard.initialise(player.ownedCards);
+      SelectionBoardUI.initialise(player.ownedCards);
 
       // Add container to stage and set up selection cursor
       if (UIManager.selectionBoard.container.parent) {

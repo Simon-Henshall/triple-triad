@@ -1,7 +1,7 @@
 import { UIManager } from "../managers/UIManager.js";
 import { offsets } from "../render/offsets.js";
 import { player } from "../render/player.js";
-import { selectionBoard } from "../render/selectionBoard.js";
+import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
 import { board } from "../render/board.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
@@ -30,7 +30,7 @@ export const CursorManager = {
      * @param {"up"|"down"|"left"|"right"} direction
      */
     move(direction) {
-      const controller = selectionBoard.controller;
+      const controller = SelectionBoardUI.controller;
       if (!controller) {
         return;
       }

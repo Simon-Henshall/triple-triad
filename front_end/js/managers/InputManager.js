@@ -1,5 +1,6 @@
 import { player } from "../render/player.js";
-import { selectionBoard } from "../render/selectionBoard.js";
+import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
+import { SelectionBoardRenderer } from "../ui/SelectionBoardRenderer.js";
 import { UIManager } from "../managers/UIManager.js";
 import { utils } from "../game/utils.js";
 import { CursorController } from "../controllers/CursorController.js";
@@ -136,7 +137,7 @@ export class InputManager {
    * @returns {Object|undefined} The selected card
    */
   selectCard() {
-    const card = selectionBoard.controller.selectedCard;
+    const card = SelectionBoardUI.controller.selectedCard;
     if (!card) return;
 
     if (card.count > 0) {
@@ -190,7 +191,7 @@ export class InputManager {
     if (lastCard) {
       lastCard.count++;
       player.cardManagerInstance.updateHandCards();
-      selectionBoard.updateDisplay({ skipTween: true });
+      SelectionBoardRenderer.updateDisplay({ skipTween: true });
       Game.stage.update();
     }
   }

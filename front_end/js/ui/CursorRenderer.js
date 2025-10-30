@@ -2,7 +2,8 @@ import { Game } from "../game/game.js";
 import { UIManager } from "../managers/UIManager.js";
 import { UIController } from "../controllers/UIController.js";
 import { player } from "../render/player.js";
-import { selectionBoard } from "../render/selectionBoard.js";
+import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
+import { SelectionBoardRenderer } from "../ui/SelectionBoardRenderer.js";
 import { debug } from "../debug.js";
 
 /**
@@ -30,7 +31,7 @@ export const CursorRenderer = {
      * Update the selection cursor's Y position based on controller state.
      */
     updatePosition() {
-      const controller = selectionBoard.controller;
+      const controller = SelectionBoardUI.controller;
       if (controller !== undefined && controller !== null) {
         const sb = UIManager.selectionBoard;
 
@@ -51,7 +52,12 @@ export const CursorRenderer = {
      * Ensure the selection board is visually populated.
      */
     ensurePopulated() {
-      selectionBoard.populate();
+      const controller = SelectionBoardUI.controller;
+      if (controller && typeof controller.clampSelectionToPage === "function") {
+        SelectionBoardRenderer.populate(controller);
+      } else {
+        console.warn("SelectionBoard controller missing or uninitialized.");
+      }
     },
 
     /**
