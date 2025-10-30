@@ -1,5 +1,5 @@
 import { offsets } from "../render/offsets.js";
-import { board } from "../render/board.js";
+import { BoardManager } from "../managers/BoardManager.js";
 import { UIManager } from "../managers/UIManager.js";
 import { PlacementController } from "../controllers/PlacementController.js";
 import { aiHand } from "./aiHand.js";
@@ -30,15 +30,15 @@ export const ai = {
     );
     const aiSelectedCard = this.cardsInAIHand[aiSelectedCardIndex];
 
-    if (!board.freeCells.length) {
+    if (!BoardManager.freeCells.length) {
       console.warn("No free cells available for AI move!");
       return;
     }
 
     // Pick A Cell To Play In (Currently Random)
     UIManager.selectedAISquare =
-      board.freeCells[Math.floor(Math.random() * board.freeCells.length)];
-    board.checkSelectedRowColumn();
+      BoardManager.freeCells[Math.floor(Math.random() * BoardManager.freeCells.length)];
+    BoardManager.checkSelectedRowColumn();
 
     // Place The Card
     this.aiCardsAboveSelection = aiSelectedCardIndex;

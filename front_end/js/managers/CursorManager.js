@@ -2,7 +2,7 @@ import { UIManager } from "../managers/UIManager.js";
 import { offsets } from "../render/offsets.js";
 import { player } from "../render/player.js";
 import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
-import { board } from "../render/board.js";
+import { BoardManager } from "../managers/BoardManager.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
 
@@ -245,7 +245,7 @@ export const CursorManager = {
         return;
       }
 
-      board.checkSelectedSquare();
+      BoardManager.checkSelectedSquare();
       Game.stage.update();
 
       if (debug.active) {

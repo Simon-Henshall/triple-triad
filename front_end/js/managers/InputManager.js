@@ -8,7 +8,7 @@ import { confirmationBox } from "../render/confirmationBox.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
 import { PlacementController } from "../controllers/PlacementController.js";
-import { board } from "../render/board.js";
+import { BoardManager } from "../managers/BoardManager.js";
 import { offsets } from "../render/offsets.js";
 
 const placementController = new PlacementController();
@@ -256,7 +256,7 @@ export class InputManager {
    * Place the currently selected card onto the game board.
    */
   placeCardOnBoard() {
-    if (!board.cellOccupied()) {
+    if (!BoardManager.cellOccupied()) {
       player.cardsInPlayerHand.splice(UIManager.selectedCardNumber, 1);
       CursorController.grid.remove();
 

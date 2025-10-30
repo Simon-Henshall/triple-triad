@@ -1,4 +1,4 @@
-import { board } from "../render/board.js";
+import { BoardManager } from "../managers/BoardManager.js";
 import { player } from "../render/player.js";
 import { ai } from "../game/ai.js";
 import { UIManager } from "../managers/UIManager.js";
@@ -31,7 +31,7 @@ export class PlacementController {
    * @param {number} y - Y coordinate for placement on the board.
    */
   placeCard(card, x, y) {
-    board.checkSelectedSquare();
+    BoardManager.checkSelectedSquare();
     this.manager.placeCard(card, x, y);
   }
 
@@ -46,7 +46,7 @@ export class PlacementController {
    */
   setCardAdjacents(card) {
     const getOccupant = (index) => {
-      const cell = board.boardArray[index - 1];
+      const cell = BoardManager.boardArray[index - 1];
       return cell ? cell.occupant ?? null : null;
     };
 
@@ -65,10 +65,10 @@ export class PlacementController {
    */
   addCardToBoard(card) {
     card.inCell = UIManager.selectedSquare;
-    board.boardArray[UIManager.selectedSquare - 1].occupant = card;
+    BoardManager.boardArray[UIManager.selectedSquare - 1].occupant = card;
 
-    const freeCellIndex = board.freeCells.indexOf(UIManager.selectedSquare);
-    if (freeCellIndex > -1) board.freeCells.splice(freeCellIndex, 1);
+    const freeCellIndex = BoardManager.freeCells.indexOf(UIManager.selectedSquare);
+    if (freeCellIndex > -1) BoardManager.freeCells.splice(freeCellIndex, 1);
 
     this.flippingRenderer.replaceCard(card);
   }
@@ -136,7 +136,7 @@ export class PlacementController {
    * @returns {boolean} True if the board is full, else false.
    */
   isGameOver() {
-    return board.boardArray.every((cell) => cell.occupant);
+    return BoardManager.boardArray.every((cell) => cell.occupant);
   }
 
   /**

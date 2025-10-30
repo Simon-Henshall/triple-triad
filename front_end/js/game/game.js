@@ -1,5 +1,5 @@
 // game.js
-import { board } from '../render/board.js';
+import { BoardRenderer } from '../ui/BoardRenderer.js';
 import { player } from '../render/player.js';
 import { CursorController } from '../controllers/CursorController.js';
 import { UIManager } from "../managers/UIManager.js";
@@ -56,7 +56,7 @@ export const Game = {
   },
 
   startGame() {
-    board.generateGrid();
+    BoardRenderer.generateGrid();
     
     // Clear the 'selection' hand
     player.playerHand.resetAnimatedHand();
