@@ -1,4 +1,4 @@
-import { cards } from "./cards.js";
+import { cards } from "../constants/cards.js";
 import { player } from "../render/player.js";
 import { UIManager } from "../managers/UIManager.js";
 import { ai } from "./ai.js";
