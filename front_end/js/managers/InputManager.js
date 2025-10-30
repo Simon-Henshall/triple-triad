@@ -1,6 +1,6 @@
 import { player } from "../render/player.js";
 import { selectionBoard } from "../render/selectionBoard.js";
-import { ui } from "../render/ui.js";
+import { UIManager } from "../managers/UIManager.js";
 import { utils } from "../game/utils.js";
 import { CursorController } from "../controllers/CursorController.js";
 import { confirmationBox } from "../render/confirmationBox.js";
@@ -167,7 +167,7 @@ export class InputManager {
       player.cardManagerInstance.updateHandCards();
 
       if (player.playerCards.length === 5) {
-        ui.playerSelectingHand = false;
+        UIManager.playerSelectingHand = false;
         confirmationBox.show();
       }
 
@@ -201,11 +201,11 @@ export class InputManager {
    */
   handleConfirmationChoice(forcedChoice) {
     const choice =
-      forcedChoice || (ui.confirmation.selectedChoice === 0 ? "yes" : "no");
+      forcedChoice || (UIManager.confirmation.selectedChoice === 0 ? "yes" : "no");
 
     if (choice === "yes") {
-      Game.stage.removeChild(ui.selectionBoard.container);
-      Game.stage.removeChild(ui.confirmation.container);
+      Game.stage.removeChild(UIManager.selectionBoard.container);
+      Game.stage.removeChild(UIManager.confirmation.container);
       CursorController.confirmation.remove();
       Game.startGame();
     } else {
@@ -215,14 +215,14 @@ export class InputManager {
         player.cardManagerInstance.updateHandCards();
       }
 
-      Game.stage.removeChild(ui.confirmation.container);
+      Game.stage.removeChild(UIManager.confirmation.container);
       CursorController.confirmation.remove();
 
       player.playerHand.resetAnimatedHand();
-      ui.selectionBoard.showPreviewCard();
+      UIManager.selectionBoard.showPreviewCard();
 
-      ui.playerConfirming = false;
-      ui.playerSelectingHand = true;
+      UIManager.playerConfirming = false;
+      UIManager.playerSelectingHand = true;
     }
   }
 
@@ -235,8 +235,8 @@ export class InputManager {
     CursorController.playerHand.remove();
 
     // Set default selected cell BEFORE placing the cursor
-    ui.selectedRow = 2;
-    ui.selectedColumn = 2;
+    UIManager.selectedRow = 2;
+    UIManager.selectedColumn = 2;
 
     // Place grid cursor using current selectedRow/Column
     CursorController.grid.place();
@@ -248,7 +248,7 @@ export class InputManager {
     Game.stage.removeChild(player.playerHandCursor);
 
     // Enter placement mode
-    ui.playerSelectingPlacement = true;
+    UIManager.playerSelectingPlacement = true;
   }
 
   /**
@@ -256,16 +256,16 @@ export class InputManager {
    */
   placeCardOnBoard() {
     if (!board.cellOccupied()) {
-      player.cardsInPlayerHand.splice(ui.selectedCardNumber, 1);
+      player.cardsInPlayerHand.splice(UIManager.selectedCardNumber, 1);
       CursorController.grid.remove();
 
       placementController.placeCard(
-        ui.selectedCard,
+        UIManager.selectedCard,
         offsets.gameOffsetX +
-          offsets.cellWidth * (ui.selectedColumn - 1) +
+          offsets.cellWidth * (UIManager.selectedColumn - 1) +
           offsets.cardOffsetX,
         offsets.gameOffsetY +
-          offsets.cellHeight * (ui.selectedRow - 1) +
+          offsets.cellHeight * (UIManager.selectedRow - 1) +
           offsets.cardOffsetY
       );
     }

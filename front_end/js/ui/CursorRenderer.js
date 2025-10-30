@@ -1,5 +1,6 @@
 import { Game } from "../game/game.js";
-import { ui } from "../render/ui.js";
+import { UIManager } from "../managers/UIManager.js";
+import { UIController } from "../controllers/UIController.js";
 import { player } from "../render/player.js";
 import { selectionBoard } from "../render/selectionBoard.js";
 import { debug } from "../debug.js";
@@ -31,7 +32,7 @@ export const CursorRenderer = {
     updatePosition() {
       const controller = selectionBoard.controller;
       if (controller !== undefined && controller !== null) {
-        const sb = ui.selectionBoard;
+        const sb = UIManager.selectionBoard;
 
         if (player.playerHandSelectionCursor !== undefined &&
             sb.shownCards !== undefined &&
@@ -74,10 +75,10 @@ export const CursorRenderer = {
      * Place the confirmation cursor at its initial visual position.
      */
     place() {
-      ui.confirmation.cursor.x = ui.confirmation.background.x + 50;
-      ui.confirmation.cursor.y = ui.confirmation.background.y + 60;
+      UIManager.confirmation.cursor.x = UIManager.confirmation.background.x + 50;
+      UIManager.confirmation.cursor.y = UIManager.confirmation.background.y + 60;
 
-      Game.stage.addChild(ui.confirmation.cursor);
+      Game.stage.addChild(UIManager.confirmation.cursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -89,7 +90,7 @@ export const CursorRenderer = {
      * Update the confirmation cursor's Y position according to selected choice.
      */
     updatePosition() {
-      ui.confirmation.cursor.y = ui.confirmation.background.y + 60 + ui.confirmation.selectedChoice * 30;
+      UIManager.confirmation.cursor.y = UIManager.confirmation.background.y + 60 + UIManager.confirmation.selectedChoice * 30;
       Game.stage.update();
     },
 
@@ -97,7 +98,7 @@ export const CursorRenderer = {
      * Remove the confirmation cursor from the stage.
      */
     remove() {
-      Game.stage.removeChild(ui.confirmation.cursor);
+      Game.stage.removeChild(UIManager.confirmation.cursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -134,10 +135,10 @@ export const CursorRenderer = {
      * Sync visual selection with logical selected card.
      */
     syncSelection() {
-      ui.previouslySelectedCard = ui.selectedCard;
-      ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
+      UIManager.previouslySelectedCard = UIManager.selectedCard;
+      UIManager.selectedCard = player.cardsInPlayerHand[UIManager.selectedCardNumber];
 
-      ui.updateInfoBox();
+      UIController.updateInfoBox();
       player.indentSelectedCard();
     },
 
@@ -162,9 +163,9 @@ export const CursorRenderer = {
      * Place the grid cursor on the stage.
      */
     place() {
-      ui.playerSelectingPlacement = true;
+      UIManager.playerSelectingPlacement = true;
 
-      Game.stage.addChild(ui.gridCursor);
+      Game.stage.addChild(UIManager.gridCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -184,8 +185,8 @@ export const CursorRenderer = {
      * Remove the grid cursor from the stage.
      */
     remove() {
-      ui.playerSelectingPlacement = false;
-      Game.stage.removeChild(ui.gridCursor);
+      UIManager.playerSelectingPlacement = false;
+      Game.stage.removeChild(UIManager.gridCursor);
       Game.stage.update();
 
       if (debug.active) {

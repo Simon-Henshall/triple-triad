@@ -1,4 +1,4 @@
-import { ui } from "../render/ui.js";
+import { UIManager } from "../managers/UIManager.js";
 import { offsets } from "../render/offsets.js";
 import { player } from "../render/player.js";
 import { selectionBoard } from "../render/selectionBoard.js";
@@ -20,8 +20,8 @@ export const CursorManager = {
      * Places it relative to the selection board container.
      */
     initPosition() {
-      player.playerHandSelectionCursor.x = ui.selectionBoard.background.x - 40;
-      player.playerHandSelectionCursor.y = ui.selectionBoard.background.y + 48;
+      player.playerHandSelectionCursor.x = UIManager.selectionBoard.background.x - 40;
+      player.playerHandSelectionCursor.y = UIManager.selectionBoard.background.y + 48;
     },
 
     /**
@@ -81,7 +81,7 @@ export const CursorManager = {
      * Reset the currently selected choice to default (0).
      */
     resetChoice() {
-      ui.confirmation.selectedChoice = 0;
+      UIManager.confirmation.selectedChoice = 0;
     },
 
     /**
@@ -91,24 +91,24 @@ export const CursorManager = {
      * @returns {boolean} True if the selection changed, false otherwise.
      */
     move(direction) {
-      const previousChoice = ui.confirmation.selectedChoice;
+      const previousChoice = UIManager.confirmation.selectedChoice;
 
       if (direction === "up") {
-        if (ui.confirmation.selectedChoice > 0) {
-          ui.confirmation.selectedChoice -= 1;
+        if (UIManager.confirmation.selectedChoice > 0) {
+          UIManager.confirmation.selectedChoice -= 1;
         }
       } else if (direction === "down") {
-        if (ui.confirmation.selectedChoice < 1) {
-          ui.confirmation.selectedChoice += 1;
+        if (UIManager.confirmation.selectedChoice < 1) {
+          UIManager.confirmation.selectedChoice += 1;
         }
       } else {
         console.warn(`Unknown confirmation move direction: ${direction}`);
       }
 
       // Clamp choice to valid range
-      ui.confirmation.selectedChoice = Math.max(0, Math.min(1, ui.confirmation.selectedChoice));
+      UIManager.confirmation.selectedChoice = Math.max(0, Math.min(1, UIManager.confirmation.selectedChoice));
 
-      return previousChoice !== ui.confirmation.selectedChoice;
+      return previousChoice !== UIManager.confirmation.selectedChoice;
     },
 
     /**
@@ -127,12 +127,12 @@ export const CursorManager = {
      * Initialize the player hand cursor position based on selected card index.
      */
     init() {
-      ui.playerChoosingCard = true;
+      UIManager.playerChoosingCard = true;
 
       player.playerHandCursor.x = player.handOffsetX - 50;
       player.playerHandCursor.y =
         offsets.handOffsetY +
-        (ui.selectedCardNumber + 1 + player.playedPlayerCardCount) * (offsets.cardHeight / 2);
+        (UIManager.selectedCardNumber + 1 + player.playedPlayerCardCount) * (offsets.cardHeight / 2);
     },
 
     /**
@@ -145,18 +145,18 @@ export const CursorManager = {
       const handOffset = offsets.handCardOffset ?? 32;
 
       if (direction === "up") {
-        if (ui.selectedCardNumber > 0) {
+        if (UIManager.selectedCardNumber > 0) {
           player.playerHandCursor.y -= handOffset;
-          ui.selectedCardNumber--;
+          UIManager.selectedCardNumber--;
           player.cardsAboveSelection--;
         } else {
           console.warn(`Cannot move player hand cursor up - out of bounds`);
           return false;
         }
       } else if (direction === "down") {
-        if (ui.selectedCardNumber < player.cardsInPlayerHand.length - 1) {
+        if (UIManager.selectedCardNumber < player.cardsInPlayerHand.length - 1) {
           player.playerHandCursor.y += handOffset;
-          ui.selectedCardNumber++;
+          UIManager.selectedCardNumber++;
           player.cardsAboveSelection++;
         } else {
           console.warn(`Cannot move player hand cursor down - out of bounds`);
@@ -174,7 +174,7 @@ export const CursorManager = {
      * Clears the player hand cursor state.
      */
     clear() {
-      ui.playerChoosingCard = false;
+      UIManager.playerChoosingCard = false;
     },
   },
 
@@ -186,16 +186,16 @@ export const CursorManager = {
      * Initialize the grid cursor to the starting cell (1,1 visual).
      */
     init() {
-      ui.playerSelectingPlacement = true;
+      UIManager.playerSelectingPlacement = true;
 
-      ui.gridCursor.x = offsets.gameOffsetX + offsets.cellWidth + 16;
-      ui.gridCursor.y = offsets.gameOffsetY + offsets.cellHeight + 80;
+      UIManager.gridCursor.x = offsets.gameOffsetX + offsets.cellWidth + 16;
+      UIManager.gridCursor.y = offsets.gameOffsetY + offsets.cellHeight + 80;
 
-      Game.stage.addChild(ui.gridCursor);
+      Game.stage.addChild(UIManager.gridCursor);
       Game.stage.update();
 
       if (debug.active) {
-        console.log(`Grid cursor placed at X:${ui.gridCursor.x}, Y:${ui.gridCursor.y}`);
+        console.log(`Grid cursor placed at X:${UIManager.gridCursor.x}, Y:${UIManager.gridCursor.y}`);
       }
     },
 
@@ -205,37 +205,37 @@ export const CursorManager = {
      * @param {"left"|"up"|"right"|"down"} direction
      */
     move(direction) {
-      const oldX = ui.gridCursor.x;
-      const oldY = ui.gridCursor.y;
+      const oldX = UIManager.gridCursor.x;
+      const oldY = UIManager.gridCursor.y;
 
       if (direction === "left") {
-        if (ui.gridCursor.x > offsets.gameOffsetX + 16) {
-          ui.gridCursor.x -= offsets.cellWidth;
-          ui.selectedColumn--;
+        if (UIManager.gridCursor.x > offsets.gameOffsetX + 16) {
+          UIManager.gridCursor.x -= offsets.cellWidth;
+          UIManager.selectedColumn--;
         } else {
           console.warn(`Cannot move grid cursor left - out of bounds`);
           return;
         }
       } else if (direction === "up") {
-        if (ui.gridCursor.y > offsets.gameOffsetY + 80) {
-          ui.gridCursor.y -= offsets.cellHeight;
-          ui.selectedRow--;
+        if (UIManager.gridCursor.y > offsets.gameOffsetY + 80) {
+          UIManager.gridCursor.y -= offsets.cellHeight;
+          UIManager.selectedRow--;
         } else {
           console.warn(`Cannot move grid cursor up - out of bounds`);
           return;
         }
       } else if (direction === "right") {
-        if (ui.gridCursor.x < offsets.gameOffsetX + offsets.cellWidth * 2 + 16) {
-          ui.gridCursor.x += offsets.cellWidth;
-          ui.selectedColumn++;
+        if (UIManager.gridCursor.x < offsets.gameOffsetX + offsets.cellWidth * 2 + 16) {
+          UIManager.gridCursor.x += offsets.cellWidth;
+          UIManager.selectedColumn++;
         } else {
           console.warn(`Cannot move grid cursor right - out of bounds`);
           return;
         }
       } else if (direction === "down") {
-        if (ui.gridCursor.y < offsets.gameOffsetY + offsets.cellHeight * 2 + 80) {
-          ui.gridCursor.y += offsets.cellHeight;
-          ui.selectedRow++;
+        if (UIManager.gridCursor.y < offsets.gameOffsetY + offsets.cellHeight * 2 + 80) {
+          UIManager.gridCursor.y += offsets.cellHeight;
+          UIManager.selectedRow++;
         } else {
           console.warn(`Cannot move grid cursor down - out of bounds`);
           return;
@@ -249,7 +249,7 @@ export const CursorManager = {
       Game.stage.update();
 
       if (debug.active) {
-        console.log(`Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${ui.gridCursor.x}, Y:${ui.gridCursor.y}`);
+        console.log(`Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${UIManager.gridCursor.x}, Y:${UIManager.gridCursor.y}`);
       }
     },
 
@@ -257,8 +257,8 @@ export const CursorManager = {
      * Clears the grid cursor state.
      */
     clear() {
-      ui.playerSelectingPlacement = false;
-      Game.stage.removeChild(ui.gridCursor);
+      UIManager.playerSelectingPlacement = false;
+      Game.stage.removeChild(UIManager.gridCursor);
       Game.stage.update();
 
       if (debug.active) {

@@ -1,7 +1,8 @@
 import { config } from './config.js';
 import { offsets } from './render/offsets.js';
 import { player } from './render/player.js';
-import { ui } from './render/ui.js';
+import { UIManager } from "./managers/UIManager.js";
+import { UIRenderer } from "./ui/UIRenderer.js";
 import { utils } from './game/utils.js';
 import { ai } from './game/ai.js';
 import { InputController } from './controllers/InputController.js';
@@ -43,20 +44,21 @@ export const gameInit = {
     player.playerHandSelectionCursor = new createjs.Bitmap(
       config.imagePath + "cursor.png"
     );
-    ui.gridCursor = new createjs.Bitmap(
+    UIManager.gridCursor = new createjs.Bitmap(
       config.imagePath + "cursor.png"
     );
   },
   uiContainers() {
+    UIRenderer.addBackground();
     // Main containers
-    ui.selectionBoard.container = new createjs.Container();
-    ui.selectionBoard.shownCards = new createjs.Container();
-    ui.confirmation.container = new createjs.Container();
-    ui.infoBox.container = new createjs.Container();
-    ui.previouslySelectedCard = [];
+    UIManager.selectionBoard.container = new createjs.Container();
+    UIManager.selectionBoard.shownCards = new createjs.Container();
+    UIManager.confirmation.container = new createjs.Container();
+    UIManager.infoBox.container = new createjs.Container();
+    UIManager.previouslySelectedCard = [];
 
-    ui.confirmation.background = new createjs.Shape();
-    ui.confirmation.cursor = new createjs.Bitmap(
+    UIManager.confirmation.background = new createjs.Shape();
+    UIManager.confirmation.cursor = new createjs.Bitmap(
       config.imagePath + "cursor.png"
     );
   },
@@ -64,8 +66,6 @@ export const gameInit = {
     document.addEventListener("keydown", (e) => inputController.handleKey(e));
   },
   loadInitialCards() {
-    ui.addBackground();
-
     if (typeof ajaxCall === "function") {
       utils.ajaxCall(utils.pickPlayerCards);
     } else if (typeof utils.pickPlayerCards === "function") {

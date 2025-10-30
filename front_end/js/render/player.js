@@ -1,4 +1,4 @@
-import { ui } from "./ui.js";
+import { UIManager } from "../managers/UIManager.js";
 import { utils } from "../game/utils.js";
 import { Game } from '../game/game.js';
 import { playerHand } from './playerHand.js';
@@ -46,24 +46,24 @@ export const player = {
    */
   indentSelectedCard() {
     if (utils.getPlayerTurn() === "red") {
-      if (ui.selectedCard && typeof ui.selectedCard.x !== "undefined") {
-        ui.selectedCard.x += 30;
+      if (UIManager.selectedCard && typeof UIManager.selectedCard.x !== "undefined") {
+        UIManager.selectedCard.x += 30;
       }
       if (
-        ui.previouslySelectedCard &&
-        typeof ui.previouslySelectedCard.x !== "undefined"
+        UIManager.previouslySelectedCard &&
+        typeof UIManager.previouslySelectedCard.x !== "undefined"
       ) {
-        ui.previouslySelectedCard.x -= 30;
+        UIManager.previouslySelectedCard.x -= 30;
       }
     } else if (utils.getPlayerTurn() === "blue") {
-      if (ui.selectedCard && typeof ui.selectedCard.x !== "undefined") {
-        ui.selectedCard.x -= 30;
+      if (UIManager.selectedCard && typeof UIManager.selectedCard.x !== "undefined") {
+        UIManager.selectedCard.x -= 30;
       }
       if (
-        ui.previouslySelectedCard &&
-        typeof ui.previouslySelectedCard.x !== "undefined"
+        UIManager.previouslySelectedCard &&
+        typeof UIManager.previouslySelectedCard.x !== "undefined"
       ) {
-        ui.previouslySelectedCard.x += 30;
+        UIManager.previouslySelectedCard.x += 30;
       }
     }
     Game.stage.update();
@@ -78,7 +78,7 @@ player.CardManager = class {
    * Update the hand cards shown on the selection board.
    */
   updateHandCards() {
-    const sb = ui.selectionBoard;
+    const sb = UIManager.selectionBoard;
     const owned = player.ownedCards || [];
 
     // Ensure paging is set up

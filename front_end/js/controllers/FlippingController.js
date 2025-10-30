@@ -4,7 +4,7 @@ import { utils } from "../game/utils.js";
 import { player } from "../render/player.js";
 import { ai } from "../game/ai.js";
 import { Game } from "../game/game.js";
-import { ui } from "../render/ui.js";
+import { UIManager } from "../managers/UIManager.js";
 
 const flippingRenderer = new FlippingRenderer();
 
@@ -53,7 +53,7 @@ export class FlippingController {
     this.updateOwnershipCounts(1);
 
     // Maintain board consistency
-    const squareObj = ui.squares[targetCard.inCell - 1];
+    const squareObj = UIManager.squares[targetCard.inCell - 1];
     if (squareObj) {
       squareObj.card = targetCard;
     }

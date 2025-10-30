@@ -1,4 +1,4 @@
-import { ui } from "./ui.js";
+import { UIManager } from "../managers/UIManager.js";
 import { Game } from "../game/game.js";
 import { player } from "./player.js";
 import { offsets } from "./offsets.js";
@@ -26,15 +26,15 @@ export const playerHand = {
     // TODO: Move this logic
 
     // Default selection
-    ui.selectedCard = player.cardsInPlayerHand[0];
-    ui.previouslySelectedCard = [];
+    UIManager.selectedCard = player.cardsInPlayerHand[0];
+    UIManager.previouslySelectedCard = [];
 
     // Indent chosen card
     player.indentSelectedCard();
 
     // Ready for player to choose
-    ui.playerConfirming = false;
-    ui.playerChoosingCard = true;
+    UIManager.playerConfirming = false;
+    UIManager.playerChoosingCard = true;
 
     // END TODO
 
@@ -96,13 +96,13 @@ export const playerHand = {
 
     // Tick handler only for additions to keep preview on top
     if (!remove) {
-      const previewCard = ui.selectionBoard?.displayedCard;
+      const previewCard = UIManager.selectionBoard?.displayedCard;
       if (previewCard) {
         const tickHandler = () => {
           const handCards = this.cardsInPlayerHand.filter((c) =>
             Game.stage.contains(c)
           );
-          const confirmationContainer = ui.confirmation?.container;
+          const confirmationContainer = UIManager.confirmation?.container;
           const confirmationIndex =
             confirmationContainer && Game.stage.contains(confirmationContainer)
               ? Game.stage.getChildIndex(confirmationContainer)
@@ -135,11 +135,11 @@ export const playerHand = {
    * Can be called after any major stage change.
    */
   _updateHandAndPreviewZOrder(updatePreview = true) {
-    const previewCard = ui.selectionBoard?.displayedCard;
+    const previewCard = UIManager.selectionBoard?.displayedCard;
     const handCards = this.cardsInPlayerHand.filter((c) =>
       Game.stage.contains(c)
     );
-    const confirmationContainer = ui.confirmation?.container;
+    const confirmationContainer = UIManager.confirmation?.container;
 
     let topIndex = Game.stage.numChildren;
 

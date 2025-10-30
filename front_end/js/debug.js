@@ -1,6 +1,6 @@
 import { player } from './render/player.js';
 import { board } from './render/board.js';
-import { ui } from './render/ui.js';
+import { UIManager } from "./managers/UIManager.js";
 import { utils } from './game/utils.js';
 import { ai } from './game/ai.js';
 
@@ -17,7 +17,7 @@ export const debug = {
    */
   logCell(eventOrSquare) {
     const squareID = eventOrSquare.name ?? eventOrSquare.id;
-    const squareObj = ui.squares[squareID - 1];
+    const squareObj = UIManager.squares[squareID - 1];
     const cardHere = board.boardArray[squareID - 1].occupant;
 
     console.log("======================================================");

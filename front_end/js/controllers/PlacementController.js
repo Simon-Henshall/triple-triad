@@ -1,7 +1,7 @@
 import { board } from "../render/board.js";
 import { player } from "../render/player.js";
 import { ai } from "../game/ai.js";
-import { ui } from "../render/ui.js";
+import { UIManager } from "../managers/UIManager.js";
 import { utils } from "../game/utils.js";
 import { debug } from "../debug.js";
 import { FlippingRenderer } from "../ui/FlippingRenderer.js";
@@ -50,10 +50,10 @@ export class PlacementController {
       return cell ? cell.occupant ?? null : null;
     };
 
-    card.cardLeft = getOccupant(ui.squareLeft);
-    card.cardUp = getOccupant(ui.squareUp);
-    card.cardRight = getOccupant(ui.squareRight);
-    card.cardDown = getOccupant(ui.squareDown);
+    card.cardLeft = getOccupant(UIManager.squareLeft);
+    card.cardUp = getOccupant(UIManager.squareUp);
+    card.cardRight = getOccupant(UIManager.squareRight);
+    card.cardDown = getOccupant(UIManager.squareDown);
 
     if (debug.active) console.log(card);
   }
@@ -64,10 +64,10 @@ export class PlacementController {
    * @param {createjs.Container} card - The card being placed.
    */
   addCardToBoard(card) {
-    card.inCell = ui.selectedSquare;
-    board.boardArray[ui.selectedSquare - 1].occupant = card;
+    card.inCell = UIManager.selectedSquare;
+    board.boardArray[UIManager.selectedSquare - 1].occupant = card;
 
-    const freeCellIndex = board.freeCells.indexOf(ui.selectedSquare);
+    const freeCellIndex = board.freeCells.indexOf(UIManager.selectedSquare);
     if (freeCellIndex > -1) board.freeCells.splice(freeCellIndex, 1);
 
     this.flippingRenderer.replaceCard(card);
@@ -79,7 +79,7 @@ export class PlacementController {
    * @param {createjs.Container} card - The card being placed.
    */
   applyElementEffects(card) {
-    const squareObj = ui.squares[ui.selectedSquare - 1];
+    const squareObj = UIManager.squares[UIManager.selectedSquare - 1];
     if (!squareObj || typeof squareObj.element === "undefined") return;
     if (squareObj.element === 0) return;
 
@@ -111,13 +111,13 @@ export class PlacementController {
 
     if (utils.getPlayerTurn() === "blue") {
       player.playedPlayerCardCount++;
-      ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
+      UIManager.selectedCard = player.cardsInPlayerHand[UIManager.selectedCardNumber];
 
       Game.stage.addChild(player.playerHandCursor);
-      ui.selectedCard.x -= 30;
-      Game.stage.setChildIndex(ui.infoBox.container, Game.stage.getNumChildren() - 1);
-      ui.infoBox.container.visible = true;
-      ui.playerChoosingCard = true;
+      UIManager.selectedCard.x -= 30;
+      Game.stage.setChildIndex(UIManager.infoBox.container, Game.stage.getNumChildren() - 1);
+      UIManager.infoBox.container.visible = true;
+      UIManager.playerChoosingCard = true;
     } else if (utils.getPlayerTurn() === "red") {
       ai.turn();
     }
@@ -127,7 +127,7 @@ export class PlacementController {
    * Swap the current turn between blue (player) and red (AI).
    */
   swapPlayerTurn() {
-    ui.playerTurn = utils.getPlayerTurn() === "blue" ? "red" : "blue";
+    UIManager.playerTurn = utils.getPlayerTurn() === "blue" ? "red" : "blue";
   }
 
   /**
@@ -153,12 +153,12 @@ export class PlacementController {
     if (utils.getPlayerTurn() === "blue") {
       animateDown(player.cardsInPlayerHand, player.cardsAboveSelection);
 
-      if (ui.selectedCardNumber === 0) {
+      if (UIManager.selectedCardNumber === 0) {
         player.playerHandCursor.y += offsets.handCardOffset;
-        ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
+        UIManager.selectedCard = player.cardsInPlayerHand[UIManager.selectedCardNumber];
       } else {
-        ui.selectedCardNumber--;
-        ui.selectedCard = player.cardsInPlayerHand[ui.selectedCardNumber];
+        UIManager.selectedCardNumber--;
+        UIManager.selectedCard = player.cardsInPlayerHand[UIManager.selectedCardNumber];
         player.cardsAboveSelection--;
       }
     } else if (utils.getPlayerTurn() === "red") {

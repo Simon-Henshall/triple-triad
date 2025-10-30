@@ -1,4 +1,4 @@
-import { ui } from "../render/ui.js";
+import { UIManager } from "../managers/UIManager.js";
 import { InputManager } from "../managers/InputManager.js";
 import { InputRenderer } from "../ui/InputRenderer.js";
 import { debug } from "../debug.js";
@@ -20,13 +20,13 @@ export class InputController {
   handleKey(e) {
     if (debug.active) console.log("Key pressed:", e.key);
 
-    if (ui.playerSelectingHand) {
+    if (UIManager.playerSelectingHand) {
       this.manager.handlePlayerHandSelection(e, this.renderer);
-    } else if (ui.playerConfirming) {
+    } else if (UIManager.playerConfirming) {
       this.manager.handleConfirmation(e, this.renderer);
-    } else if (ui.playerChoosingCard) {
+    } else if (UIManager.playerChoosingCard) {
       this.manager.handlePlayerCardChoice(e, this.renderer);
-    } else if (ui.playerSelectingPlacement) {
+    } else if (UIManager.playerSelectingPlacement) {
       this.manager.handlePlacement(e, this.renderer);
     }
   }

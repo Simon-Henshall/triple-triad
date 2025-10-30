@@ -1,4 +1,4 @@
-import { ui } from './ui.js';
+import { UIManager } from "../managers/UIManager.js";
 import { CursorController } from '../controllers/CursorController.js';
 import { Game } from '../game/game.js';
 
@@ -7,8 +7,8 @@ export const confirmationBox = {
    * Display the "Are you sure?" confirmation dialog
    */
   show() {
-    const conf = ui.confirmation;
-    ui.playerConfirming = true;
+    const conf = UIManager.confirmation;
+    UIManager.playerConfirming = true;
 
     // Reset to default selection
     conf.selectedChoice = 0;
@@ -62,7 +62,7 @@ export const confirmationBox = {
     CursorController.confirmation.place();
 
     // Hide the preview card while confirmation is up
-    ui.selectionBoard.hidePreviewCard();
+    UIManager.selectionBoard.hidePreviewCard();
 
     Game.stage.update();
   },

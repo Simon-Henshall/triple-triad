@@ -1,5 +1,5 @@
 import { config } from "../config.js";
-import { ui } from "./ui.js";
+import { UIManager } from "../managers/UIManager.js";
 import { Game } from "../game/game.js";
 import { utils } from "../game/utils.js";
 import { SelectionBoardController } from "../controllers/SelectionBoardController.js";
@@ -18,7 +18,7 @@ export const selectionBoard = {
   },
 
   populate() {
-    const sb = ui.selectionBoard;
+    const sb = UIManager.selectionBoard;
 
     // Keep controller selection valid for the current page
     this.controller.clampSelectionToPage();
@@ -110,7 +110,7 @@ export const selectionBoard = {
     Game.stage.update();
   },
   updateDisplay({ skipTween = false } = {}) {
-    const sb = ui.selectionBoard;
+    const sb = UIManager.selectionBoard;
     const selectedCard = this.controller.selectedCard;
     if (!selectedCard) return;
 

@@ -1,6 +1,6 @@
 import { config } from '../config.js';
 import { offsets } from './offsets.js';
-import { ui } from './ui.js';
+import { UIManager } from "../managers/UIManager.js";
 import { utils } from '../game/utils.js';
 import { debug } from '../debug.js';
 import { Game } from '../game/game.js';
@@ -34,12 +34,12 @@ export const board = {
   checkSelectedSquare() {
     for (let i = 0; i < squareMap.length; i++) {
       const s = squareMap[i];
-      if (s.row === ui.selectedRow && s.col === ui.selectedColumn) {
-        ui.selectedSquare = i + 1;
-        ui.squareLeft = s.left;
-        ui.squareUp = s.up;
-        ui.squareRight = s.right;
-        ui.squareDown = s.down;
+      if (s.row === UIManager.selectedRow && s.col === UIManager.selectedColumn) {
+        UIManager.selectedSquare = i + 1;
+        UIManager.squareLeft = s.left;
+        UIManager.squareUp = s.up;
+        UIManager.squareRight = s.right;
+        UIManager.squareDown = s.down;
         break;
       }
     }
@@ -49,13 +49,13 @@ export const board = {
   // Determine row & column from selected square
   // -------------------------
   checkSelectedRowColumn() {
-    const s = squareMap[ui.selectedAISquare - 1];
-    ui.selectedRow = s.row;
-    ui.selectedColumn = s.col;
-    ui.squareLeft = s.left;
-    ui.squareUp = s.up;
-    ui.squareRight = s.right;
-    ui.squareDown = s.down;
+    const s = squareMap[UIManager.selectedAISquare - 1];
+    UIManager.selectedRow = s.row;
+    UIManager.selectedColumn = s.col;
+    UIManager.squareLeft = s.left;
+    UIManager.squareUp = s.up;
+    UIManager.squareRight = s.right;
+    UIManager.squareDown = s.down;
   },
 
   // -------------------------
@@ -121,7 +121,7 @@ export const board = {
           debug.clickHandler(event);
         });
 
-        ui.squares.push(square);
+        UIManager.squares.push(square);
         Game.stage.addChild(square.container);
       }
     }
@@ -133,7 +133,7 @@ export const board = {
   // CELL CHECKS
   // -------------------------
   cellOccupied() {
-    const cell = this.boardArray[ui.selectedSquare - 1];
+    const cell = this.boardArray[UIManager.selectedSquare - 1];
     return cell.occupant ? cell.occupant : false;
   },
 };

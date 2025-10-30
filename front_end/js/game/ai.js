@@ -1,6 +1,6 @@
 import { offsets } from "../render/offsets.js";
 import { board } from "../render/board.js";
-import { ui } from "../render/ui.js";
+import { UIManager } from "../managers/UIManager.js";
 import { PlacementController } from "../controllers/PlacementController.js";
 import { aiHand } from "./aiHand.js";
 import { getGameStateInstance } from "./game.state.js";
@@ -36,7 +36,7 @@ export const ai = {
     }
 
     // Pick A Cell To Play In (Currently Random)
-    ui.selectedAISquare =
+    UIManager.selectedAISquare =
       board.freeCells[Math.floor(Math.random() * board.freeCells.length)];
     board.checkSelectedRowColumn();
 
@@ -49,10 +49,10 @@ export const ai = {
       placementController.placeCard(
         aiSelectedCard,
         offsets.gameOffsetX +
-          offsets.cellWidth * (ui.selectedColumn - 1) +
+          offsets.cellWidth * (UIManager.selectedColumn - 1) +
           offsets.cardOffsetX,
         offsets.gameOffsetY +
-          offsets.cellHeight * (ui.selectedRow - 1) +
+          offsets.cellHeight * (UIManager.selectedRow - 1) +
           offsets.cardOffsetY
       );
 

@@ -1,5 +1,5 @@
 import { CursorController } from "../controllers/CursorController.js";
-import { ui } from "../render/ui.js";
+import { UIManager } from "../managers/UIManager.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
 
@@ -57,8 +57,8 @@ export class InputRenderer {
    * @param {boolean} visible
    */
   toggleInfoBox(visible) {
-    if (ui.infoBox.container) {
-      ui.infoBox.container.visible = visible;
+    if (UIManager.infoBox.container) {
+      UIManager.infoBox.container.visible = visible;
       Game.stage.update();
       if (debug.active) {
         console.log(`Info box visibility set to: ${visible}`);

@@ -2,7 +2,8 @@
 import { board } from '../render/board.js';
 import { player } from '../render/player.js';
 import { CursorController } from '../controllers/CursorController.js';
-import { ui } from '../render/ui.js';
+import { UIManager } from "../managers/UIManager.js";
+import { UIRenderer } from "../ui/UIRenderer.js";
 import { ai } from './ai.js';
 
 export const Game = {
@@ -61,7 +62,7 @@ export const Game = {
     player.playerHand.resetAnimatedHand();
 
     // Remove the preview card
-    const sb = ui.selectionBoard;
+    const sb = UIManager.selectionBoard;
     if (sb.displayedCard && Game.stage.contains(sb.displayedCard)) {
       Game.stage.removeChild(sb.displayedCard);
       sb.displayedCard = null;
@@ -73,8 +74,8 @@ export const Game = {
     player.playerHand.populate();
     ai.aiHand.populate();
 
-    ui.drawCardCounts();
-    ui.drawInfoBox();
+    UIRenderer.drawCardCounts();
+    UIRenderer.drawInfoBox();
     CursorController.playerHand.place();
   },
 
