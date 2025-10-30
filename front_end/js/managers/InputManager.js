@@ -9,7 +9,7 @@ import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
 import { PlacementController } from "../controllers/PlacementController.js";
 import { BoardManager } from "../managers/BoardManager.js";
-import { offsets } from "../render/offsets.js";
+import { offsets } from "../constants/offsets.js";
 
 const placementController = new PlacementController();
 

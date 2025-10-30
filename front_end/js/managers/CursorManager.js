@@ -1,5 +1,5 @@
 import { UIManager } from "../managers/UIManager.js";
-import { offsets } from "../render/offsets.js";
+import { offsets } from "../constants/offsets.js";
 import { player } from "../render/player.js";
 import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
 import { BoardManager } from "../managers/BoardManager.js";

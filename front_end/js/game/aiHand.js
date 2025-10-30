@@ -3,7 +3,7 @@ import { ai } from "./ai.js";
 import { Game } from "./game.js";
 import { FlippingRenderer } from "../ui/FlippingRenderer.js";
 import { utils } from "./utils.js";
-import { offsets } from "../render/offsets.js";
+import { offsets } from "../constants/offsets.js";
 import { config } from "../config.js";
 import { player } from "../render/player.js";
 

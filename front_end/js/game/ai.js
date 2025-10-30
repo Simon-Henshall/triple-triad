@@ -1,4 +1,4 @@
-import { offsets } from "../render/offsets.js";
+import { offsets } from "../constants/offsets.js";
 import { BoardManager } from "../managers/BoardManager.js";
 import { UIManager } from "../managers/UIManager.js";
 import { PlacementController } from "../controllers/PlacementController.js";

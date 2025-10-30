@@ -4,7 +4,7 @@
 // -----------------------------------------------------------------------------
 
 import { config } from "../config.js";
-import { offsets } from "../render/offsets.js";
+import { offsets } from "../constants/offsets.js";
 import { player } from "../render/player.js";
 import { ai } from "../game/ai.js";
 import { Game } from "../game/game.js";

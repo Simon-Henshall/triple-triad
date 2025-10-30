@@ -1,9 +1,5 @@
-// =======================================
-// File: front_end/js/ui/PlacementRenderer.js
-// =======================================
-
 import { Game } from "../game/game.js";
-import { offsets } from "../render/offsets.js";
+import { offsets } from "../constants/offsets.js";
 
 /**
  * Handles all animations and visual effects for card placement,

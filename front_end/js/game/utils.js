@@ -6,7 +6,7 @@ import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
 import { CursorController } from "../controllers/CursorController.js";
 import { Game } from "./game.js";
 import { config } from "../config.js";
-import { offsets } from "../render/offsets.js";
+import { offsets } from "../constants/offsets.js";
 
 export const utils = {
   /**

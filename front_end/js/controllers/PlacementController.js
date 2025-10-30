@@ -7,7 +7,7 @@ import { debug } from "../debug.js";
 import { FlippingRenderer } from "../ui/FlippingRenderer.js";
 import { PlacementManager } from "../managers/PlacementManager.js";
 import { Game } from "../game/game.js";
-import { offsets } from "../render/offsets.js";
+import { offsets } from "../constants/offsets.js";
 
 /**
  * Coordinates the placement of cards from the player's hand or AI hand

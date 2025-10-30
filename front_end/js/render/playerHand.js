@@ -1,7 +1,7 @@
 import { UIManager } from "../managers/UIManager.js";
 import { Game } from "../game/game.js";
 import { player } from "./player.js";
-import { offsets } from "./offsets.js";
+import { offsets } from "../constants/offsets.js";
 import { utils } from "../game/utils.js";
 
 export const playerHand = {

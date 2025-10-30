@@ -1,7 +1,4 @@
-// -----------------------------------------------------------------------------
-// File: front_end/js/ui/UIManager.js
-// Purpose: hold non-rendered UI state, structure, and references
-// -----------------------------------------------------------------------------
+import { Game } from "../game/game";
 
 export const UIManager = {
   // -------------------------
@@ -12,8 +9,6 @@ export const UIManager = {
   selectedColumn: 2,
   selectedSquare: 5,
   selectedAISquare: undefined,
-
-  // MISSED
   squareLeft: undefined,
   squareUp: undefined,
   squareRight: undefined,
@@ -37,17 +32,37 @@ export const UIManager = {
     displayedCardColour: null,
     selectedHandCardNumber: 0,
     selectedHandCard: null,
-    hidePreviewCard() {
-      if (this.displayedCard && this.displayedCard.parent) {
-        this.displayedCard.parent.removeChild(this.displayedCard);
+    showPreviewCard() {
+      const sb = UIManager.selectionBoard;
+
+      // Only proceed if there is a card to show
+      if (!sb.displayedCard) return;
+
+      // Ensure the container exists
+      if (!sb.container) {
+        sb.container = new createjs.Container();
       }
+
+      // Ensure the container is on the stage
+      if (!sb.container.parent) {
+        Game.stage?.addChild(sb.container);
+      }
+
+      // Ensure the card is inside the container
+      if (!sb.displayedCard.parent) {
+        sb.container.addChild(sb.displayedCard);
+      }
+
+      // Force stage redraw
+      Game.stage?.update();
     },
 
-    showPreviewCard() {
-      if (this.displayedCard && !this.displayedCard.parent) {
-        Game.stage.addChild(this.displayedCard);
+    hidePreviewCard() {
+      const sb = UIManager.selectionBoard;
+      if (sb.displayedCard && sb.displayedCard.parent) {
+        sb.displayedCard.parent.removeChild(sb.displayedCard);
       }
-    }
+    },
   },
 
   // -------------------------
@@ -79,8 +94,10 @@ export const UIManager = {
   playerChoosingCard: false,
   playerSelectingPlacement: false,
   playerTurn: "blue",
-  
-  // MISSED
+
+  // -------------------------
+  // Cards
+  // -------------------------
   cardName: undefined,
   cardCount: undefined,
   card: undefined,
