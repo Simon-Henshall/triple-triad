@@ -4,7 +4,7 @@ import { SelectionBoardRenderer } from "../ui/SelectionBoardRenderer.js";
 import { UIManager } from "../managers/UIManager.js";
 import { utils } from "../game/utils.js";
 import { CursorController } from "../controllers/CursorController.js";
-import { confirmationBox } from "../render/confirmationBox.js";
+import { ConfirmationController } from "../controllers/ConfirmationController.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
 import { PlacementController } from "../controllers/PlacementController.js";
@@ -169,7 +169,7 @@ export class InputManager {
 
       if (player.playerCards.length === 5) {
         UIManager.playerSelectingHand = false;
-        confirmationBox.show();
+        ConfirmationController.show();
       }
 
       return card;
