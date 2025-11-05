@@ -263,6 +263,9 @@ export class InputManager {
       // restore selection cursor
       Game.controllers.cursorController.selection.place();
       SelectionBoardRenderer.updateCursor(SelectionBoardUI.controller);
+      if (Game.renderers?.cursorRenderer?.selection?.updatePosition) {
+        Game.renderers.cursorRenderer.selection.updatePosition();
+      }
 
       // show preview card
       UIManager.selectionBoard.showPreviewCard();
