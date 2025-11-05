@@ -26,14 +26,15 @@ export const SelectionBoardUI = {
       sb.container = new createjs.Container();
     }
 
+    if (!Game.stage.contains(sb.container)) {
+      Game.stage.addChild(sb.container);
+      // optional logging:
+      console.log("SelectionBoard container attached early from initialise()");
+    }
+
     // If the caller already created a background (pickPlayerCards does this),
     // respect it; otherwise SelectionBoardRenderer.populate will create a fallback.
     SelectionBoardRenderer.populate(this.controller);
-
-    // Finally make sure the container is added to the stage (pickPlayerCards may add later)
-    if (!sb.container.parent) {
-      Game.stage.addChild(sb.container);
-    }
   },
 
   /**

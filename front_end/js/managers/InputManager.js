@@ -1,18 +1,12 @@
-import { player } from "../render/player.js";
 import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
 import { SelectionBoardRenderer } from "../ui/SelectionBoardRenderer.js";
 import { UIManager } from "../managers/UIManager.js";
 import { utils } from "../game/utils.js";
-import { CursorController } from "../controllers/CursorController.js";
 import { ConfirmationController } from "../controllers/ConfirmationController.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
-import { PlacementController } from "../controllers/PlacementController.js";
 import { BoardManager } from "../managers/BoardManager.js";
 import { offsets } from "../constants/offsets.js";
-
-const placementController = new PlacementController();
-
 /**
  * Handles game logic triggered by player input.
  * Responsible for card selection, confirmation handling,
@@ -20,6 +14,17 @@ const placementController = new PlacementController();
  * Visual updates are delegated to the InputRenderer.
  */
 export class InputManager {
+  constructor(
+    playerManager,
+    playerRenderer,
+    playerController,
+    placementController
+  ) {
+    this.playerManager = playerManager;
+    this.playerRenderer = playerRenderer;
+    this.playerController = playerController;
+    this.placementController = placementController;
+  }
   // ------------------------------
   // HIGH-LEVEL PUBLIC METHODS
   // ------------------------------
@@ -83,10 +88,10 @@ export class InputManager {
   handlePlayerCardChoice(e, renderer) {
     switch (e.key) {
       case "ArrowUp":
-        CursorController.playerHand.move("up");
+        Game.controllers.cursorController.playerHand.move("up");
         break;
       case "ArrowDown":
-        CursorController.playerHand.move("down");
+        Game.controllers.cursorController.playerHand.move("down");
         break;
       case "Enter":
         this.playSelectedCard(renderer);
@@ -104,16 +109,16 @@ export class InputManager {
 
     switch (e.key) {
       case "ArrowLeft":
-        CursorController.grid.move("left");
+        Game.controllers.cursorController.grid.move("left");
         break;
       case "ArrowRight":
-        CursorController.grid.move("right");
+        Game.controllers.cursorController.grid.move("right");
         break;
       case "ArrowUp":
-        CursorController.grid.move("up");
+        Game.controllers.cursorController.grid.move("up");
         break;
       case "ArrowDown":
-        CursorController.grid.move("down");
+        Game.controllers.cursorController.grid.move("down");
         break;
       case "Enter":
         this.placeCardOnBoard();
@@ -121,7 +126,7 @@ export class InputManager {
       case "Backspace":
       case "Escape":
         renderer.restorePlayerHandCursor();
-        CursorController.grid.remove();
+        Game.controllers.cursorController.grid.remove();
         break;
     }
   }
@@ -141,12 +146,9 @@ export class InputManager {
     if (!card) return;
 
     if (card.count > 0) {
-      card.count--;
-      player.playerCards.push(card);
-
       if (debug.active) {
         console.log(
-          `Selected card: ${card.displayName} (remaining: ${card.count})`
+          `Selected card: ${card.displayName} (remaining: ${card.count - 1})`
         );
       }
 
@@ -154,20 +156,27 @@ export class InputManager {
       const newCardContainer = utils.createCardContainer(
         card,
         "blue",
-        player.handOffsetX,
+        this.playerManager.handOffsetX,
         Game.stage.canvas.height + 200
       );
 
+      // Add the card + container to the manager
+      this.playerManager.addCardToHand(card, newCardContainer);
+
       // Animate card into the hand
-      player.playerHand.animateCardToHand(
+      this.playerRenderer.animateCardToHand(
         newCardContainer,
-        player.playerHand.cardsInPlayerHand.length
+        this.playerManager.cardsInHand.length - 1
       );
 
       // Update hand visuals / selection board counts
-      player.cardManagerInstance.updateHandCards();
+      this.playerRenderer._updateHandAndPreviewZOrder();
+      // Force immediate update to selection board counts
+      //SelectionBoardRenderer.updateBoardCount(card.id, -1);
+      SelectionBoardRenderer.updateDisplay({ skipTween: true });
+      Game.stage.update();
 
-      if (player.playerCards.length === 5) {
+      if (this.playerManager.cardsInHand.length === 5) {
         UIManager.playerSelectingHand = false;
         ConfirmationController.show();
       }
@@ -184,17 +193,42 @@ export class InputManager {
    * Undo the last selection made by the player.
    */
   cancelLastSelection() {
-    if (player.playerCards.length === 0) return;
+    console.log("YES")
+  // Remove the last card
+  const lastCard = this.playerController.removeLastCard();
+  if (!lastCard) return;
 
-    player.playerHand.removeCardFromHand();
-    const lastCard = player.playerCards.pop();
-    if (lastCard) {
-      lastCard.count++;
-      player.cardManagerInstance.updateHandCards();
-      SelectionBoardRenderer.updateDisplay({ skipTween: true });
-      Game.stage.update();
-    }
+  const sb = UIManager.selectionBoard;
+
+  console.group("=== cancelLastSelection LOG ===");
+  console.log("lastCard removed:", lastCard.name);
+
+  // Stage info
+  console.log("Game.stage contains sb.container?", Game.stage.contains(sb.container));
+  console.log("sb.container child count:", sb.container.numChildren);
+
+  // Displayed cards info
+  if (sb.displayedCards && sb.displayedCards.length > 0) {
+    sb.displayedCards.forEach((c, i) => {
+      console.log(
+        `displayedCard[${i}] id=${c.id} name=${c.displayName} count=${c.count} colour=${c.colour} visible=${c.countText?.visible}`
+      );
+      if (!sb.shownCards.children.includes(c.countText)) {
+        console.warn(`--> countText for card ${c.id} not in sb.shownCards!`);
+      }
+    });
+  } else {
+    console.warn("No displayedCards found on selection board!");
   }
+
+  // Cursor info
+  console.log("playerHandSelectionCursor attached?", Game.stage.contains(player.playerHandSelectionCursor));
+  console.groupEnd();
+
+  // Continue with existing visual updates
+  this.playerRenderer._updateHandAndPreviewZOrder();
+  SelectionBoardRenderer.populate(SelectionBoardUI.controller);
+}
 
   /**
    * Apply the player's choice from the confirmation box.
@@ -202,28 +236,41 @@ export class InputManager {
    */
   handleConfirmationChoice(forcedChoice) {
     const choice =
-      forcedChoice || (UIManager.confirmation.selectedChoice === 0 ? "yes" : "no");
+      forcedChoice ||
+      (UIManager.confirmation.selectedChoice === 0 ? "yes" : "no");
 
     if (choice === "yes") {
       Game.stage.removeChild(UIManager.selectionBoard.container);
       Game.stage.removeChild(UIManager.confirmation.container);
-      CursorController.confirmation.remove();
+      Game.controllers.cursorController.confirmation.remove();
       Game.startGame();
     } else {
+      Game.stage.removeChild(UIManager.confirmation.container);
+      Game.controllers.cursorController.confirmation.remove();
+
+      // reset logical hand
+      this.playerController.resetHand();
+      
+      // update board counts
       for (let i = 0; i < 5; i++) {
-        const lastCard = player.playerCards.pop();
-        lastCard.count++;
-        player.cardManagerInstance.updateHandCards();
+        const lastCard = this.playerManager.playerCards.pop();
+        if (lastCard) {
+          SelectionBoardRenderer.updateBoardCount(lastCard.id, +1);
+        }
+        this.playerRenderer._updateHandAndPreviewZOrder();
       }
 
-      Game.stage.removeChild(UIManager.confirmation.container);
-      CursorController.confirmation.remove();
+      // restore selection cursor
+      Game.controllers.cursorController.selection.place();
+      SelectionBoardRenderer.updateCursor(SelectionBoardUI.controller);
 
-      player.playerHand.resetAnimatedHand();
+      // show preview card
       UIManager.selectionBoard.showPreviewCard();
 
       UIManager.playerConfirming = false;
       UIManager.playerSelectingHand = true;
+
+      Game.stage.update(); // force update
     }
   }
 
@@ -233,23 +280,31 @@ export class InputManager {
    */
   playSelectedCard(renderer) {
     // Remove hand cursor
-    CursorController.playerHand.remove();
+    Game.controllers.cursorController.playerHand.remove();
 
     // Set default selected cell BEFORE placing the cursor
     UIManager.selectedRow = 2;
     UIManager.selectedColumn = 2;
 
     // Place grid cursor using current selectedRow/Column
-    CursorController.grid.place();
+    Game.controllers.cursorController.grid.place();
 
     // Immediately hide info box now that placement is active
     renderer.toggleInfoBox(false);
 
     // Remove hand cursor from stage
-    Game.stage.removeChild(player.playerHandCursor);
+    Game.stage.removeChild(this.playerManager.playerHandCursor);
 
     // Enter placement mode
     UIManager.playerSelectingPlacement = true;
+
+    // Actually play the card
+    const selectedIndex = UIManager.selectedCardNumber;
+    const selectedCard = this.playerManager.cardsInHand[selectedIndex];
+    if (!selectedCard) {
+      console.warn("No card selected!");
+      return;
+    }
   }
 
   /**
@@ -257,18 +312,29 @@ export class InputManager {
    */
   placeCardOnBoard() {
     if (!BoardManager.cellOccupied()) {
-      player.cardsInPlayerHand.splice(UIManager.selectedCardNumber, 1);
-      CursorController.grid.remove();
+      const card = this.playerManager.cardsInHand[UIManager.selectedCardNumber];
+      if (!card) return console.warn("No card selected!");
 
-      placementController.placeCard(
-        UIManager.selectedCard,
-        offsets.gameOffsetX +
-          offsets.cellWidth * (UIManager.selectedColumn - 1) +
-          offsets.cardOffsetX,
-        offsets.gameOffsetY +
-          offsets.cellHeight * (UIManager.selectedRow - 1) +
-          offsets.cardOffsetY
+      // remove from logical hand first
+      this.playerManager.cardsInHand.splice(UIManager.selectedCardNumber, 1);
+
+      // remove cursor before placement
+      Game.controllers.cursorController.grid.remove();
+
+      // pass card to placement controller
+      this.placementController.placeCard(
+        card,
+        offsets.gameOffsetX + offsets.cellWidth * (UIManager.selectedColumn - 1) + offsets.cardOffsetX,
+        offsets.gameOffsetY + offsets.cellHeight * (UIManager.selectedRow - 1) + offsets.cardOffsetY
       );
+
+      // update selectedCardIndex & selectedCard
+      this.playerManager.selectedCardIndex = 0;
+      this.playerManager.selectedCard = this.playerManager.cardsInHand[0] || null;
+
+      // update UIManager for cursor logic
+      UIManager.selectedCardNumber = 0;
+      UIManager.selectedCard = this.playerManager.selectedCard;
     }
   }
 }

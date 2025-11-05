@@ -3,7 +3,6 @@ import { player } from "../render/player.js";
 import { UIManager } from "../managers/UIManager.js";
 import { ai } from "./ai.js";
 import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
-import { CursorController } from "../controllers/CursorController.js";
 import { Game } from "./game.js";
 import { config } from "../config.js";
 import { offsets } from "../constants/offsets.js";
@@ -18,20 +17,35 @@ export const utils = {
    */
   _createScaledBitmap(src, targetWidth, targetHeight, onReady) {
     const bmp = new createjs.Bitmap(src);
-
+    console.log("_createdScaledBitmap:", src);
     const applyScale = () => {
-      bmp.scaleX = targetWidth / bmp.image.width;
-      bmp.scaleY = targetHeight / bmp.image.height;
-      if (onReady) {
-        onReady(bmp);
+      // Only scale once image dimensions are available
+      if (bmp.image.width && bmp.image.height) {
+        bmp.scaleX = targetWidth / bmp.image.width;
+        bmp.scaleY = targetHeight / bmp.image.height;
+      } else {
+        // fallback if somehow width/height still 0
+        bmp.scaleX = 1;
+        bmp.scaleY = 1;
       }
+
+      if (onReady) onReady(bmp);
     };
 
-    if (!bmp.image.complete) {
-      bmp.image.onload = applyScale;
-    } else {
-      applyScale();
+    // Ensure applyScale runs after image is fully loaded
+    bmp.image.onload = applyScale;
+
+    // For cached images, onload may never fire in some browsers, so call immediately if complete
+    if (bmp.image.complete) {
+      // Schedule on next tick to let onload fire first if possible
+      setTimeout(applyScale, 0);
     }
+
+    // Optional: handle error
+    bmp.image.onerror = () => {
+      console.warn("Failed to load image:", src);
+      applyScale();
+    };
 
     return bmp;
   },
@@ -207,16 +221,8 @@ export const utils = {
       // Add selection board cards
       SelectionBoardUI.initialise(player.ownedCards);
 
-      // Add container to stage and set up selection cursor
-      if (UIManager.selectionBoard.container.parent) {
-        UIManager.selectionBoard.container.parent.removeChild(
-          UIManager.selectionBoard.container
-        );
-      }
-      Game.stage.addChild(UIManager.selectionBoard.container);
-
       // place selection cursor and allow user to pick
-      CursorController.selection.place();
+      Game.controllers.cursorController.selection.place();
       UIManager.playerSelectingHand = true;
     }
   },

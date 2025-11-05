@@ -1,7 +1,6 @@
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/UIManager.js";
 import { UIRenderer } from "../ui/UIRenderer.js";
-import { CursorController } from "../controllers/CursorController.js";
 
 /**
  * Controller responsible for showing and managing the
@@ -17,6 +16,10 @@ export const ConfirmationController = {
    */
   show() {
     const conf = UIManager.confirmation;
+
+    if (Game.controllers.cursorController.selection) {
+      Game.controllers.cursorController.selection.remove();
+    }
 
     // Clear any previous children to avoid duplicates
     conf.container.removeAllChildren();
@@ -36,8 +39,17 @@ export const ConfirmationController = {
     // Add container to the stage
     Game.stage.addChild(conf.container);
 
+    // Create cursor if it doesn't exist
+    if (!Game.controllers.cursorController.confirmation) {
+      Game.controllers.cursorController.confirmation = new Cursor({
+        container: conf.container,
+        x: conf.background.x + 20, // starting x
+        y: conf.background.y + 60, // starting y
+      });
+    }
+
     // Position the cursor properly
-    CursorController.confirmation.place();
+    Game.controllers.cursorController.confirmation.place();
 
     // Hide any preview cards while confirmation is active
     UIManager.selectionBoard.hidePreviewCard();

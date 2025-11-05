@@ -1,5 +1,4 @@
 import { BoardManager } from "../managers/BoardManager.js";
-import { player } from "../render/player.js";
 import { ai } from "../game/ai.js";
 import { UIManager } from "../managers/UIManager.js";
 import { utils } from "../game/utils.js";
@@ -15,7 +14,8 @@ import { offsets } from "../constants/offsets.js";
  * applying element effects, and swapping turns.
  */
 export class PlacementController {
-  constructor() {
+  constructor(playerManager) {
+    this.playerManager = playerManager;
     /** @type {FlippingRenderer} Handles card flipping animations */
     this.flippingRenderer = new FlippingRenderer();
 
@@ -110,10 +110,18 @@ export class PlacementController {
     if (debug.active) debug.logTurn();
 
     if (utils.getPlayerTurn() === "blue") {
-      player.playedPlayerCardCount++;
-      UIManager.selectedCard = player.cardsInPlayerHand[UIManager.selectedCardNumber];
+      // reset selection
+      this.playerManager.selectedCardIndex = 0;
+      this.playerManager.selectedCard = this.playerManager.cardsInHand[0] || null;
+      UIManager.selectedCardNumber = 0;
+      UIManager.selectedCard = this.playerManager.selectedCard;
 
-      Game.stage.addChild(player.playerHandCursor);
+      this.playerManager.playedCardsCount++;
+      
+      // place the cursor on the top card now
+      Game.controllers.cursorController.playerHand.place();
+
+      Game.stage.addChild(this.playerManager.playerHandCursor);
       UIManager.selectedCard.x -= 30;
       Game.stage.setChildIndex(UIManager.infoBox.container, Game.stage.getNumChildren() - 1);
       UIManager.infoBox.container.visible = true;
@@ -151,17 +159,9 @@ export class PlacementController {
     };
 
     if (utils.getPlayerTurn() === "blue") {
-      animateDown(player.cardsInPlayerHand, player.cardsAboveSelection);
-
-      if (UIManager.selectedCardNumber === 0) {
-        player.playerHandCursor.y += offsets.handCardOffset;
-        UIManager.selectedCard = player.cardsInPlayerHand[UIManager.selectedCardNumber];
-      } else {
-        UIManager.selectedCardNumber--;
-        UIManager.selectedCard = player.cardsInPlayerHand[UIManager.selectedCardNumber];
-        player.cardsAboveSelection--;
-      }
-    } else if (utils.getPlayerTurn() === "red") {
+      this.playerManager.shiftCardsDown(offsets);
+    } else {
+      // AI logic
       animateDown(ai.cardsInAIHand, ai.aiCardsAboveSelection);
     }
   }

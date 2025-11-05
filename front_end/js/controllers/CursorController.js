@@ -1,11 +1,13 @@
 import { CursorManager } from "../managers/CursorManager.js";
-import { CursorRenderer } from "../ui/CursorRenderer.js";
 import { debug } from "../debug.js";
+import { Game } from "../game/game.js";
+import { UIManager } from "../managers/UIManager.js";
+import { UIController } from "./UIController.js";
 
 /**
  * High-level controller that bridges cursor state and visual updates.
  */
-export const CursorController = {
+export const CursorController = (cursorRenderer) => ({
   // -------------------------
   // Selection (selection board) cursor
   // -------------------------
@@ -15,7 +17,7 @@ export const CursorController = {
      */
     place() {
       CursorManager.selection.initPosition();
-      CursorRenderer.selection.place();
+      cursorRenderer.selection.place();
 
       if (debug.active) {
         console.log("CursorController.selection.place()");
@@ -28,8 +30,8 @@ export const CursorController = {
      */
     move(direction) {
       CursorManager.selection.move(direction);
-      CursorRenderer.selection.updatePosition();
-      CursorRenderer.selection.ensurePopulated();
+      cursorRenderer.selection.updatePosition();
+      cursorRenderer.selection.ensurePopulated();
 
       if (debug.active) {
         console.log("CursorController.selection.move() ->", direction);
@@ -41,7 +43,7 @@ export const CursorController = {
      */
     remove() {
       CursorManager.selection.clear();
-      CursorRenderer.selection.remove();
+      cursorRenderer.selection.remove();
 
       if (debug.active) {
         console.log("CursorController.selection.remove()");
@@ -58,7 +60,7 @@ export const CursorController = {
      */
     place() {
       CursorManager.confirmation.resetChoice();
-      CursorRenderer.confirmation.place();
+      cursorRenderer.confirmation.place();
 
       if (debug.active) {
         console.log("CursorController.confirmation.place()");
@@ -74,7 +76,7 @@ export const CursorController = {
       const changed = CursorManager.confirmation.move(direction);
 
       if (changed) {
-        CursorRenderer.confirmation.updatePosition();
+        cursorRenderer.confirmation.updatePosition();
       }
 
       if (debug.active) {
@@ -87,7 +89,7 @@ export const CursorController = {
      */
     remove() {
       CursorManager.confirmation.clear();
-      CursorRenderer.confirmation.remove();
+      cursorRenderer.confirmation.remove();
 
       if (debug.active) {
         console.log("CursorController.confirmation.remove()");
@@ -104,10 +106,19 @@ export const CursorController = {
      */
     place() {
       CursorManager.playerHand.init();
-      CursorRenderer.playerHand.place();
+      cursorRenderer.playerHand.place();
+
+      // Update info box for the newly selected card
+      const playerManager = Game.managers.playerManager;
+      const selectedIndex = UIManager.selectedCardNumber ?? 0;
+      const newSelectedCard = playerManager.cardsInHand[selectedIndex];
+      if (newSelectedCard) {
+        UIManager.selectedCard = newSelectedCard;
+        UIController.updateInfoBox();
+      }
 
       if (debug.active) {
-        console.log("CursorController.playerHand.place()");
+        console.log("CursorController.playerHand.place() -> infoBox updated");
       }
     },
 
@@ -119,8 +130,8 @@ export const CursorController = {
       const moved = CursorManager.playerHand.move(direction);
 
       if (moved) {
-        CursorRenderer.playerHand.updatePosition();
-        CursorRenderer.playerHand.syncSelection();
+        cursorRenderer.playerHand.updatePosition();
+        cursorRenderer.playerHand.syncSelection();
       }
 
       if (debug.active) {
@@ -133,7 +144,7 @@ export const CursorController = {
      */
     remove() {
       CursorManager.playerHand.clear();
-      CursorRenderer.playerHand.remove();
+      cursorRenderer.playerHand.remove();
 
       if (debug.active) {
         console.log("CursorController.playerHand.remove()");
@@ -150,7 +161,7 @@ export const CursorController = {
      */
     place() {
       CursorManager.grid.init();
-      CursorRenderer.grid.place();
+      cursorRenderer.grid.place();
 
       if (debug.active) {
         console.log("CursorController.grid.place()");
@@ -165,7 +176,7 @@ export const CursorController = {
       const moved = CursorManager.grid.move(direction);
 
       if (moved) {
-        CursorRenderer.grid.updatePosition();
+        cursorRenderer.grid.updatePosition();
       }
 
       if (debug.active) {
@@ -178,11 +189,11 @@ export const CursorController = {
      */
     remove() {
       CursorManager.grid.clear();
-      CursorRenderer.grid.remove();
+      cursorRenderer.grid.remove();
 
       if (debug.active) {
         console.log("CursorController.grid.remove()");
       }
     },
   },
-};
+});

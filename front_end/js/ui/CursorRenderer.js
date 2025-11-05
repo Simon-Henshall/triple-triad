@@ -1,7 +1,6 @@
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/UIManager.js";
 import { UIController } from "../controllers/UIController.js";
-import { player } from "../render/player.js";
 import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
 import { SelectionBoardRenderer } from "../ui/SelectionBoardRenderer.js";
 import { debug } from "../debug.js";
@@ -10,7 +9,7 @@ import { debug } from "../debug.js";
  * Handles all visual rendering of cursors.
  * Works with CreateJS stage and visual containers, separate from logical state.
  */
-export const CursorRenderer = {
+export const CursorRenderer = (playerManager, playerRenderer) => ({
   /**
    * Visual handling of the selection board cursor.
    */
@@ -19,7 +18,8 @@ export const CursorRenderer = {
      * Place the selection cursor on the stage.
      */
     place() {
-      Game.stage.addChild(player.playerHandSelectionCursor);
+      playerManager.playerHandSelectionCursor.visible = true;
+      Game.stage.addChild(playerManager.playerHandSelectionCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -35,13 +35,13 @@ export const CursorRenderer = {
       if (controller !== undefined && controller !== null) {
         const sb = UIManager.selectionBoard;
 
-        if (player.playerHandSelectionCursor !== undefined &&
+        if (playerManager.playerHandSelectionCursor !== undefined &&
             sb.shownCards !== undefined &&
             sb.background !== undefined) {
           const relativeIndex = controller.selectedIndex - controller.pageStart;
           const rowStep = 35;
 
-          player.playerHandSelectionCursor.y = sb.background.y + 48 + rowStep * relativeIndex;
+          playerManager.playerHandSelectionCursor.y = sb.background.y + 48 + rowStep * relativeIndex;
         }
       }
 
@@ -64,7 +64,7 @@ export const CursorRenderer = {
      * Remove the selection cursor from the stage.
      */
     remove() {
-      Game.stage.removeChild(player.playerHandSelectionCursor);
+      Game.stage.removeChild(playerManager.playerHandSelectionCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -121,7 +121,8 @@ export const CursorRenderer = {
      * Place the player hand cursor on the stage.
      */
     place() {
-      Game.stage.addChild(player.playerHandCursor);
+      playerManager.playerHandCursor.visible = true;
+      Game.stage.addChild(playerManager.playerHandCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -142,17 +143,17 @@ export const CursorRenderer = {
      */
     syncSelection() {
       UIManager.previouslySelectedCard = UIManager.selectedCard;
-      UIManager.selectedCard = player.cardsInPlayerHand[UIManager.selectedCardNumber];
+      UIManager.selectedCard = playerManager.cardsInHand[UIManager.selectedCardNumber];
 
       UIController.updateInfoBox();
-      player.indentSelectedCard();
+      playerRenderer.indentSelectedCard(UIManager.selectedCard);
     },
 
     /**
      * Remove the player hand cursor from the stage.
      */
     remove() {
-      Game.stage.removeChild(player.playerHandCursor);
+      Game.stage.removeChild(playerManager.playerHandCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -200,4 +201,4 @@ export const CursorRenderer = {
       }
     },
   },
-};
+});

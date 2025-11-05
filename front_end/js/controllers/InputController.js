@@ -8,8 +8,8 @@ import { debug } from "../debug.js";
  * Delegates logic to InputManager and visual updates to InputRenderer.
  */
 export class InputController {
-  constructor() {
-    this.manager = new InputManager();
+  constructor(inputManager) {
+    this.manager = inputManager;   // already has playerManager etc.
     this.renderer = new InputRenderer();
   }
 

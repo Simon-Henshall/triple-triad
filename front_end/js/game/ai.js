@@ -1,11 +1,9 @@
 import { offsets } from "../constants/offsets.js";
 import { BoardManager } from "../managers/BoardManager.js";
 import { UIManager } from "../managers/UIManager.js";
-import { PlacementController } from "../controllers/PlacementController.js";
 import { aiHand } from "./aiHand.js";
+import { Game } from "./game.js";
 import { getGameStateInstance } from "./game.state.js";
-
-const placementController = new PlacementController();
 
 export const ai = {
   handOffsetX: 0,
@@ -46,7 +44,7 @@ export const ai = {
     const GameStateInstance = getGameStateInstance();
 
     setTimeout(() => {
-      placementController.placeCard(
+      Game.controllers.placementController.placeCard(
         aiSelectedCard,
         offsets.gameOffsetX +
           offsets.cellWidth * (UIManager.selectedColumn - 1) +

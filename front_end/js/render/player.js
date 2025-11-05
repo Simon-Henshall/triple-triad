@@ -1,7 +1,6 @@
 import { UIManager } from "../managers/UIManager.js";
 import { utils } from "../game/utils.js";
 import { Game } from '../game/game.js';
-import { playerHand } from './playerHand.js';
 
 /**
  * @namespace player
@@ -20,9 +19,6 @@ export const player = {
   /** @type {Array<createjs.Container>} Cards currently in player's hand (displayed on stage) */
   cardsInPlayerHand: [],
 
-  /** @type {Array<Object>} Current randomised hand */
-  playerHand: playerHand,
-
   /** @type {number} Number of cards above current selection */
   cardsAboveSelection: 0,
 
@@ -35,13 +31,11 @@ export const player = {
   /** @type {number} Total blue cards (score) */
   totalBlueCards: 5,
 
-  /** @type {createjs.Bitmap|null} Player hand cursor */
-  playerHandCursor: null,
-
   /** @type {createjs.Bitmap|null} Player hand selection cursor */
   playerHandSelectionCursor: null,
 
   /**
+   * TODO: Not called at all!
    * Indent the selected card to visually indicate selection.
    */
   indentSelectedCard() {

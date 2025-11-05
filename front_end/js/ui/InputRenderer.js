@@ -1,4 +1,3 @@
-import { CursorController } from "../controllers/CursorController.js";
 import { UIManager } from "../managers/UIManager.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
@@ -14,7 +13,7 @@ export class InputRenderer {
    * @param {"left"|"up"|"right"|"down"} direction
    */
   moveSelectionCursor(direction) {
-    CursorController.selection.move(direction);
+    Game.controllers.cursorController.selection.move(direction);
     if (debug.active) {
       console.log(`Selection cursor moved: ${direction}`);
     }
@@ -25,7 +24,7 @@ export class InputRenderer {
    * @param {"up"|"down"} direction
    */
   movePlayerHandCursor(direction) {
-    CursorController.playerHand.move(direction);
+    Game.controllers.cursorController.playerHand.move(direction);
     if (debug.active) {
       console.log(`Player hand cursor moved: ${direction}`);
     }
@@ -36,7 +35,7 @@ export class InputRenderer {
    * @param {"up"|"down"} direction
    */
   moveConfirmationCursor(direction) {
-    CursorController.confirmation.move(direction);
+    Game.controllers.cursorController.confirmation.move(direction);
     if (debug.active) {
       console.log(`Confirmation cursor moved: ${direction}`);
     }
@@ -46,7 +45,7 @@ export class InputRenderer {
    * Restore player hand cursor visually (used on cancel).
    */
   restorePlayerHandCursor() {
-    CursorController.playerHand.place();
+    Game.controllers.cursorController.playerHand.place();
     if (debug.active) {
       console.log("Player hand cursor restored");
     }

@@ -3,6 +3,7 @@ import { utils } from "../game/utils.js";
 import { config } from "../config.js";
 import { player } from "../render/player.js";
 import { UIManager } from "../managers/UIManager.js";
+import { SelectionBoardUI } from "./SelectionBoardUI.js";
 
 /**
  * Renders the selection board using the UIManager.selectionBoard object
@@ -18,10 +19,18 @@ export const SelectionBoardRenderer = {
    */
   populate(controller) {
     const sb = UIManager.selectionBoard;
+    sb.displayedCards = [];
 
     // Ensure container exists and is the same object the rest of the app expects.
     if (sb.container === undefined || sb.container === null) {
       sb.container = new createjs.Container();
+    }
+    
+    // Ensure container is on stage
+    // NB: This is present on hard refresh, but absent on soft refresh
+    if (!Game.stage.contains(sb.container)) {
+      Game.stage.addChild(sb.container);
+      console.log("Reattached selectionBoard container to stage.");
     }
 
     // Make sure we use the background already created by pickPlayerCards if present.
@@ -80,22 +89,38 @@ export const SelectionBoardRenderer = {
       countText.x = baseX + 380;
       countText.y = rowY;
       countText.textBaseline = "alphabetic";
+      if (cardData.count === 0) {
+        countText.color = "#909497";
+      }
+
+      // Extract ID number from image string
+      const match = cardData.image.match(/\d+$/);
+      cardData.id = match ? parseInt(match[0], 10) : i;
+
+      // Link the display text objects back to the data model
+      cardData.nameText = nameText;
+      cardData.countText = countText;
+
+      // Add cardData to selectionBoard's displayedCards array
+      if (!sb.displayedCards.find(c => c.id === cardData.id)) {
+        sb.displayedCards.push(cardData);
+      }
 
       // Icon (hide until loaded to avoid flash)
       const icon = utils._createScaledBitmap(
         "front_end/images/selection_card.png",
-        30, // Target width
-        30, // Target height
+        30,
+        30,
         (bmp) => {
-          if (bmp.image && bmp.image.width && bmp.image.height) {
+          if (bmp.image && bmp.image.complete) {
             const targetSize = 30;
             const scaleX = targetSize / bmp.image.width;
             const scaleY = targetSize / bmp.image.height;
             bmp.scaleX = scaleX;
             bmp.scaleY = scaleY;
+            bmp.visible = true;
+            Game.stage.update();
           }
-          bmp.visible = true;
-          Game.stage.update();
         }
       );
 
@@ -132,6 +157,41 @@ export const SelectionBoardRenderer = {
     }
     if (sb.totalPagesDisplay) {
       sb.totalPagesDisplay.text = sb.totalPages;
+    }
+
+    Game.stage.update();
+  },
+
+  updateBoardCount(cardId, delta) {
+    const sb = UIManager.selectionBoard;
+    if (!sb || !sb.displayedCards || !Game.stage) {
+      console.warn("updateBoardCount: no displayedCards");
+      return;
+    }
+
+    const card =
+      sb.displayedCards.find((c) => c.id === cardId) ||
+      SelectionBoardUI.controller.cards.find((c) => c.id === cardId);
+
+    if (!card) {
+      console.warn("updateBoardCount: card not found for id", cardId);
+      return;
+    }
+
+    // adjust model if caller supplied delta (keeps backward compatibility)
+    if (typeof delta === "number" && delta !== 0) {
+      card.count = (card.count || 0) + delta;
+    }
+
+    // ensure visible text reflects logical count
+    if (card.countText) {
+      card.countText.text = String(card.count);
+      // grey out if count reaches zero, restore white otherwise
+      card.colour = card.count === 0 ? "#909497" : "#ffffff";
+      card.countText.color = card.colour;
+    } else {
+      // if no countText (shouldn't happen for visible cards), log for debugging
+      console.warn("updateBoardCount: card has no countText", card);
     }
 
     Game.stage.update();

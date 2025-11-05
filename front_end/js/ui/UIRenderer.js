@@ -59,7 +59,9 @@ export const UIRenderer = {
       "90px Arial",
       "#ffffff"
     );
-    player.playerCardCount.x = player.handOffsetX + offsets.cardWidth / 3;
+    // TODO: Swap to playerManager
+    //player.playerCardCount.x = playerManager.handOffsetX + offsets.cardWidth / 3;
+    player.playerCardCount.x = Game.stageWidth - (offsets.cardWidth);
     player.playerCardCount.y = Game.stageHeight - 15;
     player.playerCardCount.textBaseline = "alphabetic";
     Game.stage.addChild(player.playerCardCount);
@@ -141,6 +143,7 @@ export const UIRenderer = {
   /**
    * Updates info box contents dynamically based on current selection.
    * Updates player/AI card counts as well.
+   * TODO: WHY DOES THIS ALSO DO THE LATTER?! Extract this!
    */
   updateInfoBox() {
     const ui = UIManager;
