@@ -251,8 +251,9 @@ export const SelectionBoardRenderer = {
    */
   updateCursor(controller) {
     const sb = UIManager.selectionBoard;
-
-    if (!player.playerHandSelectionCursor || !sb.background) {
+    
+    if (!player.playerHandSelectionCursor) {
+      console.warn("updateCursor() error: no playerHandSelectionCursor");
       return;
     }
 

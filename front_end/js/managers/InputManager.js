@@ -193,42 +193,8 @@ export class InputManager {
    * Undo the last selection made by the player.
    */
   cancelLastSelection() {
-    console.log("YES")
-  // Remove the last card
-  const lastCard = this.playerController.removeLastCard();
-  if (!lastCard) return;
-
-  const sb = UIManager.selectionBoard;
-
-  console.group("=== cancelLastSelection LOG ===");
-  console.log("lastCard removed:", lastCard.name);
-
-  // Stage info
-  console.log("Game.stage contains sb.container?", Game.stage.contains(sb.container));
-  console.log("sb.container child count:", sb.container.numChildren);
-
-  // Displayed cards info
-  if (sb.displayedCards && sb.displayedCards.length > 0) {
-    sb.displayedCards.forEach((c, i) => {
-      console.log(
-        `displayedCard[${i}] id=${c.id} name=${c.displayName} count=${c.count} colour=${c.colour} visible=${c.countText?.visible}`
-      );
-      if (!sb.shownCards.children.includes(c.countText)) {
-        console.warn(`--> countText for card ${c.id} not in sb.shownCards!`);
-      }
-    });
-  } else {
-    console.warn("No displayedCards found on selection board!");
+    this.playerController.removeLastCard();
   }
-
-  // Cursor info
-  console.log("playerHandSelectionCursor attached?", Game.stage.contains(player.playerHandSelectionCursor));
-  console.groupEnd();
-
-  // Continue with existing visual updates
-  this.playerRenderer._updateHandAndPreviewZOrder();
-  SelectionBoardRenderer.populate(SelectionBoardUI.controller);
-}
 
   /**
    * Apply the player's choice from the confirmation box.
@@ -248,7 +214,7 @@ export class InputManager {
       Game.stage.removeChild(UIManager.confirmation.container);
       Game.controllers.cursorController.confirmation.remove();
 
-      // reset logical hand
+      // reset hand
       this.playerController.resetHand();
       
       // update board counts
