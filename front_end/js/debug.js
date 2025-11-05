@@ -1,9 +1,9 @@
-import { player } from './render/player.js';
 import { BoardManager } from './managers/BoardManager.js';
 import { UIManager } from "./managers/UIManager.js";
 import { utils } from './game/utils.js';
 import { ai } from './game/ai.js';
 import { config } from "./config.js";
+import { Game } from './game/game.js';
 
 export const debug = {
   active: true, // Toggle for debug mode
@@ -66,7 +66,8 @@ export const debug = {
    */
   logHands() {
     console.log("=============== PLAYER HAND ===============");
-    player.cardsInPlayerHand.forEach((card, i) => {
+    const playerManager = Game.managers.playerManager;
+    playerManager.cardsInPlayerHand.forEach((card, i) => {
       console.log(
         `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`
       );
@@ -86,11 +87,12 @@ export const debug = {
    */
   logTurn() {
     const currentPlayer = utils.getPlayerTurn();
+    const playerManager = Game.managers.playerManager;
     console.log(
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`
     );
     console.log(
-      `SCORE | Player: ${player.totalBlueCards} AI: ${ai.totalRedCards}`
+      `SCORE | Player: ${playerManager.totalBlueCards} AI: ${ai.totalRedCards}`
     );
     console.log(`Free cells remaining: ${BoardManager.freeCells.join(", ")}`);
     console.log("*****************************************");

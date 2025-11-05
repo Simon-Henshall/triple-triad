@@ -1,12 +1,9 @@
 import { FlippingRenderer } from "../ui/FlippingRenderer.js";
 import { directionMap } from "../constants/directions.js";
 import { utils } from "../game/utils.js";
-import { player } from "../render/player.js";
 import { ai } from "../game/ai.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/UIManager.js";
-
-const flippingRenderer = new FlippingRenderer();
 
 export class FlippingController {
   constructor(gameState, player, ai) {
@@ -47,6 +44,8 @@ export class FlippingController {
     targetCard.owner = this.getCurrentPlayerColour();
 
     // Update visual representation
+    const playerManager = Game.managers.playerManager;
+    const flippingRenderer = new FlippingRenderer(playerManager);
     flippingRenderer.replaceCard(targetCard);
 
     // Update counts
@@ -65,19 +64,20 @@ export class FlippingController {
    */
   updateOwnershipCounts(flippedCount) {
     const playerColour = this.getCurrentPlayerColour();
+    const playerManager = Game.managers.playerManager;
 
     const delta = {
       blue: { totalBlueCardsConfined: 1, totalRedCardsConfined: -1 },
       red: { totalBlueCardsConfined: -1, totalRedCardsConfined: 1 },
     };
 
-    player.totalBlueCards +=
+    playerManager.totalBlueCards +=
       delta[playerColour].totalBlueCardsConfined * flippedCount;
     ai.totalRedCards +=
       delta[playerColour].totalRedCardsConfined * flippedCount;
 
     ai.aiCardCount.text = ai.totalRedCards;
-    player.playerCardCount.text = player.totalBlueCards;
+    playerManager.playerCardCount = playerManager.totalBlueCards;
     Game.stage.update();
   }
 

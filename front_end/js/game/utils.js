@@ -1,5 +1,4 @@
 import { cards } from "../constants/cards.js";
-import { player } from "../render/player.js";
 import { UIManager } from "../managers/UIManager.js";
 import { ai } from "./ai.js";
 import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
@@ -131,7 +130,8 @@ export const utils = {
     });
   },
   pickPlayerCards(ownedCardsJSON) {
-    player.ownedCards = [];
+    const playerManager = Game.managers.playerManager;
+    playerManager.ownedCards = [];
     UIManager.selectionBoard.page = 1;
     UIManager.selectionBoard.selectedHandCardNumber = 0;
     UIManager.selectionBoard.displayedCards = [];
@@ -157,14 +157,14 @@ export const utils = {
         if (cardsCopy[i]) {
           cardsCopy[i].count = UIManager.cardCount;
           cardsCopy[i].colour = "#ffffff";
-          player.ownedCards.push(cardsCopy[i]);
+          playerManager.ownedCards.push(cardsCopy[i]);
         }
       }
     }
 
     // Either pick random cards or show selection board
     if (Game.rules.indexOf("random") != -1) {
-      player.playerCards = this.shuffle($.extend(true, [], player.ownedCards));
+      playerManager.playerCards = this.shuffle($.extend(true, [], playerManager.ownedCards));
       // populate AI cards and start game
       if (!ai.cardsInAIHand || ai.cardsInAIHand.length === 0) {
         ai.aiHand.populate();
@@ -219,7 +219,7 @@ export const utils = {
       ai.aiHand.populate();
 
       // Add selection board cards
-      SelectionBoardUI.initialise(player.ownedCards);
+      SelectionBoardUI.initialise(playerManager.ownedCards);
 
       // place selection cursor and allow user to pick
       Game.controllers.cursorController.selection.place();

@@ -1,7 +1,6 @@
 import { Game } from "../game/game.js";
 import { utils } from "../game/utils.js";
 import { config } from "../config.js";
-import { player } from "../render/player.js";
 import { UIManager } from "../managers/UIManager.js";
 import { SelectionBoardUI } from "./SelectionBoardUI.js";
 
@@ -251,8 +250,8 @@ export const SelectionBoardRenderer = {
    */
   updateCursor(controller) {
     const sb = UIManager.selectionBoard;
-    
-    if (!player.playerHandSelectionCursor) {
+    const playerManager = Game.managers.playerManager;
+    if (!playerManager.playerHandSelectionCursor) {
       console.warn("updateCursor() error: no playerHandSelectionCursor");
       return;
     }
@@ -260,15 +259,15 @@ export const SelectionBoardRenderer = {
     const relativeIndex = controller.selectedIndexOnPage;
     const rowStep = 35;
 
-    player.playerHandSelectionCursor.x = sb.background.x - 40;
-    player.playerHandSelectionCursor.y = sb.background.y + 48 + rowStep * relativeIndex;
+    playerManager.playerHandSelectionCursor.x = sb.background.x - 40;
+    playerManager.playerHandSelectionCursor.y = sb.background.y + 48 + rowStep * relativeIndex;
 
     // Ensure cursor is a child of the container above shownCards
-    if (!sb.container.children.includes(player.playerHandSelectionCursor)) {
-      sb.container.addChild(player.playerHandSelectionCursor);
+    if (!sb.container.children.includes(playerManager.playerHandSelectionCursor)) {
+      sb.container.addChild(playerManager.playerHandSelectionCursor);
     } else {
       const bgIndex = sb.container.getChildIndex(sb.background);
-      sb.container.setChildIndex(player.playerHandSelectionCursor, bgIndex + 2);
+      sb.container.setChildIndex(playerManager.playerHandSelectionCursor, bgIndex + 2);
     }
   },
 };

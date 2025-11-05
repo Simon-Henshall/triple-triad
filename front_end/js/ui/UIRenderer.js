@@ -1,6 +1,5 @@
 import { config } from "../config.js";
 import { offsets } from "../constants/offsets.js";
-import { player } from "../render/player.js";
 import { ai } from "../game/ai.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/UIManager.js";
@@ -38,9 +37,10 @@ export const UIRenderer = {
    * Removes previous counts to avoid duplicates.
    */
   drawCardCounts() {
+    const playerManager = Game.managers.playerManager;
     // Remove existing counts if present
     if (ai.aiCardCount) Game.stage.removeChild(ai.aiCardCount);
-    if (player.playerCardCount) Game.stage.removeChild(player.playerCardCount);
+    if (playerManager.playerCardCount) Game.stage.removeChild(playerManager.playerCardCount);
 
     // Create and position AI card count
     ai.aiCardCount = new createjs.Text(
@@ -54,17 +54,15 @@ export const UIRenderer = {
     Game.stage.addChild(ai.aiCardCount);
 
     // Create and position player card count
-    player.playerCardCount = new createjs.Text(
-      player.totalBlueCards,
+    playerManager.playerCardCount = new createjs.Text(
+      playerManager.totalBlueCards,
       "90px Arial",
       "#ffffff"
     );
-    // TODO: Swap to playerManager
-    //player.playerCardCount.x = playerManager.handOffsetX + offsets.cardWidth / 3;
-    player.playerCardCount.x = Game.stageWidth - (offsets.cardWidth);
-    player.playerCardCount.y = Game.stageHeight - 15;
-    player.playerCardCount.textBaseline = "alphabetic";
-    Game.stage.addChild(player.playerCardCount);
+    playerManager.playerCardCount.x = Game.stageWidth - (offsets.cardWidth);
+    playerManager.playerCardCount.y = Game.stageHeight - 15;
+    playerManager.playerCardCount.textBaseline = "alphabetic";
+    Game.stage.addChild(playerManager.playerCardCount);
 
     Game.stage.update();
   },
@@ -147,6 +145,7 @@ export const UIRenderer = {
    */
   updateInfoBox() {
     const ui = UIManager;
+    const playerManager = Game.managers.playerManager;
 
     // Update selected card name
     if (ui.infoBox.cardName && ui.selectedCard) {
@@ -166,8 +165,8 @@ export const UIRenderer = {
 
     // Update card counts
     if (ai.aiCardCount) ai.aiCardCount.text = ai.totalRedCards;
-    if (player.playerCardCount)
-      player.playerCardCount.text = player.totalBlueCards;
+    if (playerManager.playerCardCount)
+      playerManager.playerCardCount = playerManager.totalBlueCards;
 
     Game.stage.update();
   },

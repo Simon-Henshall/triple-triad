@@ -1,6 +1,4 @@
-// game.js
 import { BoardRenderer } from "../ui/BoardRenderer.js";
-import { player } from "../render/player.js";
 import { UIManager } from "../managers/UIManager.js";
 import { UIRenderer } from "../ui/UIRenderer.js";
 import { ai } from "./ai.js";
@@ -73,13 +71,13 @@ export const Game = {
     const playerRenderer = Game.renderers.playerRenderer;
 
     // --- STEP 2: populate logical hand ---
-    player.playerCards = playerManager.cardsInHand.slice();
+    playerManager.playerCards = playerManager.cardsInHand.slice();
 
     // --- STEP 3: populate visual hands ---
     ai.aiHand.populate();
 
     // --- STEP 4: set first card for info box ---
-    const firstCard = player.playerCards[0];
+    const firstCard = playerManager.playerCards[0];
     if (firstCard) {
       UIManager.selectedCard = firstCard;
       playerRenderer.indentSelectedCard(firstCard);
@@ -102,9 +100,10 @@ export const Game = {
   },
 
   endGame() {
-    if (ai.totalRedCards > player.totalBlueCards) {
+    const playerManager = Game.managers.playerManager;
+    if (ai.totalRedCards > playerManager.totalBlueCards) {
       alert("lose");
-    } else if (player.totalBlueCards > ai.totalRedCards) {
+    } else if (playerManager.totalBlueCards > ai.totalRedCards) {
       alert("win");
     } else {
       alert("draw");

@@ -5,9 +5,6 @@ import { FlippingRenderer } from "../ui/FlippingRenderer.js";
 import { utils } from "./utils.js";
 import { offsets } from "../constants/offsets.js";
 import { config } from "../config.js";
-import { player } from "../render/player.js";
-
-const flippingRenderer = new FlippingRenderer();
 
 export const aiHand = {
   /**
@@ -21,7 +18,8 @@ export const aiHand = {
       // TODO: Update this to reference a stack of AI cards
       //GameStateInstance.hands.AI = utils.shuffle([...allAiCards]).slice(0, 5);
       // Temporary placeholder: use player cards until AI deck logic added
-      GameStateInstance.hands.AI = utils.shuffle([...player.ownedCards]).slice(0, 5);
+      const playerManager = Game.managers.playerManager;
+      GameStateInstance.hands.AI = utils.shuffle([...playerManager.ownedCards]).slice(0, 5);
     }
 
     // Clear any existing containers from the stage (safety reset)
@@ -51,6 +49,8 @@ export const aiHand = {
 
     // Flip AI hand if "open" rule applies
     if (Game.rules?.includes("open")) {
+      const playerManager = Game.managers.playerManager;
+      const flippingRenderer = new FlippingRenderer(playerManager);
       flippingRenderer.flipAIHand();
     }
 

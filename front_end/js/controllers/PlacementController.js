@@ -17,7 +17,7 @@ export class PlacementController {
   constructor(playerManager) {
     this.playerManager = playerManager;
     /** @type {FlippingRenderer} Handles card flipping animations */
-    this.flippingRenderer = new FlippingRenderer();
+    this.flippingRenderer = new FlippingRenderer(playerManager);
 
     /** @type {PlacementManager} Handles the placement animations and completion callbacks */
     this.manager = new PlacementManager(this);
