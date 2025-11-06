@@ -1,7 +1,7 @@
 import { cards } from "../constants/cards.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { ai } from "./ai.js";
-import { SelectionBoardUI } from "../ui/selection-board-ui.js";
+import { SelectionBoardUI } from "../renderers/selection-board-ui.js";
 import { Game } from "./game.js";
 import { config } from "../config.js";
 import { offsets } from "../constants/offsets.js";

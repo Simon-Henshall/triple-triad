@@ -1,5 +1,5 @@
 import { Game } from "../game/game.js";
-import { SelectionBoardRenderer } from "../ui/selection-board-renderer.js";
+import { SelectionBoardRenderer } from "../renderers/selection-board-renderer.js";
 
 /**
  * Bridges player input, logical state, and rendering.

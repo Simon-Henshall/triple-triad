@@ -1,5 +1,5 @@
 import { Game } from "../game/game.js";
-import { SelectionBoardRenderer } from "../ui/selection-board-renderer.js";
+import { SelectionBoardRenderer } from "../renderers/selection-board-renderer.js";
 
 /**
  * Manages all logical state of the player: deck, hand, played cards, and counts.

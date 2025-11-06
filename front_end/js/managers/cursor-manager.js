@@ -1,6 +1,6 @@
 import { UIManager } from "./ui-manager.js";
 import { offsets } from "../constants/offsets.js";
-import { SelectionBoardUI } from "../ui/selection-board-ui.js";
+import { SelectionBoardUI } from "../renderers/selection-board-ui.js";
 import { BoardManager } from "../managers/board-manager.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";

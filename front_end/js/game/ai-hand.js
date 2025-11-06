@@ -1,7 +1,7 @@
 import { getGameStateInstance } from "./game.state.js";
 import { ai } from "./ai.js";
 import { Game } from "./game.js";
-import { FlippingRenderer } from "../ui/flipping-renderer.js";
+import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { utilities } from "./utilities.js";
 import { offsets } from "../constants/offsets.js";
 import { config } from "../config.js";

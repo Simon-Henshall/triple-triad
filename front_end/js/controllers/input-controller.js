@@ -1,5 +1,5 @@
 import { UIManager } from "../managers/ui-manager.js";
-import { InputRenderer } from "../ui/input-renderer.js";
+import { InputRenderer } from "../renderers/input-renderer.js";
 import { debug } from "../debug.js";
 
 /**

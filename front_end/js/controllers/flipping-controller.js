@@ -1,4 +1,4 @@
-import { FlippingRenderer } from "../ui/flipping-renderer.js";
+import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { directionMap } from "../constants/directions.js";
 import { utilities } from "../game/utilities.js";
 import { ai } from "../game/ai.js";

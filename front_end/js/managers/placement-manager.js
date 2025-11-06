@@ -1,7 +1,7 @@
 import { Game } from "../game/game.js";
 import { utilities } from "../game/utilities.js";
 import { FlippingController } from "../controllers/flipping-controller.js";
-import { PlacementRenderer } from "../ui/placement-renderer.js";
+import { PlacementRenderer } from "../renderers/placement-renderer.js";
 
 const flippingController = new FlippingController();
 

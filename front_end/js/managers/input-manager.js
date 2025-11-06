@@ -1,5 +1,5 @@
-import { SelectionBoardUI } from "../ui/selection-board-ui.js";
-import { SelectionBoardRenderer } from "../ui/selection-board-renderer.js";
+import { SelectionBoardUI } from "../renderers/selection-board-ui.js";
+import { SelectionBoardRenderer } from "../renderers/selection-board-renderer.js";
 import { UIManager } from "./ui-manager.js";
 import { utilities } from "../game/utilities.js";
 import { ConfirmationController } from "../controllers/confirmation-controller.js";

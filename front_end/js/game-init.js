@@ -1,20 +1,20 @@
 import { config } from "./config.js";
 import { offsets } from "./constants/offsets.js";
 import { UIManager } from "./managers/ui-manager.js";
-import { UIRenderer } from "./ui/ui-renderer.js";
+import { UIRenderer } from "./renderers/ui-renderer.js";
 import { utilities } from "./game/utilities.js";
 import { ai } from "./game/ai.js";
 import { Game } from "./game/game.js";
 
 // Managers & Controllers
 import { PlayerManager } from "./managers/player-manager.js";
-import { PlayerRenderer } from "./ui/player-renderer.js";
+import { PlayerRenderer } from "./renderers/player-renderer.js";
 import { PlayerController } from "./controllers/player-controller.js";
 import { PlacementManager } from "./managers/placement-manager.js";
 import { PlacementController } from "./controllers/placement-controller.js";
 import { InputManager } from "./managers/input-manager.js";
 import { CursorManager } from "./managers/cursor-manager.js";
-import { CursorRenderer } from "./ui/cursor-renderer.js";
+import { CursorRenderer } from "./renderers/cursor-renderer.js";
 import { CursorController } from "./controllers/cursor-controller.js";
 import { InputController } from "./controllers/input-controller.js";
 import { BoardManager } from "./managers/board-manager.js";

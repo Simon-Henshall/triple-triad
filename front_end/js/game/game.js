@@ -1,6 +1,6 @@
-import { BoardRenderer } from "../ui/board-renderer.js";
+import { BoardRenderer } from "../renderers/board-renderer.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { UIRenderer } from "../ui/ui-renderer.js";
+import { UIRenderer } from "../renderers/ui-renderer.js";
 import { ai } from "./ai.js";
 import { UIController } from "../controllers/ui-controller.js";
 
