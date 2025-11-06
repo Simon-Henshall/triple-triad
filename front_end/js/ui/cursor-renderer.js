@@ -67,7 +67,6 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Remove the selection cursor from the stage.
      */
     remove() {
-      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(playerManager.playerHandSelectionCursor);
       Game.stage.update();
 
@@ -113,7 +112,6 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Remove the confirmation cursor from the stage.
      */
     remove() {
-      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.confirmation.cursor);
       Game.stage.update();
 
@@ -164,7 +162,6 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Remove the player hand cursor from the stage.
      */
     remove() {
-      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(playerManager.playerHandCursor);
       Game.stage.update();
 
@@ -205,7 +202,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      */
     remove() {
       UIManager.playerSelectingPlacement = false;
-      // eslint-disable-next-line unicorn/prefer-dom-node-remove
+
       Game.stage.removeChild(UIManager.gridCursor);
       Game.stage.update();
 

@@ -27,7 +27,6 @@ export const aiHand = {
     // Clear any existing containers from the stage (safety reset)
     if (ai.cardsInAIHand?.length) {
       for (const c of ai.cardsInAIHand) {
-        // eslint-disable-next-line unicorn/prefer-dom-node-remove
         Game.stage.removeChild(c);
       }
     }

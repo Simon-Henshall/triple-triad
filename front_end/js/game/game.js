@@ -55,7 +55,6 @@ export const Game = {
     // Remove the preview card
     const sb = UIManager.selectionBoard;
     if (sb.displayedCard && Game.stage.contains(sb.displayedCard)) {
-      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(sb.displayedCard);
       sb.displayedCard = undefined;
     }

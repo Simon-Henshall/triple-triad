@@ -322,7 +322,6 @@ export const CursorManager = {
      */
     clear() {
       UIManager.playerSelectingPlacement = false;
-      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.gridCursor);
       Game.stage.update();
 

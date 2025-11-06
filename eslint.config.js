@@ -33,6 +33,7 @@ export default [
         },
       ],
       curly: ["error", "all"],
+      "unicorn/prefer-dom-node-remove": "off", // This is a CreateJS project
     },
   },
 ];

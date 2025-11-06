@@ -78,7 +78,6 @@ export class PlayerRenderer {
             this.cardsInPlayerHand.splice(index_, 1);
           }
           if (Game.stage.contains(cardContainer)) {
-            // eslint-disable-next-line unicorn/prefer-dom-node-remove
             Game.stage.removeChild(cardContainer);
           }
         }
@@ -118,7 +117,6 @@ export class PlayerRenderer {
   resetHand() {
     for (const card of this.cardsInPlayerHand) {
       if (Game.stage.contains(card)) {
-        // eslint-disable-next-line unicorn/prefer-dom-node-remove
         Game.stage.removeChild(card);
       }
     }

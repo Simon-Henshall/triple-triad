@@ -226,14 +226,11 @@ export class InputManager {
       (UIManager.confirmation.selectedChoice === 0 ? "yes" : "no");
 
     if (choice === "yes") {
-      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.selectionBoard.container);
-      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.confirmation.container);
       Game.controllers.cursorController.confirmation.remove();
       Game.startGame();
     } else {
-      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.confirmation.container);
       Game.controllers.cursorController.confirmation.remove();
 
@@ -285,7 +282,7 @@ export class InputManager {
     renderer.toggleInfoBox(false);
 
     // Remove hand cursor from stage
-    // eslint-disable-next-line unicorn/prefer-dom-node-remove
+
     Game.stage.removeChild(this.playerManager.playerHandCursor);
 
     // Enter placement mode
