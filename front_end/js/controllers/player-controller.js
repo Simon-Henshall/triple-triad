@@ -17,7 +17,7 @@ export class PlayerController {
   }
 
   /**
-   * TODO: This method isn't called at all!
+   * TODO: UNCALLED
    * Select a card in hand by index
    * @param {number} index
    */
@@ -33,7 +33,7 @@ export class PlayerController {
   }
 
   /**
-   * TODO: This method isn't called at all!
+   * TODO: UNCALLED
    * Confirm the currently selected card to add to the hand
    */
   confirmCardSelection() {

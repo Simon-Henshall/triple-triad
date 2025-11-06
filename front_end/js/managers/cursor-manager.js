@@ -159,9 +159,6 @@ export const CursorManager = {
         (cardIndex + 1 + (player.playedCardsCount || 0)) *
           (offsets.cardHeight / 2);
 
-      // TODO: Doesn't seem to be necessary
-      player.playerHandCursor.visible = true;
-
       Game.stage.update();
     },
 

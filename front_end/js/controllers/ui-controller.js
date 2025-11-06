@@ -24,7 +24,7 @@ export const UIController = {
   },
 
   /**
-   * TODO: This method isn't called at all!
+   * TODO: UNCALLED
    * Update selected card in state and refresh display.
    * @param {object} card
    */

@@ -45,7 +45,9 @@ export class GameState {
     this.turn = this.turn === "PLAYER" ? "AI" : "PLAYER";
   }
 
-  // TODO: Hook up -- Only used by tests!!
+  /**
+   * TODO: UNCALLED
+   */
   playCardAt(x, y, cardIndex) {
     const player = this.currentPlayer;
     const card = this.hands[player][cardIndex];
