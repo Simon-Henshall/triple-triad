@@ -1,5 +1,8 @@
 import { Game } from "../game/game.js";
 import { offsets } from "../constants/offsets.js";
+import { ai } from "../game/ai.js";
+import { utilities } from "../game/utilities.js";
+import { UIManager } from "../managers/ui-manager.js";
 
 /**
  * Handles all animations and visual effects for card placement,
@@ -53,5 +56,37 @@ export class PlacementRenderer {
 
     Game.stage.addChild(effectBmp);
     Game.stage.setChildIndex(effectBmp, Game.stage.getNumChildren() - 1);
+  }
+
+  /**
+   * Animate cards in hand down after one is placed, and adjust
+   * the cursor and selection indices.
+   */
+  shiftHandCardsDown() {
+    if (utilities.getPlayerTurn() === "blue") {
+      const playerManager = Game.managers.playerManager;
+      playerManager.shiftCardsDown(offsets);
+    } else {
+      // AI logic
+      this.animateDown(ai.cardsInAIHand, ai.aiCardsAboveSelection);
+    }
+  }
+
+  animateDown = (hand, count) => {
+    for (let index = 0; index < count; index++) {
+      createjs.Tween.get(hand[index]).to(
+        { y: hand[index].y + offsets.handCardOffset },
+        200,
+      );
+    }
+  };
+
+  /**
+   * Visually indent the new default card after card placement
+   */
+  indentAfterPlacement() {
+    if (UIManager.selectedCard) {
+      UIManager.selectedCard.x -= 30;
+    }
   }
 }

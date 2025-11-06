@@ -62,7 +62,6 @@ export const UIManager = {
     hidePreviewCard() {
       const sb = UIManager.selectionBoard;
       if (sb.displayedCard && sb.displayedCard.parent) {
-        // eslint-disable-next-line unicorn/prefer-dom-node-remove
         sb.displayedCard.parent.removeChild(sb.displayedCard);
       }
     },
@@ -105,4 +104,14 @@ export const UIManager = {
   cardCount: undefined,
   card: undefined,
   cardImage: undefined,
+
+  bringToFront() {
+    // Ensure info box is visible and topmost
+    const { infoBox } = UIManager;
+    Game.stage.setChildIndex(
+      infoBox.container,
+      Game.stage.getNumChildren() - 1,
+    );
+    infoBox.container.visible = true;
+  },
 };

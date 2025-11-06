@@ -1,3 +1,4 @@
+import { BoardManager } from "../managers/board-manager.js";
 import GameLogic from "./game.logic.js";
 
 const logic = new GameLogic();
@@ -98,7 +99,7 @@ export class GameState {
   }
 
   getWinner() {
-    if (!this.isGameOver()) {
+    if (!BoardManager.isGameOver()) {
       return;
     }
     if (this.scores.PLAYER > this.scores.AI) {

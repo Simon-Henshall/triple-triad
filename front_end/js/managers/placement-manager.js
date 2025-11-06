@@ -2,6 +2,9 @@ import { Game } from "../game/game.js";
 import { utilities } from "../game/utilities.js";
 import { FlippingController } from "../controllers/flipping-controller.js";
 import { PlacementRenderer } from "../renderers/placement-renderer.js";
+import { BoardManager } from "./board-manager.js";
+import { UIManager } from "./ui-manager.js";
+import { debug } from "../debug.js";
 
 const flippingController = new FlippingController();
 
@@ -74,10 +77,10 @@ export class PlacementManager {
    */
   onCardPlacementComplete(card) {
     // Update adjacency references
-    this.controller.setCardAdjacents(card);
+    this.setCardAdjacents(card);
 
     // Add card to board data structure
-    this.controller.addCardToBoard(card);
+    this.addCardToBoard(card);
 
     // Apply element effects based on board square
     this.controller.applyElementEffects(card);
@@ -89,11 +92,66 @@ export class PlacementManager {
     Game.stage.update();
 
     // Check for game over
-    if (this.controller.isGameOver()) {
+    if (BoardManager.isGameOver()) {
       Game.endGame();
     } else {
       // Switch to next player turn
       this.controller.playerTurnSwitch();
     }
+  }
+
+  /**
+   * Determine adjacent cards around the selected square.
+   *
+   * @param {createjs.Container} card - The card being placed.
+   */
+  setCardAdjacents(card) {
+    card.cardLeft = BoardManager.getOccupant(UIManager.squareLeft);
+    card.cardUp = BoardManager.getOccupant(UIManager.squareUp);
+    card.cardRight = BoardManager.getOccupant(UIManager.squareRight);
+    card.cardDown = BoardManager.getOccupant(UIManager.squareDown);
+
+    if (debug.active) {
+      console.log(card);
+    }
+  }
+
+  /**
+   * Add the card to the board state and update free cells.
+   *
+   * @param {createjs.Container} card - The card being placed.
+   */
+  addCardToBoard(card) {
+    card.inCell = UIManager.selectedSquare;
+    BoardManager.boardArray[UIManager.selectedSquare - 1].occupant = card;
+
+    const freeCellIndex = BoardManager.freeCells.indexOf(
+      UIManager.selectedSquare,
+    );
+    if (freeCellIndex !== -1) {
+      BoardManager.freeCells.splice(freeCellIndex, 1);
+    }
+
+    this.controller.flippingRenderer.replaceCard(card);
+  }
+
+  applyElementEffects(card, squareElement) {
+    if (!squareElement || squareElement === 0) {
+      return { modified: false };
+    }
+
+    const modifier = card.element === squareElement ? 1 : -1;
+    card.strengthLeft += modifier;
+    card.strengthUp += modifier;
+    card.strengthRight += modifier;
+    card.strengthDown += modifier;
+
+    return {
+      modified: true,
+      image:
+        modifier > 0
+          ? "front_end/images/plus_one.png"
+          : "front_end/images/minus_one.png",
+    };
   }
 }

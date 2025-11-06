@@ -112,4 +112,22 @@ export const BoardManager = {
     }
     this.freeCells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   },
+
+  getOccupant: (index) => {
+    const cell = BoardManager.boardArray[index - 1];
+    return cell ? (cell.occupant ?? undefined) : undefined;
+  },
+
+  /**
+   * Check if the game is over (all cells occupied).
+   *
+   * @returns {boolean} True if the board is full, else false.
+   */
+  isGameOver() {
+    return BoardManager.boardArray.every((cell) => cell.occupant);
+  },
+
+  resetSelectionToCenter() {
+    UIManager.selectedSquare = 5;
+  },
 };

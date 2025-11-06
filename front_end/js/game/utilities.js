@@ -266,4 +266,12 @@ export const utilities = {
   togglePlayerTurn() {
     UIManager.playerTurn = UIManager.playerTurn === "red" ? "blue" : "red";
   },
+
+  /**
+   * Swap the current turn between blue (player) and red (AI).
+   */
+  swapPlayerTurn() {
+    UIManager.playerTurn =
+      utilities.getPlayerTurn() === "blue" ? "red" : "blue";
+  },
 };
