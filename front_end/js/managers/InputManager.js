@@ -281,7 +281,9 @@ export class InputManager {
   placeCardOnBoard() {
     if (!BoardManager.cellOccupied()) {
       const card = this.playerManager.cardsInHand[UIManager.selectedCardNumber];
-      if (!card) return console.warn("No card selected!");
+      if (!card) {
+        return console.warn("No card selected!");
+      }
 
       // remove from logical hand first
       this.playerManager.cardsInHand.splice(UIManager.selectedCardNumber, 1);

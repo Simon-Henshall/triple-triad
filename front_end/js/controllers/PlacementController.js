@@ -116,6 +116,9 @@ export class PlacementController {
       UIManager.selectedCardNumber = 0;
       UIManager.selectedCard = this.playerManager.selectedCard;
 
+      // Default back to the centre square for player grid positioning
+      UIManager.selectedSquare = 5;
+
       this.playerManager.playedCardsCount++;
       
       // place the cursor on the top card now
