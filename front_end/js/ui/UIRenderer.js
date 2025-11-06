@@ -141,11 +141,9 @@ export const UIRenderer = {
   /**
    * Updates info box contents dynamically based on current selection.
    * Updates player/AI card counts as well.
-   * TODO: WHY DOES THIS ALSO DO THE LATTER?! Extract this!
    */
   updateInfoBox() {
     const ui = UIManager;
-    const playerManager = Game.managers.playerManager;
 
     // Update selected card name
     if (ui.infoBox.cardName && ui.selectedCard) {
@@ -162,11 +160,6 @@ export const UIRenderer = {
         ui.infoBox.cardName.getMeasuredHeight() / 2 +
         verticalOffset;
     }
-
-    // Update card counts
-    if (ai.aiCardCount) ai.aiCardCount.text = ai.totalRedCards;
-    if (playerManager.playerCardCount)
-      playerManager.playerCardCount.text = playerManager.totalBlueCards;
 
     Game.stage.update();
   },

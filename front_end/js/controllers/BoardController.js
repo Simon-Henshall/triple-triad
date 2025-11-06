@@ -9,6 +9,7 @@ import { BoardManager } from "../managers/BoardManager.js";
  */
 export const BoardController = {
   /**
+   * TODO: UNCALLED
    * Move selection in the specified direction.
    * Updates UIManager.selectedRow/Column and selectedSquare.
    *
