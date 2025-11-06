@@ -4,16 +4,14 @@ export class FlippingRenderer {
   }
 
   /**
-   * Initiate a card flip animation in a container.
+   * Flip a single card in a given direction.
    * @param {Object} card - The card to flip
    * @param {string} direction - Direction to flip
    */
   flipCard(card, direction) {
     const sliceContainer = new createjs.Container();
-
     const sliceWidth = card.children[1].image.width * card.scaleX;
     const sliceHeight = card.children[1].image.height * card.scaleY;
-
     const initialX = card.x;
     const initialY = card.y;
 
@@ -25,13 +23,13 @@ export class FlippingRenderer {
     card.cache(0, 0, sliceWidth, sliceHeight);
 
     sliceContainer.addChild(card);
-    Game.stage.addChild(sliceContainer);
+    this.stage.addChild(sliceContainer);
 
-    this.animateFlip(card, sliceContainer, direction, 0, initialX, initialY);
+    this._animateFlip(card, sliceContainer, direction, 0, initialX, initialY);
   }
 
   /**
-   * Recursive flip animation loop.
+   * Recursive flip animation.
    * @param {Object} card - Card to animate
    * @param {createjs.Container} container - Container holding card
    * @param {string} direction - Direction of flip
@@ -39,22 +37,29 @@ export class FlippingRenderer {
    * @param {number} initialX - Original X position
    * @param {number} initialY - Original Y position
    */
-  animateFlip(card, container, direction, counter, initialX, initialY) {
-    if (counter > 180) {
+  _animateFlip(card, container, direction, counter, initialX, initialY) {
+    const MAX_FRAMES = 180;
+    const SWAP_FRAME = 90;
+
+    if (counter > MAX_FRAMES) {
       this.finaliseFlip(card, container, initialX, initialY);
       return;
     }
 
     setTimeout(() => {
       counter++;
-
-      if (counter === 90) {
+      if (counter === SWAP_FRAME) {
         this.swapCardFace(card);
       }
-
       this.flipDirection(card, container, direction, counter);
-
-      this.animateFlip(card, container, direction, counter, initialX, initialY);
+      this._animateFlip(
+        card,
+        container,
+        direction,
+        counter,
+        initialX,
+        initialY,
+      );
     }, 2);
   }
 
@@ -63,15 +68,17 @@ export class FlippingRenderer {
    * @param {Object} card - Card whose face to swap
    */
   swapCardFace(card) {
-    const isBack = card.children[1].image.src.includes(card.backImage);
+    const face = card.children[1];
+    const isBack = face.image.src.includes(card.backImage);
+    face.image.src = isBack ? card.frontImage : card.backImage;
 
-    card.children[1].image.src = isBack ? card.frontImage : card.backImage;
-    card.children[1].x += card.children[1].image.width;
-    card.children[1].scaleX = -1;
+    // Reset position/scale to avoid drift
+    face.x = 0;
+    face.scaleX = 1;
   }
 
   /**
-   * Perform flip direction calculations and cache updates.
+   * Flip container slices per direction.
    * @param {Object} card - Card to manipulate
    * @param {createjs.Container} container - Container for slices
    * @param {string} direction - Flip direction
@@ -83,20 +90,12 @@ export class FlippingRenderer {
 
     for (let index = 0; index < totalSlices; index++) {
       const slice = container.getChildAt(index);
-
       slice.y =
         (Math.sin((value * Math.PI) / 180) *
           factor *
           card.children[1].image.width) /
         2;
       slice.skewY = (index % 2 === 0 ? -1 : 1) * value * factor;
-
-      if (index % 2 === 0) {
-        slice.y -=
-          card.children[1].image.width *
-          Math.sin((slice.skewY * Math.PI) / 180);
-      }
-
       slice.x =
         card.children[1].image.width *
         (index - totalSlices / 2) *
@@ -104,7 +103,7 @@ export class FlippingRenderer {
       slice.updateCache();
     }
 
-    Game.stage.update();
+    this.stage.update();
   }
 
   /**
@@ -117,8 +116,7 @@ export class FlippingRenderer {
   finaliseFlip(card, container, initialX, initialY) {
     card.x = initialX;
     card.y = initialY;
-
-    Game.stage.addChild(card);
+    this.stage.addChild(card);
     container.removeAllChildren();
     container.remove();
   }
@@ -146,19 +144,11 @@ export class FlippingRenderer {
     }
   }
 
-  /**
-   * TODO: Fix and improve this
-   * Flip the entire AI hand at the start of the game.
-   */
-  flipAIHand() {
-    // Reverse copy ensures visual flip starts from last to first
-    for (const [index, card] of ai.cardsInAIHand.toReversed().entries()) {
-      setTimeout(
-        () => {
-          this.flipCard(card, "right");
-        },
-        2000 * (index + 1),
-      );
+  /** Flip AI hand at game start */
+  flipAIHand(aiHand) {
+    const handCopy = aiHand.toReversed();
+    for (const [index, card] of handCopy.entries()) {
+      setTimeout(() => this.flipCard(card, "right"), 2000 * (index + 1));
     }
   }
 }
