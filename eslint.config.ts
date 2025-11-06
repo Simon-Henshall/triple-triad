@@ -3,8 +3,11 @@ import tsparser from "@typescript-eslint/parser";
 import prettierPlugin from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
 import eslintPluginUnicorn from "eslint-plugin-unicorn";
+//import pluginJs from "@eslint/js";
+import jsdoc from "eslint-plugin-jsdoc";
 
 export default [
+  //pluginJs.configs.recommended,
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
     languageOptions: {
@@ -16,8 +19,8 @@ export default [
       "@typescript-eslint": tseslint,
       prettier: prettierPlugin,
       unicorn: eslintPluginUnicorn,
+      jsdoc: jsdoc,
     },
-
     rules: {
       ...tseslint.configs.recommended.rules,
       ...prettierConfig.rules,
@@ -33,7 +36,19 @@ export default [
         },
       ],
       curly: ["error", "all"],
-      "unicorn/prefer-dom-node-remove": "off", // This is a CreateJS project
+      "unicorn/prefer-dom-node-remove": "off",
+      "jsdoc/require-description": "warn",
+      "jsdoc/require-jsdoc": [
+        "warn",
+        {
+          require: {
+            FunctionDeclaration: true,
+            MethodDefinition: true,
+            ClassDeclaration: true,
+            ArrowFunctionExpression: true,
+          },
+        },
+      ],
     },
   },
 ];
