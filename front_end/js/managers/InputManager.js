@@ -105,8 +105,6 @@ export class InputManager {
    * @param {InputRenderer} renderer
    */
   handlePlacement(e, renderer) {
-    renderer.toggleInfoBox(false);
-
     switch (e.key) {
       case "ArrowLeft":
         Game.controllers.cursorController.grid.move("left");
@@ -125,6 +123,7 @@ export class InputManager {
         break;
       case "Backspace":
       case "Escape":
+        renderer.toggleInfoBox(true);
         renderer.restorePlayerHandCursor();
         Game.controllers.cursorController.grid.remove();
         break;
