@@ -41,7 +41,7 @@ export const gameInit = {
     const playerController = new PlayerController(
       playerManager,
       playerRenderer,
-      UIManager
+      UIManager,
     );
 
     const placementManager = new PlacementManager();
@@ -56,7 +56,7 @@ export const gameInit = {
       playerManager,
       playerRenderer,
       playerController,
-      placementController
+      placementController,
     );
 
     const inputController = new InputController(inputManager);
@@ -103,7 +103,9 @@ export const gameInit = {
     // Create grid, player hand and selection cursors
     CursorManager.player.playerHandCursor = new createjs.Bitmap(cursorPath);
     CursorManager.player.playerHandCursor.visible = false;
-    CursorManager.player.playerHandSelectionCursor = new createjs.Bitmap(cursorPath);
+    CursorManager.player.playerHandSelectionCursor = new createjs.Bitmap(
+      cursorPath,
+    );
     CursorManager.player.playerHandSelectionCursor.visible = false;
     UIManager.gridCursor = new createjs.Bitmap(cursorPath);
     UIManager.gridCursor.visible = false;
@@ -123,7 +125,7 @@ export const gameInit = {
 
     UIManager.confirmation.background = new createjs.Shape();
     UIManager.confirmation.cursor = new createjs.Bitmap(
-      config.imagePath + "cursor.png"
+      config.imagePath + "cursor.png",
     );
   },
 
@@ -143,15 +145,7 @@ export const gameInit = {
     this.stage();
     this.offsets();
 
-    const {
-      playerManager,
-      playerRenderer,
-      playerController,
-      placementManager,
-      placementController,
-      inputManager,
-      inputController,
-    } = this.managers();
+    const { playerManager, playerRenderer, inputController } = this.managers();
 
     // Setup UI containers early so cursors and renderers have valid targets
     this.uiContainers();
@@ -166,9 +160,12 @@ export const gameInit = {
     this.cursors();
 
     // Instantiate the renderers and controllers now that dependencies exist
-    Game.renderers.cursorRenderer = CursorRenderer(playerManager, playerRenderer);
+    Game.renderers.cursorRenderer = CursorRenderer(
+      playerManager,
+      playerRenderer,
+    );
     Game.controllers.cursorController = CursorController(
-      Game.renderers.cursorRenderer
+      Game.renderers.cursorRenderer,
     );
 
     // Setup key event handlers

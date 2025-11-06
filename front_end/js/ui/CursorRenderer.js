@@ -35,13 +35,16 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       if (controller !== undefined && controller !== null) {
         const sb = UIManager.selectionBoard;
 
-        if (playerManager.playerHandSelectionCursor !== undefined &&
-            sb.shownCards !== undefined &&
-            sb.background !== undefined) {
+        if (
+          playerManager.playerHandSelectionCursor !== undefined &&
+          sb.shownCards !== undefined &&
+          sb.background !== undefined
+        ) {
           const relativeIndex = controller.selectedIndex - controller.pageStart;
           const rowStep = 35;
 
-          playerManager.playerHandSelectionCursor.y = sb.background.y + 48 + rowStep * relativeIndex;
+          playerManager.playerHandSelectionCursor.y =
+            sb.background.y + 48 + rowStep * relativeIndex;
         }
       }
 
@@ -81,8 +84,10 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Place the confirmation cursor at its initial visual position.
      */
     place() {
-      UIManager.confirmation.cursor.x = UIManager.confirmation.background.x + 50;
-      UIManager.confirmation.cursor.y = UIManager.confirmation.background.y + 60;
+      UIManager.confirmation.cursor.x =
+        UIManager.confirmation.background.x + 50;
+      UIManager.confirmation.cursor.y =
+        UIManager.confirmation.background.y + 60;
 
       Game.stage.addChild(UIManager.confirmation.cursor);
       Game.stage.update();
@@ -96,7 +101,10 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Update the confirmation cursor's Y position according to selected choice.
      */
     updatePosition() {
-      UIManager.confirmation.cursor.y = UIManager.confirmation.background.y + 60 + UIManager.confirmation.selectedChoice * 30;
+      UIManager.confirmation.cursor.y =
+        UIManager.confirmation.background.y +
+        60 +
+        UIManager.confirmation.selectedChoice * 30;
       Game.stage.update();
     },
 
@@ -143,7 +151,8 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      */
     syncSelection() {
       UIManager.previouslySelectedCard = UIManager.selectedCard;
-      UIManager.selectedCard = playerManager.cardsInHand[UIManager.selectedCardNumber];
+      UIManager.selectedCard =
+        playerManager.cardsInHand[UIManager.selectedCardNumber];
 
       UIController.updateInfoBox();
       playerRenderer.indentSelectedCard(UIManager.selectedCard);

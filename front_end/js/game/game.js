@@ -41,7 +41,7 @@ export const Game = {
     console.log("Game destroyed");
   },
 
-  bootstrap(options = {}) {
+  bootstrap() {
     // initialize asset loader if not already present
     if (!this.assets) {
       const queue = new createjs.LoadQueue(false);
@@ -107,7 +107,9 @@ export const Game = {
       alert("win");
     } else {
       alert("draw");
-      if (this.rules.includes("sudden_death")) this.startGame();
+      if (this.rules.includes("sudden_death")) {
+        this.startGame();
+      }
     }
   },
 };

@@ -23,7 +23,7 @@ export const ai = {
     }
 
     const aiSelectedCardIndex = Math.floor(
-      Math.random() * this.cardsInAIHand.length
+      Math.random() * this.cardsInAIHand.length,
     );
     const aiSelectedCard = this.cardsInAIHand[aiSelectedCardIndex];
 
@@ -34,7 +34,9 @@ export const ai = {
 
     // Pick A Cell To Play In (Currently Random)
     UIManager.selectedAISquare =
-      BoardManager.freeCells[Math.floor(Math.random() * BoardManager.freeCells.length)];
+      BoardManager.freeCells[
+        Math.floor(Math.random() * BoardManager.freeCells.length)
+      ];
     BoardManager.checkSelectedRowColumn();
 
     // Place The Card
@@ -50,7 +52,7 @@ export const ai = {
           offsets.cardOffsetX,
         offsets.gameOffsetY +
           offsets.cellHeight * (UIManager.selectedRow - 1) +
-          offsets.cardOffsetY
+          offsets.cardOffsetY,
       );
 
       // Only remove from logical hand array here; visuals are handled in placeCard()

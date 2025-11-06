@@ -24,7 +24,7 @@ export const SelectionBoardRenderer = {
     if (sb.container === undefined || sb.container === null) {
       sb.container = new createjs.Container();
     }
-    
+
     // Ensure container is on stage
     // NB: This is present on hard refresh, but absent on soft refresh
     if (!Game.stage.contains(sb.container)) {
@@ -78,13 +78,21 @@ export const SelectionBoardRenderer = {
       const rowY = baseY + 35 * i + 60;
 
       // Name
-      const nameText = new createjs.Text(cardData.displayName, "26px Arial", "#ffffff");
+      const nameText = new createjs.Text(
+        cardData.displayName,
+        "26px Arial",
+        "#ffffff",
+      );
       nameText.x = baseX + 50;
       nameText.y = rowY;
       nameText.textBaseline = "alphabetic";
 
       // Count
-      const countText = new createjs.Text(String(cardData.count), "26px Arial", "#ffffff");
+      const countText = new createjs.Text(
+        String(cardData.count),
+        "26px Arial",
+        "#ffffff",
+      );
       countText.x = baseX + 380;
       countText.y = rowY;
       countText.textBaseline = "alphabetic";
@@ -101,7 +109,7 @@ export const SelectionBoardRenderer = {
       cardData.countText = countText;
 
       // Add cardData to selectionBoard's displayedCards array
-      if (!sb.displayedCards.find(c => c.id === cardData.id)) {
+      if (!sb.displayedCards.find((c) => c.id === cardData.id)) {
         sb.displayedCards.push(cardData);
       }
 
@@ -120,7 +128,7 @@ export const SelectionBoardRenderer = {
             bmp.visible = true;
             Game.stage.update();
           }
-        }
+        },
       );
 
       icon.visible = false;
@@ -217,7 +225,12 @@ export const SelectionBoardRenderer = {
     const offscreenY = Game.stage.canvas.height + 50;
 
     if (!sb.displayedCard) {
-      sb.displayedCard = utils.createCardContainer(selectedCard, "blue", targetX, offscreenY);
+      sb.displayedCard = utils.createCardContainer(
+        selectedCard,
+        "blue",
+        targetX,
+        offscreenY,
+      );
       Game.stage.addChild(sb.displayedCard);
       sb.displayedCardColour = sb.displayedCard.getChildAt(0);
       sb.displayedCardImage = sb.displayedCard.getChildAt(1);
@@ -226,7 +239,8 @@ export const SelectionBoardRenderer = {
         sb.displayedCardColour.image.src = config.cardPath + "blue.png";
       }
       if (sb.displayedCardImage) {
-        sb.displayedCardImage.image.src = config.cardPath + selectedCard.image + ".png";
+        sb.displayedCardImage.image.src =
+          config.cardPath + selectedCard.image + ".png";
       }
       sb.displayedCard.x = targetX;
       sb.displayedCard.y = offscreenY;
@@ -236,7 +250,7 @@ export const SelectionBoardRenderer = {
       createjs.Tween.get(sb.displayedCard, { override: true }).to(
         { y: targetY },
         300,
-        createjs.Ease.quadOut
+        createjs.Ease.quadOut,
       );
     } else {
       sb.displayedCard.y = targetY;
@@ -260,14 +274,20 @@ export const SelectionBoardRenderer = {
     const rowStep = 35;
 
     playerManager.playerHandSelectionCursor.x = sb.background.x - 40;
-    playerManager.playerHandSelectionCursor.y = sb.background.y + 48 + rowStep * relativeIndex;
+    playerManager.playerHandSelectionCursor.y =
+      sb.background.y + 48 + rowStep * relativeIndex;
 
     // Ensure cursor is a child of the container above shownCards
-    if (!sb.container.children.includes(playerManager.playerHandSelectionCursor)) {
+    if (
+      !sb.container.children.includes(playerManager.playerHandSelectionCursor)
+    ) {
       sb.container.addChild(playerManager.playerHandSelectionCursor);
     } else {
       const bgIndex = sb.container.getChildIndex(sb.background);
-      sb.container.setChildIndex(playerManager.playerHandSelectionCursor, bgIndex + 2);
+      sb.container.setChildIndex(
+        playerManager.playerHandSelectionCursor,
+        bgIndex + 2,
+      );
     }
   },
 };

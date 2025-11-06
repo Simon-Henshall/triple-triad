@@ -85,19 +85,22 @@ export class FlippingRenderer {
       const slice = container.getChildAt(i);
 
       slice.y =
-        (Math.sin(value * Math.PI / 180) * factor * card.children[1].image.width) /
+        (Math.sin((value * Math.PI) / 180) *
+          factor *
+          card.children[1].image.width) /
         2;
       slice.skewY = (i % 2 === 0 ? -1 : 1) * value * factor;
 
       if (i % 2 === 0) {
         slice.y -=
-          card.children[1].image.width * Math.sin(slice.skewY * Math.PI / 180);
+          card.children[1].image.width *
+          Math.sin((slice.skewY * Math.PI) / 180);
       }
 
       slice.x =
         card.children[1].image.width *
         (i - totalSlices / 2) *
-        Math.cos(slice.skewY * Math.PI / 180);
+        Math.cos((slice.skewY * Math.PI) / 180);
       slice.updateCache();
     }
 
@@ -127,7 +130,7 @@ export class FlippingRenderer {
   replaceCard(cardToReplace) {
     if (!cardToReplace.children[0]) {
       const ownerBmp = new createjs.Bitmap(
-        `front_end/images/cards/${cardToReplace.owner}.png`
+        `front_end/images/cards/${cardToReplace.owner}.png`,
       );
       cardToReplace.addChildAt(ownerBmp, 0);
     } else {
@@ -138,7 +141,7 @@ export class FlippingRenderer {
     if (cardToReplace.children[1]) {
       cardToReplace.setChildIndex(
         cardToReplace.children[1],
-        cardToReplace.getNumChildren() - 1
+        cardToReplace.getNumChildren() - 1,
       );
     }
   }
@@ -153,9 +156,12 @@ export class FlippingRenderer {
       .slice()
       .reverse()
       .forEach((card, index) => {
-        setTimeout(() => {
-          this.flipCard(card, "right");
-        }, 2000 * (index + 1));
+        setTimeout(
+          () => {
+            this.flipCard(card, "right");
+          },
+          2000 * (index + 1),
+        );
       });
   }
 }

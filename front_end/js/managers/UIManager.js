@@ -36,7 +36,9 @@ export const UIManager = {
       const sb = UIManager.selectionBoard;
 
       // Only proceed if there is a card to show
-      if (!sb.displayedCard) return;
+      if (!sb.displayedCard) {
+        return;
+      }
 
       // Ensure the container exists
       if (!sb.container) {

@@ -19,12 +19,14 @@ export const aiHand = {
       //GameStateInstance.hands.AI = utils.shuffle([...allAiCards]).slice(0, 5);
       // Temporary placeholder: use player cards until AI deck logic added
       const playerManager = Game.managers.playerManager;
-      GameStateInstance.hands.AI = utils.shuffle([...playerManager.ownedCards]).slice(0, 5);
+      GameStateInstance.hands.AI = utils
+        .shuffle([...playerManager.ownedCards])
+        .slice(0, 5);
     }
 
     // Clear any existing containers from the stage (safety reset)
     if (ai.cardsInAIHand?.length) {
-      ai.cardsInAIHand.forEach(c => Game.stage.removeChild(c));
+      ai.cardsInAIHand.forEach((c) => Game.stage.removeChild(c));
     }
     ai.cardsInAIHand = [];
 
@@ -40,7 +42,7 @@ export const aiHand = {
           frontImageSrc: config.cardPath + card.image + ".png",
           backImageSrc: config.cardPath + "back.png",
           onReady: () => Game.stage.update(),
-        }
+        },
       );
 
       ai.cardsInAIHand.push(cardContainer);

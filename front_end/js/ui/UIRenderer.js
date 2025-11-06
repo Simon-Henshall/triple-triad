@@ -39,14 +39,18 @@ export const UIRenderer = {
   drawCardCounts() {
     const playerManager = Game.managers.playerManager;
     // Remove existing counts if present
-    if (ai.aiCardCount) Game.stage.removeChild(ai.aiCardCount);
-    if (playerManager.playerCardCount) Game.stage.removeChild(playerManager.playerCardCount);
+    if (ai.aiCardCount) {
+      Game.stage.removeChild(ai.aiCardCount);
+    }
+    if (playerManager.playerCardCount) {
+      Game.stage.removeChild(playerManager.playerCardCount);
+    }
 
     // Create and position AI card count
     ai.aiCardCount = new createjs.Text(
       ai.totalRedCards,
       "90px Arial",
-      "#ffffff"
+      "#ffffff",
     );
     ai.aiCardCount.x = ai.handOffsetX + offsets.cardWidth / 3;
     ai.aiCardCount.y = Game.stageHeight - 15;
@@ -57,9 +61,9 @@ export const UIRenderer = {
     playerManager.playerCardCount = new createjs.Text(
       playerManager.totalBlueCards,
       "90px Arial",
-      "#ffffff"
+      "#ffffff",
     );
-    playerManager.playerCardCount.x = Game.stageWidth - (offsets.cardWidth);
+    playerManager.playerCardCount.x = Game.stageWidth - offsets.cardWidth;
     playerManager.playerCardCount.y = Game.stageHeight - 15;
     playerManager.playerCardCount.textBaseline = "alphabetic";
     Game.stage.addChild(playerManager.playerCardCount);
@@ -96,7 +100,7 @@ export const UIRenderer = {
       infoBoxBackground.x,
       infoBoxBackground.y,
       INFO_BOX_WIDTH,
-      INFO_BOX_HEIGHT
+      INFO_BOX_HEIGHT,
     );
     ui.infoBox.container.addChild(infoBoxBackground);
 
@@ -112,7 +116,7 @@ export const UIRenderer = {
       ui.infoBox.cardName = new createjs.Text(
         ui.selectedCard?.name || "",
         "30px Arial",
-        "#ffffff"
+        "#ffffff",
       );
       ui.infoBox.cardName.textBaseline = "alphabetic";
     }
@@ -203,7 +207,7 @@ export const UIRenderer = {
     const question = new createjs.Text(
       "Are you sure?",
       "28px Arial",
-      "#ffffff"
+      "#ffffff",
     );
     question.x = conf.background.x + 60;
     question.y = conf.background.y + 20;
@@ -224,7 +228,7 @@ export const UIRenderer = {
       choiceLabel,
       question,
       yesText,
-      noText
+      noText,
     );
   },
 };

@@ -1,6 +1,8 @@
 class GameLogic {
   canFlip(attackerCard, defenderCard, direction) {
-    if (!attackerCard || !defenderCard) return false;
+    if (!attackerCard || !defenderCard) {
+      return false;
+    }
 
     const strengthMap = {
       up: ["strengthUp", "strengthDown"],
@@ -20,7 +22,9 @@ class GameLogic {
 
   getFlippableNeighbours(board, x, y) {
     const attacker = board[y][x];
-    if (!attacker) return [];
+    if (!attacker) {
+      return [];
+    }
 
     const directions = {
       up: [0, -1],
@@ -59,7 +63,7 @@ class GameLogic {
   applyFlips(board, flips, newOwner) {
     // Deep clone board to avoid mutating input
     const newBoard = board.map((row) =>
-      row.map((cell) => (cell ? { ...cell } : null))
+      row.map((cell) => (cell ? { ...cell } : null)),
     );
 
     for (const { x, y } of flips) {
@@ -80,7 +84,7 @@ class GameLogic {
 
     // Clone board deeply
     const newBoard = board.map((row) =>
-      row.map((cell) => (cell ? { ...cell } : null))
+      row.map((cell) => (cell ? { ...cell } : null)),
     );
 
     // Place the card

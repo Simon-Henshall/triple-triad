@@ -76,7 +76,11 @@ export class SelectionBoardController {
   clampSelectionToPage() {
     const start = this.pageStart;
     const end = start + this.displayedCards.length - 1;
-    if (this.selectedIndex < start) this.selectedIndex = start;
-    if (this.selectedIndex > end) this.selectedIndex = end;
+    if (this.selectedIndex < start) {
+      this.selectedIndex = start;
+    }
+    if (this.selectedIndex > end) {
+      this.selectedIndex = end;
+    }
   }
 }

@@ -1,5 +1,4 @@
 import { UIManager } from "../managers/UIManager.js";
-import { InputManager } from "../managers/InputManager.js";
 import { InputRenderer } from "../ui/InputRenderer.js";
 import { debug } from "../debug.js";
 
@@ -9,7 +8,7 @@ import { debug } from "../debug.js";
  */
 export class InputController {
   constructor(inputManager) {
-    this.manager = inputManager;   // already has playerManager etc.
+    this.manager = inputManager; // already has playerManager etc.
     this.renderer = new InputRenderer();
   }
 
@@ -18,7 +17,9 @@ export class InputController {
    * @param {KeyboardEvent} e
    */
   handleKey(e) {
-    if (debug.active) console.log("Key pressed:", e.key);
+    if (debug.active) {
+      console.log("Key pressed:", e.key);
+    }
 
     if (UIManager.playerSelectingHand) {
       this.manager.handlePlayerHandSelection(e, this.renderer);

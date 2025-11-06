@@ -1,9 +1,9 @@
-import { BoardManager } from './managers/BoardManager.js';
+import { BoardManager } from "./managers/BoardManager.js";
 import { UIManager } from "./managers/UIManager.js";
-import { utils } from './game/utils.js';
-import { ai } from './game/ai.js';
+import { utils } from "./game/utils.js";
+import { ai } from "./game/ai.js";
 import { config } from "./config.js";
-import { Game } from './game/game.js';
+import { Game } from "./game/game.js";
 
 export const debug = {
   active: true, // Toggle for debug mode
@@ -31,7 +31,7 @@ export const debug = {
       console.log(`  Owner: ${cardHere.owner}`);
       console.log(`  Element: ${cardHere.element}`);
       console.log(
-        `  Strengths -> L:${cardHere.strengthLeft} U:${cardHere.strengthUp} R:${cardHere.strengthRight} D:${cardHere.strengthDown}`
+        `  Strengths -> L:${cardHere.strengthLeft} U:${cardHere.strengthUp} R:${cardHere.strengthRight} D:${cardHere.strengthDown}`,
       );
       console.log("  Adjacent Cards:");
       console.log(`    Left: ${cardHere.cardLeft?.name ?? "None"}`);
@@ -51,11 +51,17 @@ export const debug = {
   logBoard() {
     console.log("--------------- BOARD STATE ---------------");
     for (let i = 0; i < 3; i++) {
-      const row = BoardManager.boardArray.slice(i * 3, i * 3 + 3).map((cell) => {
-        const elem = cell.element ? `Cell Element: ${config.elements[cell.element].name}` : "No Element";
-        if (!cell.occupant) return `[Empty | ${elem}]`;
-        return `[${cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.element} | Cell Element: ${elem}]`;
-      });
+      const row = BoardManager.boardArray
+        .slice(i * 3, i * 3 + 3)
+        .map((cell) => {
+          const elem = cell.element
+            ? `Cell Element: ${config.elements[cell.element].name}`
+            : "No Element";
+          if (!cell.occupant) {
+            return `[Empty | ${elem}]`;
+          }
+          return `[${cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.element} | Cell Element: ${elem}]`;
+        });
       console.log(`Row ${i + 1}: ${row.join(" | ")}`);
     }
     console.log("-------------------------------------------");
@@ -69,14 +75,14 @@ export const debug = {
     const playerManager = Game.managers.playerManager;
     playerManager.cardsInPlayerHand.forEach((card, i) => {
       console.log(
-        `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`
+        `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
       );
     });
 
     console.log("=============== AI HAND ===================");
     ai.cardsInAIHand.forEach((card, i) => {
       console.log(
-        `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`
+        `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
       );
     });
     console.log("==========================================");
@@ -89,10 +95,10 @@ export const debug = {
     const currentPlayer = utils.getPlayerTurn();
     const playerManager = Game.managers.playerManager;
     console.log(
-      `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`
+      `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`,
     );
     console.log(
-      `SCORE | Player: ${playerManager.totalBlueCards} AI: ${ai.totalRedCards}`
+      `SCORE | Player: ${playerManager.totalBlueCards} AI: ${ai.totalRedCards}`,
     );
     console.log(`Free cells remaining: ${BoardManager.freeCells.join(", ")}`);
     console.log("*****************************************");

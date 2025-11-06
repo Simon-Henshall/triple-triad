@@ -22,7 +22,10 @@ export const CursorManager = {
      * Places it relative to the selection board container.
      */
     initPosition() {
-      if (!CursorManager.player || !CursorManager.player.playerHandSelectionCursor) {
+      if (
+        !CursorManager.player ||
+        !CursorManager.player.playerHandSelectionCursor
+      ) {
         console.warn("CursorManager.player not set yet");
         return;
       }
@@ -45,7 +48,8 @@ export const CursorManager = {
       }
 
       const currentPageStart = controller.pageStart;
-      const currentPageEnd = currentPageStart + controller.displayedCards.length - 1;
+      const currentPageEnd =
+        currentPageStart + controller.displayedCards.length - 1;
 
       switch (direction) {
         case "up": {
@@ -115,7 +119,10 @@ export const CursorManager = {
       }
 
       // Clamp choice to valid range
-      UIManager.confirmation.selectedChoice = Math.max(0, Math.min(1, UIManager.confirmation.selectedChoice));
+      UIManager.confirmation.selectedChoice = Math.max(
+        0,
+        Math.min(1, UIManager.confirmation.selectedChoice),
+      );
 
       return previousChoice !== UIManager.confirmation.selectedChoice;
     },
@@ -149,7 +156,8 @@ export const CursorManager = {
       player.playerHandCursor.x = player.handOffsetX - 50;
       player.playerHandCursor.y =
         offsets.handOffsetY +
-        (cardIndex + 1 + (player.playedCardsCount || 0)) * (offsets.cardHeight / 2);
+        (cardIndex + 1 + (player.playedCardsCount || 0)) *
+          (offsets.cardHeight / 2);
 
       // TODO: Doesn't seem to be necessary
       player.playerHandCursor.visible = true;
@@ -205,7 +213,9 @@ export const CursorManager = {
     clear() {
       UIManager.playerChoosingCard = false;
       const player = CursorManager.player;
-      if (player?.playerHandCursor) player.playerHandCursor.visible = false;
+      if (player?.playerHandCursor) {
+        player.playerHandCursor.visible = false;
+      }
       Game.stage.update();
     },
   },
@@ -228,7 +238,9 @@ export const CursorManager = {
       Game.stage.update();
 
       if (debug.active) {
-        console.log(`Grid cursor placed at X:${UIManager.gridCursor.x}, Y:${UIManager.gridCursor.y}`);
+        console.log(
+          `Grid cursor placed at X:${UIManager.gridCursor.x}, Y:${UIManager.gridCursor.y}`,
+        );
       }
     },
 
@@ -246,28 +258,44 @@ export const CursorManager = {
           if (UIManager.gridCursor.x > offsets.gameOffsetX + 16) {
             UIManager.gridCursor.x -= offsets.cellWidth;
             UIManager.selectedColumn--;
-          } else return console.warn("Cannot move grid cursor left - out of bounds");
+          } else {
+            return console.warn("Cannot move grid cursor left - out of bounds");
+          }
           break;
 
         case "up":
           if (UIManager.gridCursor.y > offsets.gameOffsetY + 80) {
             UIManager.gridCursor.y -= offsets.cellHeight;
             UIManager.selectedRow--;
-          } else return console.warn("Cannot move grid cursor up - out of bounds");
+          } else {
+            return console.warn("Cannot move grid cursor up - out of bounds");
+          }
           break;
 
         case "right":
-          if (UIManager.gridCursor.x < offsets.gameOffsetX + offsets.cellWidth * 2 + 16) {
+          if (
+            UIManager.gridCursor.x <
+            offsets.gameOffsetX + offsets.cellWidth * 2 + 16
+          ) {
             UIManager.gridCursor.x += offsets.cellWidth;
             UIManager.selectedColumn++;
-          } else return console.warn("Cannot move grid cursor right - out of bounds");
+          } else {
+            return console.warn(
+              "Cannot move grid cursor right - out of bounds",
+            );
+          }
           break;
 
         case "down":
-          if (UIManager.gridCursor.y < offsets.gameOffsetY + offsets.cellHeight * 2 + 80) {
+          if (
+            UIManager.gridCursor.y <
+            offsets.gameOffsetY + offsets.cellHeight * 2 + 80
+          ) {
             UIManager.gridCursor.y += offsets.cellHeight;
             UIManager.selectedRow++;
-          } else return console.warn("Cannot move grid cursor down - out of bounds");
+          } else {
+            return console.warn("Cannot move grid cursor down - out of bounds");
+          }
           break;
 
         default:
@@ -278,7 +306,9 @@ export const CursorManager = {
       Game.stage.update();
 
       if (debug.active) {
-        console.log(`Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${UIManager.gridCursor.x}, Y:${UIManager.gridCursor.y}`);
+        console.log(
+          `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${UIManager.gridCursor.x}, Y:${UIManager.gridCursor.y}`,
+        );
       }
     },
 

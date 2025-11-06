@@ -28,7 +28,7 @@ export class FlippingController {
         ) {
           this.flipCardOver(card, direction);
         }
-      }
+      },
     );
   }
 

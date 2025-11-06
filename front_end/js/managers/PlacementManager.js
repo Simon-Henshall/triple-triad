@@ -29,7 +29,8 @@ export class PlacementManager {
    * @param {number} placementY - Y coordinate on the board.
    */
   placeCard(card, placementX, placementY) {
-    const offscreenX = utils.getPlayerTurn() === "red" ? card.x + 40 : card.x - 40;
+    const offscreenX =
+      utils.getPlayerTurn() === "red" ? card.x + 40 : card.x - 40;
     const offscreenY = -200;
 
     // Animate the card offscreen first

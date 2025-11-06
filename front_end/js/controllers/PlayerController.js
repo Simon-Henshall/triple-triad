@@ -23,7 +23,9 @@ export class PlayerController {
    */
   selectCard(index) {
     const card = this.manager.getHandCard(index);
-    if (!card) return;
+    if (!card) {
+      return;
+    }
 
     this.manager.selectedCard = card;
     this.renderer.indentSelectedCard(card);
@@ -36,10 +38,11 @@ export class PlayerController {
    */
   confirmCardSelection() {
     const card = this.manager.selectedCard;
-    if (!card) return;
+    if (!card) {
+      return;
+    }
 
-    // Create visual container for the hand card (if you don't already have one)
-    const index = this.manager.cardsInHand.length;
+    // Create visual container for the hand card
     const container = this.renderer.createCardContainer(card, "blue");
 
     // Attach a reference to the selection board card
@@ -47,7 +50,9 @@ export class PlayerController {
 
     // Add to logical hand (this will also update the selection board count)
     const added = this.manager.addCardToHand(card, container);
-    if (!added) return;
+    if (!added) {
+      return;
+    }
   }
 
   /**
@@ -55,7 +60,9 @@ export class PlayerController {
    */
   removeLastCard() {
     const removedContainer = this.manager.removeLastCard();
-    if (!removedContainer) return;
+    if (!removedContainer) {
+      return;
+    }
 
     const index = this.manager.cardsInHand.length;
 

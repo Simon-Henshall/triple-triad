@@ -75,10 +75,14 @@ export const SelectionBoardManager = {
     this.selectedHandCard = null;
 
     // Clear the shownCards container
-    if (this.shownCards) this.shownCards.removeAllChildren();
+    if (this.shownCards) {
+      this.shownCards.removeAllChildren();
+    }
 
     // Remove preview card from stage if present
-    if (this.displayedCard) Game.stage.removeChild(this.displayedCard);
+    if (this.displayedCard) {
+      Game.stage.removeChild(this.displayedCard);
+    }
 
     // Reset preview card references
     this.displayedCard = null;

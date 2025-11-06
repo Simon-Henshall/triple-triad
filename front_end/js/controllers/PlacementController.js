@@ -47,7 +47,7 @@ export class PlacementController {
   setCardAdjacents(card) {
     const getOccupant = (index) => {
       const cell = BoardManager.boardArray[index - 1];
-      return cell ? cell.occupant ?? null : null;
+      return cell ? (cell.occupant ?? null) : null;
     };
 
     card.cardLeft = getOccupant(UIManager.squareLeft);
@@ -55,7 +55,9 @@ export class PlacementController {
     card.cardRight = getOccupant(UIManager.squareRight);
     card.cardDown = getOccupant(UIManager.squareDown);
 
-    if (debug.active) console.log(card);
+    if (debug.active) {
+      console.log(card);
+    }
   }
 
   /**
@@ -67,8 +69,12 @@ export class PlacementController {
     card.inCell = UIManager.selectedSquare;
     BoardManager.boardArray[UIManager.selectedSquare - 1].occupant = card;
 
-    const freeCellIndex = BoardManager.freeCells.indexOf(UIManager.selectedSquare);
-    if (freeCellIndex > -1) BoardManager.freeCells.splice(freeCellIndex, 1);
+    const freeCellIndex = BoardManager.freeCells.indexOf(
+      UIManager.selectedSquare,
+    );
+    if (freeCellIndex > -1) {
+      BoardManager.freeCells.splice(freeCellIndex, 1);
+    }
 
     this.flippingRenderer.replaceCard(card);
   }
@@ -80,8 +86,12 @@ export class PlacementController {
    */
   applyElementEffects(card) {
     const squareObj = UIManager.squares[UIManager.selectedSquare - 1];
-    if (!squareObj || typeof squareObj.element === "undefined") return;
-    if (squareObj.element === 0) return;
+    if (!squareObj || typeof squareObj.element === "undefined") {
+      return;
+    }
+    if (squareObj.element === 0) {
+      return;
+    }
 
     let effectImage;
     if (card.element === squareObj.element) {
@@ -107,12 +117,15 @@ export class PlacementController {
   playerTurnSwitch() {
     this.swapPlayerTurn();
 
-    if (debug.active) debug.logTurn();
+    if (debug.active) {
+      debug.logTurn();
+    }
 
     if (utils.getPlayerTurn() === "blue") {
       // reset selection
       this.playerManager.selectedCardIndex = 0;
-      this.playerManager.selectedCard = this.playerManager.cardsInHand[0] || null;
+      this.playerManager.selectedCard =
+        this.playerManager.cardsInHand[0] || null;
       UIManager.selectedCardNumber = 0;
       UIManager.selectedCard = this.playerManager.selectedCard;
 
@@ -120,13 +133,16 @@ export class PlacementController {
       UIManager.selectedSquare = 5;
 
       this.playerManager.playedCardsCount++;
-      
+
       // place the cursor on the top card now
       Game.controllers.cursorController.playerHand.place();
 
       Game.stage.addChild(this.playerManager.playerHandCursor);
       UIManager.selectedCard.x -= 30;
-      Game.stage.setChildIndex(UIManager.infoBox.container, Game.stage.getNumChildren() - 1);
+      Game.stage.setChildIndex(
+        UIManager.infoBox.container,
+        Game.stage.getNumChildren() - 1,
+      );
       UIManager.infoBox.container.visible = true;
       UIManager.playerChoosingCard = true;
     } else if (utils.getPlayerTurn() === "red") {
@@ -157,7 +173,10 @@ export class PlacementController {
   shiftHandCardsDown() {
     const animateDown = (hand, count) => {
       for (let i = 0; i < count; i++) {
-        createjs.Tween.get(hand[i]).to({ y: hand[i].y + offsets.handCardOffset }, 200);
+        createjs.Tween.get(hand[i]).to(
+          { y: hand[i].y + offsets.handCardOffset },
+          200,
+        );
       }
     };
 

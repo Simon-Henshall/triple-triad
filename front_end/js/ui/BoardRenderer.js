@@ -45,7 +45,7 @@ export const BoardRenderer = {
         // If the cell has an element, display it
         if (elemId !== 0) {
           const elementGraphic = new createjs.Bitmap(
-            ` ${config.imagePath}/elements/${config.elements[elemId].imagePath}`
+            ` ${config.imagePath}/elements/${config.elements[elemId].imagePath}`,
           );
           elementGraphic.x = offsets.gameOffsetX + 60;
           elementGraphic.y = offsets.gameOffsetY + 70;
@@ -54,7 +54,9 @@ export const BoardRenderer = {
 
         // Add transparent hit area
         const hit = new createjs.Shape();
-        hit.graphics.beginFill("#000").drawRect(0, 0, offsets.cellWidth, offsets.cellHeight);
+        hit.graphics
+          .beginFill("#000")
+          .drawRect(0, 0, offsets.cellWidth, offsets.cellHeight);
         square.container.hitArea = hit;
 
         // Click handler delegates to debug for now
@@ -77,7 +79,9 @@ export const BoardRenderer = {
    */
   redrawSquare(squareID) {
     const square = UIManager.squares[squareID - 1];
-    if (!square) return;
+    if (!square) {
+      return;
+    }
 
     // Clear previous children
     square.container.removeAllChildren();
@@ -87,7 +91,7 @@ export const BoardRenderer = {
     // Re-add element graphic if exists
     if (elemId !== 0) {
       const elementGraphic = new createjs.Bitmap(
-        `${config.imagePath}/elements/${config.elements[elemId].imagePath}`
+        `${config.imagePath}/elements/${config.elements[elemId].imagePath}`,
       );
       elementGraphic.x = offsets.gameOffsetX + 60;
       elementGraphic.y = offsets.gameOffsetY + 70;
@@ -96,7 +100,9 @@ export const BoardRenderer = {
 
     // Re-add hit area
     const hit = new createjs.Shape();
-    hit.graphics.beginFill("#000").drawRect(0, 0, offsets.cellWidth, offsets.cellHeight);
+    hit.graphics
+      .beginFill("#000")
+      .drawRect(0, 0, offsets.cellWidth, offsets.cellHeight);
     square.container.hitArea = hit;
 
     Game.stage.update();

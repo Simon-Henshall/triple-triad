@@ -74,8 +74,12 @@ export class PlayerRenderer {
       .call(() => {
         if (remove) {
           const idx = this.cardsInPlayerHand.indexOf(cardContainer);
-          if (idx >= 0) this.cardsInPlayerHand.splice(idx, 1);
-          if (Game.stage.contains(cardContainer)) Game.stage.removeChild(cardContainer);
+          if (idx >= 0) {
+            this.cardsInPlayerHand.splice(idx, 1);
+          }
+          if (Game.stage.contains(cardContainer)) {
+            Game.stage.removeChild(cardContainer);
+          }
         }
 
         this._updateHandAndPreviewZOrder(!remove);
@@ -83,7 +87,9 @@ export class PlayerRenderer {
       });
 
     // Optional: keep preview on top while animating
-    if (!remove) this._attachPreviewTicker(cardContainer);
+    if (!remove) {
+      this._attachPreviewTicker(cardContainer);
+    }
   }
 
   /**
@@ -110,7 +116,9 @@ export class PlayerRenderer {
    */
   resetHand() {
     this.cardsInPlayerHand.forEach((card) => {
-      if (Game.stage.contains(card)) Game.stage.removeChild(card);
+      if (Game.stage.contains(card)) {
+        Game.stage.removeChild(card);
+      }
     });
     this.cardsInPlayerHand = [];
     Game.stage.update();
@@ -128,7 +136,7 @@ export class PlayerRenderer {
       card,
       "blue",
       this.stackOffsetX,
-      this.stackOffsetY + index * this.stackSpacing
+      this.stackOffsetY + index * this.stackSpacing,
     );
   }
 
@@ -162,7 +170,9 @@ export class PlayerRenderer {
    */
   _attachPreviewTicker(cardContainer) {
     const previewCard = UIManager.selectionBoard?.displayedCard;
-    if (!previewCard) return;
+    if (!previewCard) {
+      return;
+    }
 
     const tickHandler = () => {
       const confirmationContainer = UIManager.confirmation?.container;
@@ -176,7 +186,10 @@ export class PlayerRenderer {
       }
 
       if (Game.stage.contains(cardContainer)) {
-        Game.stage.setChildIndex(cardContainer, Game.stage.getChildIndex(previewCard) - 1);
+        Game.stage.setChildIndex(
+          cardContainer,
+          Game.stage.getChildIndex(previewCard) - 1,
+        );
       }
     };
 

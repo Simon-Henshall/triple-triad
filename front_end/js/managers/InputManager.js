@@ -18,7 +18,7 @@ export class InputManager {
     playerManager,
     playerRenderer,
     playerController,
-    placementController
+    placementController,
   ) {
     this.playerManager = playerManager;
     this.playerRenderer = playerRenderer;
@@ -142,12 +142,14 @@ export class InputManager {
    */
   selectCard() {
     const card = SelectionBoardUI.controller.selectedCard;
-    if (!card) return;
+    if (!card) {
+      return;
+    }
 
     if (card.count > 0) {
       if (debug.active) {
         console.log(
-          `Selected card: ${card.displayName} (remaining: ${card.count - 1})`
+          `Selected card: ${card.displayName} (remaining: ${card.count - 1})`,
         );
       }
 
@@ -156,7 +158,7 @@ export class InputManager {
         card,
         "blue",
         this.playerManager.handOffsetX,
-        Game.stage.canvas.height + 200
+        Game.stage.canvas.height + 200,
       );
 
       // Add the card + container to the manager
@@ -165,7 +167,7 @@ export class InputManager {
       // Animate card into the hand
       this.playerRenderer.animateCardToHand(
         newCardContainer,
-        this.playerManager.cardsInHand.length - 1
+        this.playerManager.cardsInHand.length - 1,
       );
 
       // Update hand visuals / selection board counts
@@ -183,7 +185,7 @@ export class InputManager {
       return card;
     } else if (debug.active) {
       console.warn(
-        `Attempted to select a card with zero count: ${card.displayName}`
+        `Attempted to select a card with zero count: ${card.displayName}`,
       );
     }
   }
@@ -215,7 +217,7 @@ export class InputManager {
 
       // reset hand
       this.playerController.resetHand();
-      
+
       // update board counts
       for (let i = 0; i < 5; i++) {
         const lastCard = this.playerManager.playerCards.pop();
@@ -294,13 +296,18 @@ export class InputManager {
       // pass card to placement controller
       this.placementController.placeCard(
         card,
-        offsets.gameOffsetX + offsets.cellWidth * (UIManager.selectedColumn - 1) + offsets.cardOffsetX,
-        offsets.gameOffsetY + offsets.cellHeight * (UIManager.selectedRow - 1) + offsets.cardOffsetY
+        offsets.gameOffsetX +
+          offsets.cellWidth * (UIManager.selectedColumn - 1) +
+          offsets.cardOffsetX,
+        offsets.gameOffsetY +
+          offsets.cellHeight * (UIManager.selectedRow - 1) +
+          offsets.cardOffsetY,
       );
 
       // update selectedCardIndex & selectedCard
       this.playerManager.selectedCardIndex = 0;
-      this.playerManager.selectedCard = this.playerManager.cardsInHand[0] || null;
+      this.playerManager.selectedCard =
+        this.playerManager.cardsInHand[0] || null;
 
       // update UIManager for cursor logic
       UIManager.selectedCardNumber = 0;

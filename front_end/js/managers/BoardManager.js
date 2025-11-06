@@ -6,7 +6,9 @@ import { UIManager } from "./UIManager.js";
  * including square occupancy, selected square, and elements.
  */
 export const BoardManager = {
-  boardArray: Array(9).fill(null).map(() => ({ element: 0, occupant: null })),
+  boardArray: Array(9)
+    .fill(null)
+    .map(() => ({ element: 0, occupant: null })),
   freeCells: [1, 2, 3, 4, 5, 6, 7, 8, 9],
 
   // Lookup table for square positions and adjacency
@@ -29,7 +31,10 @@ export const BoardManager = {
   checkSelectedSquare() {
     for (let i = 0; i < this.squareMap.length; i++) {
       const s = this.squareMap[i];
-      if (s.row === UIManager.selectedRow && s.col === UIManager.selectedColumn) {
+      if (
+        s.row === UIManager.selectedRow &&
+        s.col === UIManager.selectedColumn
+      ) {
         UIManager.selectedSquare = i + 1;
         UIManager.squareLeft = s.left;
         UIManager.squareUp = s.up;
@@ -76,14 +81,16 @@ export const BoardManager = {
       const randomIndex = Math.floor(Math.random() * possibleElements.length);
       elements.push(Number(possibleElements[randomIndex]));
     }
-    for (let i = numElements; i < 9; i++) elements.push(0);
+    for (let i = numElements; i < 9; i++) {
+      elements.push(0);
+    }
 
     return this.shuffle(elements);
   },
 
   /**
    * Simple Fisher-Yates shuffle
-   * @param {Array} array 
+   * @param {Array} array
    * @returns {Array}
    */
   shuffle(array) {
@@ -99,7 +106,7 @@ export const BoardManager = {
    * Reset the board to initial empty state.
    */
   resetBoard() {
-    this.boardArray.forEach(cell => {
+    this.boardArray.forEach((cell) => {
       cell.element = 0;
       cell.occupant = null;
     });

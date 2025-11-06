@@ -64,7 +64,9 @@ export class PlayerManager {
    * @returns {boolean} success
    */
   addCardToHand(card, container) {
-    if (!card || !container) return false;
+    if (!card || !container) {
+      return false;
+    }
 
     // Update board count
     if (card.id != null) {
@@ -85,11 +87,15 @@ export class PlayerManager {
    * @returns {Object|null} removed card
    */
   removeLastCard() {
-    if (this.playerCards.length === 0) return null;
+    if (this.playerCards.length === 0) {
+      return null;
+    }
 
     const removedCard = this.playerCards.pop();
     const removedContainer = this.cardsInHand.pop();
-    if (!removedCard || !removedContainer) return null;
+    if (!removedCard || !removedContainer) {
+      return null;
+    }
 
     // Step 1: Update board count
     if (removedCard.id != null) {
@@ -146,7 +152,7 @@ export class PlayerManager {
       if (card) {
         createjs.Tween.get(card).to(
           { y: card.y + offsets.handCardOffset },
-          200
+          200,
         );
       }
     }
