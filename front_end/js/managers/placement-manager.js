@@ -5,8 +5,8 @@ import { PlacementRenderer } from "../renderers/placement-renderer.js";
 import { BoardManager } from "./board-manager.js";
 import { UIManager } from "./ui-manager.js";
 import { debug } from "../debug.js";
-
-const flippingController = new FlippingController();
+import { FlippingRenderer } from "../renderers/flipping-renderer.js";
+import { offsets } from "../constants/offsets.js";
 
 /**
  * Handles the logical flow of card placement, coordinating animations and
@@ -14,6 +14,7 @@ const flippingController = new FlippingController();
  */
 export class PlacementManager {
   /**
+   * Creates an instance of PlacementManager.
    * @param {PlacementController} controller - The high-level controller managing placement logic.
    */
   constructor(controller) {
@@ -22,6 +23,15 @@ export class PlacementManager {
 
     /** @type {PlacementRenderer} */
     this.renderer = new PlacementRenderer();
+
+    /** @type {FlippingController} */
+    this.flippingController = new FlippingController();
+
+    /** @type {PlayerManager} */
+    this.playerManager = controller.playerManager;
+
+    /** @type {FlippingRenderer} */
+    this.flippingRenderer = new FlippingRenderer(this.playerManager);
   }
 
   /**
@@ -32,17 +42,23 @@ export class PlacementManager {
    * @param {number} placementY - Y coordinate on the board.
    */
   placeCard(card, placementX, placementY) {
-    const offscreenX =
-      utilities.getPlayerTurn() === "red" ? card.x + 40 : card.x - 40;
-    const offscreenY = -200;
+    if (!card) {
+      console.warn("Attempted to place a null or undefined card.");
+      return;
+    }
 
     // Animate the card offscreen first
+    const offscreenX =
+      utilities.getPlayerTurn() === "red"
+        ? card.x + offsets.offscreenX
+        : card.x - offsets.offscreenX;
+    const offscreenY = offsets.offscreenY;
     this.renderer.moveCardOffscreen(card, offscreenX, offscreenY, (c) => {
       this.onCardOffscreenComplete(c, placementX, placementY);
     });
 
     // Shift remaining hand cards down
-    this.controller.shiftHandCardsDown();
+    this.renderer.shiftHandCardsDown();
   }
 
   /**
@@ -59,9 +75,12 @@ export class PlacementManager {
 
     // Update card visuals for red player
     if (utilities.getPlayerTurn() === "red") {
-      card.children[1].image.src = card.frontImage;
-      this.controller.flippingRenderer.replaceCard(card);
+      const face = card.children?.[1];
+      if (face?.image) {
+        face.image.src = card.frontImage;
+      }
     }
+    this.flippingRenderer.refreshCardFace(card);
 
     // Animate card onto board
     this.renderer.moveCardToBoard(card, placementX, placementY, (c) => {
@@ -86,7 +105,7 @@ export class PlacementManager {
     this.controller.applyElementEffects(card);
 
     // Check for flips triggered by placement
-    flippingController.flipCardsCheck(card);
+    this.flippingController.flipCardsCheck(card);
 
     // Update the stage to reflect all changes
     Game.stage.update();
@@ -106,10 +125,12 @@ export class PlacementManager {
    * @param {createjs.Container} card - The card being placed.
    */
   setCardAdjacents(card) {
-    card.cardLeft = BoardManager.getOccupant(UIManager.squareLeft);
-    card.cardUp = BoardManager.getOccupant(UIManager.squareUp);
-    card.cardRight = BoardManager.getOccupant(UIManager.squareRight);
-    card.cardDown = BoardManager.getOccupant(UIManager.squareDown);
+    const directions = ["Left", "Up", "Right", "Down"];
+    for (const direction of directions) {
+      card[`card${direction}`] = BoardManager.getOccupant(
+        UIManager[`square${direction}`],
+      );
+    }
 
     if (debug.active) {
       console.log(card);
@@ -132,11 +153,12 @@ export class PlacementManager {
       BoardManager.freeCells.splice(freeCellIndex, 1);
     }
 
-    this.controller.flippingRenderer.replaceCard(card);
+    this.flippingRenderer.refreshCardFace(card);
+    BoardManager.lastPlacedSquare = UIManager.selectedSquare;
   }
 
   applyElementEffects(card, squareElement) {
-    if (!squareElement || squareElement === 0) {
+    if (!squareElement) {
       return { modified: false };
     }
 

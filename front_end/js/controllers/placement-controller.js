@@ -20,10 +20,11 @@ export class PlacementController {
     this.flippingRenderer = new FlippingRenderer(playerManager);
 
     /** @type {PlacementManager} Handles the placement animations and completion callbacks */
-    this.manager = new PlacementManager({
-      controller: this,
-      renderer: this.flippingRenderer,
-    });
+    this.manager = undefined; // Instantiated in Game.managers
+  }
+
+  init() {
+    this.manager = new PlacementManager(this);
   }
 
   /**
@@ -115,12 +116,5 @@ export class PlacementController {
 
     // Reset the card indentation for the player
     this.manager.renderer.indentAfterPlacement();
-  }
-
-  /**
-   * Call the renderer to shift hand cards down.
-   */
-  shiftHandCardsDown() {
-    this.manager.renderer.shiftHandCardsDown();
   }
 }

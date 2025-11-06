@@ -44,8 +44,9 @@ export const gameInit = {
       UIManager,
     );
 
-    const placementManager = new PlacementManager();
     const placementController = new PlacementController(playerManager);
+    placementController.init();
+    const placementManager = new PlacementManager(placementController);
 
     // If manager needs to call back into controller, wire it
     if (typeof placementManager.setController === "function") {

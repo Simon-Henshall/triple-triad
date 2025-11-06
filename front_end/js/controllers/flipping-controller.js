@@ -47,7 +47,7 @@ export class FlippingController {
     // Update visual representation
     const playerManager = Game.managers.playerManager;
     const flippingRenderer = new FlippingRenderer(playerManager);
-    flippingRenderer.replaceCard(targetCard);
+    flippingRenderer.refreshCardFace(targetCard);
 
     // Update counts
     this.updateOwnershipCounts(1);

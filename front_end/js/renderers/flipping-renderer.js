@@ -127,7 +127,7 @@ export class FlippingRenderer {
    * Replace or update the card ownership image while retaining the front art.
    * @param {Object} cardToReplace - The card whose visual representation to update
    */
-  replaceCard(cardToReplace) {
+  refreshCardFace(cardToReplace) {
     if (cardToReplace.children[0]) {
       cardToReplace.children[0].image.src = `front_end/images/cards/${cardToReplace.owner}.png`;
     } else {

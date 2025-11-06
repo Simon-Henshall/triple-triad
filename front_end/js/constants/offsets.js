@@ -9,4 +9,6 @@ export const offsets = {
   cardOffsetY: 3,
   cardWidth: 93,
   cardHeight: 120,
+  offscreenY: -200,
+  offscreenX: 40,
 };
