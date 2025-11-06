@@ -7,6 +7,6 @@ export const offsets = {
   cellHeight: 184,
   cardOffsetX: 3,
   cardOffsetY: 3,
-  cardWidth: 0,
-  cardHeight: 0,
+  cardWidth: 93,
+  cardHeight: 120,
 };

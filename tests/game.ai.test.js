@@ -1,4 +1,4 @@
-import { GameState } from '../front_end/js/game.state.js';
+import { GameState } from '../front_end/js/game/game.state.js';
 
 describe('GameState AI logic', () => {
   const A = (stats = {}) => ({ owner: 'PLAYER', strengthUp: 5, strengthRight: 5, strengthDown: 5, strengthLeft: 5, ...stats });

@@ -1,0 +1,88 @@
+import { Game } from "../game/game.js";
+import { SelectionBoardRenderer } from "../ui/SelectionBoardRenderer.js";
+
+/**
+ * Bridges player input, logical state, and rendering.
+ */
+export class PlayerController {
+  /**
+   * @param {PlayerManager} manager
+   * @param {PlayerRenderer} renderer
+   * @param {Object} uiManager
+   */
+  constructor(manager, renderer, uiManager) {
+    this.manager = manager;
+    this.renderer = renderer;
+    this.ui = uiManager;
+  }
+
+  /**
+   * TODO: This method isn't called at all!
+   * Select a card in hand by index
+   * @param {number} index
+   */
+  selectCard(index) {
+    const card = this.manager.getHandCard(index);
+    if (!card) return;
+
+    this.manager.selectedCard = card;
+    this.renderer.indentSelectedCard(card);
+    this.ui.selectedCard = card;
+  }
+
+  /**
+   * TODO: This method isn't called at all!
+   * Confirm the currently selected card to add to the hand
+   */
+  confirmCardSelection() {
+    const card = this.manager.selectedCard;
+    if (!card) return;
+
+    // Create visual container for the hand card (if you don't already have one)
+    const index = this.manager.cardsInHand.length;
+    const container = this.renderer.createCardContainer(card, "blue");
+
+    // Attach a reference to the selection board card
+    container.id = card.card || card.image;
+
+    // Add to logical hand (this will also update the selection board count)
+    const added = this.manager.addCardToHand(card, container);
+    if (!added) return;
+  }
+
+  /**
+   * Remove the last card from the hand (e.g., cancel action)
+   */
+  removeLastCard() {
+    const removedContainer = this.manager.removeLastCard();
+    if (!removedContainer) return;
+
+    const index = this.manager.cardsInHand.length;
+
+    // Animate the removed card back to hand (reverse)
+    this.renderer.animateCardToHand(removedContainer, index, true);
+
+    // Immediately update z-order of remaining hand + preview
+    this.renderer._updateHandAndPreviewZOrder();
+    Game.stage.update();
+
+    // Update selection board preview card to match new selected card
+    SelectionBoardRenderer.updateDisplay({ skipTween: true });
+  }
+
+  /**
+   * TODO: UNCALLED
+   * Populate and render the initial hand visually
+   */
+  populateHand() {
+    this.renderer.populateHand();
+  }
+
+  /**
+   * Reset the player's hand completely
+   */
+  resetHand() {
+    this.manager.resetHand();
+    this.renderer.resetHand();
+  }
+}

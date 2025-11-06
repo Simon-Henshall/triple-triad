@@ -1,8 +1,9 @@
-import { player } from './player.js';
-import { board } from './board.js';
-import { ui } from './ui.js';
-import { utils } from './utils.js';
-import { ai } from './ai.js';
+import { BoardManager } from './managers/BoardManager.js';
+import { UIManager } from "./managers/UIManager.js";
+import { utils } from './game/utils.js';
+import { ai } from './game/ai.js';
+import { config } from "./config.js";
+import { Game } from './game/game.js';
 
 export const debug = {
   active: true, // Toggle for debug mode
@@ -17,8 +18,8 @@ export const debug = {
    */
   logCell(eventOrSquare) {
     const squareID = eventOrSquare.name ?? eventOrSquare.id;
-    const squareObj = ui.squares[squareID - 1];
-    const cardHere = board.boardArray[squareID - 1].occupant;
+    const squareObj = UIManager.squares[squareID - 1];
+    const cardHere = BoardManager.boardArray[squareID - 1].occupant;
 
     console.log("======================================================");
     console.log(`CELL DEBUG | Square ID: ${squareID}`);
@@ -50,7 +51,7 @@ export const debug = {
   logBoard() {
     console.log("--------------- BOARD STATE ---------------");
     for (let i = 0; i < 3; i++) {
-      const row = board.boardArray.slice(i * 3, i * 3 + 3).map((cell) => {
+      const row = BoardManager.boardArray.slice(i * 3, i * 3 + 3).map((cell) => {
         const elem = cell.element ? `Cell Element: ${config.elements[cell.element].name}` : "No Element";
         if (!cell.occupant) return `[Empty | ${elem}]`;
         return `[${cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.element} | Cell Element: ${elem}]`;
@@ -65,7 +66,8 @@ export const debug = {
    */
   logHands() {
     console.log("=============== PLAYER HAND ===============");
-    player.cardsInPlayerHand.forEach((card, i) => {
+    const playerManager = Game.managers.playerManager;
+    playerManager.cardsInPlayerHand.forEach((card, i) => {
       console.log(
         `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`
       );
@@ -85,13 +87,14 @@ export const debug = {
    */
   logTurn() {
     const currentPlayer = utils.getPlayerTurn();
+    const playerManager = Game.managers.playerManager;
     console.log(
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`
     );
     console.log(
-      `SCORE | Player: ${player.totalBlueCards} AI: ${ai.totalRedCards}`
+      `SCORE | Player: ${playerManager.totalBlueCards} AI: ${ai.totalRedCards}`
     );
-    console.log(`Free cells remaining: ${board.freeCells.join(", ")}`);
+    console.log(`Free cells remaining: ${BoardManager.freeCells.join(", ")}`);
     console.log("*****************************************");
   },
 
