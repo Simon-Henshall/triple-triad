@@ -166,7 +166,7 @@ export const UIRenderer = {
     // Update card counts
     if (ai.aiCardCount) ai.aiCardCount.text = ai.totalRedCards;
     if (playerManager.playerCardCount)
-      playerManager.playerCardCount = playerManager.totalBlueCards;
+      playerManager.playerCardCount.text = playerManager.totalBlueCards;
 
     Game.stage.update();
   },

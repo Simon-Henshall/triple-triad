@@ -27,9 +27,6 @@ export class PlayerManager {
     /** @type {number} Number of cards above current selection */
     this.cardsAboveSelection = 0;
 
-    /** @type {number} Total cards held by player */
-    this.playerCardCount = 0;
-
     /** @type {Object|null} Currently selected card */
     this.selectedCard = null;
 
@@ -59,7 +56,6 @@ export class PlayerManager {
    */
   initDeck() {
     this.playerCards = this.shuffleDeck([...this.ownedCards]);
-    this.playerCardCount = this.playerCards.length;
   }
 
   /**

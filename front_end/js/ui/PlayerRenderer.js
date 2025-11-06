@@ -92,14 +92,13 @@ export class PlayerRenderer {
    */
   indentSelectedCard(selectedCard) {
     const prevCard = UIManager.previouslySelectedCard;
-    const isBlueTurn = this.manager.totalBlueCards > 0;
 
     if (selectedCard) {
-      selectedCard.x += isBlueTurn ? -30 : 30;
+      selectedCard.x -= 30;
     }
 
     if (prevCard && prevCard.x !== undefined) {
-      prevCard.x += isBlueTurn ? 30 : -30;
+      prevCard.x += 30;
     }
 
     UIManager.previouslySelectedCard = selectedCard;

@@ -9,7 +9,6 @@ export const ai = {
   handOffsetX: 0,
   cardsInAIHand: [],
   aiCardsAboveSelection: 0,
-  aiCardCount: 0,
   aiDelay: 1000,
   totalRedCards: 5,
   aiHand: aiHand,

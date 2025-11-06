@@ -77,7 +77,7 @@ export class FlippingController {
       delta[playerColour].totalRedCardsConfined * flippedCount;
 
     ai.aiCardCount.text = ai.totalRedCards;
-    playerManager.playerCardCount = playerManager.totalBlueCards;
+    playerManager.playerCardCount.text = playerManager.totalBlueCards;
     Game.stage.update();
   }
 
