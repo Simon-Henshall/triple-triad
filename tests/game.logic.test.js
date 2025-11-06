@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/consistent-function-scoping */
 import GameLogic from "../front_end/js/game/game.logic.js";
 const logic = new GameLogic();
 
@@ -15,12 +16,12 @@ describe("canFlip", () => {
   });
 
   test("returns false when defender missing", () => {
-    expect(logic.canFlip({ strengthRight: 5 }, null, "right")).toBe(false);
+    expect(logic.canFlip({ strengthRight: 5 }, undefined, "right")).toBe(false);
   });
 
   test("throws on invalid direction", () => {
     expect(() =>
-      logic.canFlip({ strengthUp: 1 }, { strengthDown: 1 }, "diagonal")
+      logic.canFlip({ strengthUp: 1 }, { strengthDown: 1 }, "diagonal"),
     ).toThrow();
   });
 });
@@ -41,13 +42,13 @@ describe("getFlippableNeighbours", () => {
   });
 
   test("ignores empty spaces and boundaries", () => {
-    const board = [[A({ strengthRight: 5 }), null]];
+    const board = [[A({ strengthRight: 5 }), undefined]];
     expect(logic.getFlippableNeighbours(board, 0, 0)).toEqual([]);
   });
 
   test("handles multiple directions (up, down, left, right)", () => {
     const board = [
-      [null, B({ owner: "B", strengthDown: 2 }), null],
+      [undefined, B({ owner: "B", strengthDown: 2 }), undefined],
       [
         B({ owner: "B", strengthRight: 2 }),
         A({
@@ -58,7 +59,7 @@ describe("getFlippableNeighbours", () => {
         }),
         B({ owner: "B", strengthLeft: 2 }),
       ],
-      [null, B({ owner: "B", strengthUp: 2 }), null],
+      [undefined, B({ owner: "B", strengthUp: 2 }), undefined],
     ];
     const flips = logic.getFlippableNeighbours(board, 1, 1);
     expect(flips).toHaveLength(4);
@@ -68,83 +69,93 @@ describe("getFlippableNeighbours", () => {
         { x: 1, y: 2 },
         { x: 0, y: 1 },
         { x: 2, y: 1 },
-      ])
+      ]),
     );
   });
 });
 
-describe('applyFlips', () => {
-  const A = (stats = {}) => ({ owner: 'A', ...stats });
-  const B = (stats = {}) => ({ owner: 'B', ...stats });
+describe("applyFlips", () => {
+  const A = (stats = {}) => ({ owner: "A", ...stats });
+  const B = (stats = {}) => ({ owner: "B", ...stats });
 
-  test('changes ownership of specified coordinates', () => {
-    const board = [
-      [A(), B()],
-    ];
+  test("changes ownership of specified coordinates", () => {
+    const board = [[A(), B()]];
     const flips = [{ x: 1, y: 0 }];
-    const result = logic.applyFlips(board, flips, 'A');
-    expect(result[0][1].owner).toBe('A');
+    const result = logic.applyFlips(board, flips, "A");
+    expect(result[0][1].owner).toBe("A");
   });
 
-  test('does not mutate the original board', () => {
-    const board = [
-      [A(), B()],
-    ];
+  test("does not mutate the original board", () => {
+    const board = [[A(), B()]];
     const flips = [{ x: 1, y: 0 }];
-    const result = logic.applyFlips(board, flips, 'A');
-    expect(board[0][1].owner).toBe('B');
+    const result = logic.applyFlips(board, flips, "A");
+    expect(board[0][1].owner).toBe("B");
     expect(result).not.toBe(board);
   });
 
-  test('ignores null cells safely', () => {
-    const board = [
-      [A(), null],
-    ];
+  test("ignores null cells safely", () => {
+    const board = [[A(), undefined]];
     const flips = [{ x: 1, y: 0 }];
-    const result = logic.applyFlips(board, flips, 'A');
-    expect(result[0][0].owner).toBe('A');
+    const result = logic.applyFlips(board, flips, "A");
+    expect(result[0][0].owner).toBe("A");
     expect(result[0][1]).toBeNull();
   });
 });
 
-describe('playCard', () => {
-  const A = (stats = {}) => ({ owner: 'A', strengthUp: 5, strengthRight: 5, strengthDown: 5, strengthLeft: 5, ...stats });
-  const B = (stats = {}) => ({ owner: 'B', strengthUp: 1, strengthRight: 1, strengthDown: 1, strengthLeft: 1, ...stats });
-
-  test('places a new card on an empty cell', () => {
-    const board = [
-      [null, null],
-      [null, null],
-    ];
-    const result = logic.playCard(board, 0, 0, A(), 'A');
-    expect(result[0][0].owner).toBe('A');
+describe("playCard", () => {
+  const A = (stats = {}) => ({
+    owner: "A",
+    strengthUp: 5,
+    strengthRight: 5,
+    strengthDown: 5,
+    strengthLeft: 5,
+    ...stats,
+  });
+  const B = (stats = {}) => ({
+    owner: "B",
+    strengthUp: 1,
+    strengthRight: 1,
+    strengthDown: 1,
+    strengthLeft: 1,
+    ...stats,
   });
 
-  test('throws an error if the cell is already occupied', () => {
+  test("places a new card on an empty cell", () => {
     const board = [
-      [A(), null],
-      [null, null],
+      [undefined, undefined],
+      [undefined, undefined],
     ];
-    expect(() => logic.playCard(board, 0, 0, A(), 'A')).toThrow('Cell already occupied');
+    const result = logic.playCard(board, 0, 0, A(), "A");
+    expect(result[0][0].owner).toBe("A");
   });
 
-  test('flips neighbouring opponent cards if stronger', () => {
+  test("throws an error if the cell is already occupied", () => {
     const board = [
-      [null, B({ strengthLeft: 1 })],
-      [null, null],
+      [A(), undefined],
+      [undefined, undefined],
+    ];
+    expect(() => logic.playCard(board, 0, 0, A(), "A")).toThrow(
+      "Cell already occupied",
+    );
+  });
+
+  test("flips neighbouring opponent cards if stronger", () => {
+    const board = [
+      [undefined, B({ strengthLeft: 1 })],
+      [undefined, undefined],
     ];
     const card = A({ strengthRight: 5 });
-    const result = logic.playCard(board, 0, 0, card, 'A');
-    expect(result[0][1].owner).toBe('A');
+    const result = logic.playCard(board, 0, 0, card, "A");
+    expect(result[0][1].owner).toBe("A");
   });
 
-  test('does not flip if not stronger', () => {
+  test("does not flip if not stronger", () => {
     const board = [
-      [null, B({ strengthLeft: 9 })],
-      [null, null],
+      [undefined, B({ strengthLeft: 9 })],
+      [undefined, undefined],
     ];
     const card = A({ strengthRight: 5 });
-    const result = logic.playCard(board, 0, 0, card, 'A');
-    expect(result[0][1].owner).toBe('B');
+    const result = logic.playCard(board, 0, 0, card, "A");
+    expect(result[0][1].owner).toBe("B");
   });
 });

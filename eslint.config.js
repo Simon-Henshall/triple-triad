@@ -21,7 +21,7 @@ export default [
     rules: {
       ...tseslint.configs.recommended.rules,
       ...prettierConfig.rules,
-      //...eslintPluginUnicorn.configs.all.rules,
+      ...eslintPluginUnicorn.configs.all.rules,
       "@typescript-eslint/no-unused-vars": "warn",
       //"no-console": "warn",
       semi: ["error", "always"],

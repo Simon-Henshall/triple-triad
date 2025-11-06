@@ -1,7 +1,7 @@
 import { Game } from "../game/game.js";
-import { utils } from "../game/utils.js";
-import { FlippingController } from "../controllers/FlippingController.js";
-import { PlacementRenderer } from "../ui/PlacementRenderer.js";
+import { utilities } from "../game/utilities.js";
+import { FlippingController } from "../controllers/flipping-controller.js";
+import { PlacementRenderer } from "../ui/placement-renderer.js";
 
 const flippingController = new FlippingController();
 
@@ -30,7 +30,7 @@ export class PlacementManager {
    */
   placeCard(card, placementX, placementY) {
     const offscreenX =
-      utils.getPlayerTurn() === "red" ? card.x + 40 : card.x - 40;
+      utilities.getPlayerTurn() === "red" ? card.x + 40 : card.x - 40;
     const offscreenY = -200;
 
     // Animate the card offscreen first
@@ -55,7 +55,7 @@ export class PlacementManager {
     Game.stage.setChildIndex(card, Game.stage.getNumChildren() - 1);
 
     // Update card visuals for red player
-    if (utils.getPlayerTurn() === "red") {
+    if (utilities.getPlayerTurn() === "red") {
       card.children[1].image.src = card.frontImage;
       this.controller.flippingRenderer.replaceCard(card);
     }

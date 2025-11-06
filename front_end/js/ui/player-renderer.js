@@ -1,5 +1,5 @@
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/UIManager.js";
+import { UIManager } from "../managers/ui-manager.js";
 import { offsets } from "../constants/offsets.js";
 
 /**
@@ -29,11 +29,11 @@ export class PlayerRenderer {
   populateHand() {
     this.resetHand();
 
-    this.manager.cardsInHand.forEach((card, index) => {
+    for (const [index, card] of this.manager.cardsInHand.entries()) {
       const container = this._createCardContainer(card, index);
       this.cardsInPlayerHand.push(container);
       Game.stage.addChild(container);
-    });
+    }
 
     // Default selection
     const firstCard = this.cardsInPlayerHand[0];
@@ -73,11 +73,12 @@ export class PlayerRenderer {
       .to({ y: finalY }, 600, createjs.Ease.quadOut)
       .call(() => {
         if (remove) {
-          const idx = this.cardsInPlayerHand.indexOf(cardContainer);
-          if (idx >= 0) {
-            this.cardsInPlayerHand.splice(idx, 1);
+          const index_ = this.cardsInPlayerHand.indexOf(cardContainer);
+          if (index_ !== -1) {
+            this.cardsInPlayerHand.splice(index_, 1);
           }
           if (Game.stage.contains(cardContainer)) {
+            // eslint-disable-next-line unicorn/prefer-dom-node-remove
             Game.stage.removeChild(cardContainer);
           }
         }
@@ -97,14 +98,14 @@ export class PlayerRenderer {
    * @param {createjs.Container} selectedCard
    */
   indentSelectedCard(selectedCard) {
-    const prevCard = UIManager.previouslySelectedCard;
+    const previousCard = UIManager.previouslySelectedCard;
 
     if (selectedCard) {
       selectedCard.x -= 30;
     }
 
-    if (prevCard && prevCard.x !== undefined) {
-      prevCard.x += 30;
+    if (previousCard && previousCard.x !== undefined) {
+      previousCard.x += 30;
     }
 
     UIManager.previouslySelectedCard = selectedCard;
@@ -115,11 +116,12 @@ export class PlayerRenderer {
    * Remove all visual cards from stage
    */
   resetHand() {
-    this.cardsInPlayerHand.forEach((card) => {
+    for (const card of this.cardsInPlayerHand) {
       if (Game.stage.contains(card)) {
+        // eslint-disable-next-line unicorn/prefer-dom-node-remove
         Game.stage.removeChild(card);
       }
-    });
+    }
     this.cardsInPlayerHand = [];
     Game.stage.update();
   }
@@ -131,8 +133,8 @@ export class PlayerRenderer {
    * @returns {createjs.Container}
    */
   _createCardContainer(card, index) {
-    // Assume utils.createCardContainer exists
-    return utils.createCardContainer(
+    // Assume utilities.createCardContainer exists
+    return utilities.createCardContainer(
       card,
       "blue",
       this.stackOffsetX,
@@ -157,11 +159,11 @@ export class PlayerRenderer {
       Game.stage.setChildIndex(previewCard, topIndex - 1);
     }
 
-    this.cardsInPlayerHand.forEach((c) => {
+    for (const c of this.cardsInPlayerHand) {
       if (Game.stage.contains(c) && previewCard) {
         Game.stage.setChildIndex(c, Game.stage.getChildIndex(previewCard) - 1);
       }
-    });
+    }
   }
 
   /**

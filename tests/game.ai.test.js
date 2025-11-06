@@ -1,38 +1,53 @@
-import { GameState } from '../front_end/js/game/game.state.js';
+/* eslint-disable unicorn/consistent-function-scoping */
+import { GameState } from "../front_end/js/game/game.state.js";
 
-describe('GameState AI logic', () => {
-  const A = (stats = {}) => ({ owner: 'PLAYER', strengthUp: 5, strengthRight: 5, strengthDown: 5, strengthLeft: 5, ...stats });
-  const B = (stats = {}) => ({ owner: 'AI', strengthUp: 5, strengthRight: 5, strengthDown: 5, strengthLeft: 5, ...stats });
+describe("GameState AI logic", () => {
+  const A = (stats = {}) => ({
+    owner: "PLAYER",
+    strengthUp: 5,
+    strengthRight: 5,
+    strengthDown: 5,
+    strengthLeft: 5,
+    ...stats,
+  });
+  const B = (stats = {}) => ({
+    owner: "AI",
+    strengthUp: 5,
+    strengthRight: 5,
+    strengthDown: 5,
+    strengthLeft: 5,
+    ...stats,
+  });
 
-  test('AI plays a valid card into an empty space', () => {
+  test("AI plays a valid card into an empty space", () => {
     const game = new GameState({
       playerHand: [A()],
       aiHand: [B()],
-      startingPlayer: 'AI',
+      startingPlayer: "AI",
     });
 
     game.playAiTurn();
 
     const placedCells = game.board.flat().filter(Boolean);
     expect(placedCells.length).toBe(1);
-    expect(placedCells[0].owner).toBe('AI');
-    expect(game.turn).toBe('PLAYER');
+    expect(placedCells[0].owner).toBe("AI");
+    expect(game.turn).toBe("PLAYER");
   });
 
-  test('AI cannot play if it has no cards', () => {
+  test("AI cannot play if it has no cards", () => {
     const game = new GameState({
       playerHand: [A()],
       aiHand: [],
-      startingPlayer: 'AI',
+      startingPlayer: "AI",
     });
-    expect(() => game.playAiTurn()).toThrow('AI has no cards left');
+    expect(() => game.playAiTurn()).toThrow("AI has no cards left");
   });
 
-  test('AI cannot play if no cells are available', () => {
+  test("AI cannot play if no cells are available", () => {
     const game = new GameState({
       playerHand: [A()],
       aiHand: [B()],
-      startingPlayer: 'AI',
+      startingPlayer: "AI",
     });
 
     // Fill the board completely
@@ -42,15 +57,15 @@ describe('GameState AI logic', () => {
       [A(), A(), A()],
     ];
 
-    expect(() => game.playAiTurn()).toThrow('No available cells for AI move');
+    expect(() => game.playAiTurn()).toThrow("No available cells for AI move");
   });
 
-  test('AI must only play on its own turn', () => {
+  test("AI must only play on its own turn", () => {
     const game = new GameState({
       playerHand: [A()],
       aiHand: [B()],
-      startingPlayer: 'PLAYER',
+      startingPlayer: "PLAYER",
     });
-    expect(() => game.playAiTurn()).toThrow('It is not the AI\'s turn');
+    expect(() => game.playAiTurn()).toThrow("It is not the AI's turn");
   });
 });

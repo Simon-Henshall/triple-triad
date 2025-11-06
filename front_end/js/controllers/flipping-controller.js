@@ -1,9 +1,9 @@
-import { FlippingRenderer } from "../ui/FlippingRenderer.js";
+import { FlippingRenderer } from "../ui/flipping-renderer.js";
 import { directionMap } from "../constants/directions.js";
-import { utils } from "../game/utils.js";
+import { utilities } from "../game/utilities.js";
 import { ai } from "../game/ai.js";
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/UIManager.js";
+import { UIManager } from "../managers/ui-manager.js";
 
 export class FlippingController {
   constructor(gameState, player, ai) {
@@ -17,19 +17,20 @@ export class FlippingController {
    * @param {Object} card - The card to check around.
    */
   flipCardsCheck(card) {
-    Object.entries(directionMap).forEach(
-      ([direction, { prop, playerStrength, opponentStrength }]) => {
-        const target = card[prop];
+    for (const [
+      direction,
+      { prop, playerStrength, opponentStrength },
+    ] of Object.entries(directionMap)) {
+      const target = card[prop];
 
-        if (
-          target &&
-          card.owner !== target.owner &&
-          card[playerStrength] > target[opponentStrength]
-        ) {
-          this.flipCardOver(card, direction);
-        }
-      },
-    );
+      if (
+        target &&
+        card.owner !== target.owner &&
+        card[playerStrength] > target[opponentStrength]
+      ) {
+        this.flipCardOver(card, direction);
+      }
+    }
   }
 
   /**
@@ -52,9 +53,9 @@ export class FlippingController {
     this.updateOwnershipCounts(1);
 
     // Maintain board consistency
-    const squareObj = UIManager.squares[targetCard.inCell - 1];
-    if (squareObj) {
-      squareObj.card = targetCard;
+    const squareObject = UIManager.squares[targetCard.inCell - 1];
+    if (squareObject) {
+      squareObject.card = targetCard;
     }
   }
 
@@ -86,6 +87,6 @@ export class FlippingController {
    * @returns {string} Player colour ("red" or "blue")
    */
   getCurrentPlayerColour() {
-    return utils.getPlayerTurn();
+    return utilities.getPlayerTurn();
   }
 }

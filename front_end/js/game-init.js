@@ -1,23 +1,23 @@
 import { config } from "./config.js";
 import { offsets } from "./constants/offsets.js";
-import { UIManager } from "./managers/UIManager.js";
-import { UIRenderer } from "./ui/UIRenderer.js";
-import { utils } from "./game/utils.js";
+import { UIManager } from "./managers/ui-manager.js";
+import { UIRenderer } from "./ui/ui-renderer.js";
+import { utilities } from "./game/utilities.js";
 import { ai } from "./game/ai.js";
 import { Game } from "./game/game.js";
 
 // Managers & Controllers
-import { PlayerManager } from "./managers/PlayerManager.js";
-import { PlayerRenderer } from "./ui/PlayerRenderer.js";
-import { PlayerController } from "./controllers/PlayerController.js";
-import { PlacementManager } from "./managers/PlacementManager.js";
-import { PlacementController } from "./controllers/PlacementController.js";
-import { InputManager } from "./managers/InputManager.js";
-import { CursorManager } from "./managers/CursorManager.js";
-import { CursorRenderer } from "./ui/CursorRenderer.js";
-import { CursorController } from "./controllers/CursorController.js";
-import { InputController } from "./controllers/InputController.js";
-import { BoardManager } from "./managers/BoardManager.js";
+import { PlayerManager } from "./managers/player-manager.js";
+import { PlayerRenderer } from "./ui/player-renderer.js";
+import { PlayerController } from "./controllers/player-controller.js";
+import { PlacementManager } from "./managers/placement-manager.js";
+import { PlacementController } from "./controllers/placement-controller.js";
+import { InputManager } from "./managers/input-manager.js";
+import { CursorManager } from "./managers/cursor-manager.js";
+import { CursorRenderer } from "./ui/cursor-renderer.js";
+import { CursorController } from "./controllers/cursor-controller.js";
+import { InputController } from "./controllers/input-controller.js";
+import { BoardManager } from "./managers/board-manager.js";
 
 export const gameInit = {
   stage() {
@@ -130,14 +130,16 @@ export const gameInit = {
   },
 
   events(inputController) {
-    document.addEventListener("keydown", (e) => inputController.handleKey(e));
+    document.addEventListener("keydown", (event) =>
+      inputController.handleKey(event),
+    );
   },
 
   loadInitialCards() {
     if (typeof ajaxCall === "function") {
-      utils.ajaxCall(utils.pickPlayerCards);
-    } else if (typeof utils.pickPlayerCards === "function") {
-      utils.pickPlayerCards();
+      utilities.ajaxCall(utilities.pickPlayerCards);
+    } else if (typeof utilities.pickPlayerCards === "function") {
+      utilities.pickPlayerCards();
     }
   },
 

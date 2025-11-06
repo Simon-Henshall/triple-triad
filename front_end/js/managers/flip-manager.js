@@ -9,8 +9,8 @@ export class FlipManager {
 
   flipCardsAround(card) {
     const flipped = this.controller.flipCardsCheck(card);
-    flipped.forEach(({ target, direction }) => {
+    for (const { target, direction } of flipped) {
       this.renderer.flipCard(target, direction);
-    });
+    }
   }
 }

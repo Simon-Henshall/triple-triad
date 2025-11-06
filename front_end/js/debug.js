@@ -1,6 +1,6 @@
-import { BoardManager } from "./managers/BoardManager.js";
-import { UIManager } from "./managers/UIManager.js";
-import { utils } from "./game/utils.js";
+import { BoardManager } from "./managers/board-manager.js";
+import { UIManager } from "./managers/ui-manager.js";
+import { utilities } from "./game/utilities.js";
 import { ai } from "./game/ai.js";
 import { config } from "./config.js";
 import { Game } from "./game/game.js";
@@ -18,12 +18,12 @@ export const debug = {
    */
   logCell(eventOrSquare) {
     const squareID = eventOrSquare.name ?? eventOrSquare.id;
-    const squareObj = UIManager.squares[squareID - 1];
+    const squareObject = UIManager.squares[squareID - 1];
     const cardHere = BoardManager.boardArray[squareID - 1].occupant;
 
     console.log("======================================================");
     console.log(`CELL DEBUG | Square ID: ${squareID}`);
-    console.log(`Element: ${squareObj?.element ?? "None"}`);
+    console.log(`Element: ${squareObject?.element ?? "None"}`);
 
     if (cardHere && cardHere !== "Empty") {
       console.log("Card Present:");
@@ -50,19 +50,19 @@ export const debug = {
    */
   logBoard() {
     console.log("--------------- BOARD STATE ---------------");
-    for (let i = 0; i < 3; i++) {
+    for (let index = 0; index < 3; index++) {
       const row = BoardManager.boardArray
-        .slice(i * 3, i * 3 + 3)
+        .slice(index * 3, index * 3 + 3)
         .map((cell) => {
-          const elem = cell.element
+          const element = cell.element
             ? `Cell Element: ${config.elements[cell.element].name}`
             : "No Element";
           if (!cell.occupant) {
-            return `[Empty | ${elem}]`;
+            return `[Empty | ${element}]`;
           }
-          return `[${cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.element} | Cell Element: ${elem}]`;
+          return `[${cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.element} | Cell Element: ${element}]`;
         });
-      console.log(`Row ${i + 1}: ${row.join(" | ")}`);
+      console.log(`Row ${index + 1}: ${row.join(" | ")}`);
     }
     console.log("-------------------------------------------");
   },
@@ -73,18 +73,18 @@ export const debug = {
   logHands() {
     console.log("=============== PLAYER HAND ===============");
     const playerManager = Game.managers.playerManager;
-    playerManager.cardsInPlayerHand.forEach((card, i) => {
+    for (const [index, card] of playerManager.cardsInPlayerHand.entries()) {
       console.log(
-        `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
+        `Card ${index}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
       );
-    });
+    }
 
     console.log("=============== AI HAND ===================");
-    ai.cardsInAIHand.forEach((card, i) => {
+    for (const [index, card] of ai.cardsInAIHand.entries()) {
       console.log(
-        `Card ${i}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
+        `Card ${index}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
       );
-    });
+    }
     console.log("==========================================");
   },
 
@@ -92,7 +92,7 @@ export const debug = {
    * Logs current turn info
    */
   logTurn() {
-    const currentPlayer = utils.getPlayerTurn();
+    const currentPlayer = utilities.getPlayerTurn();
     const playerManager = Game.managers.playerManager;
     console.log(
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`,

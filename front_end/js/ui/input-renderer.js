@@ -1,4 +1,4 @@
-import { UIManager } from "../managers/UIManager.js";
+import { UIManager } from "../managers/ui-manager.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
 

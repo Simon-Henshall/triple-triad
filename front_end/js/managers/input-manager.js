@@ -1,11 +1,11 @@
-import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
-import { SelectionBoardRenderer } from "../ui/SelectionBoardRenderer.js";
-import { UIManager } from "../managers/UIManager.js";
-import { utils } from "../game/utils.js";
-import { ConfirmationController } from "../controllers/ConfirmationController.js";
+import { SelectionBoardUI } from "../ui/selection-board-ui.js";
+import { SelectionBoardRenderer } from "../ui/selection-board-renderer.js";
+import { UIManager } from "./ui-manager.js";
+import { utilities } from "../game/utilities.js";
+import { ConfirmationController } from "../controllers/confirmation-controller.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
-import { BoardManager } from "../managers/BoardManager.js";
+import { BoardManager } from "../managers/board-manager.js";
 import { offsets } from "../constants/offsets.js";
 /**
  * Handles game logic triggered by player input.
@@ -31,102 +31,121 @@ export class InputManager {
 
   /**
    * Handle arrow keys, Enter, and cancel for selection board.
-   * @param {KeyboardEvent} e
+   * @param {KeyboardEvent} event
    * @param {InputRenderer} renderer
    */
-  handlePlayerHandSelection(e, renderer) {
-    switch (e.key) {
-      case "ArrowLeft":
+  handlePlayerHandSelection(event, renderer) {
+    switch (event.key) {
+      case "ArrowLeft": {
         renderer.moveSelectionCursor("left");
         break;
-      case "ArrowRight":
+      }
+      case "ArrowRight": {
         renderer.moveSelectionCursor("right");
         break;
-      case "ArrowUp":
+      }
+      case "ArrowUp": {
         renderer.moveSelectionCursor("up");
         break;
-      case "ArrowDown":
+      }
+      case "ArrowDown": {
         renderer.moveSelectionCursor("down");
         break;
-      case "Enter":
+      }
+      case "Enter": {
         this.selectCard();
         break;
+      }
       case "Backspace":
-      case "Escape":
+      case "Escape": {
         this.cancelLastSelection();
         break;
+      }
     }
   }
 
   /**
    * Handle confirmation box navigation and choice selection.
-   * @param {KeyboardEvent} e
+   * @param {KeyboardEvent} event
    * @param {InputRenderer} renderer
    */
-  handleConfirmation(e, renderer) {
-    switch (e.key) {
-      case "ArrowUp":
+  handleConfirmation(event, renderer) {
+    switch (event.key) {
+      case "ArrowUp": {
         renderer.moveConfirmationCursor("up");
         break;
-      case "ArrowDown":
+      }
+      case "ArrowDown": {
         renderer.moveConfirmationCursor("down");
         break;
-      case "Enter":
+      }
+      case "Enter": {
         this.handleConfirmationChoice();
         break;
+      }
       case "Backspace":
-      case "Escape":
+      case "Escape": {
         this.handleConfirmationChoice("no");
         break;
+      }
     }
   }
 
   /**
    * Handle player hand cursor movement and card play selection.
-   * @param {KeyboardEvent} e
+   * @param {KeyboardEvent} event
    */
-  handlePlayerCardChoice(e, renderer) {
-    switch (e.key) {
-      case "ArrowUp":
+  handlePlayerCardChoice(event, renderer) {
+    switch (event.key) {
+      case "ArrowUp": {
         Game.controllers.cursorController.playerHand.move("up");
         break;
-      case "ArrowDown":
+      }
+      case "ArrowDown": {
         Game.controllers.cursorController.playerHand.move("down");
         break;
-      case "Enter":
+      }
+      case "Enter": {
         this.playSelectedCard(renderer);
         break;
+      }
     }
   }
 
   /**
    * Handle placement cursor movement and card placement.
-   * @param {KeyboardEvent} e
+   * @param {KeyboardEvent} event
    * @param {InputRenderer} renderer
    */
-  handlePlacement(e, renderer) {
-    switch (e.key) {
-      case "ArrowLeft":
+  handlePlacement(event, renderer) {
+    switch (event.key) {
+      case "ArrowLeft": {
         Game.controllers.cursorController.grid.move("left");
         break;
-      case "ArrowRight":
+      }
+      case "ArrowRight": {
         Game.controllers.cursorController.grid.move("right");
         break;
-      case "ArrowUp":
+      }
+      case "ArrowUp": {
         Game.controllers.cursorController.grid.move("up");
         break;
-      case "ArrowDown":
+      }
+      case "ArrowDown": {
         Game.controllers.cursorController.grid.move("down");
         break;
-      case "Enter":
+      }
+      case "Enter": {
         this.placeCardOnBoard();
         break;
+      }
       case "Backspace":
-      case "Escape":
+      case "Escape": {
         renderer.toggleInfoBox(true);
         renderer.restorePlayerHandCursor();
         Game.controllers.cursorController.grid.remove();
         break;
+      }
     }
   }
 
@@ -154,7 +173,7 @@ export class InputManager {
       }
 
       // Create a visual container for the card offscreen
-      const newCardContainer = utils.createCardContainer(
+      const _newCardContainer = utilities.createCardContainer(
         card,
         "blue",
         this.playerManager.handOffsetX,
@@ -162,11 +181,11 @@ export class InputManager {
       );
 
       // Add the card + container to the manager
-      this.playerManager.addCardToHand(card, newCardContainer);
+      this.playerManager.addCardToHand(card, _newCardContainer);
 
       // Animate card into the hand
       this.playerRenderer.animateCardToHand(
-        newCardContainer,
+        _newCardContainer,
         this.playerManager.cardsInHand.length - 1,
       );
 
@@ -207,11 +226,14 @@ export class InputManager {
       (UIManager.confirmation.selectedChoice === 0 ? "yes" : "no");
 
     if (choice === "yes") {
+      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.selectionBoard.container);
+      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.confirmation.container);
       Game.controllers.cursorController.confirmation.remove();
       Game.startGame();
     } else {
+      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.confirmation.container);
       Game.controllers.cursorController.confirmation.remove();
 
@@ -219,7 +241,7 @@ export class InputManager {
       this.playerController.resetHand();
 
       // update board counts
-      for (let i = 0; i < 5; i++) {
+      for (let index = 0; index < 5; index++) {
         const lastCard = this.playerManager.playerCards.pop();
         if (lastCard) {
           SelectionBoardRenderer.updateBoardCount(lastCard.id, +1);
@@ -263,6 +285,7 @@ export class InputManager {
     renderer.toggleInfoBox(false);
 
     // Remove hand cursor from stage
+    // eslint-disable-next-line unicorn/prefer-dom-node-remove
     Game.stage.removeChild(this.playerManager.playerHandCursor);
 
     // Enter placement mode
@@ -307,7 +330,7 @@ export class InputManager {
       // update selectedCardIndex & selectedCard
       this.playerManager.selectedCardIndex = 0;
       this.playerManager.selectedCard =
-        this.playerManager.cardsInHand[0] || null;
+        this.playerManager.cardsInHand[0] || undefined;
 
       // update UIManager for cursor logic
       UIManager.selectedCardNumber = 0;

@@ -81,17 +81,17 @@ export class FlippingRenderer {
     const factor = direction === "left" ? -1 : 1;
     const totalSlices = container.getNumChildren();
 
-    for (let i = 0; i < totalSlices; i++) {
-      const slice = container.getChildAt(i);
+    for (let index = 0; index < totalSlices; index++) {
+      const slice = container.getChildAt(index);
 
       slice.y =
         (Math.sin((value * Math.PI) / 180) *
           factor *
           card.children[1].image.width) /
         2;
-      slice.skewY = (i % 2 === 0 ? -1 : 1) * value * factor;
+      slice.skewY = (index % 2 === 0 ? -1 : 1) * value * factor;
 
-      if (i % 2 === 0) {
+      if (index % 2 === 0) {
         slice.y -=
           card.children[1].image.width *
           Math.sin((slice.skewY * Math.PI) / 180);
@@ -99,7 +99,7 @@ export class FlippingRenderer {
 
       slice.x =
         card.children[1].image.width *
-        (i - totalSlices / 2) *
+        (index - totalSlices / 2) *
         Math.cos((slice.skewY * Math.PI) / 180);
       slice.updateCache();
     }
@@ -120,7 +120,7 @@ export class FlippingRenderer {
 
     Game.stage.addChild(card);
     container.removeAllChildren();
-    Game.stage.removeChild(container);
+    container.remove();
   }
 
   /**
@@ -128,13 +128,13 @@ export class FlippingRenderer {
    * @param {Object} cardToReplace - The card whose visual representation to update
    */
   replaceCard(cardToReplace) {
-    if (!cardToReplace.children[0]) {
+    if (cardToReplace.children[0]) {
+      cardToReplace.children[0].image.src = `front_end/images/cards/${cardToReplace.owner}.png`;
+    } else {
       const ownerBmp = new createjs.Bitmap(
         `front_end/images/cards/${cardToReplace.owner}.png`,
       );
       cardToReplace.addChildAt(ownerBmp, 0);
-    } else {
-      cardToReplace.children[0].image.src = `front_end/images/cards/${cardToReplace.owner}.png`;
     }
 
     // Ensure front face stays above ownership background
@@ -152,16 +152,13 @@ export class FlippingRenderer {
    */
   flipAIHand() {
     // Reverse copy ensures visual flip starts from last to first
-    ai.cardsInAIHand
-      .slice()
-      .reverse()
-      .forEach((card, index) => {
-        setTimeout(
-          () => {
-            this.flipCard(card, "right");
-          },
-          2000 * (index + 1),
-        );
-      });
+    for (const [index, card] of ai.cardsInAIHand.toReversed().entries()) {
+      setTimeout(
+        () => {
+          this.flipCard(card, "right");
+        },
+        2000 * (index + 1),
+      );
+    }
   }
 }

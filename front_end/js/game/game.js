@@ -1,19 +1,16 @@
-import { BoardRenderer } from "../ui/BoardRenderer.js";
-import { UIManager } from "../managers/UIManager.js";
-import { UIRenderer } from "../ui/UIRenderer.js";
+import { BoardRenderer } from "../ui/board-renderer.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { UIRenderer } from "../ui/ui-renderer.js";
 import { ai } from "./ai.js";
-import { UIController } from "../controllers/UIController.js";
+import { UIController } from "../controllers/ui-controller.js";
 
 export const Game = {
   initialized: false,
   rules: ["elemental"],
-  stage: null,
+  stage: undefined,
   stageWidth: 0,
   stageHeight: 0,
   cards: {},
-  _listeners: [],
-  _intervals: [],
-  _timeouts: [],
 
   destroy() {
     // stop createjs Ticker
@@ -28,14 +25,10 @@ export const Game = {
       this.stage.removeAllEventListeners?.();
     }
 
-    // clear intervals/timeouts
-    this._intervals.forEach(clearInterval);
-    this._timeouts.forEach(clearTimeout);
-
     // clear references
-    this.stage = null;
-    this.assets = null;
-    this.cursor = null;
+    this.stage = undefined;
+    this.assets = undefined;
+    this.cursor = undefined;
 
     this.initialized = false;
     console.log("Game destroyed");
@@ -48,8 +41,8 @@ export const Game = {
       this.assets = queue;
       this.assets.loaded = new Promise((resolve) => {
         queue.on("complete", resolve);
-        queue.on("error", (err) => {
-          console.error("Assets load error", err);
+        queue.on("error", (error) => {
+          console.error("Assets load error", error);
           resolve();
         });
       });
@@ -62,8 +55,9 @@ export const Game = {
     // Remove the preview card
     const sb = UIManager.selectionBoard;
     if (sb.displayedCard && Game.stage.contains(sb.displayedCard)) {
+      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(sb.displayedCard);
-      sb.displayedCard = null;
+      sb.displayedCard = undefined;
     }
 
     // --- STEP 1: get the references ---
@@ -71,7 +65,7 @@ export const Game = {
     const playerRenderer = Game.renderers.playerRenderer;
 
     // --- STEP 2: populate logical hand ---
-    playerManager.playerCards = playerManager.cardsInHand.slice();
+    playerManager.playerCards = [...playerManager.cardsInHand];
 
     // --- STEP 3: populate visual hands ---
     ai.aiHand.populate();

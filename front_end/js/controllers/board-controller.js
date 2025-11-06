@@ -1,5 +1,5 @@
-import { UIManager } from "../managers/UIManager.js";
-import { BoardManager } from "../managers/BoardManager.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { BoardManager } from "../managers/board-manager.js";
 
 /**
  * Handles player selection on the board:
@@ -17,36 +17,41 @@ export const BoardController = {
    */
   moveSelection(direction) {
     switch (direction) {
-      case "up":
+      case "up": {
         if (UIManager.squareUp !== "none") {
           UIManager.selectedSquare = UIManager.squareUp;
           this.updateRowColumnFromSquare(UIManager.selectedSquare);
         }
         break;
+      }
 
-      case "down":
+      case "down": {
         if (UIManager.squareDown !== "none") {
           UIManager.selectedSquare = UIManager.squareDown;
           this.updateRowColumnFromSquare(UIManager.selectedSquare);
         }
         break;
+      }
 
-      case "left":
+      case "left": {
         if (UIManager.squareLeft !== "none") {
           UIManager.selectedSquare = UIManager.squareLeft;
           this.updateRowColumnFromSquare(UIManager.selectedSquare);
         }
         break;
+      }
 
-      case "right":
+      case "right": {
         if (UIManager.squareRight !== "none") {
           UIManager.selectedSquare = UIManager.squareRight;
           this.updateRowColumnFromSquare(UIManager.selectedSquare);
         }
         break;
+      }
 
-      default:
+      default: {
         console.warn(`Unknown direction: ${direction}`);
+      }
     }
   },
 

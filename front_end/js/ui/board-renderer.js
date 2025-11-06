@@ -1,7 +1,7 @@
 import { offsets } from "../constants/offsets.js";
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/UIManager.js";
-import { BoardManager } from "../managers/BoardManager.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { BoardManager } from "../managers/board-manager.js";
 import { debug } from "../debug.js";
 import { config } from "../config.js";
 
@@ -24,17 +24,17 @@ export const BoardRenderer = {
     for (let y = 0; y < 3; y++) {
       for (let x = 0; x < 3; x++) {
         squareID++;
-        const elemId = elements[squareID - 1];
+        const elementId = elements[squareID - 1];
 
         // Update BoardManager state
-        BoardManager.boardArray[squareID - 1].element = elemId;
+        BoardManager.boardArray[squareID - 1].element = elementId;
 
         // Create square container
         const square = {
           id: squareID,
           x: x * offsets.cellWidth,
           y: y * offsets.cellHeight,
-          element: elemId,
+          element: elementId,
           container: new createjs.Container(),
         };
 
@@ -43,9 +43,9 @@ export const BoardRenderer = {
         square.container.name = String(squareID);
 
         // If the cell has an element, display it
-        if (elemId !== 0) {
+        if (elementId !== 0) {
           const elementGraphic = new createjs.Bitmap(
-            ` ${config.imagePath}/elements/${config.elements[elemId].imagePath}`,
+            ` ${config.imagePath}/elements/${config.elements[elementId].imagePath}`,
           );
           elementGraphic.x = offsets.gameOffsetX + 60;
           elementGraphic.y = offsets.gameOffsetY + 70;
@@ -86,12 +86,12 @@ export const BoardRenderer = {
     // Clear previous children
     square.container.removeAllChildren();
 
-    const elemId = BoardManager.boardArray[squareID - 1].element;
+    const elementId = BoardManager.boardArray[squareID - 1].element;
 
     // Re-add element graphic if exists
-    if (elemId !== 0) {
+    if (elementId !== 0) {
       const elementGraphic = new createjs.Bitmap(
-        `${config.imagePath}/elements/${config.elements[elemId].imagePath}`,
+        `${config.imagePath}/elements/${config.elements[elementId].imagePath}`,
       );
       elementGraphic.x = offsets.gameOffsetX + 60;
       elementGraphic.y = offsets.gameOffsetY + 70;
@@ -112,11 +112,11 @@ export const BoardRenderer = {
    * Clears all squares from stage.
    */
   clearBoard() {
-    UIManager.squares.forEach((square) => {
+    for (const square of UIManager.squares) {
       if (square.container.parent) {
-        square.container.parent.removeChild(square.container);
+        square.container.remove();
       }
-    });
+    }
     UIManager.squares = [];
     Game.stage.update();
   },

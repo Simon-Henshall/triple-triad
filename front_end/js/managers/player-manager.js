@@ -1,5 +1,5 @@
 import { Game } from "../game/game.js";
-import { SelectionBoardRenderer } from "../ui/SelectionBoardRenderer.js";
+import { SelectionBoardRenderer } from "../ui/selection-board-renderer.js";
 
 /**
  * Manages all logical state of the player: deck, hand, played cards, and counts.
@@ -28,25 +28,25 @@ export class PlayerManager {
     this.cardsAboveSelection = 0;
 
     /** @type {Object|null} Currently selected card */
-    this.selectedCard = null;
+    this.selectedCard = undefined;
 
     /** index of currently selected card */
     this.selectedCardIndex = 0;
 
     /** createjs.DisplayObject for cursor above hand */
-    this.playerHandCursor = null;
+    this.playerHandCursor = undefined;
   }
 
   /** Shuffle an array (Fisher-Yates) */
   shuffleDeck(array = this.playerCards) {
     let m = array.length,
       t,
-      i;
+      index;
     while (m) {
-      i = Math.floor(Math.random() * m--);
+      index = Math.floor(Math.random() * m--);
       t = array[m];
-      array[m] = array[i];
-      array[i] = t;
+      array[m] = array[index];
+      array[index] = t;
     }
     return array;
   }
@@ -69,7 +69,7 @@ export class PlayerManager {
     }
 
     // Update board count
-    if (card.id != null) {
+    if (card.id != undefined) {
       card.count = (card.count || 0) - 1;
     }
 
@@ -88,17 +88,17 @@ export class PlayerManager {
    */
   removeLastCard() {
     if (this.playerCards.length === 0) {
-      return null;
+      return;
     }
 
     const removedCard = this.playerCards.pop();
     const removedContainer = this.cardsInHand.pop();
     if (!removedCard || !removedContainer) {
-      return null;
+      return;
     }
 
     // Step 1: Update board count
-    if (removedCard.id != null) {
+    if (removedCard.id != undefined) {
       removedCard.count = (removedCard.count || 0) + 1;
       SelectionBoardRenderer.updateBoardCount(removedCard.id, 0);
     }
@@ -107,12 +107,12 @@ export class PlayerManager {
     createjs.Tween.get(removedContainer)
       .to({ y: Game.stage.canvas.height + 200 }, 500, createjs.Ease.quadIn)
       .call(() => {
-        Game.stage.removeChild(removedContainer);
+        removedContainer.remove();
         Game.stage.update();
       });
 
     // Step 3: Update selected card (logical)
-    this.selectedCard = this.playerCards[this.playerCards.length - 1] || null;
+    this.selectedCard = this.playerCards.at(-1) || undefined;
 
     return removedContainer; // return container for visual updates in controller
   }
@@ -130,7 +130,7 @@ export class PlayerManager {
    * @returns {Object|null}
    */
   getHandCard(index) {
-    return this.cardsInHand[index] || null;
+    return this.cardsInHand[index] || undefined;
   }
 
   /**
@@ -138,7 +138,7 @@ export class PlayerManager {
    */
   resetHand() {
     this.cardsInHand = [];
-    this.selectedCard = null;
+    this.selectedCard = undefined;
   }
 
   /**
@@ -147,8 +147,8 @@ export class PlayerManager {
   shiftCardsDown(offsets) {
     const count = Math.min(this.cardsAboveSelection, this.cardsInHand.length);
 
-    for (let i = 0; i < count; i++) {
-      const card = this.cardsInHand[i];
+    for (let index = 0; index < count; index++) {
+      const card = this.cardsInHand[index];
       if (card) {
         createjs.Tween.get(card).to(
           { y: card.y + offsets.handCardOffset },
@@ -162,7 +162,7 @@ export class PlayerManager {
 
     // reset selection safely
     this.selectedCardIndex = 0;
-    this.selectedCard = this.cardsInHand[0] || null;
+    this.selectedCard = this.cardsInHand[0] || undefined;
   }
 
   /**

@@ -2,7 +2,7 @@ import { config } from "../config.js";
 import { offsets } from "../constants/offsets.js";
 import { ai } from "../game/ai.js";
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/UIManager.js";
+import { UIManager } from "../managers/ui-manager.js";
 
 // Info box layout constants
 const INFO_BOX_WIDTH = 420;
@@ -40,10 +40,10 @@ export const UIRenderer = {
     const playerManager = Game.managers.playerManager;
     // Remove existing counts if present
     if (ai.aiCardCount) {
-      Game.stage.removeChild(ai.aiCardCount);
+      ai.aiCardCount.remove();
     }
     if (playerManager.playerCardCount) {
-      Game.stage.removeChild(playerManager.playerCardCount);
+      playerManager.playerCardCount.remove();
     }
 
     // Create and position AI card count
@@ -83,10 +83,10 @@ export const UIRenderer = {
     const ui = UIManager;
 
     // Initialize container if missing, otherwise clear previous children
-    if (!ui.infoBox.container) {
-      ui.infoBox.container = new createjs.Container();
-    } else {
+    if (ui.infoBox.container) {
       ui.infoBox.container.removeAllChildren();
+    } else {
+      ui.infoBox.container = new createjs.Container();
     }
 
     // Draw the background rectangle
@@ -179,52 +179,52 @@ export const UIRenderer = {
    * @property {createjs.Container} conf.container - Container for all confirmation elements
    * @property {createjs.Shape} conf.background - Background rectangle
    */
-  drawConfirmationBox(conf) {
+  drawConfirmationBox(config_) {
     // Set the dimensions and fill color of the confirmation background
-    conf.background.width = 300;
-    conf.background.height = 120;
-    conf.background.graphics
+    config_.background.width = 300;
+    config_.background.height = 120;
+    config_.background.graphics
       .beginFill("#666666")
-      .drawRect(0, 0, conf.background.width, conf.background.height);
-    conf.background.x = 380;
-    conf.background.y = 285;
+      .drawRect(0, 0, config_.background.width, config_.background.height);
+    config_.background.x = 380;
+    config_.background.y = 285;
 
     // Create a border slightly larger than the background
     const border = new createjs.Shape();
-    border.width = conf.background.width + 2;
-    border.height = conf.background.height + 2;
+    border.width = config_.background.width + 2;
+    border.height = config_.background.height + 2;
     border.graphics
       .beginFill("#000000")
       .drawRect(0, 0, border.width, border.height);
-    border.x = conf.background.x - 1;
-    border.y = conf.background.y - 1;
+    border.x = config_.background.x - 1;
+    border.y = config_.background.y - 1;
 
     // Add text elements with fixed offsets for alignment
     const choiceLabel = new createjs.Text("CHOICE", "18px Arial", "#ffffff");
-    choiceLabel.x = conf.background.x + 10;
-    choiceLabel.y = conf.background.y + 5;
+    choiceLabel.x = config_.background.x + 10;
+    choiceLabel.y = config_.background.y + 5;
 
     const question = new createjs.Text(
       "Are you sure?",
       "28px Arial",
       "#ffffff",
     );
-    question.x = conf.background.x + 60;
-    question.y = conf.background.y + 20;
+    question.x = config_.background.x + 60;
+    question.y = config_.background.y + 20;
 
     const yesText = new createjs.Text("Yes", "28px Arial", "#ffffff");
-    yesText.x = conf.background.x + 120;
-    yesText.y = conf.background.y + 50;
+    yesText.x = config_.background.x + 120;
+    yesText.y = config_.background.y + 50;
 
     const noText = new createjs.Text("No", "28px Arial", "#ffffff");
-    noText.x = conf.background.x + 120;
-    noText.y = conf.background.y + 80;
+    noText.x = config_.background.x + 120;
+    noText.y = config_.background.y + 80;
 
     // Clear container and add all elements
-    conf.container.removeAllChildren();
-    conf.container.addChild(
+    config_.container.removeAllChildren();
+    config_.container.addChild(
       border,
-      conf.background,
+      config_.background,
       choiceLabel,
       question,
       yesText,

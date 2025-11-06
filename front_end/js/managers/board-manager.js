@@ -1,14 +1,14 @@
 import { config } from "../config.js";
-import { UIManager } from "./UIManager.js";
+import { UIManager } from "./ui-manager.js";
 
 /**
  * BoardManager handles the logical state of the 3x3 board,
  * including square occupancy, selected square, and elements.
  */
 export const BoardManager = {
-  boardArray: Array(9)
-    .fill(null)
-    .map(() => ({ element: 0, occupant: null })),
+  boardArray: Array.from({ length: 9 })
+    .fill()
+    .map(() => ({ element: 0, occupant: undefined })),
   freeCells: [1, 2, 3, 4, 5, 6, 7, 8, 9],
 
   // Lookup table for square positions and adjacency
@@ -29,13 +29,13 @@ export const BoardManager = {
    * sets the current selected square and adjacent squares.
    */
   checkSelectedSquare() {
-    for (let i = 0; i < this.squareMap.length; i++) {
-      const s = this.squareMap[i];
+    for (let index = 0; index < this.squareMap.length; index++) {
+      const s = this.squareMap[index];
       if (
         s.row === UIManager.selectedRow &&
         s.col === UIManager.selectedColumn
       ) {
-        UIManager.selectedSquare = i + 1;
+        UIManager.selectedSquare = index + 1;
         UIManager.squareLeft = s.left;
         UIManager.squareUp = s.up;
         UIManager.squareRight = s.right;
@@ -64,7 +64,7 @@ export const BoardManager = {
    */
   cellOccupied() {
     const cell = this.boardArray[UIManager.selectedSquare - 1];
-    return cell.occupant ? cell.occupant : false;
+    return cell.occupant ?? false;
   },
 
   /**
@@ -75,13 +75,13 @@ export const BoardManager = {
   generateElements() {
     const possibleElements = Object.keys(config.elements);
     const elements = [];
-    const numElements = Math.floor(Math.random() * 3) + 1;
+    const numberOfElements = Math.floor(Math.random() * 3) + 1;
 
-    for (let i = 0; i < numElements; i++) {
+    for (let index = 0; index < numberOfElements; index++) {
       const randomIndex = Math.floor(Math.random() * possibleElements.length);
       elements.push(Number(possibleElements[randomIndex]));
     }
-    for (let i = numElements; i < 9; i++) {
+    for (let index = numberOfElements; index < 9; index++) {
       elements.push(0);
     }
 
@@ -94,22 +94,22 @@ export const BoardManager = {
    * @returns {Array}
    */
   shuffle(array) {
-    const arr = array.slice();
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+    const array_ = [...array];
+    for (let index = array_.length - 1; index > 0; index--) {
+      const index_ = Math.floor(Math.random() * (index + 1));
+      [array_[index], array_[index_]] = [array_[index_], array_[index]];
     }
-    return arr;
+    return array_;
   },
 
   /**
    * Reset the board to initial empty state.
    */
   resetBoard() {
-    this.boardArray.forEach((cell) => {
+    for (const cell of this.boardArray) {
       cell.element = 0;
-      cell.occupant = null;
-    });
+      cell.occupant = undefined;
+    }
     this.freeCells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   },
 };

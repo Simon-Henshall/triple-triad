@@ -1,8 +1,8 @@
 import { getGameStateInstance } from "./game.state.js";
 import { ai } from "./ai.js";
 import { Game } from "./game.js";
-import { FlippingRenderer } from "../ui/FlippingRenderer.js";
-import { utils } from "./utils.js";
+import { FlippingRenderer } from "../ui/flipping-renderer.js";
+import { utilities } from "./utilities.js";
 import { offsets } from "../constants/offsets.js";
 import { config } from "../config.js";
 
@@ -14,29 +14,32 @@ export const aiHand = {
     const GameStateInstance = getGameStateInstance();
 
     // Lazily populate AI logical hand if empty
-    if (!GameStateInstance.hands.AI.length) {
+    if (GameStateInstance.hands.AI.length === 0) {
       // TODO: Update this to reference a stack of AI cards
-      //GameStateInstance.hands.AI = utils.shuffle([...allAiCards]).slice(0, 5);
+      //GameStateInstance.hands.AI = utilities.shuffle([...allAiCards]).slice(0, 5);
       // Temporary placeholder: use player cards until AI deck logic added
       const playerManager = Game.managers.playerManager;
-      GameStateInstance.hands.AI = utils
+      GameStateInstance.hands.AI = utilities
         .shuffle([...playerManager.ownedCards])
         .slice(0, 5);
     }
 
     // Clear any existing containers from the stage (safety reset)
     if (ai.cardsInAIHand?.length) {
-      ai.cardsInAIHand.forEach((c) => Game.stage.removeChild(c));
+      for (const c of ai.cardsInAIHand) {
+        // eslint-disable-next-line unicorn/prefer-dom-node-remove
+        Game.stage.removeChild(c);
+      }
     }
     ai.cardsInAIHand = [];
 
     // Create new containers for each AI card
-    GameStateInstance.hands.AI.forEach((card, i) => {
-      const cardContainer = utils.createCardContainer(
+    for (const [index, card] of GameStateInstance.hands.AI.entries()) {
+      const cardContainer = utilities.createCardContainer(
         card,
         "red",
         ai.handOffsetX || offsets.gameOffsetX / 2 || 100,
-        (offsets.handOffsetY || 50) + i * (offsets.handCardOffset || 95),
+        (offsets.handOffsetY || 50) + index * (offsets.handCardOffset || 95),
         {
           showBack: true,
           frontImageSrc: config.cardPath + card.image + ".png",
@@ -47,7 +50,7 @@ export const aiHand = {
 
       ai.cardsInAIHand.push(cardContainer);
       Game.stage.addChild(cardContainer);
-    });
+    }
 
     // Flip AI hand if "open" rule applies
     if (Game.rules?.includes("open")) {

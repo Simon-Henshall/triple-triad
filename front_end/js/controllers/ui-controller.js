@@ -3,8 +3,8 @@
 // Purpose: coordinate UIManager state and UIRenderer drawing
 // -----------------------------------------------------------------------------
 
-import { UIManager } from "../managers/UIManager.js";
-import { UIRenderer } from "../ui/UIRenderer.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { UIRenderer } from "../ui/ui-renderer.js";
 
 export const UIController = {
   /**

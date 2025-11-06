@@ -1,6 +1,6 @@
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/UIManager.js";
-import { UIRenderer } from "../ui/UIRenderer.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { UIRenderer } from "../ui/ui-renderer.js";
 
 /**
  * Controller responsible for showing and managing the
@@ -15,36 +15,36 @@ export const ConfirmationController = {
    * and hides any preview card from the selection board.
    */
   show() {
-    const conf = UIManager.confirmation;
+    const config = UIManager.confirmation;
 
     if (Game.controllers.cursorController.selection) {
       Game.controllers.cursorController.selection.remove();
     }
 
     // Clear any previous children to avoid duplicates
-    conf.container.removeAllChildren();
+    config.container.removeAllChildren();
 
     // Set the player state to 'confirming'
     UIManager.playerConfirming = true;
 
     // Reset the default choice index
-    conf.selectedChoice = 0;
+    config.selectedChoice = 0;
 
     // Position cursor relative to the confirmation box background
-    conf.cursor.y = conf.background.y + 60;
+    config.cursor.y = config.background.y + 60;
 
     // Render the confirmation box (UI only)
-    UIRenderer.drawConfirmationBox(conf);
+    UIRenderer.drawConfirmationBox(config);
 
     // Add container to the stage
-    Game.stage.addChild(conf.container);
+    Game.stage.addChild(config.container);
 
     // Create cursor if it doesn't exist
     if (!Game.controllers.cursorController.confirmation) {
       Game.controllers.cursorController.confirmation = new Cursor({
-        container: conf.container,
-        x: conf.background.x + 20, // starting x
-        y: conf.background.y + 60, // starting y
+        container: config.container,
+        x: config.background.x + 20, // starting x
+        y: config.background.y + 60, // starting y
       });
     }
 

@@ -8,29 +8,29 @@ import { Game } from "../game/game.js";
  * SelectionBoardRenderer using the data stored here.
  */
 export const SelectionBoardManager = {
-  /** @type {createjs.Container|null} Container for all selection board elements */
-  container: null,
+  /** @type {createjs.Container|undefined} Container for all selection board elements */
+  container: undefined,
 
-  /** @type {createjs.Shape|null} Background shape for the selection board */
-  background: null,
+  /** @type {createjs.Shape|undefined} Background shape for the selection board */
+  background: undefined,
 
-  /** @type {createjs.Text|null} Display text for current page */
-  pageDisplay: null,
+  /** @type {createjs.Text|undefined} Display text for current page */
+  pageDisplay: undefined,
 
-  /** @type {createjs.Text|null} Display text for total pages */
-  totalPagesDisplay: null,
+  /** @type {createjs.Text|undefined} Display text for total pages */
+  totalPagesDisplay: undefined,
 
-  /** @type {createjs.Container|null} Container holding the currently shown cards */
-  shownCards: null,
+  /** @type {createjs.Container|undefined} Container holding the currently shown cards */
+  shownCards: undefined,
 
-  /** @type {createjs.Container|null} Container for the preview card */
-  displayedCard: null,
+  /** @type {createjs.Container|undefined} Container for the preview card */
+  displayedCard: undefined,
 
-  /** @type {createjs.Bitmap|null} Image element for preview card background/colour */
-  displayedCardColour: null,
+  /** @type {createjs.Bitmap|undefined} Image element for preview card background/colour */
+  displayedCardColour: undefined,
 
-  /** @type {createjs.Bitmap|null} Image element for preview card artwork */
-  displayedCardImage: null,
+  /** @type {createjs.Bitmap|undefined} Image element for preview card artwork */
+  displayedCardImage: undefined,
 
   /** @type {number} Current page number being displayed */
   page: 1,
@@ -41,8 +41,8 @@ export const SelectionBoardManager = {
   /** @type {number} Number of cards on the current page */
   remainingCards: 0,
 
-  /** @type {Object|null} Currently selected card object (for preview) */
-  selectedHandCard: null,
+  /** @type {Object|undefined} Currently selected card object (for preview) */
+  selectedHandCard: undefined,
 
   /**
    * Initialise the selection board container and background.
@@ -72,7 +72,7 @@ export const SelectionBoardManager = {
     this.page = 1;
     this.totalPages = 1;
     this.remainingCards = 0;
-    this.selectedHandCard = null;
+    this.selectedHandCard = undefined;
 
     // Clear the shownCards container
     if (this.shownCards) {
@@ -81,12 +81,12 @@ export const SelectionBoardManager = {
 
     // Remove preview card from stage if present
     if (this.displayedCard) {
-      Game.stage.removeChild(this.displayedCard);
+      this.displayedCard.remove();
     }
 
     // Reset preview card references
-    this.displayedCard = null;
-    this.displayedCardColour = null;
-    this.displayedCardImage = null;
+    this.displayedCard = undefined;
+    this.displayedCardColour = undefined;
+    this.displayedCardImage = undefined;
   },
 };

@@ -1,8 +1,8 @@
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/UIManager.js";
-import { UIController } from "../controllers/UIController.js";
-import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
-import { SelectionBoardRenderer } from "../ui/SelectionBoardRenderer.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { UIController } from "../controllers/ui-controller.js";
+import { SelectionBoardUI } from "./selection-board-ui.js";
+import { SelectionBoardRenderer } from "./selection-board-renderer.js";
 import { debug } from "../debug.js";
 
 /**
@@ -67,6 +67,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Remove the selection cursor from the stage.
      */
     remove() {
+      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(playerManager.playerHandSelectionCursor);
       Game.stage.update();
 
@@ -112,6 +113,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Remove the confirmation cursor from the stage.
      */
     remove() {
+      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.confirmation.cursor);
       Game.stage.update();
 
@@ -162,6 +164,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Remove the player hand cursor from the stage.
      */
     remove() {
+      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(playerManager.playerHandCursor);
       Game.stage.update();
 
@@ -202,6 +205,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      */
     remove() {
       UIManager.playerSelectingPlacement = false;
+      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.gridCursor);
       Game.stage.update();
 

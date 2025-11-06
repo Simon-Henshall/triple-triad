@@ -18,9 +18,9 @@ export class GameState {
     startingPlayer = "PLAYER",
   } = {}) {
     this.board = [
-      [null, null, null],
-      [null, null, null],
-      [null, null, null],
+      [undefined, undefined, undefined],
+      [undefined, undefined, undefined],
+      [undefined, undefined, undefined],
     ];
 
     this.hands = {
@@ -97,7 +97,7 @@ export class GameState {
 
   getWinner() {
     if (!this.isGameOver()) {
-      return null;
+      return;
     }
     if (this.scores.PLAYER > this.scores.AI) {
       return "PLAYER";

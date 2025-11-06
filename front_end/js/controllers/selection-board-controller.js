@@ -49,7 +49,7 @@ export class SelectionBoardController {
 
   /** @returns {Object|null} Currently selected card object */
   get selectedCard() {
-    return this.cards[this.selectedIndex] || null;
+    return this.cards[this.selectedIndex] || undefined;
   }
 
   /**

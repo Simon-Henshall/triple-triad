@@ -1,8 +1,8 @@
 import { Game } from "../game/game.js";
-import { utils } from "../game/utils.js";
+import { utilities } from "../game/utilities.js";
 import { config } from "../config.js";
-import { UIManager } from "../managers/UIManager.js";
-import { SelectionBoardUI } from "./SelectionBoardUI.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { SelectionBoardUI } from "./selection-board-ui.js";
 
 /**
  * Renders the selection board using the UIManager.selectionBoard object
@@ -45,11 +45,11 @@ export const SelectionBoardRenderer = {
       }
     } else {
       // Ensure background is a child of the container and at the bottom.
-      if (!sb.container.children.includes(sb.background)) {
-        sb.container.addChildAt(sb.background, 0);
-      } else {
+      if (sb.container.children.includes(sb.background)) {
         // Ensure background stays at index 0
         sb.container.setChildIndex(sb.background, 0);
+      } else {
+        sb.container.addChildAt(sb.background, 0);
       }
     }
 
@@ -64,18 +64,18 @@ export const SelectionBoardRenderer = {
     const cards = controller.displayedCards;
 
     // Recreate or clear the shownCards container (list area)
-    if (!sb.shownCards) {
-      sb.shownCards = new createjs.Container();
-    } else {
+    if (sb.shownCards) {
       sb.shownCards.removeAllChildren();
+    } else {
+      sb.shownCards = new createjs.Container();
     }
 
     // Build the visible list based on the *existing* background coordinates
     const baseX = sb.background.x;
     const baseY = sb.background.y;
 
-    cards.forEach((cardData, i) => {
-      const rowY = baseY + 35 * i + 60;
+    for (const [index, cardData] of cards.entries()) {
+      const rowY = baseY + 35 * index + 60;
 
       // Name
       const nameText = new createjs.Text(
@@ -102,19 +102,19 @@ export const SelectionBoardRenderer = {
 
       // Extract ID number from image string
       const match = cardData.image.match(/\d+$/);
-      cardData.id = match ? parseInt(match[0], 10) : i;
+      cardData.id = match ? Number.parseInt(match[0], 10) : index;
 
       // Link the display text objects back to the data model
       cardData.nameText = nameText;
       cardData.countText = countText;
 
       // Add cardData to selectionBoard's displayedCards array
-      if (!sb.displayedCards.find((c) => c.id === cardData.id)) {
+      if (!sb.displayedCards.some((c) => c.id === cardData.id)) {
         sb.displayedCards.push(cardData);
       }
 
       // Icon (hide until loaded to avoid flash)
-      const icon = utils._createScaledBitmap(
+      const icon = utilities._createScaledBitmap(
         "front_end/images/selection_card.png",
         30,
         30,
@@ -133,22 +133,22 @@ export const SelectionBoardRenderer = {
 
       icon.visible = false;
       icon.x = baseX + 15;
-      icon.y = baseY + 35 * i + 35;
+      icon.y = baseY + 35 * index + 35;
       icon.textBaseline = "alphabetic";
 
       sb.shownCards.addChild(nameText, countText, icon);
-    });
+    }
 
     // Ensure shownCards is a child of the container and sits above the background
-    if (!sb.container.children.includes(sb.shownCards)) {
-      sb.container.addChild(sb.shownCards);
-    } else {
+    if (sb.container.children.includes(sb.shownCards)) {
       // ensure shownCards is above background
       const bgIndex = sb.container.getChildIndex(sb.background);
       const shownIndex = sb.container.getChildIndex(sb.shownCards);
       if (shownIndex <= bgIndex) {
         sb.container.setChildIndex(sb.shownCards, bgIndex + 1);
       }
+    } else {
+      sb.container.addChild(sb.shownCards);
     }
 
     // --- Update the preview card based on absolute selection ---
@@ -224,17 +224,7 @@ export const SelectionBoardRenderer = {
     const targetY = sb.background.y + 200;
     const offscreenY = Game.stage.canvas.height + 50;
 
-    if (!sb.displayedCard) {
-      sb.displayedCard = utils.createCardContainer(
-        selectedCard,
-        "blue",
-        targetX,
-        offscreenY,
-      );
-      Game.stage.addChild(sb.displayedCard);
-      sb.displayedCardColour = sb.displayedCard.getChildAt(0);
-      sb.displayedCardImage = sb.displayedCard.getChildAt(1);
-    } else {
+    if (sb.displayedCard) {
       if (sb.displayedCardColour) {
         sb.displayedCardColour.image.src = config.cardPath + "blue.png";
       }
@@ -244,16 +234,26 @@ export const SelectionBoardRenderer = {
       }
       sb.displayedCard.x = targetX;
       sb.displayedCard.y = offscreenY;
+    } else {
+      sb.displayedCard = utilities.createCardContainer(
+        selectedCard,
+        "blue",
+        targetX,
+        offscreenY,
+      );
+      Game.stage.addChild(sb.displayedCard);
+      sb.displayedCardColour = sb.displayedCard.getChildAt(0);
+      sb.displayedCardImage = sb.displayedCard.getChildAt(1);
     }
 
-    if (!skipTween) {
+    if (skipTween) {
+      sb.displayedCard.y = targetY;
+    } else {
       createjs.Tween.get(sb.displayedCard, { override: true }).to(
         { y: targetY },
         300,
         createjs.Ease.quadOut,
       );
-    } else {
-      sb.displayedCard.y = targetY;
     }
   },
 
@@ -279,15 +279,15 @@ export const SelectionBoardRenderer = {
 
     // Ensure cursor is a child of the container above shownCards
     if (
-      !sb.container.children.includes(playerManager.playerHandSelectionCursor)
+      sb.container.children.includes(playerManager.playerHandSelectionCursor)
     ) {
-      sb.container.addChild(playerManager.playerHandSelectionCursor);
-    } else {
       const bgIndex = sb.container.getChildIndex(sb.background);
       sb.container.setChildIndex(
         playerManager.playerHandSelectionCursor,
         bgIndex + 2,
       );
+    } else {
+      sb.container.addChild(playerManager.playerHandSelectionCursor);
     }
   },
 };

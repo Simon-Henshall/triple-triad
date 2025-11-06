@@ -1,10 +1,10 @@
-import { BoardManager } from "../managers/BoardManager.js";
+import { BoardManager } from "../managers/board-manager.js";
 import { ai } from "../game/ai.js";
-import { UIManager } from "../managers/UIManager.js";
-import { utils } from "../game/utils.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { utilities } from "../game/utilities.js";
 import { debug } from "../debug.js";
-import { FlippingRenderer } from "../ui/FlippingRenderer.js";
-import { PlacementManager } from "../managers/PlacementManager.js";
+import { FlippingRenderer } from "../ui/flipping-renderer.js";
+import { PlacementManager } from "../managers/placement-manager.js";
 import { Game } from "../game/game.js";
 import { offsets } from "../constants/offsets.js";
 
@@ -45,20 +45,20 @@ export class PlacementController {
    * @param {createjs.Container} card - The card being placed.
    */
   setCardAdjacents(card) {
-    const getOccupant = (index) => {
-      const cell = BoardManager.boardArray[index - 1];
-      return cell ? (cell.occupant ?? null) : null;
-    };
-
-    card.cardLeft = getOccupant(UIManager.squareLeft);
-    card.cardUp = getOccupant(UIManager.squareUp);
-    card.cardRight = getOccupant(UIManager.squareRight);
-    card.cardDown = getOccupant(UIManager.squareDown);
+    card.cardLeft = this.getOccupant(UIManager.squareLeft);
+    card.cardUp = this.getOccupant(UIManager.squareUp);
+    card.cardRight = this.getOccupant(UIManager.squareRight);
+    card.cardDown = this.getOccupant(UIManager.squareDown);
 
     if (debug.active) {
       console.log(card);
     }
   }
+
+  getOccupant = (index) => {
+    const cell = BoardManager.boardArray[index - 1];
+    return cell ? (cell.occupant ?? undefined) : undefined;
+  };
 
   /**
    * Add the card to the board state and update free cells.
@@ -72,7 +72,7 @@ export class PlacementController {
     const freeCellIndex = BoardManager.freeCells.indexOf(
       UIManager.selectedSquare,
     );
-    if (freeCellIndex > -1) {
+    if (freeCellIndex !== -1) {
       BoardManager.freeCells.splice(freeCellIndex, 1);
     }
 
@@ -85,16 +85,16 @@ export class PlacementController {
    * @param {createjs.Container} card - The card being placed.
    */
   applyElementEffects(card) {
-    const squareObj = UIManager.squares[UIManager.selectedSquare - 1];
-    if (!squareObj || typeof squareObj.element === "undefined") {
+    const squareObject = UIManager.squares[UIManager.selectedSquare - 1];
+    if (!squareObject || squareObject.element === undefined) {
       return;
     }
-    if (squareObj.element === 0) {
+    if (squareObject.element === 0) {
       return;
     }
 
     let effectImage;
-    if (card.element === squareObj.element) {
+    if (card.element === squareObject.element) {
       card.strengthLeft++;
       card.strengthUp++;
       card.strengthRight++;
@@ -121,11 +121,11 @@ export class PlacementController {
       debug.logTurn();
     }
 
-    if (utils.getPlayerTurn() === "blue") {
+    if (utilities.getPlayerTurn() === "blue") {
       // reset selection
       this.playerManager.selectedCardIndex = 0;
       this.playerManager.selectedCard =
-        this.playerManager.cardsInHand[0] || null;
+        this.playerManager.cardsInHand[0] || undefined;
       UIManager.selectedCardNumber = 0;
       UIManager.selectedCard = this.playerManager.selectedCard;
 
@@ -145,7 +145,7 @@ export class PlacementController {
       );
       UIManager.infoBox.container.visible = true;
       UIManager.playerChoosingCard = true;
-    } else if (utils.getPlayerTurn() === "red") {
+    } else if (utilities.getPlayerTurn() === "red") {
       ai.turn();
     }
   }
@@ -154,7 +154,8 @@ export class PlacementController {
    * Swap the current turn between blue (player) and red (AI).
    */
   swapPlayerTurn() {
-    UIManager.playerTurn = utils.getPlayerTurn() === "blue" ? "red" : "blue";
+    UIManager.playerTurn =
+      utilities.getPlayerTurn() === "blue" ? "red" : "blue";
   }
 
   /**
@@ -171,20 +172,20 @@ export class PlacementController {
    * the cursor and selection indices.
    */
   shiftHandCardsDown() {
-    const animateDown = (hand, count) => {
-      for (let i = 0; i < count; i++) {
-        createjs.Tween.get(hand[i]).to(
-          { y: hand[i].y + offsets.handCardOffset },
-          200,
-        );
-      }
-    };
-
-    if (utils.getPlayerTurn() === "blue") {
+    if (utilities.getPlayerTurn() === "blue") {
       this.playerManager.shiftCardsDown(offsets);
     } else {
       // AI logic
-      animateDown(ai.cardsInAIHand, ai.aiCardsAboveSelection);
+      this.animateDown(ai.cardsInAIHand, ai.aiCardsAboveSelection);
     }
   }
+
+  animateDown = (hand, count) => {
+    for (let index = 0; index < count; index++) {
+      createjs.Tween.get(hand[index]).to(
+        { y: hand[index].y + offsets.handCardOffset },
+        200,
+      );
+    }
+  };
 }

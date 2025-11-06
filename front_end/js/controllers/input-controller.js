@@ -1,5 +1,5 @@
-import { UIManager } from "../managers/UIManager.js";
-import { InputRenderer } from "../ui/InputRenderer.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { InputRenderer } from "../ui/input-renderer.js";
 import { debug } from "../debug.js";
 
 /**
@@ -14,21 +14,21 @@ export class InputController {
 
   /**
    * Handle keydown event and route based on current game mode.
-   * @param {KeyboardEvent} e
+   * @param {KeyboardEvent} event
    */
-  handleKey(e) {
+  handleKey(event) {
     if (debug.active) {
-      console.log("Key pressed:", e.key);
+      console.log("Key pressed:", event.key);
     }
 
     if (UIManager.playerSelectingHand) {
-      this.manager.handlePlayerHandSelection(e, this.renderer);
+      this.manager.handlePlayerHandSelection(event, this.renderer);
     } else if (UIManager.playerConfirming) {
-      this.manager.handleConfirmation(e, this.renderer);
+      this.manager.handleConfirmation(event, this.renderer);
     } else if (UIManager.playerChoosingCard) {
-      this.manager.handlePlayerCardChoice(e, this.renderer);
+      this.manager.handlePlayerCardChoice(event, this.renderer);
     } else if (UIManager.playerSelectingPlacement) {
-      this.manager.handlePlacement(e, this.renderer);
+      this.manager.handlePlacement(event, this.renderer);
     }
   }
 }

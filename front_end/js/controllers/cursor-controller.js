@@ -1,8 +1,8 @@
-import { CursorManager } from "../managers/CursorManager.js";
+import { CursorManager } from "../managers/cursor-manager.js";
 import { debug } from "../debug.js";
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/UIManager.js";
-import { UIController } from "./UIController.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { UIController } from "./ui-controller.js";
 
 /**
  * High-level controller that bridges cursor state and visual updates.
@@ -111,9 +111,9 @@ export const CursorController = (cursorRenderer) => ({
       // Update info box for the newly selected card
       const playerManager = Game.managers.playerManager;
       const selectedIndex = UIManager.selectedCardNumber ?? 0;
-      const newSelectedCard = playerManager.cardsInHand[selectedIndex];
-      if (newSelectedCard) {
-        UIManager.selectedCard = newSelectedCard;
+      const newlySelectedCard = playerManager.cardsInHand[selectedIndex];
+      if (newlySelectedCard) {
+        UIManager.selectedCard = newlySelectedCard;
         UIController.updateInfoBox();
       }
 

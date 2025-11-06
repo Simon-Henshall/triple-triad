@@ -35,7 +35,7 @@ class GameLogic {
 
     const flips = [];
 
-    for (const [dir, [dx, dy]] of Object.entries(directions)) {
+    for (const [direction, [dx, dy]] of Object.entries(directions)) {
       const nx = x + dx;
       const ny = y + dy;
 
@@ -51,7 +51,7 @@ class GameLogic {
       // Only flip if enemy card and attacker beats defender
       if (
         attacker.owner !== defender.owner &&
-        this.canFlip(attacker, defender, dir)
+        this.canFlip(attacker, defender, direction)
       ) {
         flips.push({ x: nx, y: ny });
       }
@@ -60,35 +60,35 @@ class GameLogic {
     return flips;
   }
 
-  applyFlips(board, flips, newOwner) {
+  applyFlips(board, flips, _newOwner) {
     // Deep clone board to avoid mutating input
-    const newBoard = board.map((row) =>
-      row.map((cell) => (cell ? { ...cell } : null)),
+    const _newBoard = board.map((row) =>
+      row.map((cell) => (cell ? { ...cell } : undefined)),
     );
 
     for (const { x, y } of flips) {
-      const card = newBoard[y][x];
+      const card = _newBoard[y][x];
       if (card) {
-        card.owner = newOwner;
+        card.owner = _newOwner;
       }
     }
 
-    return newBoard;
+    return _newBoard;
   }
 
   playCard(board, x, y, card, currentPlayer) {
     // Ensure cell is empty
-    if (board[y][x] !== null) {
+    if (board[y][x] !== undefined) {
       throw new Error("Cell already occupied");
     }
 
     // Clone board deeply
-    const newBoard = board.map((row) =>
-      row.map((cell) => (cell ? { ...cell } : null)),
+    const _newBoard = board.map((row) =>
+      row.map((cell) => (cell ? { ...cell } : undefined)),
     );
 
     // Place the card
-    newBoard[y][x] = { ...card, owner: currentPlayer };
+    _newBoard[y][x] = { ...card, owner: currentPlayer };
 
     // Find flippable neighbours
     const flips = this.getFlippableNeighbours(newBoard, x, y);

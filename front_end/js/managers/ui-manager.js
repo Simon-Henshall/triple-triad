@@ -13,25 +13,25 @@ export const UIManager = {
   squareUp: undefined,
   squareRight: undefined,
   squareDown: undefined,
-  gridCursor: null,
+  gridCursor: undefined,
 
   // -------------------------
   // Selection board state
   // -------------------------
   selectionBoard: {
-    container: null,
-    background: null,
-    shownCards: null,
+    container: undefined,
+    background: undefined,
+    shownCards: undefined,
     page: 1,
-    pageDisplay: null,
+    pageDisplay: undefined,
     totalPages: undefined,
     remainingCards: undefined,
     displayedCards: undefined,
-    displayedCard: null,
-    displayedCardImage: null,
-    displayedCardColour: null,
+    displayedCard: undefined,
+    displayedCardImage: undefined,
+    displayedCardColour: undefined,
     selectedHandCardNumber: 0,
-    selectedHandCard: null,
+    selectedHandCard: undefined,
     showPreviewCard() {
       const sb = UIManager.selectionBoard;
 
@@ -62,6 +62,7 @@ export const UIManager = {
     hidePreviewCard() {
       const sb = UIManager.selectionBoard;
       if (sb.displayedCard && sb.displayedCard.parent) {
+        // eslint-disable-next-line unicorn/prefer-dom-node-remove
         sb.displayedCard.parent.removeChild(sb.displayedCard);
       }
     },
@@ -71,9 +72,9 @@ export const UIManager = {
   // Confirmation UI
   // -------------------------
   confirmation: {
-    container: null,
-    background: null,
-    cursor: null,
+    container: undefined,
+    background: undefined,
+    cursor: undefined,
     selectedChoice: 0,
   },
 
@@ -81,8 +82,8 @@ export const UIManager = {
   // Info box state
   // -------------------------
   infoBox: {
-    container: null,
-    cardName: null,
+    container: undefined,
+    cardName: undefined,
   },
 
   // -------------------------

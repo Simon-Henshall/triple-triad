@@ -1,6 +1,6 @@
-import { UIManager } from "../managers/UIManager.js";
-import { SelectionBoardRenderer } from "./SelectionBoardRenderer.js";
-import { SelectionBoardController } from "../controllers/SelectionBoardController.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { SelectionBoardRenderer } from "./selection-board-renderer.js";
+import { SelectionBoardController } from "../controllers/selection-board-controller.js";
 import { Game } from "../game/game.js";
 
 /**
@@ -8,7 +8,7 @@ import { Game } from "../game/game.js";
  * Keeps controller reference and exposes populate/paginate/moveSelection.
  */
 export const SelectionBoardUI = {
-  controller: null,
+  controller: undefined,
 
   /**
    * Initialise the selection board with a card array.

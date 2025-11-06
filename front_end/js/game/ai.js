@@ -1,7 +1,7 @@
 import { offsets } from "../constants/offsets.js";
-import { BoardManager } from "../managers/BoardManager.js";
-import { UIManager } from "../managers/UIManager.js";
-import { aiHand } from "./aiHand.js";
+import { BoardManager } from "../managers/board-manager.js";
+import { UIManager } from "../managers/ui-manager.js";
+import { aiHand } from "./ai-hand.js";
 import { Game } from "./game.js";
 import { getGameStateInstance } from "./game.state.js";
 
@@ -27,7 +27,7 @@ export const ai = {
     );
     const aiSelectedCard = this.cardsInAIHand[aiSelectedCardIndex];
 
-    if (!BoardManager.freeCells.length) {
+    if (BoardManager.freeCells.length === 0) {
       console.warn("No free cells available for AI move!");
       return;
     }

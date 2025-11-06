@@ -1,7 +1,7 @@
-import { UIManager } from "../managers/UIManager.js";
+import { UIManager } from "./ui-manager.js";
 import { offsets } from "../constants/offsets.js";
-import { SelectionBoardUI } from "../ui/SelectionBoardUI.js";
-import { BoardManager } from "../managers/BoardManager.js";
+import { SelectionBoardUI } from "../ui/selection-board-ui.js";
+import { BoardManager } from "../managers/board-manager.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
 
@@ -11,7 +11,7 @@ import { debug } from "../debug.js";
  */
 export const CursorManager = {
   /** Dynamically set in gameInit.all() */
-  player: null,
+  player: undefined,
 
   /**
    * Handles the player hand selection cursor on the selection board.
@@ -254,7 +254,7 @@ export const CursorManager = {
       const oldY = UIManager.gridCursor.y;
 
       switch (direction) {
-        case "left":
+        case "left": {
           if (UIManager.gridCursor.x > offsets.gameOffsetX + 16) {
             UIManager.gridCursor.x -= offsets.cellWidth;
             UIManager.selectedColumn--;
@@ -262,8 +262,9 @@ export const CursorManager = {
             return console.warn("Cannot move grid cursor left - out of bounds");
           }
           break;
+        }
 
-        case "up":
+        case "up": {
           if (UIManager.gridCursor.y > offsets.gameOffsetY + 80) {
             UIManager.gridCursor.y -= offsets.cellHeight;
             UIManager.selectedRow--;
@@ -271,8 +272,9 @@ export const CursorManager = {
             return console.warn("Cannot move grid cursor up - out of bounds");
           }
           break;
+        }
 
-        case "right":
+        case "right": {
           if (
             UIManager.gridCursor.x <
             offsets.gameOffsetX + offsets.cellWidth * 2 + 16
@@ -285,8 +287,9 @@ export const CursorManager = {
             );
           }
           break;
+        }
 
-        case "down":
+        case "down": {
           if (
             UIManager.gridCursor.y <
             offsets.gameOffsetY + offsets.cellHeight * 2 + 80
@@ -297,9 +300,11 @@ export const CursorManager = {
             return console.warn("Cannot move grid cursor down - out of bounds");
           }
           break;
+        }
 
-        default:
+        default: {
           return console.warn(`Unknown grid move direction: ${direction}`);
+        }
       }
 
       BoardManager.checkSelectedSquare();
@@ -317,6 +322,7 @@ export const CursorManager = {
      */
     clear() {
       UIManager.playerSelectingPlacement = false;
+      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       Game.stage.removeChild(UIManager.gridCursor);
       Game.stage.update();
 
