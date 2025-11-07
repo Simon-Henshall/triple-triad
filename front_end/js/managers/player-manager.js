@@ -3,7 +3,7 @@ import { SelectionBoardRenderer } from "../renderers/selection-board-renderer.js
 import { shuffle } from "../utilities/shuffle.js";
 
 /**
- * Manages all logical state of the player: deck, hand, played cards, and counts.
+ * Manages the player's logical state: deck, hand, played cards, and counts.
  */
 export class PlayerManager {
   constructor() {
@@ -11,7 +11,7 @@ export class PlayerManager {
     this.ownedCards = [];
 
     /** @type {Array<Object>} Player's current shuffled deck (from ownedCards) */
-    this.playerCards = [];
+    this.playerCards = []; // shuffled deck + cards temporarily in hand
 
     /** @type {Array<Object>} Cards currently in the player's hand (max 5) */
     this.cardsInHand = [];
@@ -38,59 +38,60 @@ export class PlayerManager {
     this.playerHandCursor = undefined;
   }
 
-  /**
-   * Initialise the player's deck from owned cards
-   */
+  /** Shuffle owned cards into the deck */
   initDeck() {
     this.playerCards = shuffle([...this.ownedCards]);
   }
 
   /**
-   * Add a card to the hand (max 5 cards)
+   * Add a card to the player's hand (max 5)
    * @param {Object} card
-   * @returns {boolean} success
+   * @param {createjs.Container} container
+   * @returns {boolean}
    */
   addCardToHand(card, container) {
-    if (!card || !container) {
+    if (!card || !container || this.cardsInHand.length >= 5) {
       return false;
     }
 
-    // Update board count
+    // Update logical board count
     if (card.id != undefined) {
       card.count = (card.count || 0) - 1;
+      // Keep playerCards array for removal logic
+      this.playerCards.push(card);
     }
 
-    this.playerCards.push(card);
     this.cardsInHand.push(container);
-    this.selectedCard = card;
 
-    SelectionBoardRenderer.updateBoardCount(card.id, 0);
+    // Always recalc selection
+    this._recalculateSelection();
+
+    // Refresh board count display
+    if (card.id != undefined) {
+      SelectionBoardRenderer.updateBoardCount(card.id, 0);
+    }
 
     return true;
   }
 
   /**
-   * Remove last card from hand (used for cancel)
-   * @returns {Object|null} removed card
+   * Remove last card from hand
+   * @returns {createjs.Container|null} removed container
    */
   removeLastCard() {
-    if (this.playerCards.length === 0) {
+    if (this.cardsInHand.length === 0) {
       return;
     }
 
-    const removedCard = this.playerCards.pop();
     const removedContainer = this.cardsInHand.pop();
-    if (!removedCard || !removedContainer) {
-      return;
-    }
+    const removedCard = this.playerCards.pop();
 
-    // Step 1: Update board count
-    if (removedCard.id != undefined) {
+    if (removedCard && removedCard.id != undefined) {
       removedCard.count = (removedCard.count || 0) + 1;
       SelectionBoardRenderer.updateBoardCount(removedCard.id, 0);
     }
 
-    // Step 2: Animate removal
+    // Animate removal
     createjs.Tween.get(removedContainer)
       .to({ y: Game.stage.canvas.height + 200 }, 500, createjs.Ease.quadIn)
       .call(() => {
@@ -98,21 +99,14 @@ export class PlayerManager {
         Game.stage.update();
       });
 
-    // Step 3: Update selected card (logical)
-    this.selectedCard = this.playerCards.at(-1) || undefined;
+    // Recalculate selection
+    this._recalculateSelection();
 
-    return removedContainer; // return container for visual updates in controller
+    return removedContainer;
   }
 
   /**
-   * Increment the number of cards played by the player
-   */
-  incrementPlayedCardCount() {
-    this.playedCardsCount++;
-  }
-
-  /**
-   * Get a card from hand by index
+   * Get a hand container by index
    * @param {number} index
    * @returns {Object|null}
    */
@@ -120,16 +114,16 @@ export class PlayerManager {
     return this.cardsInHand[index] || undefined;
   }
 
-  /**
-   * Reset the hand completely (used between rounds or replays)
-   */
+  /** Reset hand completely */
   resetHand() {
     this.cardsInHand = [];
-    this.selectedCard = undefined;
+    this.playerCards = [];
+    this._recalculateSelection();
   }
 
   /**
-   * Shift cards down after one is placed and update selection index.
+   * Shift cards down after one is placed
+   * @param {object} offsets - offsets.handCardOffset
    */
   shiftCardsDown(offsets) {
     const count = Math.min(this.cardsAboveSelection, this.cardsInHand.length);
@@ -144,18 +138,20 @@ export class PlayerManager {
       }
     }
 
-    // recalc cardsAboveSelection for next move
     this.cardsAboveSelection = 0;
-
-    // reset selection safely
-    this.selectedCardIndex = 0;
-    this.selectedCard = this.cardsInHand[0] || undefined;
+    this._recalculateSelection();
   }
 
   /**
-   * Increment played card count
+   * Private helper: recalculate selectedCard and selectedCardIndex
    */
-  incrementPlayedCards() {
-    this.playedCardsCount++;
+  _recalculateSelection() {
+    if (this.cardsInHand.length > 0) {
+      this.selectedCardIndex = this.cardsInHand.length - 1;
+      this.selectedCard = this.playerCards[this.selectedCardIndex];
+    } else {
+      this.selectedCardIndex = 0;
+      this.selectedCard = undefined;
+    }
   }
 }

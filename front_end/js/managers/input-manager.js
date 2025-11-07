@@ -234,32 +234,44 @@ export class InputManager {
       Game.stage.removeChild(UIManager.confirmation.container);
       Game.controllers.cursorController.confirmation.remove();
 
-      // reset hand
-      this.playerController.resetHand();
+      // Capture cards currently in the hand before reset
+      const handCards = [...this.playerManager.cardsInHand];
+      const handData = [...this.playerManager.playerCards];
 
-      // update board counts
-      for (let index = 0; index < 5; index++) {
-        const lastCard = this.playerManager.playerCards.pop();
-        if (lastCard) {
-          SelectionBoardRenderer.updateBoardCount(lastCard.id, +1);
+      // Reset model-level hand data
+      this.playerManager.resetHand();
+
+      // Restore counts for each previously selected card
+      for (const card of handData) {
+        if (card?.id != undefined) {
+          SelectionBoardRenderer.updateBoardCount(card.id, +1);
         }
-        this.playerRenderer._updateHandAndPreviewZOrder();
       }
 
-      // restore selection cursor
+      // Remove all visual hand containers from stage
+      for (const container of handCards) {
+        if (container?.parent) {
+          container.parent.removeChild(container);
+        }
+      }
+
+      // Refresh z-order and visuals
+      this.playerRenderer._updateHandAndPreviewZOrder();
+
+      // Restore cursor to selection board
       Game.controllers.cursorController.selection.place();
       SelectionBoardRenderer.updateCursor(SelectionBoardUI.controller);
       if (Game.renderers?.cursorRenderer?.selection?.updatePosition) {
         Game.renderers.cursorRenderer.selection.updatePosition();
       }
 
-      // show preview card
+      // Bring back preview card
       UIManager.selectionBoard.showPreviewCard();
 
       UIManager.playerConfirming = false;
       UIManager.playerSelectingHand = true;
 
-      Game.stage.update(); // force update
+      Game.stage.update(); // Force re-render
     }
   }
 
