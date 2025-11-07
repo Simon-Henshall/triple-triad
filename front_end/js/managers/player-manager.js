@@ -1,5 +1,6 @@
 import { Game } from "../game/game.js";
 import { SelectionBoardRenderer } from "../renderers/selection-board-renderer.js";
+import { shuffle } from "../utilities/shuffle.js";
 
 /**
  * Manages all logical state of the player: deck, hand, played cards, and counts.
@@ -37,25 +38,11 @@ export class PlayerManager {
     this.playerHandCursor = undefined;
   }
 
-  /** Shuffle an array (Fisher-Yates) */
-  shuffleDeck(array = this.playerCards) {
-    let m = array.length,
-      t,
-      index;
-    while (m) {
-      index = Math.floor(Math.random() * m--);
-      t = array[m];
-      array[m] = array[index];
-      array[index] = t;
-    }
-    return array;
-  }
-
   /**
-   * Initialize the player's deck from owned cards
+   * Initialise the player's deck from owned cards
    */
   initDeck() {
-    this.playerCards = this.shuffleDeck([...this.ownedCards]);
+    this.playerCards = shuffle([...this.ownedCards]);
   }
 
   /**

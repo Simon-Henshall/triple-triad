@@ -2,9 +2,10 @@ import { getGameStateInstance } from "./game.state.js";
 import { ai } from "./ai.js";
 import { Game } from "./game.js";
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
-import { utilities } from "./utilities.js";
 import { offsets } from "../constants/offsets.js";
 import { config } from "../config.js";
+import { createCardContainer } from "../utilities/cards.js";
+import { shuffle } from "../utilities/shuffle.js";
 
 export const aiHand = {
   /**
@@ -16,12 +17,13 @@ export const aiHand = {
     // Lazily populate AI logical hand if empty
     if (GameStateInstance.hands.AI.length === 0) {
       // TODO: Update this to reference a stack of AI cards
-      //GameStateInstance.hands.AI = utilities.shuffle([...allAiCards]).slice(0, 5);
+      //GameStateInstance.hands.AI = shuffle([...allAiCards]).slice(0, 5);
       // Temporary placeholder: use player cards until AI deck logic added
       const playerManager = Game.managers.playerManager;
-      GameStateInstance.hands.AI = utilities
-        .shuffle([...playerManager.ownedCards])
-        .slice(0, 5);
+      GameStateInstance.hands.AI = shuffle([...playerManager.ownedCards]).slice(
+        0,
+        5,
+      );
     }
 
     // Clear any existing containers from the stage (safety reset)
@@ -34,7 +36,7 @@ export const aiHand = {
 
     // Create new containers for each AI card
     for (const [index, card] of GameStateInstance.hands.AI.entries()) {
-      const cardContainer = utilities.createCardContainer(
+      const cardContainer = createCardContainer(
         card,
         "red",
         ai.handOffsetX || offsets.gameOffsetX / 2 || 100,

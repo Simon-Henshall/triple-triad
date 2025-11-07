@@ -1,7 +1,7 @@
 import { Game } from "../game/game.js";
 import { offsets } from "../constants/offsets.js";
 import { ai } from "../game/ai.js";
-import { utilities } from "../game/utilities.js";
+import { getPlayerTurn } from "../utilities/turn.js";
 import { UIManager } from "../managers/ui-manager.js";
 
 /**
@@ -62,7 +62,7 @@ export class PlacementRenderer {
    * or adjust AI cards accordingly.
    */
   shiftHandCardsDown() {
-    if (utilities.getPlayerTurn() === "blue") {
+    if (getPlayerTurn() === "blue") {
       const playerManager = Game.managers.playerManager;
       playerManager.shiftCardsDown(offsets);
     } else {

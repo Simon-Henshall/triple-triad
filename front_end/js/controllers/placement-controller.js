@@ -1,11 +1,12 @@
 import { BoardManager } from "../managers/board-manager.js";
 import { ai } from "../game/ai.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { utilities } from "../game/utilities.js";
+import { getPlayerTurn } from "../utilities/turn.js";
 import { debug } from "../debug.js";
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { PlacementManager } from "../managers/placement-manager.js";
 import { Game } from "../game/game.js";
+import { swapPlayerTurn } from "../utilities/turn.js";
 
 /**
  * Coordinates the placement of cards from the player's hand or AI hand
@@ -66,13 +67,13 @@ export class PlacementController {
    */
   playerTurnSwitch() {
     // Swap active player
-    utilities.swapPlayerTurn();
+    swapPlayerTurn();
 
     if (debug.active) {
       debug.logTurn();
     }
 
-    const currentTurn = utilities.getPlayerTurn();
+    const currentTurn = getPlayerTurn();
 
     if (currentTurn === "blue") {
       this._preparePlayerTurn();

@@ -2,7 +2,7 @@ import { config } from "./config.js";
 import { offsets } from "./constants/offsets.js";
 import { UIManager } from "./managers/ui-manager.js";
 import { UIRenderer } from "./renderers/ui-renderer.js";
-import { utilities } from "./game/utilities.js";
+import { pickPlayerCards } from "./utilities/selection.js";
 import { ai } from "./game/ai.js";
 import { Game } from "./game/game.js";
 
@@ -139,7 +139,7 @@ export const gameInit = {
 
   loadInitialCards() {
     if (config.useLocalCards) {
-      utilities.pickPlayerCards();
+      pickPlayerCards();
     } else {
       (async () => {
         try {

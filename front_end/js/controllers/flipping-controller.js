@@ -1,6 +1,6 @@
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { directionMap } from "../constants/directions.js";
-import { utilities } from "../game/utilities.js";
+import { getPlayerTurn } from "../utilities/turn.js";
 import { ai } from "../game/ai.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
@@ -57,7 +57,7 @@ export class FlippingController {
     }
 
     // Change ownership
-    targetCard.owner = this.getCurrentPlayerColour();
+    targetCard.owner = getPlayerTurn();
 
     // Refresh visuals
     const playerManager = Game.managers.playerManager;
@@ -80,7 +80,7 @@ export class FlippingController {
    * @param {number} flippedCount - Number of cards flipped this turn.
    */
   updateOwnershipCounts(flippedCount) {
-    const playerColour = this.getCurrentPlayerColour();
+    const playerColour = getPlayerTurn();
     const playerManager = Game.managers.playerManager;
 
     const delta = {
@@ -96,14 +96,5 @@ export class FlippingController {
     playerManager.playerCardCount.text = playerManager.totalBlueCards;
 
     Game.stage.update();
-  }
-
-  /**
-   * Returns the colour of the current active player.
-   *
-   * @returns {"red"|"blue"} The current player's colour.
-   */
-  getCurrentPlayerColour() {
-    return utilities.getPlayerTurn();
   }
 }

@@ -20,20 +20,22 @@ export const SelectionBoardUI = {
   initialise(cards) {
     this.controller = new SelectionBoardController(cards);
 
-    // Ensure the UIManager.selectionBoard.container exists and is attached to stage.
+    // Ensure container exists and is attached to stage
     const sb = UIManager.selectionBoard;
     if (!sb.container) {
       sb.container = new createjs.Container();
     }
-
     if (!Game.stage.contains(sb.container)) {
       Game.stage.addChild(sb.container);
-      // optional logging:
-      console.log("SelectionBoard container attached early from initialise()");
     }
 
-    // If the caller already created a background (pickPlayerCards does this),
-    // respect it; otherwise SelectionBoardRenderer.populate will create a fallback.
+    // Draw background & text if not already present
+    if (!sb.background) {
+      this._drawSelectionBoardBackground();
+    }
+    this._drawSelectionBoardText();
+
+    // Populate visuals
     SelectionBoardRenderer.populate(this.controller);
   },
 
@@ -73,5 +75,52 @@ export const SelectionBoardUI = {
       this.controller.selectPrevious();
     }
     this.populate();
+  },
+
+  /**
+   * Draw selection board background.
+   * Private method, called automatically from initialise().
+   */
+  _drawSelectionBoardBackground() {
+    const sb = UIManager.selectionBoard;
+    sb.background = new createjs.Shape();
+    sb.background.graphics.beginFill("#666666").drawRect(0, 0, 420, 450);
+    sb.background.x = 170;
+    sb.background.y = 100;
+    sb.container.addChild(sb.background);
+  },
+
+  /**
+   * Draw selection board static text (labels, page, NUM).
+   * Private method, called automatically from initialise().
+   */
+  _drawSelectionBoardText() {
+    const sb = UIManager.selectionBoard;
+
+    const createText = (text, x, y) => {
+      const t = new createjs.Text(text, "20px Arial", "#ffffff");
+      t.x = x;
+      t.y = y;
+      t.textBaseline = "alphabetic";
+      return t;
+    };
+
+    const baseX = sb.background.x;
+    const baseY = sb.background.y;
+
+    // Only create the labels once
+    if (!sb.cardListText) {
+      sb.cardListText = createText("CARDS", baseX + 10, baseY + 20);
+      sb.pageText = createText("P.", baseX + 110, baseY + 20);
+      sb.numberText = createText("NUM.", baseX + 350, baseY + 20);
+
+      sb.container.addChild(sb.cardListText, sb.pageText, sb.numberText);
+    }
+
+    // Page display: create only if missing, otherwise update existing
+    if (!sb.pageDisplay) {
+      sb.pageDisplay = createText("1", baseX + 150, baseY + 20);
+      sb.container.addChild(sb.pageDisplay);
+    }
   },
 };

@@ -1,6 +1,6 @@
 import { BoardManager } from "./managers/board-manager.js";
 import { UIManager } from "./managers/ui-manager.js";
-import { utilities } from "./game/utilities.js";
+import { getPlayerTurn } from "./utilities/turn.js";
 import { ai } from "./game/ai.js";
 import { config } from "./config.js";
 import { Game } from "./game/game.js";
@@ -92,7 +92,7 @@ export const debug = {
    * Logs current turn info
    */
   logTurn() {
-    const currentPlayer = utilities.getPlayerTurn();
+    const currentPlayer = getPlayerTurn();
     const playerManager = Game.managers.playerManager;
     console.log(
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`,

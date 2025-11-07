@@ -1,12 +1,12 @@
 import { SelectionBoardUI } from "../renderers/selection-board-ui.js";
 import { SelectionBoardRenderer } from "../renderers/selection-board-renderer.js";
 import { UIManager } from "./ui-manager.js";
-import { utilities } from "../game/utilities.js";
 import { ConfirmationController } from "../controllers/confirmation-controller.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
 import { BoardManager } from "../managers/board-manager.js";
 import { offsets } from "../constants/offsets.js";
+import { createCardContainer } from "../utilities/cards.js";
 /**
  * Handles game logic triggered by player input.
  * Responsible for card selection, confirmation handling,
@@ -173,7 +173,7 @@ export class InputManager {
       }
 
       // Create a visual container for the card offscreen
-      const _newCardContainer = utilities.createCardContainer(
+      const _newCardContainer = createCardContainer(
         card,
         "blue",
         this.playerManager.handOffsetX,

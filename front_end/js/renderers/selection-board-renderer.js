@@ -1,8 +1,8 @@
 import { Game } from "../game/game.js";
-import { utilities } from "../game/utilities.js";
 import { config } from "../config.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { SelectionBoardUI } from "./selection-board-ui.js";
+import { createCardContainer, createScaledBitmap } from "../utilities/cards.js";
 
 /**
  * Renders the selection board using the UIManager.selectionBoard object
@@ -114,7 +114,7 @@ export const SelectionBoardRenderer = {
       }
 
       // Icon (hide until loaded to avoid flash)
-      const icon = utilities._createScaledBitmap(
+      const icon = createScaledBitmap(
         "front_end/images/selection_card.png",
         30,
         30,
@@ -235,7 +235,7 @@ export const SelectionBoardRenderer = {
       sb.displayedCard.x = targetX;
       sb.displayedCard.y = offscreenY;
     } else {
-      sb.displayedCard = utilities.createCardContainer(
+      sb.displayedCard = createCardContainer(
         selectedCard,
         "blue",
         targetX,
