@@ -18,6 +18,7 @@ import { CursorRenderer } from "./renderers/cursor-renderer.js";
 import { CursorController } from "./controllers/cursor-controller.js";
 import { InputController } from "./controllers/input-controller.js";
 import { BoardManager } from "./managers/board-manager.js";
+import { fetchPlayerCards } from "./utilities/network.js";
 
 export const gameInit = {
   stage() {
@@ -137,10 +138,18 @@ export const gameInit = {
   },
 
   loadInitialCards() {
-    if (typeof ajaxCall === "function") {
-      utilities.ajaxCall(utilities.pickPlayerCards);
-    } else if (typeof utilities.pickPlayerCards === "function") {
+    if (config.useLocalCards) {
       utilities.pickPlayerCards();
+    } else {
+      (async () => {
+        try {
+          const playerId = 1; // TODO: Replace with actual player ID
+          const cards = await fetchPlayerCards(playerId);
+          console.log(cards);
+        } catch (error) {
+          console.error(error);
+        }
+      })();
     }
   },
 
