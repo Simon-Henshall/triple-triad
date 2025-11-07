@@ -1,6 +1,7 @@
 /**
  * Handles the logical state of the selection board.
  * Tracks available cards, pagination, and selected index.
+ * Provides helper methods for safe navigation and page management.
  */
 export class SelectionBoardController {
   /**
@@ -8,10 +9,17 @@ export class SelectionBoardController {
    * @param {number} cardsPerPage - How many cards to show per page
    */
   constructor(cards = [], cardsPerPage = 11) {
+    /** @type {Array} All cards on the selection board */
     this.cards = cards;
+
+    /** @type {number} Number of cards per page */
     this.cardsPerPage = cardsPerPage;
+
+    /** @type {number} Current page, 1-based */
     this.currentPage = 1;
-    this.selectedIndex = 0; // absolute index
+
+    /** @type {number} Absolute selected index within cards array */
+    this.selectedIndex = 0;
   }
 
   /** @returns {number} Total pages based on current cards and cardsPerPage */
@@ -29,27 +37,70 @@ export class SelectionBoardController {
     return this.cards.slice(this.pageStart, this.pageStart + this.cardsPerPage);
   }
 
+  /** @returns {Object|undefined} Currently selected card */
+  get selectedCard() {
+    return this.cards[this.selectedIndex];
+  }
+
+  /** @returns {number} Index relative to the current page */
+  get selectedIndexOnPage() {
+    return this.selectedIndex - this.pageStart;
+  }
+
+  /**
+   * Clamp a provided index to valid range
+   * @param {number} index
+   * @returns {number}
+   */
+  _clampIndex(index) {
+    return Math.max(0, Math.min(index, this.cards.length - 1));
+  }
+
+  /**
+   * Set current page safely and reset selection to first card on page
+   * @param {number} newPage
+   */
+  _setPage(newPage) {
+    this.currentPage = Math.max(1, Math.min(newPage, this.totalPages));
+    this.selectedIndex = this.pageStart;
+  }
+
   /**
    * Select a specific card by absolute index
    * @param {number} index
    */
   selectIndex(index) {
-    this.selectedIndex = Math.max(0, Math.min(index, this.cards.length - 1));
+    this.selectedIndex = this._clampIndex(index);
   }
 
-  /** Select the next card (moves right/down logically) */
+  /**
+   * Move selection to next card (absolute)
+   * Clamped to array bounds
+   */
   selectNext() {
     this.selectIndex(this.selectedIndex + 1);
   }
 
-  /** Select the previous card (moves left/up logically) */
+  /**
+   * Move selection to previous card (absolute)
+   * Clamped to array bounds
+   */
   selectPrevious() {
     this.selectIndex(this.selectedIndex - 1);
   }
 
-  /** @returns {Object|null} Currently selected card object */
-  get selectedCard() {
-    return this.cards[this.selectedIndex] || undefined;
+  /**
+   * Move to next page (if available) and reset selection to first card
+   */
+  paginateRight() {
+    this._setPage(this.currentPage + 1);
+  }
+
+  /**
+   * Move to previous page (if available) and reset selection to first card
+   */
+  paginateLeft() {
+    this._setPage(this.currentPage - 1);
   }
 
   /**
@@ -57,22 +108,17 @@ export class SelectionBoardController {
    * @param {"left"|"right"} direction
    */
   paginate(direction) {
-    if (direction === "left" && this.currentPage > 1) {
-      this.currentPage--;
-    } else if (direction === "right" && this.currentPage < this.totalPages) {
-      this.currentPage++;
+    if (direction === "left") {
+      this.paginateLeft();
+    } else if (direction === "right") {
+      this.paginateRight();
     }
-
-    // Reset selection to top of page
-    this.selectedIndex = this.pageStart;
   }
 
-  /** @returns {number} Index relative to current page */
-  get selectedIndexOnPage() {
-    return this.selectedIndex - this.pageStart;
-  }
-
-  /** Clamp selection to current page bounds */
+  /**
+   * Clamp selection to current page bounds
+   * Useful if selectNext()/selectPrevious() may exceed page
+   */
   clampSelectionToPage() {
     const start = this.pageStart;
     const end = start + this.displayedCards.length - 1;
