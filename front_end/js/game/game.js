@@ -50,48 +50,71 @@ export const Game = {
   },
 
   startGame() {
-    BoardRenderer.generateGrid();
+    console.log("[Game] Starting new match...");
 
-    // Remove the preview card
+    // --- STEP 1: Clear selection UI ---
     const sb = UIManager.selectionBoard;
-    if (sb.displayedCard && Game.stage.contains(sb.displayedCard)) {
-      Game.stage.removeChild(sb.displayedCard);
-      sb.displayedCard = undefined;
+    if (sb?.container) {
+      Game.stage.removeChild(sb.container);
+    }
+    if (UIManager.confirmation?.container) {
+      Game.stage.removeChild(UIManager.confirmation.container);
     }
 
-    // --- STEP 1: get the references ---
+    // --- STEP 2: Generate the board grid ---
+    BoardRenderer.generateGrid();
+
+    // --- STEP 3: Retrieve player + renderer references ---
     const playerManager = Game.managers.playerManager;
     const playerRenderer = Game.renderers.playerRenderer;
 
-    // --- STEP 2: populate logical hand ---
+    // TODO: Fix this logic, but required for indentation to work
     playerManager.playerCards = [...playerManager.cardsInHand];
 
-    // --- STEP 3: populate visual hands ---
-    ai.aiHand.populate();
+    // --- STEP 4: Sync logical hand ---
+    if (playerManager.cardsInHand.length === 0) {
+      console.warn("[startGame] No cards in hand; skipping hand setup.");
+    }
 
-    // --- STEP 4: set first card for info box ---
+    // --- STEP 5: Render the hand visually ---
+    playerRenderer.renderHand?.(playerManager.cardsInHand);
+
+    // --- STEP 6: AI setup ---
+    if (ai?.aiHand?.populate) {
+      ai.aiHand.populate();
+    }
+
+    // --- STEP 7: Info box initialization ---
     const firstCard = playerManager.playerCards[0];
     if (firstCard) {
       UIManager.selectedCard = firstCard;
       playerRenderer.indentSelectedCard(firstCard);
       UIController.updateInfoBox();
-      console.log("[startGame] InfoBox set to first card:", firstCard);
+      console.log(
+        "[startGame] InfoBox set to first card:",
+        firstCard.name || firstCard.id,
+      );
     } else {
-      console.warn("[startGame] no cards in player hand!");
+      console.warn("[startGame] Player has no cards to display in InfoBox.");
     }
 
-    // Set the game state
+    // --- STEP 8: Update UI flags ---
     UIManager.playerConfirming = false;
     UIManager.playerChoosingCard = true;
+    UIManager.playerSelectingHand = false;
 
-    // Draw card counts if desired
+    // --- STEP 9: Draw overlays ---
     UIRenderer.drawCardCounts();
     UIRenderer.drawInfoBox();
 
-    // Place player hand cursor
-    Game.controllers.cursorController.playerHand.place();
-  },
+    // --- STEP 10: Place cursor and update stage ---
+    if (Game.controllers?.cursorController?.playerHand?.place) {
+      Game.controllers.cursorController.playerHand.place();
+    }
 
+    Game.stage.update();
+    console.log("[Game] Match started successfully.");
+  },
   endGame() {
     const playerManager = Game.managers.playerManager;
     if (ai.totalRedCards > playerManager.totalBlueCards) {
