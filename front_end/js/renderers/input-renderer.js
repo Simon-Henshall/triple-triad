@@ -15,7 +15,7 @@ export class InputRenderer {
   moveSelectionCursor(direction) {
     Game.controllers.cursorController.selection.move(direction);
     if (debug.active) {
-      console.log(`Selection cursor moved: ${direction}`);
+      //console.log(`Selection cursor moved: ${direction}`);
     }
   }
 
@@ -26,7 +26,7 @@ export class InputRenderer {
   movePlayerHandCursor(direction) {
     Game.controllers.cursorController.playerHand.move(direction);
     if (debug.active) {
-      console.log(`Player hand cursor moved: ${direction}`);
+      //console.log(`Player hand cursor moved: ${direction}`);
     }
   }
 
@@ -37,7 +37,7 @@ export class InputRenderer {
   moveConfirmationCursor(direction) {
     Game.controllers.cursorController.confirmation.move(direction);
     if (debug.active) {
-      console.log(`Confirmation cursor moved: ${direction}`);
+      //console.log(`Confirmation cursor moved: ${direction}`);
     }
   }
 
@@ -47,7 +47,7 @@ export class InputRenderer {
   restorePlayerHandCursor() {
     Game.controllers.cursorController.playerHand.place();
     if (debug.active) {
-      console.log("Player hand cursor restored");
+      //console.log("Player hand cursor restored");
     }
   }
 
@@ -60,7 +60,7 @@ export class InputRenderer {
       UIManager.infoBox.container.visible = visible;
       Game.stage.update();
       if (debug.active) {
-        console.log(`Info box visibility set to: ${visible}`);
+        //console.log(`Info box visibility set to: ${visible}`);
       }
     }
   }

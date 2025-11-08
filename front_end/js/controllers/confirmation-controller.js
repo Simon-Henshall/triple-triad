@@ -1,6 +1,7 @@
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { UIRenderer } from "../renderers/ui-renderer.js";
+import { debug } from "../debug.js";
 
 /**
  * Controller responsible for showing and managing the
@@ -26,6 +27,10 @@ export const ConfirmationController = {
 
     // Set the player state to 'confirming'
     UIManager.playerConfirming = true;
+
+    if (debug.active) {
+      console.log("Selected cards:", Game.managers.playerManager.hand);
+    }
 
     // Reset the default choice index
     config.selectedChoice = 0;

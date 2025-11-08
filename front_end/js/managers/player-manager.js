@@ -118,6 +118,9 @@ export class PlayerManager {
   resetHand() {
     this.cardsInHand = [];
     this.playerCards = [];
+    if (debug.active) {
+      console.log("Resetting player hand from:", this.cardsInHand);
+    }
     this._recalculateSelection();
   }
 

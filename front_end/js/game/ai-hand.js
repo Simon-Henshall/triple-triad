@@ -6,6 +6,7 @@ import { offsets } from "../constants/offsets.js";
 import { config } from "../config.js";
 import { createCardContainer } from "../utilities/cards.js";
 import { shuffle } from "../utilities/shuffle.js";
+import { debug } from "../debug.js";
 
 export const aiHand = {
   /**
@@ -51,6 +52,10 @@ export const aiHand = {
 
       ai.cardsInAIHand.push(cardContainer);
       Game.stage.addChild(cardContainer);
+    }
+
+    if (debug.active) {
+      console.log("AI chose the following cards:", ai.cardsInAIHand);
     }
 
     // Flip AI hand if "open" rule applies

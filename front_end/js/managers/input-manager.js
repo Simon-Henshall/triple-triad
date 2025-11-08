@@ -167,9 +167,7 @@ export class InputManager {
 
     if (card.count > 0) {
       if (debug.active) {
-        console.log(
-          `Selected card: ${card.displayName} (remaining: ${card.count - 1})`,
-        );
+        console.log("Selected card:", card);
       }
 
       // Create a visual container for the card offscreen

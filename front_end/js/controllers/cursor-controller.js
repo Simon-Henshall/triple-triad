@@ -20,7 +20,7 @@ export const CursorController = (cursorRenderer) => ({
       cursorRenderer.selection.place();
 
       if (debug.active) {
-        console.log("CursorController.selection.place()");
+        //console.log("CursorController.selection.place()");
       }
     },
 
@@ -34,7 +34,7 @@ export const CursorController = (cursorRenderer) => ({
       cursorRenderer.selection.ensurePopulated();
 
       if (debug.active) {
-        console.log("CursorController.selection.move() ->", direction);
+        //console.log("CursorController.selection.move() ->", direction);
       }
     },
 
@@ -46,7 +46,7 @@ export const CursorController = (cursorRenderer) => ({
       cursorRenderer.selection.remove();
 
       if (debug.active) {
-        console.log("CursorController.selection.remove()");
+        //console.log("CursorController.selection.remove()");
       }
     },
   },
@@ -63,7 +63,7 @@ export const CursorController = (cursorRenderer) => ({
       cursorRenderer.confirmation.place();
 
       if (debug.active) {
-        console.log("CursorController.confirmation.place()");
+        //console.log("CursorController.confirmation.place()");
       }
     },
 
@@ -80,7 +80,7 @@ export const CursorController = (cursorRenderer) => ({
       }
 
       if (debug.active) {
-        console.log("CursorController.confirmation.move() ->", direction);
+        //console.log("CursorController.confirmation.move() ->", direction);
       }
     },
 
@@ -92,7 +92,7 @@ export const CursorController = (cursorRenderer) => ({
       cursorRenderer.confirmation.remove();
 
       if (debug.active) {
-        console.log("CursorController.confirmation.remove()");
+        //console.log("CursorController.confirmation.remove()");
       }
     },
   },
@@ -118,7 +118,7 @@ export const CursorController = (cursorRenderer) => ({
       }
 
       if (debug.active) {
-        console.log("CursorController.playerHand.place() -> infoBox updated");
+        //console.log("CursorController.playerHand.place() -> infoBox updated");
       }
     },
 
@@ -135,7 +135,7 @@ export const CursorController = (cursorRenderer) => ({
       }
 
       if (debug.active) {
-        console.log("CursorController.playerHand.move() ->", direction);
+        //console.log("CursorController.playerHand.move() ->", direction);
       }
     },
 
@@ -147,7 +147,7 @@ export const CursorController = (cursorRenderer) => ({
       cursorRenderer.playerHand.remove();
 
       if (debug.active) {
-        console.log("CursorController.playerHand.remove()");
+        //console.log("CursorController.playerHand.remove()");
       }
     },
   },
@@ -164,7 +164,7 @@ export const CursorController = (cursorRenderer) => ({
       cursorRenderer.grid.place();
 
       if (debug.active) {
-        console.log("CursorController.grid.place()");
+        //console.log("CursorController.grid.place()");
       }
     },
 
@@ -180,7 +180,7 @@ export const CursorController = (cursorRenderer) => ({
       }
 
       if (debug.active) {
-        console.log("CursorController.grid.move() ->", direction);
+        //console.log("CursorController.grid.move() ->", direction);
       }
     },
 
@@ -192,7 +192,7 @@ export const CursorController = (cursorRenderer) => ({
       cursorRenderer.grid.remove();
 
       if (debug.active) {
-        console.log("CursorController.grid.remove()");
+        //console.log("CursorController.grid.remove()");
       }
     },
   },
