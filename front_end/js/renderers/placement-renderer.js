@@ -1,6 +1,5 @@
 import { Game } from "../game/game.js";
 import { offsets } from "../constants/offsets.js";
-import { ai } from "../game/ai.js";
 import { getPlayerTurn } from "../utilities/turn.js";
 import { UIManager } from "../managers/ui-manager.js";
 
@@ -67,7 +66,8 @@ export class PlacementRenderer {
       playerManager.shiftCardsDown(offsets);
     } else {
       // AI hand movement
-      this.animateDown(ai.cardsInAIHand, ai.aiCardsAboveSelection);
+      const aiManager = Game.managers.aiManager;
+      this.animateDown(aiManager.hand, aiManager.cardsAboveSelection);
     }
   }
 
@@ -79,8 +79,8 @@ export class PlacementRenderer {
    */
   animateDown(hand, count) {
     for (let index = 0; index < count; index++) {
-      createjs.Tween.get(hand[index]).to(
-        { y: hand[index].y + offsets.handCardOffset },
+      createjs.Tween.get(hand[index].display).to(
+        { y: hand[index].display.y + offsets.handCardOffset },
         200,
       );
     }

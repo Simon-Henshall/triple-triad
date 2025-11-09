@@ -1,5 +1,5 @@
 /**
- * Shuffle an array using Fisher-Yates algorithm
+ * Shuffle an array using the Fisher-Yates algorithm
  * @template T
  * @param {T[]} array - Array to shuffle
  * @returns {T[]} - Shuffled array

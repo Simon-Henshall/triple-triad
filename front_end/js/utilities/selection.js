@@ -1,7 +1,6 @@
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { shuffle } from "./shuffle.js";
-import { ai } from "../game/ai.js";
 import { SelectionBoardUI } from "../renderers/selection-board-ui.js";
 import { cards } from "../constants/cards.js";
 import { fallBackCardsForTesting } from "../constants/fallback-cards.js";
@@ -72,10 +71,11 @@ function _populateDeck(playerManager, parsedCards) {
  * @param {Object} playerManager
  */
 function _initialiseRandomMode(playerManager) {
+  const aiManager = Game.managers.aiManager;
   playerManager.hand = shuffle($.extend(true, [], playerManager.deck));
 
-  if (!ai.cardsInAIHand || ai.cardsInAIHand.length === 0) {
-    ai.aiHand.populate();
+  if (!aiManager.hand || aiManager.hand.length === 0) {
+    aiManager.hand.populate();
   }
 
   Game.startGame();
@@ -86,8 +86,9 @@ function _initialiseRandomMode(playerManager) {
  * @param {Object} playerManager
  */
 function _setupSelectionBoard(playerManager) {
+  const aiManager = Game.managers.aiManager;
   // Populate AI hand and selection board
-  ai.aiHand.populate();
+  aiManager.populateHand();
   SelectionBoardUI.initialise(playerManager.deck);
 
   // SelectionBoardUI will now handle drawing background/text

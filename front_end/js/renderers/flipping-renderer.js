@@ -145,8 +145,8 @@ export class FlippingRenderer {
   }
 
   /** Flip AI hand at game start */
-  flipAIHand(aiHand) {
-    const handCopy = aiHand.toReversed();
+  flipAIHand(hand) {
+    const handCopy = hand.toReversed();
     for (const [index, card] of handCopy.entries()) {
       setTimeout(() => this.flipCard(card, "right"), 2000 * (index + 1));
     }

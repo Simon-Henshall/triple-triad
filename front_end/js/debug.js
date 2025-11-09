@@ -1,7 +1,6 @@
 import { BoardManager } from "./managers/board-manager.js";
 import { UIManager } from "./managers/ui-manager.js";
 import { getPlayerTurn } from "./utilities/turn.js";
-import { ai } from "./game/ai.js";
 import { config } from "./config.js";
 import { Game } from "./game/game.js";
 
@@ -80,7 +79,8 @@ export const debug = {
     }
 
     console.log("=============== AI HAND ===================");
-    for (const [index, card] of ai.cardsInAIHand.entries()) {
+    const aiManager = Game.managers.aiManager;
+    for (const [index, card] of aiManager.hand.entries()) {
       console.log(
         `Card ${index}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
       );
@@ -94,11 +94,12 @@ export const debug = {
   logTurn() {
     const currentPlayer = getPlayerTurn();
     const playerManager = Game.managers.playerManager;
+    const aiManager = Game.managers.aiManager;
     console.log(
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`,
     );
     console.log(
-      `SCORE | Player: ${playerManager.totalBlueCards} AI: ${ai.totalRedCards}`,
+      `SCORE | Player: ${playerManager.totalBlueCards} AI: ${aiManager.totalRedCards}`,
     );
     console.log(`Free cells remaining: ${BoardManager.freeCells.join(", ")}`);
     console.log("*****************************************");

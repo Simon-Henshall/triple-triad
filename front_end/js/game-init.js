@@ -3,10 +3,10 @@ import { offsets } from "./constants/offsets.js";
 import { UIManager } from "./managers/ui-manager.js";
 import { UIRenderer } from "./renderers/ui-renderer.js";
 import { pickPlayerCards } from "./utilities/selection.js";
-import { ai } from "./game/ai.js";
 import { Game } from "./game/game.js";
 
 // Managers & Controllers
+import { AIManager } from "./managers/ai-manager.js";
 import { PlayerManager } from "./managers/player-manager.js";
 import { PlayerRenderer } from "./renderers/player-renderer.js";
 import { PlayerController } from "./controllers/player-controller.js";
@@ -37,6 +37,7 @@ export const gameInit = {
 
   managers() {
     // Instantiate base managers
+    const aiManager = new AIManager();
     const playerManager = new PlayerManager();
     const playerRenderer = new PlayerRenderer(playerManager);
     const playerController = new PlayerController(
@@ -65,6 +66,7 @@ export const gameInit = {
 
     // Register everything globally in Game (optional convenience)
     Game.managers = {
+      aiManager,
       playerManager,
       placementManager,
       inputManager,
@@ -82,6 +84,7 @@ export const gameInit = {
     };
 
     return {
+      aiManager,
       playerManager,
       playerRenderer,
       playerController,
@@ -93,10 +96,10 @@ export const gameInit = {
   },
 
   handPositions() {
-    const { playerManager } = Game.managers;
+    const { aiManager, playerManager } = Game.managers;
     playerManager.handOffsetX =
       offsets.gameOffsetX + offsets.cellWidth * 3 + offsets.cardWidth / 4;
-    ai.handOffsetX = offsets.gameOffsetX / 2 - offsets.cardWidth / 2;
+    aiManager.handOffsetX = offsets.gameOffsetX / 2 - offsets.cardWidth / 2;
   },
 
   cursors() {

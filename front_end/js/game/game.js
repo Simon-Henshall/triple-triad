@@ -1,7 +1,6 @@
 import { BoardRenderer } from "../renderers/board-renderer.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { UIRenderer } from "../renderers/ui-renderer.js";
-import { ai } from "./ai.js";
 import { UIController } from "../controllers/ui-controller.js";
 
 export const Game = {
@@ -67,6 +66,7 @@ export const Game = {
     // --- STEP 3: Retrieve player + renderer references ---
     const playerManager = Game.managers.playerManager;
     const playerRenderer = Game.renderers.playerRenderer;
+    const aiManager = Game.managers.aiManager;
 
     // --- STEP 4: Sync logical hand ---
     if (playerManager.hand.length === 0) {
@@ -77,8 +77,8 @@ export const Game = {
     playerRenderer.renderHand?.(playerManager.hand);
 
     // --- STEP 6: AI setup ---
-    if (ai?.aiHand?.populate) {
-      ai.aiHand.populate();
+    if (aiManager?.hand?.populate) {
+      aiManager.hand.populate();
     }
 
     // --- STEP 7: Info box initialization ---
@@ -112,9 +112,10 @@ export const Game = {
   },
   endGame() {
     const playerManager = Game.managers.playerManager;
-    if (ai.totalRedCards > playerManager.totalBlueCards) {
+    const aiManager = Game.managers.aiManager;
+    if (aiManager.totalRedCards > playerManager.totalBlueCards) {
       alert("lose");
-    } else if (playerManager.totalBlueCards > ai.totalRedCards) {
+    } else if (playerManager.totalBlueCards > aiManager.totalRedCards) {
       alert("win");
     } else {
       alert("draw");

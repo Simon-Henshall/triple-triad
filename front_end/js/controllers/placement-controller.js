@@ -1,5 +1,4 @@
 import { BoardManager } from "../managers/board-manager.js";
-import { ai } from "../game/ai.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { getPlayerTurn } from "../utilities/turn.js";
 import { debug } from "../debug.js";
@@ -78,7 +77,7 @@ export class PlacementController {
     if (currentTurn === "blue") {
       this._preparePlayerTurn();
     } else if (currentTurn === "red") {
-      ai.turn();
+      Game.managers.aiManager.takeTurn();
     }
   }
 

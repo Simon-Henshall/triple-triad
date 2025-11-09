@@ -1,6 +1,5 @@
 import { config } from "../config.js";
 import { offsets } from "../constants/offsets.js";
-import { ai } from "../game/ai.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
 
@@ -38,24 +37,25 @@ export const UIRenderer = {
    */
   drawCardCounts() {
     const playerManager = Game.managers.playerManager;
+    const aiManager = Game.managers.aiManager;
     // Remove existing counts if present
-    if (ai.aiCardCount) {
-      ai.aiCardCount.remove();
+    if (aiManager.aiCardCount) {
+      aiManager.aiCardCount.remove();
     }
     if (playerManager.playerCardCount) {
       playerManager.playerCardCount.remove();
     }
 
     // Create and position AI card count
-    ai.aiCardCount = new createjs.Text(
-      ai.totalRedCards,
+    aiManager.aiCardCount = new createjs.Text(
+      aiManager.totalRedCards,
       "90px Arial",
       "#ffffff",
     );
-    ai.aiCardCount.x = ai.handOffsetX + offsets.cardWidth / 3;
-    ai.aiCardCount.y = Game.stageHeight - 15;
-    ai.aiCardCount.textBaseline = "alphabetic";
-    Game.stage.addChild(ai.aiCardCount);
+    aiManager.aiCardCount.x = aiManager.handOffsetX + offsets.cardWidth / 3;
+    aiManager.aiCardCount.y = Game.stageHeight - 15;
+    aiManager.aiCardCount.textBaseline = "alphabetic";
+    Game.stage.addChild(aiManager.aiCardCount);
 
     // Create and position player card count
     playerManager.playerCardCount = new createjs.Text(

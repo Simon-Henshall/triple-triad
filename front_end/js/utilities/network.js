@@ -1,5 +1,5 @@
 /**
- * Fetch player cards from PHP endpoint with timeout and error handling.
+ * Fetch player cards from the PHP endpoint with timeout and error handling.
  *
  * @export
  * @async

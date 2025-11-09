@@ -1,6 +1,5 @@
 import { Game } from "../game/game.js";
 import { SelectionBoardRenderer } from "../renderers/selection-board-renderer.js";
-import { shuffle } from "../utilities/shuffle.js";
 import { debug } from "../debug.js";
 
 /**

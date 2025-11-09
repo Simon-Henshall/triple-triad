@@ -1,9 +1,9 @@
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { directionMap } from "../constants/directions.js";
 import { getPlayerTurn } from "../utilities/turn.js";
-import { ai } from "../game/ai.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
+import { debug } from "../debug.js";
 
 /**
  * Handles the core logic for flipping cards after placement,
@@ -33,6 +33,14 @@ export class FlippingController {
       { prop, playerStrength, opponentStrength },
     ] of Object.entries(directionMap)) {
       const target = card[prop];
+
+      if (debug.active) {
+        console.log(
+          "FlippingController.flipCardsCheck() -> checking",
+          card,
+          target,
+        );
+      }
 
       if (
         target &&
@@ -82,6 +90,7 @@ export class FlippingController {
   updateOwnershipCounts(flippedCount) {
     const playerColour = getPlayerTurn();
     const playerManager = Game.managers.playerManager;
+    const aiManager = Game.managers.aiManager;
 
     const delta = {
       blue: { player: 1, ai: -1 },
@@ -89,10 +98,10 @@ export class FlippingController {
     };
 
     playerManager.totalBlueCards += delta[playerColour].player * flippedCount;
-    ai.totalRedCards += delta[playerColour].ai * flippedCount;
+    aiManager.totalRedCards += delta[playerColour].ai * flippedCount;
 
     // Update on-screen text
-    ai.aiCardCount.text = ai.totalRedCards;
+    aiManager.aiCardCount.text = aiManager.totalRedCards;
     playerManager.playerCardCount.text = playerManager.totalBlueCards;
 
     Game.stage.update();
