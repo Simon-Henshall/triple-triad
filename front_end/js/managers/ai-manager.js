@@ -2,12 +2,11 @@ import { offsets } from "../constants/offsets.js";
 import { BoardManager } from "../managers/board-manager.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { Game } from "../game/game.js";
-import { getGameStateInstance } from "../game/game.state.js";
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { config } from "../config.js";
 import { createCardContainer } from "../utilities/cards.js";
-import { shuffle } from "../utilities/shuffle.js";
 import { debug } from "../debug.js";
+import { shuffle } from "../utilities/shuffle.js";
 
 /**
  * Represents a single AI card (logic + visual)
@@ -45,38 +44,30 @@ export class AIManager {
    * If no logical hand exists yet, it generates a new one from the player's deck.
    */
   populateHand() {
-    const GameStateInstance = getGameStateInstance();
-
-    // Lazily populate AI logical hand if empty
-    if (GameStateInstance.hands.AI.length === 0) {
-      const playerManager = Game.managers.playerManager;
-      GameStateInstance.hands.AI = shuffle([...playerManager.deck]).slice(0, 5);
-    }
-
-    // Remove any previous AI hand containers
-    for (const card of this.hand) {
-      if (card.display) {
-        Game.stage.removeChild(card.display);
-      }
-    }
     this.hand = [];
 
+    const playerManager = Game.managers.playerManager;
+    console.log(playerManager);
+    const pickedCards = shuffle(playerManager.deck).slice(0, 5);
+    console.log(pickedCards);
+
     // Create new visual containers for AI cards
-    for (const [index, cardData] of GameStateInstance.hands.AI.entries()) {
+    const count = 5;
+    for (let index_ = 0; index_ < count; index_++) {
       const cardContainer = createCardContainer(
-        cardData,
+        pickedCards[index_],
         "red",
         this.handOffsetX || offsets.gameOffsetX / 2 || 100,
-        (offsets.handOffsetY || 50) + index * (offsets.handCardOffset || 95),
+        (offsets.handOffsetY || 50) + index_ * (offsets.handCardOffset || 95),
         {
           showBack: true,
-          frontImageSrc: config.cardPath + cardData.image + ".png",
+          frontImageSrc: config.cardPath + pickedCards[index_].image + ".png",
           backImageSrc: config.cardPath + "back.png",
           onReady: () => Game.stage.update(),
         },
       );
 
-      this.hand.push(new AICard(cardData, cardContainer));
+      this.hand.push(new AICard(pickedCards[index_], cardContainer));
       Game.stage.addChild(cardContainer);
     }
 
@@ -100,19 +91,14 @@ export class AIManager {
    */
   takeTurn() {
     if (this.hand.length === 0) {
-      console.warn("AI has no cards to play!");
       return;
     }
-
     if (BoardManager.freeCells.length === 0) {
-      console.warn("No free cells available for AI move!");
       return;
     }
 
-    // Pick random card and target square
     const cardIndex = Math.floor(Math.random() * this.hand.length);
     const selectedCard = this.hand[cardIndex];
-    const GameStateInstance = getGameStateInstance();
 
     UIManager.selectedAISquare =
       BoardManager.freeCells[
@@ -122,10 +108,19 @@ export class AIManager {
     BoardManager.checkSelectedRowColumn();
     this.cardsAboveSelection = cardIndex;
 
-    // Delay the actual placement for natural pacing
     setTimeout(() => {
+      // Remove the played card from hand
+      const playedCard = this.hand.splice(cardIndex, 1)[0];
+
+      // Animate only cards above the played card
+      this.shiftCardsDown(offsets.handCardOffset, cardIndex);
+
+      // Ensure played card is on top of stage
+      Game.stage.addChild(playedCard.display);
+
+      // Place the selected card visually
       Game.controllers.placementController.placeCard(
-        selectedCard.display,
+        playedCard.display,
         offsets.gameOffsetX +
           offsets.cellWidth * (UIManager.selectedColumn - 1) +
           offsets.cardOffsetX,
@@ -133,11 +128,21 @@ export class AIManager {
           offsets.cellHeight * (UIManager.selectedRow - 1) +
           offsets.cardOffsetY,
       );
-
-      // Remove the logical card from hand
-      GameStateInstance.hands.AI.splice(cardIndex, 1);
-      this.hand.splice(cardIndex, 1);
     }, this.aiDelay);
+  }
+
+  shiftCardsDown(offsetY, playedIndex) {
+    for (let index = 0; index < playedIndex; index++) {
+      const card = this.hand[index];
+      if (card?.display) {
+        createjs.Tween.get(card.display).to(
+          { y: card.display.y + offsetY },
+          200,
+        );
+      }
+    }
+
+    // No need to touch cards below the played card
   }
 
   /**

@@ -67,9 +67,6 @@ export const Game = {
       playerRenderer.renderHand?.(playerManager.hand);
     }
 
-    // Populate AI hand
-    aiManager.populateHand?.();
-
     // Setup info box for first card
     const firstCard = playerManager.hand[0];
     if (firstCard) {
@@ -101,7 +98,9 @@ export const Game = {
    */
   startSelection() {
     console.log("[Game] Starting hand selection...");
-
+    pickPlayerCards();
+    // TODO: Actually make use of this; note that this does noth
+    /*
     // Get the cards for hand selection
     const cards = pickPlayerCards(); // should return array of card objects
 
@@ -118,6 +117,7 @@ export const Game = {
     UIRenderer.drawInfoBox();
 
     this.stage.update();
+    */
   },
 
   /**

@@ -89,7 +89,6 @@ function _setupSelectionBoard(playerManager) {
   const aiManager = Game.managers.aiManager;
   // Populate AI hand and selection board
   aiManager.populateHand();
-  SelectionBoardUI.initialise(playerManager.deck);
 
   // SelectionBoardUI will now handle drawing background/text
   SelectionBoardUI.initialise(playerManager.deck);

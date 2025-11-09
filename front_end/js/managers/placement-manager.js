@@ -57,6 +57,9 @@ export class PlacementManager {
       this.onCardOffscreenComplete(c, placementX, placementY);
     });
 
+    // TODO: Gets called twice
+    //debugger;
+
     // Shift remaining hand cards down
     this.renderer.shiftHandCardsDown();
   }
