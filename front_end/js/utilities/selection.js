@@ -65,6 +65,8 @@ function _populateOwnedCards(playerManager, parsedCards) {
       playerManager.ownedCards.push(cardsCopy[index]);
     }
   }
+
+  console.log("Player deck populated:", playerManager.deck);
 }
 
 /**

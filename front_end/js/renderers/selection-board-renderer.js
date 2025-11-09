@@ -186,6 +186,7 @@ export const SelectionBoardRenderer = {
    * @param {number} [delta] - Optional delta to apply (positive or negative)
    */
   updateBoardCount(cardId, delta) {
+    console.log("SelectionBoardRenderer.updateBoardCount", cardId);
     const sb = UIManager.selectionBoard;
     if (!sb?.displayedCards) {
       console.warn("updateBoardCount: no displayedCards or stage missing");
@@ -229,13 +230,21 @@ export const SelectionBoardRenderer = {
     if (!selectedCard) {
       return;
     }
-
+    console.log(
+      "SelectionBoardRenderer.updateDisplay",
+      selectedCard,
+      "Displayed Card:",
+      sb.displayedCard,
+      "Board:",
+      sb,
+    );
     const targetX = sb.background.x + PREVIEW_X_OFFSET;
     const targetY = sb.background.y + PREVIEW_Y_OFFSET;
     const offscreenY = Game.stage.canvas.height + 50;
 
     // If a displayedCard already exists, update its image and colour
     if (sb.displayedCard) {
+      console.log("Displaying the card for a navigation load:", selectedCard);
       // Always set the colour (could cache if needed)
       if (sb.displayedCardColour) {
         sb.displayedCardColour.image.src = config.cardPath + "blue.png";
@@ -252,6 +261,7 @@ export const SelectionBoardRenderer = {
       sb.displayedCard.y = offscreenY;
     } else {
       // Create container for first-time display
+      console.log("Displaying the card for the first time:", selectedCard);
       sb.displayedCard = createCardContainer(
         selectedCard,
         "blue",

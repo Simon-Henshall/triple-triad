@@ -66,6 +66,12 @@ export function createCardContainer(
   y,
   { showBack = false, frontImageSrc, backImageSrc, onReady } = {},
 ) {
+  console.log(
+    "Creating card container for",
+    cardData.displayName,
+    "owned by",
+    ownerColour,
+  );
   const targetW =
     offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
   const targetH =

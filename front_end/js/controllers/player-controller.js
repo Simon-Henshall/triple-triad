@@ -42,6 +42,7 @@ export class PlayerController {
       return;
     }
 
+    console.log("PlayerController.confirmCardSelection:", card);
     // Create visual container for the hand card
     const container = this.renderer.createCardContainer(card, "blue");
 

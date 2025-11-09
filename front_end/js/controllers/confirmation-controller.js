@@ -29,7 +29,8 @@ export const ConfirmationController = {
     UIManager.playerConfirming = true;
 
     if (debug.active) {
-      console.log("Selected cards:", Game.managers.playerManager.hand);
+      console.log("cardsInHand:", Game.managers.playerManager.cardsInHand);
+      console.log("playerCards:", Game.managers.playerManager.playerCards);
     }
 
     // Reset the default choice index

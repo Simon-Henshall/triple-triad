@@ -58,9 +58,15 @@ export class PlayerRenderer {
    * @param {boolean} remove - true if removing
    */
   animateCardToHand(cardContainer, index, remove = false) {
+    console.log(
+      `${remove ? "Removing" : "Adding"} card ${remove ? "from" : "to"} hand at index ${index}:`,
+      cardContainer,
+    );
+
     const targetX = this.stackOffsetX;
     const targetY = this.stackOffsetY + index * this.stackSpacing;
 
+    // Add to stage only when adding
     if (!remove) {
       cardContainer.x = targetX;
       cardContainer.y = Game.stage.canvas.height + 200;
@@ -78,6 +84,7 @@ export class PlayerRenderer {
           if (index_ !== -1) {
             this.cardsInPlayerHand.splice(index_, 1);
           }
+          console.log("Card removed from hand:", cardContainer);
           if (Game.stage.contains(cardContainer)) {
             Game.stage.removeChild(cardContainer);
           }

@@ -161,6 +161,7 @@ export class InputManager {
    */
   selectCard() {
     const card = SelectionBoardUI.controller.selectedCard;
+    console.log("Selecting card:", card);
     if (!card) {
       return;
     }
@@ -182,6 +183,7 @@ export class InputManager {
       this.playerManager.addCardToHand(card, _newCardContainer);
 
       // Animate card into the hand
+      console.log("selectCard()", _newCardContainer);
       this.playerRenderer.animateCardToHand(
         _newCardContainer,
         this.playerManager.cardsInHand.length - 1,
