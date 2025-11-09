@@ -48,7 +48,7 @@ export class AIManager {
 
     const playerManager = Game.managers.playerManager;
     console.log(playerManager);
-    const pickedCards = shuffle(playerManager.deck).slice(0, 5);
+    const pickedCards = shuffle([...playerManager.deck]).slice(0, 5);
     console.log(pickedCards);
 
     // Create new visual containers for AI cards
@@ -90,16 +90,10 @@ export class AIManager {
    * Visual placement and flip logic are handled by PlacementController.
    */
   takeTurn() {
-    if (this.hand.length === 0) {
-      return;
-    }
-    if (BoardManager.freeCells.length === 0) {
-      return;
-    }
-
+    // Pick a random card from AI hand
     const cardIndex = Math.floor(Math.random() * this.hand.length);
-    const selectedCard = this.hand[cardIndex];
 
+    // Pick a random free cell for placement
     UIManager.selectedAISquare =
       BoardManager.freeCells[
         Math.floor(Math.random() * BoardManager.freeCells.length)
@@ -115,10 +109,10 @@ export class AIManager {
       // Animate only cards above the played card
       this.shiftCardsDown(offsets.handCardOffset, cardIndex);
 
-      // Ensure played card is on top of stage
+      // Ensure played card renders on top
       Game.stage.addChild(playedCard.display);
 
-      // Place the selected card visually
+      // Place card visually on board
       Game.controllers.placementController.placeCard(
         playedCard.display,
         offsets.gameOffsetX +
@@ -128,9 +122,17 @@ export class AIManager {
           offsets.cellHeight * (UIManager.selectedRow - 1) +
           offsets.cardOffsetY,
       );
+
+      // Reorder remaining AI hand for consistent layering
+      this.reorderHand();
     }, this.aiDelay);
   }
 
+  /**
+   * Shift cards above the played card downwards.
+   * @param {number} offsetY
+   * @param {number} playedIndex
+   */
   shiftCardsDown(offsetY, playedIndex) {
     for (let index = 0; index < playedIndex; index++) {
       const card = this.hand[index];
@@ -141,16 +143,36 @@ export class AIManager {
         );
       }
     }
-
-    // No need to touch cards below the played card
   }
 
   /**
-   * Resets the AI’s hand and clears visuals from the stage.
+   * Ensures remaining AI cards are stacked in order on stage.
+   */
+  reorderHand() {
+    for (const card of this.hand) {
+      if (card?.display) {
+        Game.stage.removeChild(card.display);
+      }
+    }
+    for (const card of this.hand) {
+      if (card?.display) {
+        Game.stage.addChild(card.display);
+      }
+    }
+
+    // Ensure the score display stays on top
+    if (this.aiCardCount.text) {
+      Game.stage.removeChild(this.aiCardCount);
+      Game.stage.addChild(this.aiCardCount);
+    }
+  }
+
+  /**
+   * Clears AI hand and removes all visuals from stage.
    */
   resetHand() {
     for (const card of this.hand) {
-      if (card.display) {
+      if (card?.display) {
         Game.stage.removeChild(card.display);
       }
     }
