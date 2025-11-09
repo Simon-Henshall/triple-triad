@@ -28,11 +28,6 @@ export const ConfirmationController = {
     // Set the player state to 'confirming'
     UIManager.playerConfirming = true;
 
-    if (debug.active) {
-      console.log("cardsInHand:", Game.managers.playerManager.cardsInHand);
-      console.log("playerCards:", Game.managers.playerManager.playerCards);
-    }
-
     // Reset the default choice index
     config.selectedChoice = 0;
 

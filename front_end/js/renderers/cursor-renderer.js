@@ -151,10 +151,9 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      */
     syncSelection() {
       UIManager.previouslySelectedCard = UIManager.selectedCard;
-      UIManager.selectedCard =
-        playerManager.cardsInHand[UIManager.selectedCardNumber];
+      UIManager.selectedCard = playerManager.hand[UIManager.selectedCardNumber];
 
-      UIController.updateInfoBox();
+      UIController.updateInfoBox(UIManager.selectedCard);
       playerRenderer.indentSelectedCard(UIManager.selectedCard);
     },
 

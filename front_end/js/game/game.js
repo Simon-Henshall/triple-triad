@@ -68,16 +68,13 @@ export const Game = {
     const playerManager = Game.managers.playerManager;
     const playerRenderer = Game.renderers.playerRenderer;
 
-    // TODO: Fix this logic, but required for indentation to work
-    playerManager.playerCards = [...playerManager.cardsInHand];
-
     // --- STEP 4: Sync logical hand ---
-    if (playerManager.cardsInHand.length === 0) {
+    if (playerManager.hand.length === 0) {
       console.warn("[startGame] No cards in hand; skipping hand setup.");
     }
 
     // --- STEP 5: Render the hand visually ---
-    playerRenderer.renderHand?.(playerManager.cardsInHand);
+    playerRenderer.renderHand?.(playerManager.hand);
 
     // --- STEP 6: AI setup ---
     if (ai?.aiHand?.populate) {
@@ -85,15 +82,14 @@ export const Game = {
     }
 
     // --- STEP 7: Info box initialization ---
-    const firstCard = playerManager.playerCards[0];
+    const firstCard = playerManager.hand[0];
     if (firstCard) {
       UIManager.selectedCard = firstCard;
+      console.log("[startGame] indentSelectedCard to first card:", firstCard);
       playerRenderer.indentSelectedCard(firstCard);
-      UIController.updateInfoBox();
-      console.log(
-        "[startGame] InfoBox set to first card:",
-        firstCard.name || firstCard.id,
-      );
+      UIRenderer.drawInfoBox();
+      UIController.updateInfoBox(firstCard);
+      console.log("[startGame] InfoBox set to first card:", firstCard);
     } else {
       console.warn("[startGame] Player has no cards to display in InfoBox.");
     }
@@ -105,7 +101,6 @@ export const Game = {
 
     // --- STEP 9: Draw overlays ---
     UIRenderer.drawCardCounts();
-    UIRenderer.drawInfoBox();
 
     // --- STEP 10: Place cursor and update stage ---
     if (Game.controllers?.cursorController?.playerHand?.place) {

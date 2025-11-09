@@ -92,9 +92,9 @@ export class PlacementController {
 
     // Reset selection to the first available card
     playerManager.selectedCardIndex = 0;
-    playerManager.selectedCard = playerManager.cardsInHand[0] ?? undefined;
+    playerManager.selectedCard = playerManager.hand[0] ?? undefined;
     UIManager.selectedCardNumber = 0;
-    UIManager.selectedCard = playerManager.selectedCard;
+    UIManager.selectedCard = playerManager.hand;
 
     // Default back to centre square
     BoardManager.resetSelectionToCenter();

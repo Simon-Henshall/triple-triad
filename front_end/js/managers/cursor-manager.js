@@ -187,7 +187,7 @@ export const CursorManager = {
           return false;
         }
       } else if (direction === "down") {
-        if (UIManager.selectedCardNumber < player.cardsInHand.length - 1) {
+        if (UIManager.selectedCardNumber < player.hand.length - 1) {
           player.playerHandCursor.y += handOffset;
           UIManager.selectedCardNumber++;
           player.cardsAboveSelection++;

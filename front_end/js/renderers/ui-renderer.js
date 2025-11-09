@@ -146,12 +146,13 @@ export const UIRenderer = {
    * Updates info box contents dynamically based on current selection.
    * Updates player/AI card counts as well.
    */
-  updateInfoBox() {
+  updateInfoBox(card) {
     const ui = UIManager;
+    console.log("UIRenderer.updateInfoBox() called", ui, card);
 
     // Update selected card name
-    if (ui.infoBox.cardName && ui.selectedCard) {
-      ui.infoBox.cardName.text = ui.selectedCard.name;
+    if (ui.infoBox.cardName && card) {
+      ui.infoBox.cardName.text = card.display.name;
 
       const verticalOffset = 30 / 2 + 10;
       ui.infoBox.cardName.x =
@@ -163,6 +164,14 @@ export const UIRenderer = {
         INFO_BOX_HEIGHT / 2 -
         ui.infoBox.cardName.getMeasuredHeight() / 2 +
         verticalOffset;
+    } else if (!ui.infoBox.cardName) {
+      console.log("Creating new cardName text element");
+      ui.infoBox.cardName = new createjs.Text(
+        card.name || "",
+        "30px Arial",
+        "#ffffff",
+      );
+      ui.infoBox.cardName.textBaseline = "alphabetic";
     }
 
     Game.stage.update();

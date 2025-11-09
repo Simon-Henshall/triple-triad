@@ -72,7 +72,7 @@ function _populateDeck(playerManager, parsedCards) {
  * @param {Object} playerManager
  */
 function _initialiseRandomMode(playerManager) {
-  playerManager.playerCards = shuffle($.extend(true, [], playerManager.deck));
+  playerManager.hand = shuffle($.extend(true, [], playerManager.deck));
 
   if (!ai.cardsInAIHand || ai.cardsInAIHand.length === 0) {
     ai.aiHand.populate();

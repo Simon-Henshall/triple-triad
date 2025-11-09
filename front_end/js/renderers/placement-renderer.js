@@ -91,7 +91,11 @@ export class PlacementRenderer {
    */
   indentAfterPlacement() {
     if (UIManager.selectedCard) {
-      UIManager.selectedCard.x -= 30;
+      console.log(
+        "Indenting selected card after placement",
+        UIManager.selectedCard,
+      );
+      UIManager.selectedCard.display.x -= 30;
     }
   }
 }

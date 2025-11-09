@@ -111,10 +111,15 @@ export const CursorController = (cursorRenderer) => ({
       // Update info box for the newly selected card
       const playerManager = Game.managers.playerManager;
       const selectedIndex = UIManager.selectedCardNumber ?? 0;
-      const newlySelectedCard = playerManager.cardsInHand[selectedIndex];
+      const newlySelectedCard = playerManager.hand[selectedIndex];
+      console.log(
+        "CursorController.playerHand.place() -> selected card index:",
+        selectedIndex,
+        newlySelectedCard,
+      );
       if (newlySelectedCard) {
         UIManager.selectedCard = newlySelectedCard;
-        UIController.updateInfoBox();
+        UIController.updateInfoBox(newlySelectedCard);
       }
 
       if (debug.active) {

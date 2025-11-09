@@ -186,7 +186,7 @@ export class InputManager {
       console.log("selectCard()", _newCardContainer);
       this.playerRenderer.animateCardToHand(
         _newCardContainer,
-        this.playerManager.cardsInHand.length - 1,
+        this.playerManager.hand.length - 1,
       );
 
       // Update hand visuals / selection board counts
@@ -196,7 +196,7 @@ export class InputManager {
       SelectionBoardRenderer.updateDisplay({ skipTween: true });
       Game.stage.update();
 
-      if (this.playerManager.cardsInHand.length === 5) {
+      if (this.playerManager.hand.length === 5) {
         UIManager.playerSelectingHand = false;
         ConfirmationController.show();
       }
@@ -235,24 +235,19 @@ export class InputManager {
       Game.controllers.cursorController.confirmation.remove();
 
       // Capture cards currently in the hand before reset
-      const handCards = [...this.playerManager.cardsInHand];
-      const handData = [...this.playerManager.playerCards];
+      const hand = [...this.playerManager.hand];
 
       // Reset model-level hand data
       this.playerManager.resetHand();
 
-      // Restore counts for each previously selected card
-      for (const card of handData) {
-        if (card?.id != undefined) {
-          SelectionBoardRenderer.updateBoardCount(card.id, +1);
-        }
-      }
-
-      // Remove all visual hand containers from stage
-      for (const container of handCards) {
-        if (container?.parent) {
-          container.parent.removeChild(container);
-        }
+      // Remove card containers from stage and restore counts
+      for (const card of hand) {
+        console.log("Removing card (display) from stage:", card);
+        card.display.parent.removeChild(card.display);
+        console.log(
+          `Adding one to stock for ${card.data.displayName}, now: ${card.data.count + 1}`,
+        );
+        SelectionBoardRenderer.updateBoardCount(card.data.id, +1);
       }
 
       // Refresh z-order and visuals
@@ -302,7 +297,7 @@ export class InputManager {
 
     // Actually play the card
     const selectedIndex = UIManager.selectedCardNumber;
-    const selectedCard = this.playerManager.cardsInHand[selectedIndex];
+    const selectedCard = this.playerManager.hand[selectedIndex];
     if (!selectedCard) {
       console.warn("No card selected!");
       return;
@@ -314,20 +309,19 @@ export class InputManager {
    */
   placeCardOnBoard() {
     if (!BoardManager.cellOccupied()) {
-      const card = this.playerManager.cardsInHand[UIManager.selectedCardNumber];
+      const card = this.playerManager.hand[UIManager.selectedCardNumber];
       if (!card) {
         return console.warn("No card selected!");
       }
 
-      // remove from logical hand first
-      this.playerManager.cardsInHand.splice(UIManager.selectedCardNumber, 1);
+      this.playerManager.hand.splice(UIManager.selectedCardNumber, 1);
 
       // remove cursor before placement
       Game.controllers.cursorController.grid.remove();
 
       // pass card to placement controller
       this.placementController.placeCard(
-        card,
+        card.display,
         offsets.gameOffsetX +
           offsets.cellWidth * (UIManager.selectedColumn - 1) +
           offsets.cardOffsetX,
@@ -338,8 +332,12 @@ export class InputManager {
 
       // update selectedCardIndex & selectedCard
       this.playerManager.selectedCardIndex = 0;
-      this.playerManager.selectedCard =
-        this.playerManager.cardsInHand[0] || undefined;
+      this.playerManager.selectedCard = this.playerManager.hand[0] || undefined;
+
+      console.log(
+        "After placement, player hand is now:",
+        this.playerManager.hand,
+      );
 
       // update UIManager for cursor logic
       UIManager.selectedCardNumber = 0;

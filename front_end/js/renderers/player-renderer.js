@@ -25,19 +25,19 @@ export class PlayerRenderer {
   /**
    * TODO: UNCALLED
    * Populate the player's hand visually.
-   * @param {Array<Object>} playerCards
+   * @param {Array<Card>} hand
    */
   populateHand() {
     this.resetHand();
 
-    for (const [index, card] of this.manager.cardsInHand.entries()) {
+    for (const [index, card] of this.manager.hand.entries()) {
       const container = this._createCardContainer(card, index);
       this.cardsInPlayerHand.push(container);
       Game.stage.addChild(container);
     }
 
     // Default selection
-    const firstCard = this.cardsInPlayerHand[0];
+    const firstCard = this.hand[0];
     if (firstCard) {
       UIManager.selectedCard = firstCard;
       UIManager.previouslySelectedCard = [];
@@ -105,14 +105,19 @@ export class PlayerRenderer {
    * @param {createjs.Container} selectedCard
    */
   indentSelectedCard(selectedCard) {
+    console.log("Indenting selected card:", selectedCard.data.displayName);
     const previousCard = UIManager.previouslySelectedCard;
 
     if (selectedCard) {
-      selectedCard.x -= 30;
+      selectedCard.display.x -= 30;
     }
 
-    if (previousCard && previousCard.x !== undefined) {
-      previousCard.x += 30;
+    if (previousCard && previousCard?.display?.x !== undefined) {
+      console.log(
+        "Unindenting previously selected card:",
+        previousCard.data.displayName,
+      );
+      previousCard.display.x += 30;
     }
 
     UIManager.previouslySelectedCard = selectedCard;
