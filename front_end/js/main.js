@@ -1,6 +1,5 @@
-import { Game } from "./game/game.js";
+import { gameInit } from "./game/game-init.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await Game.initialize();
-  Game.startSelection();
+  gameInit.all();
 });
