@@ -23,7 +23,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       Game.stage.update();
 
       if (debug.active) {
-        console.log("Selection cursor placed on stage");
+        //console.log("Selection cursor placed on stage");
       }
     },
 
@@ -71,7 +71,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       Game.stage.update();
 
       if (debug.active) {
-        console.log("Selection cursor removed from stage");
+        //console.log("Selection cursor removed from stage");
       }
     },
   },
@@ -93,7 +93,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       Game.stage.update();
 
       if (debug.active) {
-        console.log("Confirmation cursor placed on stage");
+        //console.log("Confirmation cursor placed on stage");
       }
     },
 
@@ -116,7 +116,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       Game.stage.update();
 
       if (debug.active) {
-        console.log("Confirmation cursor removed from stage");
+        //console.log("Confirmation cursor removed from stage");
       }
     },
   },
@@ -134,7 +134,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       Game.stage.update();
 
       if (debug.active) {
-        console.log("Player hand cursor placed on stage");
+        //console.log("Player hand cursor placed on stage");
       }
     },
 
@@ -151,10 +151,9 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      */
     syncSelection() {
       UIManager.previouslySelectedCard = UIManager.selectedCard;
-      UIManager.selectedCard =
-        playerManager.cardsInHand[UIManager.selectedCardNumber];
+      UIManager.selectedCard = playerManager.hand[UIManager.selectedCardNumber];
 
-      UIController.updateInfoBox();
+      UIController.updateInfoBox(UIManager.selectedCard);
       playerRenderer.indentSelectedCard(UIManager.selectedCard);
     },
 
@@ -166,7 +165,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       Game.stage.update();
 
       if (debug.active) {
-        console.log("Player hand cursor removed from stage");
+        //console.log("Player hand cursor removed from stage");
       }
     },
   },
@@ -185,7 +184,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       Game.stage.update();
 
       if (debug.active) {
-        console.log("Grid cursor placed on stage");
+        //console.log("Grid cursor placed on stage");
       }
     },
 
@@ -207,7 +206,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       Game.stage.update();
 
       if (debug.active) {
-        console.log("Grid cursor removed from stage");
+        //console.log("Grid cursor removed from stage");
       }
     },
   },

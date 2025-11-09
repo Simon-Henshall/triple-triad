@@ -19,8 +19,8 @@ export const UIController = {
   /**
    * Refresh info box + card counts.
    */
-  updateInfoBox() {
-    UIRenderer.updateInfoBox();
+  updateInfoBox(card) {
+    UIRenderer.updateInfoBox(card);
   },
 
   /**

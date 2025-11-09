@@ -1,20 +1,31 @@
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { directionMap } from "../constants/directions.js";
-import { utilities } from "../game/utilities.js";
-import { ai } from "../game/ai.js";
+import { getPlayerTurn } from "../utilities/turn.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
+import { debug } from "../debug.js";
 
+/**
+ * Handles the core logic for flipping cards after placement,
+ * including ownership updates, count tracking, and visual refreshes.
+ */
 export class FlippingController {
-  constructor(gameState, player, ai) {
+  /**
+   * TODO: Look into consideration of these paramaters.
+   * @param {Object} [gameState] - Optional reference to the current game state.
+   * @param {Object} [player] - Optional reference to player data.
+   * @param {Object} [aiInstance] - Optional reference to AI data.
+   */
+  constructor(gameState, player, aiInstance) {
     this.gameState = gameState;
     this.player = player;
-    this.ai = ai;
+    this.ai = aiInstance;
   }
 
   /**
-   * Check adjacent cards for possible flips based on strengths.
-   * @param {Object} card - The card to check around.
+   * Checks adjacent cards for flip conditions based on attack/defence strengths.
+   *
+   * @param {createjs.Container} card - The card just placed or triggering the flip check.
    */
   flipCardsCheck(card) {
     for (const [
@@ -22,6 +33,14 @@ export class FlippingController {
       { prop, playerStrength, opponentStrength },
     ] of Object.entries(directionMap)) {
       const target = card[prop];
+
+      if (debug.active) {
+        console.log(
+          "FlippingController.flipCardsCheck() -> checking",
+          card,
+          target,
+        );
+      }
 
       if (
         target &&
@@ -34,25 +53,29 @@ export class FlippingController {
   }
 
   /**
-   * Flip a single adjacent card over to the current player's side.
-   * @param {Object} card - The source card triggering the flip
-   * @param {string} direction - Direction to flip ("left", "right", "up", "down")
+   * Flips a single adjacent card to the current player's side, updates visuals and counts.
+   *
+   * @param {createjs.Container} card - The source card triggering the flip.
+   * @param {string} direction - Direction to flip ("left", "right", "up", "down").
    */
   flipCardOver(card, direction) {
     const targetCard = card[directionMap[direction].prop];
+    if (!targetCard) {
+      return;
+    }
 
     // Change ownership
-    targetCard.owner = this.getCurrentPlayerColour();
+    targetCard.owner = getPlayerTurn();
 
-    // Update visual representation
+    // Refresh visuals
     const playerManager = Game.managers.playerManager;
     const flippingRenderer = new FlippingRenderer(playerManager);
-    flippingRenderer.replaceCard(targetCard);
+    flippingRenderer.refreshCardFace(targetCard);
 
-    // Update counts
+    // Update ownership counts
     this.updateOwnershipCounts(1);
 
-    // Maintain board consistency
+    // Maintain UI consistency
     const squareObject = UIManager.squares[targetCard.inCell - 1];
     if (squareObject) {
       squareObject.card = targetCard;
@@ -60,33 +83,27 @@ export class FlippingController {
   }
 
   /**
-   * Update player and AI ownership totals
-   * @param {number} flippedCount - Number of cards flipped
+   * Updates the displayed counts for red and blue card ownership after flips.
+   *
+   * @param {number} flippedCount - Number of cards flipped this turn.
    */
   updateOwnershipCounts(flippedCount) {
-    const playerColour = this.getCurrentPlayerColour();
+    const playerColour = getPlayerTurn();
     const playerManager = Game.managers.playerManager;
+    const aiManager = Game.managers.aiManager;
 
     const delta = {
-      blue: { totalBlueCardsConfined: 1, totalRedCardsConfined: -1 },
-      red: { totalBlueCardsConfined: -1, totalRedCardsConfined: 1 },
+      blue: { player: 1, ai: -1 },
+      red: { player: -1, ai: 1 },
     };
 
-    playerManager.totalBlueCards +=
-      delta[playerColour].totalBlueCardsConfined * flippedCount;
-    ai.totalRedCards +=
-      delta[playerColour].totalRedCardsConfined * flippedCount;
+    playerManager.totalBlueCards += delta[playerColour].player * flippedCount;
+    aiManager.totalRedCards += delta[playerColour].ai * flippedCount;
 
-    ai.aiCardCount.text = ai.totalRedCards;
+    // Update on-screen text
+    aiManager.aiCardCount.text = aiManager.totalRedCards;
     playerManager.playerCardCount.text = playerManager.totalBlueCards;
-    Game.stage.update();
-  }
 
-  /**
-   * Get the colour of the current player.
-   * @returns {string} Player colour ("red" or "blue")
-   */
-  getCurrentPlayerColour() {
-    return utilities.getPlayerTurn();
+    Game.stage.update();
   }
 }

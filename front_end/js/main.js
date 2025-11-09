@@ -1,7 +1,10 @@
-import { gameInit } from "./game-init.js";
-import { Game } from "./game/game.js";
+import { gameInit } from "./game/game-init.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  Game.bootstrap();
-  gameInit.all();
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    document.body.classList.add("loading");
+    gameInit.all();
+  } finally {
+    document.body.classList.remove("loading");
+  }
 });

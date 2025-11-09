@@ -1,17 +1,17 @@
 import { BoardManager } from "../managers/board-manager.js";
-import { ai } from "../game/ai.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { utilities } from "../game/utilities.js";
+import { getPlayerTurn } from "../utilities/turn.js";
 import { debug } from "../debug.js";
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { PlacementManager } from "../managers/placement-manager.js";
 import { Game } from "../game/game.js";
-import { offsets } from "../constants/offsets.js";
+import { swapPlayerTurn } from "../utilities/turn.js";
 
 /**
  * Coordinates the placement of cards from the player's hand or AI hand
  * onto the board, including updating the game state, handling adjacency,
  * applying element effects, and swapping turns.
+ * Acts as the main entry point for placement-related actions.
  */
 export class PlacementController {
   constructor(playerManager) {
@@ -20,6 +20,10 @@ export class PlacementController {
     this.flippingRenderer = new FlippingRenderer(playerManager);
 
     /** @type {PlacementManager} Handles the placement animations and completion callbacks */
+    this.manager = undefined; // Instantiated in Game.managers
+  }
+
+  init() {
     this.manager = new PlacementManager(this);
   }
 
@@ -31,6 +35,10 @@ export class PlacementController {
    * @param {number} y - Y coordinate for placement on the board.
    */
   placeCard(card, x, y) {
+    if (!card) {
+      console.warn("Attempted to place a null or undefined card.");
+      return;
+    }
     BoardManager.checkSelectedSquare();
     this.manager.placeCard(card, x, y);
   }
@@ -40,152 +48,73 @@ export class PlacementController {
   // ------------------------------
 
   /**
-   * Determine adjacent cards around the selected square.
-   *
-   * @param {createjs.Container} card - The card being placed.
-   */
-  setCardAdjacents(card) {
-    card.cardLeft = this.getOccupant(UIManager.squareLeft);
-    card.cardUp = this.getOccupant(UIManager.squareUp);
-    card.cardRight = this.getOccupant(UIManager.squareRight);
-    card.cardDown = this.getOccupant(UIManager.squareDown);
-
-    if (debug.active) {
-      console.log(card);
-    }
-  }
-
-  getOccupant = (index) => {
-    const cell = BoardManager.boardArray[index - 1];
-    return cell ? (cell.occupant ?? undefined) : undefined;
-  };
-
-  /**
-   * Add the card to the board state and update free cells.
-   *
-   * @param {createjs.Container} card - The card being placed.
-   */
-  addCardToBoard(card) {
-    card.inCell = UIManager.selectedSquare;
-    BoardManager.boardArray[UIManager.selectedSquare - 1].occupant = card;
-
-    const freeCellIndex = BoardManager.freeCells.indexOf(
-      UIManager.selectedSquare,
-    );
-    if (freeCellIndex !== -1) {
-      BoardManager.freeCells.splice(freeCellIndex, 1);
-    }
-
-    this.flippingRenderer.replaceCard(card);
-  }
-
-  /**
    * Apply element effects (bonus or penalty) to the placed card.
    *
    * @param {createjs.Container} card - The card being placed.
    */
   applyElementEffects(card) {
-    const squareObject = UIManager.squares[UIManager.selectedSquare - 1];
-    if (!squareObject || squareObject.element === undefined) {
-      return;
+    const { selectedSquare, squares } = UIManager;
+    const squareElement = squares[selectedSquare - 1]?.element;
+    const effect = this.manager.applyElementEffects(card, squareElement);
+    if (effect.modified) {
+      this.manager.renderer.showElementEffect(card, effect.image);
     }
-    if (squareObject.element === 0) {
-      return;
-    }
-
-    let effectImage;
-    if (card.element === squareObject.element) {
-      card.strengthLeft++;
-      card.strengthUp++;
-      card.strengthRight++;
-      card.strengthDown++;
-      effectImage = "front_end/images/plus_one.png";
-    } else {
-      card.strengthLeft--;
-      card.strengthUp--;
-      card.strengthRight--;
-      card.strengthDown--;
-      effectImage = "front_end/images/minus_one.png";
-    }
-
-    this.manager.renderer.showElementEffect(card, effectImage);
   }
 
   /**
    * Switch the turn between player and AI after card placement.
    */
   playerTurnSwitch() {
-    this.swapPlayerTurn();
+    // Swap active player
+    swapPlayerTurn();
 
     if (debug.active) {
       debug.logTurn();
     }
 
-    if (utilities.getPlayerTurn() === "blue") {
-      // reset selection
-      this.playerManager.selectedCardIndex = 0;
-      this.playerManager.selectedCard =
-        this.playerManager.cardsInHand[0] || undefined;
-      UIManager.selectedCardNumber = 0;
-      UIManager.selectedCard = this.playerManager.selectedCard;
+    const currentTurn = getPlayerTurn();
 
-      // Default back to the centre square for player grid positioning
-      UIManager.selectedSquare = 5;
-
-      this.playerManager.playedCardsCount++;
-
-      // place the cursor on the top card now
-      Game.controllers.cursorController.playerHand.place();
-
-      Game.stage.addChild(this.playerManager.playerHandCursor);
-      UIManager.selectedCard.x -= 30;
-      Game.stage.setChildIndex(
-        UIManager.infoBox.container,
-        Game.stage.getNumChildren() - 1,
-      );
-      UIManager.infoBox.container.visible = true;
-      UIManager.playerChoosingCard = true;
-    } else if (utilities.getPlayerTurn() === "red") {
-      ai.turn();
+    if (currentTurn === "blue") {
+      this._preparePlayerTurn();
+    } else if (currentTurn === "red") {
+      Game.managers.aiManager.takeTurn();
     }
   }
 
   /**
-   * Swap the current turn between blue (player) and red (AI).
+   * Prepare for the next player turn.
+   * Resets card selection, UI state, and player cursor.
+   * Called internally by playerTurnSwitch().
    */
-  swapPlayerTurn() {
-    UIManager.playerTurn =
-      utilities.getPlayerTurn() === "blue" ? "red" : "blue";
-  }
+  _preparePlayerTurn() {
+    const { playerManager } = this;
 
-  /**
-   * Check if the game is over (all cells occupied).
-   *
-   * @returns {boolean} True if the board is full, else false.
-   */
-  isGameOver() {
-    return BoardManager.boardArray.every((cell) => cell.occupant);
-  }
+    // Reset selection to the first available card
+    playerManager.selectedCardIndex = 0;
+    playerManager.selectedCard = playerManager.hand[0] ?? undefined;
+    UIManager.selectedCardNumber = 0;
+    UIManager.selectedCard = playerManager.hand;
 
-  /**
-   * Animate cards in hand down after one is placed, and adjust
-   * the cursor and selection indices.
-   */
-  shiftHandCardsDown() {
-    if (utilities.getPlayerTurn() === "blue") {
-      this.playerManager.shiftCardsDown(offsets);
-    } else {
-      // AI logic
-      this.animateDown(ai.cardsInAIHand, ai.aiCardsAboveSelection);
-    }
-  }
+    // Default back to centre square
+    BoardManager.resetSelectionToCenter();
 
-  animateDown = (hand, count) => {
-    for (let index = 0; index < count; index++) {
-      createjs.Tween.get(hand[index]).to(
-        { y: hand[index].y + offsets.handCardOffset },
-        200,
-      );
-    }
-  };
+    // Increment played cards count
+    // TODO: This badly needs moving
+    playerManager.playedCardsCount++;
+
+    // Restore the player's cursor
+    const { cursorController } = Game.controllers;
+    cursorController.playerHand.place();
+
+    Game.stage.addChild(playerManager.playerHandCursor);
+
+    // Ensure info box is visible and topmost
+    UIManager.bringToFront();
+
+    // Swap back to the card choice phase
+    UIManager.playerChoosingCard = true;
+
+    // Reset the card indentation for the player
+    this.manager.renderer.indentAfterPlacement();
+  }
 }

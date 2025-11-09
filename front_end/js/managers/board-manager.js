@@ -1,4 +1,5 @@
 import { config } from "../config.js";
+import { shuffle } from "../utilities/shuffle.js";
 import { UIManager } from "./ui-manager.js";
 
 /**
@@ -85,21 +86,7 @@ export const BoardManager = {
       elements.push(0);
     }
 
-    return this.shuffle(elements);
-  },
-
-  /**
-   * Simple Fisher-Yates shuffle
-   * @param {Array} array
-   * @returns {Array}
-   */
-  shuffle(array) {
-    const array_ = [...array];
-    for (let index = array_.length - 1; index > 0; index--) {
-      const index_ = Math.floor(Math.random() * (index + 1));
-      [array_[index], array_[index_]] = [array_[index_], array_[index]];
-    }
-    return array_;
+    return shuffle(elements);
   },
 
   /**
@@ -111,5 +98,23 @@ export const BoardManager = {
       cell.occupant = undefined;
     }
     this.freeCells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  },
+
+  getOccupant: (index) => {
+    const cell = BoardManager.boardArray[index - 1];
+    return cell ? (cell.occupant ?? undefined) : undefined;
+  },
+
+  /**
+   * Check if the game is over (all cells occupied).
+   *
+   * @returns {boolean} True if the board is full, else false.
+   */
+  isGameOver() {
+    return BoardManager.boardArray.every((cell) => cell.occupant);
+  },
+
+  resetSelectionToCenter() {
+    UIManager.selectedSquare = 5;
   },
 };

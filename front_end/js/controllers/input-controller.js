@@ -18,7 +18,7 @@ export class InputController {
    */
   handleKey(event) {
     if (debug.active) {
-      console.log("Key pressed:", event.key);
+      //console.log("Key pressed:", event.key);
     }
 
     if (UIManager.playerSelectingHand) {

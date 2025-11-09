@@ -42,6 +42,7 @@ export class PlayerController {
       return;
     }
 
+    console.log("PlayerController.confirmCardSelection:", card);
     // Create visual container for the hand card
     const container = this.renderer.createCardContainer(card, "blue");
 
@@ -64,7 +65,7 @@ export class PlayerController {
       return;
     }
 
-    const index = this.manager.cardsInHand.length;
+    const index = this.manager.hand.length;
 
     // Animate the removed card back to hand (reverse)
     this.renderer.animateCardToHand(removedContainer, index, true);
