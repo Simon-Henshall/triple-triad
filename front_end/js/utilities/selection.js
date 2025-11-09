@@ -8,14 +8,14 @@ import { fallBackCardsForTesting } from "../constants/fallback-cards.js";
 
 /**
  * Process player's owned cards and initialize either random mode or selection board.
- * @param {string} ownedCardsJSON
+ * @param {string} deckJSON
  */
-export function pickPlayerCards(ownedCardsJSON) {
+export function pickPlayerCards(deckJSON) {
   const playerManager = Game.managers.playerManager;
 
   _resetSelectionBoardState();
-  const parsedCards = _parseOwnedCards(ownedCardsJSON);
-  _populateOwnedCards(playerManager, parsedCards);
+  const parsedCards = _parseDeck(deckJSON);
+  _populateDeck(playerManager, parsedCards);
 
   if (Game.rules.includes("random")) {
     _initialiseRandomMode(playerManager);
@@ -34,16 +34,14 @@ function _resetSelectionBoardState() {
 
 /**
  * Parse owned cards JSON with fallback to hardcoded deck.
- * @param {string} ownedCardsJSON
+ * @param {string} deckJSON
  * @returns {Array} parsed card objects
  */
-function _parseOwnedCards(json) {
+function _parseDeck(json) {
   try {
     return JSON.parse(json);
   } catch {
-    console.warn(
-      "Failed to parse ownedCardsJSON, falling back to hardcoded deck",
-    );
+    console.warn("Failed to parse deckJSON, falling back to hardcoded deck");
     return fallBackCardsForTesting;
   }
 }
@@ -53,16 +51,16 @@ function _parseOwnedCards(json) {
  * @param {Object} playerManager
  * @param {Array} parsedCards
  */
-function _populateOwnedCards(playerManager, parsedCards) {
+function _populateDeck(playerManager, parsedCards) {
   const cardsCopy = $.extend({}, cards || []);
-  playerManager.ownedCards = [];
+  playerManager.deck = [];
 
   for (const [index, parsedCard] of parsedCards.entries()) {
     if (parsedCard.count > 0 && cardsCopy[index]) {
       UIManager.cardCount = parsedCard.count;
       cardsCopy[index].count = parsedCard.count;
       cardsCopy[index].colour = "#ffffff";
-      playerManager.ownedCards.push(cardsCopy[index]);
+      playerManager.deck.push(cardsCopy[index]);
     }
   }
 
@@ -74,9 +72,7 @@ function _populateOwnedCards(playerManager, parsedCards) {
  * @param {Object} playerManager
  */
 function _initialiseRandomMode(playerManager) {
-  playerManager.playerCards = shuffle(
-    $.extend(true, [], playerManager.ownedCards),
-  );
+  playerManager.playerCards = shuffle($.extend(true, [], playerManager.deck));
 
   if (!ai.cardsInAIHand || ai.cardsInAIHand.length === 0) {
     ai.aiHand.populate();
@@ -92,10 +88,10 @@ function _initialiseRandomMode(playerManager) {
 function _setupSelectionBoard(playerManager) {
   // Populate AI hand and selection board
   ai.aiHand.populate();
-  SelectionBoardUI.initialise(playerManager.ownedCards);
+  SelectionBoardUI.initialise(playerManager.deck);
 
   // SelectionBoardUI will now handle drawing background/text
-  SelectionBoardUI.initialise(playerManager.ownedCards);
+  SelectionBoardUI.initialise(playerManager.deck);
 
   // Place cursor and enable selection
   Game.controllers.cursorController.selection.place();

@@ -21,10 +21,7 @@ export const aiHand = {
       //GameStateInstance.hands.AI = shuffle([...allAiCards]).slice(0, 5);
       // Temporary placeholder: use player cards until AI deck logic added
       const playerManager = Game.managers.playerManager;
-      GameStateInstance.hands.AI = shuffle([...playerManager.ownedCards]).slice(
-        0,
-        5,
-      );
+      GameStateInstance.hands.AI = shuffle([...playerManager.deck]).slice(0, 5);
     }
 
     // Clear any existing containers from the stage (safety reset)

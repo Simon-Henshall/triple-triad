@@ -9,9 +9,9 @@ import { debug } from "../debug.js";
 export class PlayerManager {
   constructor() {
     /** @type {Array<Object>} All owned cards in the game */
-    this.ownedCards = [];
+    this.deck = [];
 
-    /** @type {Array<Object>} Player's current shuffled deck (from ownedCards) */
+    /** @type {Array<Object>} Player's current shuffled deck (from deck) */
     this.playerCards = []; // shuffled deck + cards temporarily in hand
 
     /** @type {Array<Object>} Cards currently in the player's hand (max 5) */
@@ -41,7 +41,7 @@ export class PlayerManager {
 
   /** Shuffle owned cards into the deck */
   initDeck() {
-    this.playerCards = shuffle([...this.ownedCards]);
+    this.playerCards = shuffle([...this.deck]);
   }
 
   /**
