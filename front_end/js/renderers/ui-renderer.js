@@ -38,13 +38,6 @@ export const UIRenderer = {
   drawCardCounts() {
     const playerManager = Game.managers.playerManager;
     const aiManager = Game.managers.aiManager;
-    // Remove existing counts if present
-    if (aiManager.aiCardCount) {
-      aiManager.aiCardCount.remove();
-    }
-    if (playerManager.playerCardCount) {
-      playerManager.playerCardCount.remove();
-    }
 
     // Create and position AI card count
     aiManager.aiCardCount = new createjs.Text(

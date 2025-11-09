@@ -27,9 +27,6 @@ export class AIManager {
     /** @type {Array<AICard>} Cards currently in the AI’s hand (max 5) */
     this.hand = [];
 
-    /** @type {number} Number of cards played by player */
-    this.aiCardCount = 0;
-
     /** @type {number} Number of cards currently owned by the AI (score) */
     this.totalRedCards = 5;
 
