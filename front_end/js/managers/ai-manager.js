@@ -23,7 +23,10 @@ export class AICard {
  */
 export class AIManager {
   constructor() {
-    /** @type {Array<AICard>} Cards currently in the AI’s hand (max 5) */
+    /** @type {Array<AICard>} Cards in the AI's deck */
+    this.deck = [];
+
+    /** @type {Array<AICard>} Cards currently in the AI's hand (max 5) */
     this.hand = [];
 
     /** @type {number} Number of cards currently owned by the AI (score) */
@@ -35,6 +38,9 @@ export class AIManager {
     /** @type {number} Index offset for the next card to be played */
     this.cardsAboveSelection = 0;
 
+    /** @type {Array<AICard>} Essentially just totalRedCards - TODO: Improve this linkage */
+    this.aiCardCount = [];
+
     /** @type {number} Delay between AI decision and placement (ms) */
     this.aiDelay = 1000;
   }
@@ -44,45 +50,21 @@ export class AIManager {
    * If no logical hand exists yet, it generates a new one from the player's deck.
    */
   populateHand() {
+    // If deck not yet created, clone from player deck
+    if (!this.deck || this.deck.length === 0) {
+      const playerDeck = Game.managers.playerManager.deck;
+      this.deck = structuredClone(playerDeck); // or $.extend(true, [], playerDeck)
+    }
+
+    // Randomly pick 5 cards from AI deck
     this.hand = [];
-
-    const playerManager = Game.managers.playerManager;
-    console.log(playerManager);
-    const pickedCards = shuffle([...playerManager.deck]).slice(0, 5);
-    console.log(pickedCards);
-
-    // Create new visual containers for AI cards
-    const count = 5;
-    for (let index_ = 0; index_ < count; index_++) {
-      const cardContainer = createCardContainer(
-        pickedCards[index_],
-        "red",
-        this.handOffsetX || offsets.gameOffsetX / 2 || 100,
-        (offsets.handOffsetY || 50) + index_ * (offsets.handCardOffset || 95),
-        {
-          showBack: true,
-          frontImageSrc: config.cardPath + pickedCards[index_].image + ".png",
-          backImageSrc: config.cardPath + "back.png",
-          onReady: () => Game.stage.update(),
-        },
-      );
-
-      this.hand.push(new AICard(pickedCards[index_], cardContainer));
-      Game.stage.addChild(cardContainer);
+    for (let index = 0; index < 5 && this.deck.length > 0; index++) {
+      const index = Math.floor(Math.random() * this.deck.length);
+      const [card] = this.deck.splice(index, 1);
+      this.hand.push(card);
     }
 
-    if (debug.active) {
-      console.log("AI chose the following cards:", this.hand);
-    }
-
-    // Flip AI hand if "open" rule applies
-    if (Game.rules?.includes("open")) {
-      const playerManager = Game.managers.playerManager;
-      const flippingRenderer = new FlippingRenderer(playerManager);
-      flippingRenderer.flipAIHand();
-    }
-
-    Game.stage.update();
+    console.log("[AIManager] Hand populated:", this.hand);
   }
 
   /**

@@ -5,6 +5,9 @@ import { UIManager } from "../managers/ui-manager.js";
 import { UIRenderer } from "../renderers/ui-renderer.js";
 
 import { Game } from "./game.js";
+import { GameDeck } from "./game-deck.js";
+
+import { createDeck } from "../card/card-factory.js";
 
 // Managers & Controllers
 import { AIManager } from "../managers/ai-manager.js";
@@ -70,6 +73,7 @@ export const gameInit = {
       playerRenderer,
       UIManager,
     );
+    const gameDeck = new GameDeck(playerManager, aiManager);
 
     const placementController = new PlacementController(playerManager);
     placementController.init();
@@ -92,6 +96,7 @@ export const gameInit = {
       placementManager,
       inputManager,
       boardManager: BoardManager,
+      gameDeck,
     };
 
     Game.controllers = {
@@ -110,6 +115,7 @@ export const gameInit = {
       playerRenderer,
       playerController,
       placementManager,
+      gameDeck,
       placementController,
       inputManager,
       inputController,
@@ -186,6 +192,16 @@ export const gameInit = {
   },
 
   /**
+   * Adds the main board background to the game stage.
+   * This is a static image and does not require updates.
+   */
+  addBackground() {
+    const background = new createjs.Bitmap(config.imagePath + "board.png");
+    Game.stage.addChild(background);
+    Game.stage.update();
+  },
+
+  /**
    * Run full initialization sequence in order:
    * 1. Stage setup
    * 2. Compute offsets
@@ -197,16 +213,36 @@ export const gameInit = {
    * 8. Start hand selection
    */
   all() {
+    console.log("[Game-Init] Setting up canvas...");
     this.stage();
-    this.offsets();
+
+    this.offsets(); // TODO: Clean this up
+
+    console.log("[Game-Init] Drawing background...");
+    this.addBackground();
 
     const { inputController } = this.managers();
 
-    this.uiContainers();
     this.handPositions();
     this.cursors();
     this.events(inputController);
 
-    Game.startSelection();
+    console.log("[Game-Init] Starting deck creation...");
+
+    const playerDeck = createDeck("player");
+    const aiDeck = createDeck("ai");
+
+    Game.managers.playerManager.deck = playerDeck;
+    Game.managers.aiManager.deck = aiDeck;
+
+    console.log("[Game-Init] Decks created:", {
+      playerDeck,
+      aiDeck,
+    });
+
+    console.log(
+      "[Game-Init] Initialisation complete. Passing off to [Game]...",
+    );
+    Game._setupSelectionBoard(Game.managers.playerManager);
   },
 };

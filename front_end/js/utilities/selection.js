@@ -9,18 +9,45 @@ import { fallBackCardsForTesting } from "../constants/fallback-cards.js";
  * Process player's owned cards and initialize either random mode or selection board.
  * @param {string} deckJSON
  */
-export function pickPlayerCards(deckJSON) {
-  const playerManager = Game.managers.playerManager;
+export function pickPlayerCards(selectedIndex) {
+  const { playerManager, gameDeck } = Game.managers;
 
-  _resetSelectionBoardState();
-  const parsedCards = _parseDeck(deckJSON);
-  _populateDeck(playerManager, parsedCards);
-
-  if (Game.rules.includes("random")) {
-    _initialiseRandomMode(playerManager);
-  } else {
-    _setupSelectionBoard(playerManager);
+  // Ensure player deck is initialized if not already
+  if (!playerManager.deck || playerManager.deck.length === 0) {
+    const parsedCards = fallBackCardsForTesting;
+    _populateDeck(playerManager, parsedCards);
   }
+
+  // If the player is deselecting a card already in their hand
+  const existingIndex = playerManager.hand.indexOf(
+    playerManager.deck[selectedIndex],
+  );
+
+  if (existingIndex !== -1) {
+    // Move from hand back to deck
+    gameDeck.moveCardFromHandToDeck(
+      playerManager.hand,
+      playerManager.deck,
+      existingIndex,
+    );
+  } else if (playerManager.hand.length < 5) {
+    // Move from deck to hand
+    gameDeck.moveCardFromDeckToHand(
+      playerManager.deck,
+      playerManager.hand,
+      selectedIndex,
+    );
+  }
+
+  // Update UI (selection board display, counts, etc.)
+  // TODO: Implement updateCounts method
+  // UIManager.selectionBoard.updateCounts(
+  //   playerManager.deck.length,
+  //   playerManager.hand.length,
+  // );
+
+  // Optional: update preview card
+  gameDeck.setPreviewCard(playerManager.deck[selectedIndex]);
 }
 
 /** Reset selection board state before picking cards */
@@ -79,21 +106,4 @@ function _initialiseRandomMode(playerManager) {
   }
 
   Game.startGame();
-}
-
-/**
- * Setup selection board visuals, AI hand, and allow player to pick cards.
- * @param {Object} playerManager
- */
-function _setupSelectionBoard(playerManager) {
-  const aiManager = Game.managers.aiManager;
-  // Populate AI hand and selection board
-  aiManager.populateHand();
-
-  // SelectionBoardUI will now handle drawing background/text
-  SelectionBoardUI.initialise(playerManager.deck);
-
-  // Place cursor and enable selection
-  Game.controllers.cursorController.selection.place();
-  UIManager.playerSelectingHand = true;
 }

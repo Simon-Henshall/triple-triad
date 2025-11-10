@@ -8,15 +8,6 @@ import { UIRenderer } from "../renderers/ui-renderer.js";
 
 export const UIController = {
   /**
-   * Initialize board visuals.
-   */
-  init() {
-    UIRenderer.addBackground();
-    UIRenderer.drawCardCounts();
-    UIRenderer.drawInfoBox();
-  },
-
-  /**
    * Refresh info box + card counts.
    */
   updateInfoBox(card) {

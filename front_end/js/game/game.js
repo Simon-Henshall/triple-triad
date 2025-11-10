@@ -3,6 +3,7 @@ import { UIRenderer } from "../renderers/ui-renderer.js";
 import { UIController } from "../controllers/ui-controller.js";
 import { BoardRenderer } from "../renderers/board-renderer.js";
 import { pickPlayerCards } from "../utilities/selection.js";
+import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
 
 /**
  * Core game logic container.
@@ -92,32 +93,37 @@ export const Game = {
   },
 
   /**
-   * Begin the hand selection phase for the player.
-   * Renders the selection board, picks cards, and
-   * prepares the preview card.
+   * Handles setup and operation of the selection board (hand selection screen)
+   * where the player chooses 5 cards from their deck.
    */
-  startSelection() {
-    console.log("[Game] Starting hand selection...");
-    pickPlayerCards();
-    // TODO: Actually make use of this; note that this does noth
-    /*
-    // Get the cards for hand selection
-    const cards = pickPlayerCards(); // should return array of card objects
+  _setupSelectionBoard() {
+    // 1. Initialise the SelectionBook with the player's deck
+    console.log("[Game] Initialising selection book...");
+    SelectionBookUI.initialise(Game.managers.playerManager.deck);
 
-    // Initialise selection board
-    SelectionBoardUI.initialise(cards);
-
-    // Set UI flags
-    UIManager.playerSelectingHand = true;
-    UIManager.playerChoosingCard = false;
-    UIManager.playerConfirming = false;
-
-    // Show first card preview
-    UIManager.selectedCard = cards[0] ?? null;
-    UIRenderer.drawInfoBox();
-
-    this.stage.update();
-    */
+    // 2. Attach navigation controls (for debugging/demo)
+    console.log("[Game] Wiring up selection book controls...");
+    globalThis.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowDown": {
+          SelectionBookUI.moveSelection(true);
+          break;
+        }
+        case "ArrowUp": {
+          SelectionBookUI.moveSelection(false);
+          break;
+        }
+        case "ArrowLeft": {
+          SelectionBookUI.paginate("left");
+          break;
+        }
+        case "ArrowRight": {
+          SelectionBookUI.paginate("right");
+          break;
+        }
+        // case "Enter": handle selection confirm later
+      }
+    });
   },
 
   /**

@@ -45,15 +45,6 @@ export const SelectionBoardRenderer = {
       sb.shownCards = new createjs.Container();
     }
 
-    const baseX = sb.background.x;
-    const baseY = sb.background.y;
-
-    for (const [index, cardData] of controller.displayedCards.entries()) {
-      this._addCardVisual(sb, cardData, baseX, baseY, index);
-    }
-
-    this._ensureShownCardsOnTop(sb);
-
     // Update preview and cursor
     sb.selectedHandCard = controller.selectedCard;
     this.updateDisplay(controller);
@@ -108,6 +99,8 @@ export const SelectionBoardRenderer = {
    */
   _addCardVisual(sb, cardData, baseX, baseY, index) {
     const rowY = baseY + ROW_HEIGHT * index + CARD_ROW_START_Y;
+
+    console.log(cardData);
 
     // Name text
     const nameText = new createjs.Text(
@@ -245,36 +238,32 @@ export const SelectionBoardRenderer = {
     // If a displayedCard already exists, update its image and colour
     if (sb.displayedCard) {
       console.log("Displaying the card for a navigation load:", selectedCard);
-      // Always set the colour (could cache if needed)
+
+      // Update face and colour bitmaps if already exists
       if (sb.displayedCardColour) {
         sb.displayedCardColour.image.src = config.cardPath + "blue.png";
       }
 
-      // Update the main card image
       if (sb.displayedCardImage) {
         sb.displayedCardImage.image.src =
-          config.cardPath + selectedCard.image + ".png";
+          config.cardPath + selectedCard.data.imagePath;
       }
 
       // Reset position offscreen for tween
       sb.displayedCard.x = targetX;
       sb.displayedCard.y = offscreenY;
     } else {
-      // Create container for first-time display
+      // Create and store the visual container
       console.log("Displaying the card for the first time:", selectedCard);
-      sb.displayedCard = createCardContainer(
-        selectedCard,
-        "blue",
-        targetX,
-        offscreenY,
-      );
+      sb.displayedCard = selectedCard.visuals.container;
+      sb.displayedCard.x = targetX;
+      sb.displayedCard.y = offscreenY;
       Game.stage.addChild(sb.displayedCard);
-      sb.displayedCardColour = sb.displayedCard.getChildAt(0);
-      sb.displayedCardImage = sb.displayedCard.getChildAt(1);
     }
 
     // Tween or place instantly
     if (skipTween) {
+      console.log("Placing displayed card instantly at", targetY);
       sb.displayedCard.y = targetY;
     } else {
       createjs.Tween.get(sb.displayedCard, { override: true }).to(

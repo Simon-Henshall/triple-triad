@@ -18,7 +18,7 @@ export const UIManager = {
   // -------------------------
   // Selection board state
   // -------------------------
-  selectionBoard: {
+  selectionBook: {
     container: undefined,
     background: undefined,
     shownCards: undefined,
@@ -33,7 +33,7 @@ export const UIManager = {
     selectedHandCardNumber: 0,
     selectedHandCard: undefined,
     showPreviewCard() {
-      const sb = UIManager.selectionBoard;
+      const sb = UIManager.selectionBook;
 
       // Only proceed if there is a card to show
       if (!sb.displayedCard) {
@@ -60,9 +60,15 @@ export const UIManager = {
     },
 
     hidePreviewCard() {
-      const sb = UIManager.selectionBoard;
+      const sb = UIManager.selectionBook;
       if (sb.displayedCard && sb.displayedCard.parent) {
         sb.displayedCard.parent.removeChild(sb.displayedCard);
+      }
+    },
+
+    updateCounts(deckCount, handCount) {
+      if (this.countText) {
+        this.countText.text = `Deck: ${deckCount} | Hand: ${handCount}`;
       }
     },
   },
