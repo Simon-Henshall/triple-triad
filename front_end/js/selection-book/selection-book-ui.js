@@ -11,7 +11,6 @@ export const SelectionBookUI = {
    * @param {Array} deck
    */
   initialise(deck, playerManager) {
-    console.log(deck);
     // Create controller
     this.controller = new SelectionBookController(deck, playerManager);
 
@@ -127,15 +126,14 @@ export const SelectionBookUI = {
    * @returns {Object|undefined} The selected card object
    */
   getSelectedCard() {
-    const c = this.controller;
-    if (!c) {
-      return;
-    }
-
-    const selected = c.visibleCards[c.selectedIndexOnPage];
+    const selected =
+      this.controller.visibleCards[this.controller.selectedIndexOnPage];
 
     // Return undefined if stock is zero
     if (!selected || selected.remaining <= 0) {
+      console.warn(
+        `[Selection Book UI] Attempted to add ${selected.data.name}, but there's no stock for that card.`,
+      );
       return;
     }
 

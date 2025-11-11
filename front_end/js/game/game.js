@@ -124,7 +124,6 @@ export const Game = {
         case "Enter": {
           const selectedCard = SelectionBookUI.getSelectedCard();
           if (!selectedCard) {
-            console.warn("[Game] No card selected for addition!");
             return;
           }
           Game.managers.playerManager.addCardToHand(selectedCard);

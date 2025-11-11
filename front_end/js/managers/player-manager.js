@@ -1,4 +1,3 @@
-import { Game } from "../game/game.js";
 import { SelectionBookRenderer } from "../selection-book/selection-book-renderer.js";
 import { debug } from "../debug.js";
 import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
@@ -107,16 +106,21 @@ export class PlayerManager {
     }
 
     // Create a real Card instance
-    const newCard = new Card(deckEntry, deckEntry.visuals);
+    const card = new Card(deckEntry, deckEntry.visuals);
 
     // Add to hand
-    this.hand.push(newCard);
+    this.hand.push(card);
 
     // Decrement count
     deckEntry.count--;
 
     console.log(
-      `Added card: ${deckEntry.data.name} — remaining copies: ${deckEntry.count}`,
+      `[Player Manager] Added card: ${deckEntry.data.name} — remaining copies: ${deckEntry.count}`,
+    );
+
+    console.log(
+      "[Player Manager] Player hand is now:",
+      this.hand.map((card) => card.data.data.name),
     );
 
     this._recalculateSelection();
@@ -155,9 +159,14 @@ export class PlayerManager {
       this.deck.push(card);
     }
 
-    console.log("Removed card from hand:", card.data.data.name);
-    console.log("Deck now:", this.deck);
-    console.log("Hand now:", this.hand);
+    console.log(
+      "[Player Manager] Removed card from hand:",
+      card.data.data.name,
+    );
+    console.log(
+      "[Player Manager] Player hand is now:",
+      this.hand.map((card) => card.data.data.name),
+    );
 
     // Recalculate hand selection
     this._recalculateSelection();
