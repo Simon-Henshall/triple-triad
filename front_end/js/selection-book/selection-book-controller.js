@@ -1,72 +1,105 @@
 /**
- *
+ * Selection Book Controller
+ * @export
+ * @class SelectionBookController
+ * @typedef {SelectionBookController}
  */
 export class SelectionBookController {
   /**
-   *
+   * Constructor for the SelectionBookController
+   * @param {Array} deck - Array of Card objects with count and selected properties
+   * @param {PlayerManager} playerManager - Reference to the player manager
+   * @param {number} cardsPerPage - Number of cards to display on each page
    */
-  constructor(deck = [], cardsPerPage = 11) {
+  constructor(deck = [], playerManager, cardsPerPage = 11) {
     this.cards = deck.map((c) => ({
       ...c,
       remaining: (c.count ?? 0) - (c.selected ?? 0),
+      initiallyHidden: (c.count ?? 0) === 0,
     }));
+    this.playerManager = playerManager;
     this.cardsPerPage = cardsPerPage;
 
     this.currentPage = 1;
-    this.selectedIndexOnPage = 0; // index within the current page slice
+    this.selectedIndexOnPage = 0;
   }
 
-  /** All cards with remaining > 0 */
-  get remainingCards() {
-    return this.cards.filter((c) => c.remaining > 0);
+  /** Cards that should actually appear in the book (for both display and selection) */
+  get displayedCards() {
+    // Recalculate remaining per archetype
+    return this.cards
+      .map((archetype) => {
+        const inHandCount = this.playerManager?.hand.filter(
+          (h) => h.data.data.id === archetype.data.id,
+        ).length;
+        return {
+          ...archetype,
+          remaining: (archetype.count ?? 0) - inHandCount,
+        };
+      })
+      .filter((c) => {
+        // Keep if:
+        // 1️⃣ It was NOT initially hidden (had stock at the start), OR
+        // 2️⃣ It’s dynamically dropped to 0 after being visible
+        return !c.initiallyHidden;
+      });
   }
 
-  /** Total pages based on remaining cards */
+  /** Page-based slicing */
+  get visibleCards() {
+    const CARDS_PER_PAGE = this.cardsPerPage ?? 11;
+    const pageStart = (this.currentPage - 1) * CARDS_PER_PAGE;
+    const pageEnd = pageStart + CARDS_PER_PAGE;
+    return this.displayedCards.slice(pageStart, pageEnd);
+  }
+
+  /** Total pages */
   get totalPages() {
     return Math.max(
       1,
-      Math.ceil(this.remainingCards.length / this.cardsPerPage),
+      Math.ceil(this.displayedCards.length / this.cardsPerPage),
     );
   }
 
-  /** Slice of remaining cards for the current page */
-  get visibleCards() {
-    const start = (this.currentPage - 1) * this.cardsPerPage;
-    return this.remainingCards.slice(start, start + this.cardsPerPage);
-  }
-
-  /** Get the currently selected card object */
+  /** Current selection */
   get selectedCard() {
     return this.visibleCards[this.selectedIndexOnPage];
   }
 
-  /** Move cursor down */
+  /** Cursor movement */
   moveNext() {
-    if (this.selectedIndexOnPage < this.visibleCards.length - 1) {
-      this.selectedIndexOnPage++;
-    } else if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-      this.selectedIndexOnPage = 0;
+    const cards = this.visibleCards;
+    if (cards.length === 0) {
+      return;
     }
+    this.selectedIndexOnPage = Math.min(
+      this.selectedIndexOnPage + 1,
+      cards.length - 1,
+    );
   }
 
-  /** Move cursor up */
+  /**
+   * Returns the currently selected card from the visible cards, or null if no selection is made.
+   * @returns {Card|null}
+   *
+   */
   movePrevious() {
-    if (this.selectedIndexOnPage > 0) {
-      this.selectedIndexOnPage--;
-    } else if (this.currentPage > 1) {
-      this.currentPage--;
-      this.selectedIndexOnPage = this.visibleCards.length - 1;
+    if (this.visibleCards.length === 0) {
+      return;
     }
+    this.selectedIndexOnPage = Math.max(this.selectedIndexOnPage - 1, 0);
   }
 
-  /** Paginate left/right manually */
+  /**
+   * Handles pagination of the selection board.
+   * @param {"up|down|left|right"} direction
+   */
   paginate(direction) {
     if (direction === "right" && this.currentPage < this.totalPages) {
       this.currentPage++;
     } else if (direction === "left" && this.currentPage > 1) {
       this.currentPage--;
     }
-    this.selectedIndexOnPage = 0; // reset cursor to top of page
+    this.selectedIndexOnPage = 0;
   }
 }

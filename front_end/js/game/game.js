@@ -2,7 +2,6 @@ import { UIManager } from "../managers/ui-manager.js";
 import { UIRenderer } from "../renderers/ui-renderer.js";
 import { UIController } from "../controllers/ui-controller.js";
 import { BoardRenderer } from "../renderers/board-renderer.js";
-import { pickPlayerCards } from "../utilities/selection.js";
 import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
 
 /**
@@ -58,7 +57,7 @@ export const Game = {
     // Generate the game board
     BoardRenderer.generateGrid();
 
-    const { playerManager, aiManager } = this.managers;
+    const { playerManager } = this.managers;
     const { playerRenderer } = this.renderers;
 
     // Render player's hand
@@ -99,12 +98,13 @@ export const Game = {
   _setupSelectionBoard() {
     // 1. Initialise the SelectionBook with the player's deck
     console.log("[Game] Initialising selection book...");
-    SelectionBookUI.initialise(Game.managers.playerManager.deck);
+    const playerManager = Game.managers.playerManager;
+    SelectionBookUI.initialise(playerManager.deck, playerManager);
 
     // 2. Attach navigation controls (for debugging/demo)
     console.log("[Game] Wiring up selection book controls...");
-    globalThis.addEventListener("keydown", (e) => {
-      switch (e.key) {
+    globalThis.addEventListener("keydown", (event) => {
+      switch (event.key) {
         case "ArrowDown": {
           SelectionBookUI.moveSelection(true);
           break;
@@ -121,7 +121,25 @@ export const Game = {
           SelectionBookUI.paginate("right");
           break;
         }
-        // case "Enter": handle selection confirm later
+        case "Enter": {
+          const selectedCard = SelectionBookUI.getSelectedCard();
+          if (!selectedCard) {
+            console.warn("[Game] No card selected for addition!");
+            return;
+          }
+          Game.managers.playerManager.addCardToHand(selectedCard);
+          break;
+        }
+        case "Backspace":
+        case "Escape": {
+          // Remove last-added card from hand
+          const removed = Game.managers.playerManager.removeLastCardFromHand();
+          if (removed) {
+            // Refresh the selection book display
+            SelectionBookUI.populate();
+          }
+          break;
+        }
       }
     });
   },

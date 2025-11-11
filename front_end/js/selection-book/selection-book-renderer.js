@@ -6,6 +6,7 @@ const CARD_ROW_START_Y = 40;
 const CURSOR_X_OFFSET = -40;
 const CURSOR_Y_OFFSET = 60;
 const NORMAL_COLOR = "#ffffff";
+const ZERO_COLOR = "#888"; // grey for zero counts
 
 export const SelectionBookRenderer = {
   populate(controller) {
@@ -17,34 +18,29 @@ export const SelectionBookRenderer = {
     // Ensure base containers
     if (!sb.shownCards) {
       sb.shownCards = new createjs.Container();
-      sb.cardIcons = []; // <-- cache for icons
+      sb.cardIcons = []; // cache for icons
+      sb.cardNameTexts = []; // cache for name texts
+      sb.cardCountTexts = []; // cache for count texts
     }
     sb.shownCards.removeAllChildren();
 
-    // Flatten remaining cards
-    const remainingCards = controller.cards
-      .map((c) => ({ ...c, remaining: (c.count ?? 0) - (c.selected ?? 0) }))
-      .filter((c) => c.remaining > 0);
+    const visibleCards = controller.visibleCards;
 
-    const CARDS_PER_PAGE = controller.cardsPerPage ?? 11;
-    const pageStart = (controller.currentPage - 1) * CARDS_PER_PAGE;
-    const pageEnd = pageStart + CARDS_PER_PAGE;
-    const visibleCards = remainingCards.slice(pageStart, pageEnd);
-
-    // Draw card rows
+    // Draw each card row
     for (const [rowIndex, card] of visibleCards.entries()) {
-      this._addCardRow(sb, card, rowIndex, card.remaining);
+      const color = card.remaining > 0 ? "#ffffff" : "#888"; // NORMAL_COLOR / ZERO_COLOR
+      this._addCardRow(sb, card, rowIndex, card.remaining, color);
     }
 
-    // Update cursor
-    this._updateCursor(controller);
+    // Update cursor — make sure it considers all visible rows, even zero stock
+    this._updateCursor(controller, visibleCards.length);
 
     // Update page display
     if (sb.pageDisplay) {
       sb.pageDisplay.text = controller.currentPage.toString();
     }
 
-    // Ensure shownCards is added
+    // Ensure container
     if (!sb.container.children.includes(sb.shownCards)) {
       sb.container.addChild(sb.shownCards);
     }
@@ -69,20 +65,38 @@ export const SelectionBookRenderer = {
     icon.y = rowY + 10;
 
     // Card name
-    const nameText = new createjs.Text(
-      card.data.name,
-      "26px Arial",
-      NORMAL_COLOR,
-    );
+    if (!sb.cardNameTexts) {
+      sb.cardNameTexts = [];
+    }
+    if (!sb.cardCountTexts) {
+      sb.cardCountTexts = [];
+    }
+
+    let nameText = sb.cardNameTexts[rowIndex];
+    if (nameText) {
+      nameText.text = card.data.name; // update existing
+    } else {
+      nameText = new createjs.Text(card.data.name, "26px Arial", NORMAL_COLOR);
+      sb.cardNameTexts[rowIndex] = nameText;
+    }
     nameText.x = baseX + 60;
     nameText.y = rowY + 10;
 
     // Count
-    const countText = new createjs.Text(
-      remaining.toString(),
-      "26px Arial",
-      remaining > 0 ? NORMAL_COLOR : ZERO_COLOR,
-    );
+    let countText = sb.cardCountTexts[rowIndex];
+    if (countText) {
+      countText.text = remaining.toString(); // update existing
+    } else {
+      countText = new createjs.Text(
+        remaining.toString(),
+        "26px Arial",
+        remaining > 0 ? NORMAL_COLOR : ZERO_COLOR,
+      );
+      sb.cardCountTexts[rowIndex] = countText;
+    }
+
+    // Update color for existing text as well
+    countText.color = remaining > 0 ? NORMAL_COLOR : ZERO_COLOR;
     countText.x = baseX + 380;
     countText.y = rowY + 10;
 
@@ -96,10 +110,10 @@ export const SelectionBookRenderer = {
       return;
     }
 
-    const relIndex = controller.selectedIndexOnPage;
+    const relativeIndex = controller.selectedIndexOnPage;
 
     cursor.x = sb.background.x + CURSOR_X_OFFSET;
-    cursor.y = sb.background.y + CURSOR_Y_OFFSET + ROW_HEIGHT * relIndex;
+    cursor.y = sb.background.y + CURSOR_Y_OFFSET + ROW_HEIGHT * relativeIndex;
 
     if (!sb.container.children.includes(cursor)) {
       sb.container.addChild(cursor);

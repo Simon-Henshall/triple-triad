@@ -1,11 +1,19 @@
 import { Game } from "../game/game.js";
-import { SelectionBoardRenderer } from "../renderers/selection-board-renderer.js";
+import { SelectionBookRenderer } from "../selection-book/selection-book-renderer.js";
 import { debug } from "../debug.js";
+import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
 
 /**
  * Represents a single card in the game (logic + visual)
  */
 export class Card {
+  /**
+   * Creates an instance of Card.
+   *
+   * @constructor
+   * @param {*} data
+   * @param {*} display
+   */
   constructor(data, display) {
     this.data = data; // e.g., { displayName, image, strengthUp, ... }
     this.display = display; // createjs.Container representing the card visually
@@ -16,6 +24,11 @@ export class Card {
  * Manages the player's logical state: deck, hand, played cards, and counts.
  */
 export class PlayerManager {
+  /**
+   * Creates an instance of PlayerManager.
+   *
+   * @constructor
+   */
   constructor() {
     /** @type {Array<Card>} All owned cards in the game */
     this.deck = [];
@@ -46,68 +59,113 @@ export class PlayerManager {
   }
 
   /**
-   * Add a card to the player's hand (max 5)
-   * @param {Object} cardData
-   * @param {createjs.Container} cardDisplay
-   * @returns {boolean}
+   * Handles the selection of a card from the selection book
+   *
+   * @param {*} controller
    */
-  addCardToHand(cardData, cardDisplay) {
-    if (!cardData || !cardDisplay || this.hand.length >= 5) {
+  _handleSelectionConfirm(controller) {
+    const selectedIndex = controller.selectedIndexOnPage ?? 0;
+    const currentPage = controller.currentPage ?? 1;
+    const CARDS_PER_PAGE = controller.cardsPerPage ?? 11;
+    const absoluteIndex = (currentPage - 1) * CARDS_PER_PAGE + selectedIndex;
+
+    const card = controller.cards[absoluteIndex];
+
+    if (!card) {
+      console.warn("No card selected at index:", absoluteIndex);
+      return;
+    }
+
+    const added = this.addCardToHand(card);
+
+    if (added) {
+      // Optionally give feedback or refresh UI
+      SelectionBookRenderer.populate(controller);
+      console.log(`✅ Added ${card.data?.name ?? card.name} to hand.`);
+    } else {
+      console.log(`⚠️ Could not add card: ${card.data?.name ?? card.name}`);
+    }
+  }
+
+  /**
+   * Adds a card from deck to hand.
+   * Moves the actual Card instance, respects max hand size.
+   *
+   * @param {Card} card
+   * @returns {boolean} true if added, false otherwise
+   */
+  addCardToHand(cardData) {
+    if (!cardData) {
       return false;
     }
 
-    // Update logical count
-    if (cardData.id != undefined) {
-      cardData.count = (cardData.count || 0) - 1;
+    // Find the archetype in the deck
+    const deckEntry = this.deck.find((c) => c.data.id === cardData.data.id);
+    if (!deckEntry || deckEntry.count <= 0) {
+      console.warn("No more copies available in deck for", cardData.data.name);
+      return false;
     }
 
-    this.hand.push(new Card(cardData, cardDisplay));
+    // Create a real Card instance
+    const newCard = new Card(deckEntry, deckEntry.visuals);
 
-    console.log("Added card to hand:", cardData, cardDisplay);
-    console.log("Current hand is now:", this.hand);
+    // Add to hand
+    this.hand.push(newCard);
 
-    // Always recalc selection
+    // Decrement count
+    deckEntry.count--;
+
+    console.log(
+      `Added card: ${deckEntry.data.name} — remaining copies: ${deckEntry.count}`,
+    );
+
     this._recalculateSelection();
 
-    // Refresh board count display
-    if (cardData.id != undefined) {
-      SelectionBoardRenderer.updateBoardCount(cardData.id, 0);
-    }
+    // Update the UI immediately
+    SelectionBookRenderer.populate(SelectionBookUI.controller);
 
     return true;
   }
 
   /**
-   * Remove last card from hand
-   * @returns {createjs.Container|null} removed container
+   * Removes the most recently added card from hand and returns it to the deck.
+   * Accepts a specific card instance to remove (default: top of stack).
+   *
+   * @param {Card} [card] - Optional specific card instance to remove
+   * @returns {boolean} true if removed, false otherwise
    */
-  removeLastCard() {
+  /**
+   * Removes the most recently added card from the player's hand
+   * and returns it to the deck.
+   */
+  removeLastCardFromHand() {
     if (this.hand.length === 0) {
-      return;
+      return false;
     }
 
-    const removedCard = this.hand.pop();
+    // Pop the last card (most recently added)
+    const card = this.hand.pop();
 
-    console.log("Removed card from hand:", removedCard);
-    console.log("Current hand is now:", this.hand);
-
-    if (removedCard.data && removedCard.data.id != undefined) {
-      removedCard.data.count = (removedCard.data.count || 0) + 1;
-      SelectionBoardRenderer.updateBoardCount(removedCard.data.id, 0);
+    // Return it to the deck
+    const archetype = this.deck.find((c) => c.data.id === card.data.data.id);
+    if (archetype) {
+      archetype.count = (archetype.count || 0) + 1;
+    } else {
+      // Safety fallback: add the full card back into the deck
+      this.deck.push(card);
     }
 
-    // Animate removal
-    createjs.Tween.get(removedCard.display)
-      .to({ y: Game.stage.canvas.height + 200 }, 500, createjs.Ease.quadIn)
-      .call(() => {
-        removedCard.display.remove();
-        Game.stage.update();
-      });
+    console.log("Removed card from hand:", card.data.data.name);
+    console.log("Deck now:", this.deck);
+    console.log("Hand now:", this.hand);
 
-    // Recalculate selection
+    // Recalculate hand selection
     this._recalculateSelection();
 
-    return removedCard.display;
+    // Update the UI immediately
+    SelectionBookRenderer.populate(SelectionBookUI.controller);
+
+    return card;
   }
 
   /**

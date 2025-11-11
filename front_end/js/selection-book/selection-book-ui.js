@@ -10,9 +10,10 @@ export const SelectionBookUI = {
    * Initialise the Selection Book UI with a deck
    * @param {Array} deck
    */
-  initialise(deck) {
+  initialise(deck, playerManager) {
+    console.log(deck);
     // Create controller
-    this.controller = new SelectionBookController(deck);
+    this.controller = new SelectionBookController(deck, playerManager);
 
     const sb = UIManager.selectionBook;
     if (!sb.container) {
@@ -92,7 +93,10 @@ export const SelectionBookUI = {
     const bx = sb.background.x;
     const by = sb.background.y;
     /**
-     *
+     * Create text
+     * @param {string} text
+     * @param {number} x
+     * @param {number} y
      */
     const createText = (text, x, y) => {
       const t = new createjs.Text(text, "20px Arial", "#ffffff");
@@ -115,5 +119,26 @@ export const SelectionBookUI = {
     );
 
     sb.headerDrawn = true;
+  },
+
+  /**
+   * Returns the currently selected card object from the selection board.
+   * If the selection board is empty or not initialized, returns null.
+   * @returns {Object|undefined} The selected card object
+   */
+  getSelectedCard() {
+    const c = this.controller;
+    if (!c) {
+      return;
+    }
+
+    const selected = c.visibleCards[c.selectedIndexOnPage];
+
+    // Return undefined if stock is zero
+    if (!selected || selected.remaining <= 0) {
+      return;
+    }
+
+    return selected;
   },
 };
