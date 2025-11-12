@@ -5,6 +5,10 @@ export const config = {
   useLocalCards: true, // Set to true to use local card data instead of fetching from server
   imagePath: "front_end/images/",
   cardPath: "front_end/images/cards/",
+  actualCardWidth: 93,
+  actualCardHeight: 120,
+  scaledCardWidth: 138,
+  scaledCardHeight: 178,
   fps: 60,
   elements: {
     1: {
