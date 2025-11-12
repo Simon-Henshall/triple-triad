@@ -96,51 +96,10 @@ export const Game = {
    * where the player chooses 5 cards from their deck.
    */
   _setupSelectionBoard() {
-    // 1. Initialise the SelectionBook with the player's deck
     console.log("[Game] Initialising selection book...");
     const playerManager = Game.managers.playerManager;
     SelectionBookUI.initialise(playerManager.deck, playerManager);
-
-    // 2. Attach navigation controls (for debugging/demo)
-    console.log("[Game] Wiring up selection book controls...");
-    globalThis.addEventListener("keydown", (event) => {
-      switch (event.key) {
-        case "ArrowDown": {
-          SelectionBookUI.moveSelection(true);
-          break;
-        }
-        case "ArrowUp": {
-          SelectionBookUI.moveSelection(false);
-          break;
-        }
-        case "ArrowLeft": {
-          SelectionBookUI.paginate("left");
-          break;
-        }
-        case "ArrowRight": {
-          SelectionBookUI.paginate("right");
-          break;
-        }
-        case "Enter": {
-          const selectedCard = SelectionBookUI.getSelectedCard();
-          if (!selectedCard) {
-            return;
-          }
-          Game.managers.playerManager.addCardToHand(selectedCard);
-          break;
-        }
-        case "Backspace":
-        case "Escape": {
-          // Remove last-added card from hand
-          const removed = Game.managers.playerManager.removeLastCardFromHand();
-          if (removed) {
-            // Refresh the selection book display
-            SelectionBookUI.populate();
-          }
-          break;
-        }
-      }
-    });
+    UIManager.playerSelectingHand = true;
   },
 
   /**

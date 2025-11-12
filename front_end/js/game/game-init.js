@@ -68,6 +68,7 @@ export const gameInit = {
     const aiManager = new AIManager();
     const playerManager = new PlayerManager();
     const playerRenderer = new PlayerRenderer(playerManager);
+    playerManager.renderer = playerRenderer;
     const playerController = new PlayerController(
       playerManager,
       playerRenderer,

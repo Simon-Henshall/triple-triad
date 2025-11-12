@@ -57,45 +57,54 @@ export class PlayerRenderer {
    * @param {number} index - target index
    * @param {boolean} remove - true if removing
    */
-  animateCardToHand(cardContainer, index, remove = false) {
-    console.log(
-      `${remove ? "Removing" : "Adding"} card ${remove ? "from" : "to"} hand at index ${index}:`,
-      cardContainer,
-    );
-
+  animateCardToHand(cardContainer, index, isRemoving = false) {
     const targetX = this.stackOffsetX;
     const targetY = this.stackOffsetY + index * this.stackSpacing;
 
-    // Add to stage only when adding
-    if (!remove) {
+    // console.log(
+    //   `[Player Renderer] Animating ${isRemoving ? "removal" : "addition"} at index ${index}:`,
+    //   cardContainer,
+    // );
+
+    // ADDING: attach to stage and track
+    if (!isRemoving) {
       cardContainer.x = targetX;
       cardContainer.y = Game.stage.canvas.height + 200;
       Game.stage.addChild(cardContainer);
-      this.cardsInPlayerHand.push(cardContainer);
+      this.cardsInPlayerHand.splice(index, 0, cardContainer);
     }
 
-    const finalY = remove ? Game.stage.canvas.height + 200 : targetY;
+    const finalY = isRemoving ? Game.stage.canvas.height + 200 : targetY;
 
     createjs.Tween.get(cardContainer, { override: true })
       .to({ y: finalY }, 600, createjs.Ease.quadOut)
       .call(() => {
-        if (remove) {
+        if (isRemoving) {
+          // console.log(
+          //   "[Player Renderer] Removal tween finished for:",
+          //   cardContainer,
+          // );
+
           const index_ = this.cardsInPlayerHand.indexOf(cardContainer);
-          if (index_ !== -1) {
+          if (index_ === -1) {
+            console.warn(
+              "[Player Renderer] Container not found; array out of sync",
+            );
+          } else {
             this.cardsInPlayerHand.splice(index_, 1);
           }
-          console.log("Card removed from hand:", cardContainer);
+
           if (Game.stage.contains(cardContainer)) {
             Game.stage.removeChild(cardContainer);
           }
         }
 
-        this._updateHandAndPreviewZOrder(!remove);
+        this._updateHandAndPreviewZOrder(!isRemoving);
         Game.stage.update();
       });
 
-    // Optional: keep preview on top while animating
-    if (!remove) {
+    // Keep preview above during animation
+    if (!isRemoving) {
       this._attachPreviewTicker(cardContainer);
     }
   }
@@ -186,6 +195,9 @@ export class PlayerRenderer {
       return;
     }
 
+    /**
+     *
+     */
     const tickHandler = () => {
       const confirmationContainer = UIManager.confirmation?.container;
       let topIndex = Game.stage.numChildren;

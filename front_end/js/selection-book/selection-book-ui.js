@@ -2,6 +2,7 @@ import { UIManager } from "../managers/ui-manager.js";
 import { SelectionBookRenderer } from "./selection-book-renderer.js";
 import { SelectionBookController } from "./selection-book-controller.js";
 import { Game } from "../game/game.js";
+import { Card } from "../card/card.js";
 
 export const SelectionBookUI = {
   controller: undefined,
@@ -129,14 +130,16 @@ export const SelectionBookUI = {
     const selected =
       this.controller.visibleCards[this.controller.selectedIndexOnPage];
 
-    // Return undefined if stock is zero
     if (!selected || selected.remaining <= 0) {
       console.warn(
-        `[Selection Book UI] Attempted to add ${selected.data.name}, but there's no stock for that card.`,
+        `[Selection Book UI] Attempted to add ${selected?.data?.name}, but there's no stock for that card.`,
       );
       return;
     }
 
-    return selected;
+    // Return a proper Card instance
+    const card = new Card(selected.data, selected.owner, 1); // count = 1 for hand
+    card.visuals = { ...selected.visuals }; // preserve existing bitmaps
+    return card;
   },
 };

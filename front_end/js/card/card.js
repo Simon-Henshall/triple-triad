@@ -91,4 +91,23 @@ export class Card {
   setCount(count) {
     this.count = count;
   }
+
+  /**
+   * Create a new Card instance with identical data
+   * but optional new owner / count
+   */
+  clone({ owner = this.owner, count = this.count } = {}) {
+    const copy = new Card(this.data, owner, count);
+
+    // If a visual container exists, clone it for the new hand instance
+    if (this.visuals.container) {
+      const containerClone = this.visuals.container.clone(true); // deep clone bitmaps
+      copy.visuals.container = containerClone;
+      copy.visuals.faceBitmap = containerClone.getChildByName("faceBitmap");
+      copy.visuals.colourBitmap = containerClone.getChildByName("colourBitmap");
+      copy.visuals.backBitmap = containerClone.getChildByName("backBitmap");
+    }
+
+    return copy;
+  }
 }

@@ -12,6 +12,9 @@ import { offsets } from "../constants/offsets.js";
  */
 export function createScaledBitmap(source, targetWidth, targetHeight, onReady) {
   const bmp = new createjs.Bitmap(source);
+  /**
+   *
+   */
   const applyScale = () => {
     // Only scale once image dimensions are available
     if (bmp.image.width && bmp.image.height) {
@@ -66,26 +69,28 @@ export function createCardContainer(
   y,
   { showBack = false, frontImageSrc, backImageSrc, onReady } = {},
 ) {
-  console.log(
-    "Creating card container for",
-    cardData.displayName,
-    "owned by",
-    ownerColour,
-  );
+  if (!cardData) {
+    console.warn("[createCardContainer] cardData is undefined!");
+    return new createjs.Container();
+  }
+
   const targetW =
     offsets.cardWidth || offsets.cellWidth - (offsets.cardOffsetX || 3) * 2;
   const targetH =
     offsets.cardHeight || offsets.cellHeight - (offsets.cardOffsetY || 3) * 2;
 
+  // Determine front/back image paths
+  const frontSource =
+    frontImageSrc || `${config.cardPath}${cardData.image}.png`;
+  const backSource = backImageSrc || `${config.cardPath}back.png`;
+
+  // Create bitmaps
   const cardImage = createScaledBitmap(
-    showBack
-      ? backImageSrc
-      : frontImageSrc || `${config.cardPath}${cardData.image}.png`,
+    showBack ? backSource : frontSource,
     targetW,
     targetH,
     onReady,
   );
-
   const cardColour = createScaledBitmap(
     `${config.cardPath}${ownerColour}.png`,
     targetW,
@@ -93,9 +98,11 @@ export function createCardContainer(
     onReady,
   );
 
+  // Container holds both background and face
   const container = new createjs.Container();
   container.addChild(cardColour, cardImage);
 
+  // Store relevant card info for gameplay
   container.name = cardData.displayName;
   container.strengthUp = cardData.strengthUp;
   container.strengthRight = cardData.strengthRight;
@@ -106,9 +113,8 @@ export function createCardContainer(
   container.background = ownerColour;
 
   if (showBack) {
-    container.frontImage =
-      frontImageSrc || `${config.cardPath}${cardData.image}.png`;
-    container.backImage = backImageSrc || `${config.cardPath}back.png`;
+    container.frontImage = frontSource;
+    container.backImage = backSource;
   }
 
   container.x = x;

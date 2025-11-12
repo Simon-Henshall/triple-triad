@@ -1,6 +1,7 @@
 import { SelectionBookRenderer } from "../selection-book/selection-book-renderer.js";
 import { debug } from "../debug.js";
 import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
+import { Game } from "../game/game.js";
 
 /**
  * Represents a single card in the game (logic + visual)
@@ -28,7 +29,7 @@ export class PlayerManager {
    *
    * @constructor
    */
-  constructor() {
+  constructor({ renderer } = {}) {
     /** @type {Array<Card>} All owned cards in the game */
     this.deck = [];
 
@@ -55,6 +56,8 @@ export class PlayerManager {
 
     /** createjs.DisplayObject for cursor above hand */
     this.playerHandCursor = undefined;
+
+    this.renderer = renderer;
   }
 
   /**
@@ -93,41 +96,36 @@ export class PlayerManager {
    * @param {Card} card
    * @returns {boolean} true if added, false otherwise
    */
-  addCardToHand(cardData) {
-    if (!cardData) {
+  addCardToHand(card) {
+    if (!card) {
       return false;
     }
 
-    // Find the archetype in the deck
-    const deckEntry = this.deck.find((c) => c.data.id === cardData.data.id);
+    const deckEntry = this.deck.find((c) => c.data.id === card.data.id);
     if (!deckEntry || deckEntry.count <= 0) {
-      console.warn("No more copies available in deck for", cardData.data.name);
+      console.warn("No more copies available in deck for", card.data.name);
       return false;
     }
 
-    // Create a real Card instance
-    const card = new Card(deckEntry, deckEntry.visuals);
-
-    // Add to hand
-    this.hand.push(card);
-
-    // Decrement count
+    // Clone for visuals + logic
+    const cardClone = deckEntry.clone();
+    this.hand.push(cardClone);
     deckEntry.count--;
 
-    console.log(
-      `[Player Manager] Added card: ${deckEntry.data.name} — remaining copies: ${deckEntry.count}`,
-    );
+    // Trigger renderer to visually add this card
+    if (this.renderer && cardClone.display) {
+      const index = this.hand.length - 1;
+      this.renderer.animateCardToHand(cardClone.display, index, false);
+    }
 
+    console.log(`[Player Manager] Added card: ${deckEntry.data.name}`);
     console.log(
       "[Player Manager] Player hand is now:",
-      this.hand.map((card) => card.data.data.name),
+      this.hand.map((c) => c.data.name),
     );
 
     this._recalculateSelection();
-
-    // Update the UI immediately
     SelectionBookRenderer.populate(SelectionBookUI.controller);
-
     return true;
   }
 
@@ -147,31 +145,40 @@ export class PlayerManager {
       return false;
     }
 
-    // Pop the last card (most recently added)
+    // Index before popping
+    const index = this.hand.length - 1;
+
+    // Pop the last logical card
     const card = this.hand.pop();
 
-    // Return it to the deck
-    const archetype = this.deck.find((c) => c.data.id === card.data.data.id);
-    if (archetype) {
-      archetype.count = (archetype.count || 0) + 1;
+    // Find the on-stage container for that index
+    const containerOnStage = this.renderer?.cardsInPlayerHand?.[index];
+    if (containerOnStage) {
+      // console.log(
+      //   "[Player Manager] Animating removal for visual container at index:",
+      //   index,
+      // );
+      this.renderer.animateCardToHand(containerOnStage, index, true);
     } else {
-      // Safety fallback: add the full card back into the deck
-      this.deck.push(card);
+      console.warn(
+        "[Player Manager] No visual container found for index:",
+        index,
+      );
     }
 
-    console.log(
-      "[Player Manager] Removed card from hand:",
-      card.data.data.name,
-    );
+    // Return to deck
+    const archetype = this.deck.find((c) => c.data.id === card.data.id);
+    if (archetype) {
+      archetype.count++;
+    }
+
+    console.log("[Player Manager] Removed card:", card.data.name);
     console.log(
       "[Player Manager] Player hand is now:",
-      this.hand.map((card) => card.data.data.name),
+      this.hand.map((c) => c.data.name),
     );
 
-    // Recalculate hand selection
     this._recalculateSelection();
-
-    // Update the UI immediately
     SelectionBookRenderer.populate(SelectionBookUI.controller);
 
     return card;

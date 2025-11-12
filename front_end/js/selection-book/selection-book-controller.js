@@ -30,7 +30,7 @@ export class SelectionBookController {
     return this.cards
       .map((archetype) => {
         const inHandCount = this.playerManager?.hand.filter(
-          (h) => h.data.data.id === archetype.data.id,
+          (h) => h.data.id === archetype.data.id,
         ).length;
         return {
           ...archetype,
