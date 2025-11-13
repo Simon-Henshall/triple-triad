@@ -195,7 +195,6 @@ export class PlayerManager {
     // Clear player hand
     this.hand = [];
 
-    }
 
     // Notify UI / SelectionBook to visually reset
     this.selectionBook?.resetCounts?.();
