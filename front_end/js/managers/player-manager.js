@@ -103,38 +103,23 @@ export class PlayerManager {
    * @returns {boolean} true if added, false otherwise
    */
   addCardToHand(card) {
-    if (!card) {
-      return false;
-    }
-
-    const deckEntry = this.deck.find((c) => c.data.id === card.data.id);
-    if (!deckEntry || deckEntry.count <= 0) {
+    const deckCard = this.deck.find((d) => d.data.id === card.data.id);
+    if (!deckCard || deckCard.remaining <= 0) {
       console.warn(
-        "[Player Manager] No more copies available in deck for",
-        card.data.name,
+        `[Player Manager] No more copies available in deck for ${card.data?.name}`,
       );
       return false;
     }
 
-    // Clone for visuals + logic
-    const cardClone = deckEntry.clone();
-    this.hand.push(cardClone);
-    deckEntry.count--;
+    deckCard.remaining--;
+    deckCard.selectedCount = (deckCard.selectedCount || 0) + 1;
 
-    // Trigger renderer to visually add this card
-    if (this.renderer && cardClone.display) {
-      const index = this.hand.length - 1;
-      this.renderer.animateCardToHand(cardClone.display, index, false);
-    }
-
-    console.log(`[Player Manager] Added card: ${deckEntry.data.name}`);
+    this.hand.push(card);
+    console.log("[Player Manager] Added card:", card.data.name);
     console.log(
       "[Player Manager] Player hand is now:",
       this.hand.map((c) => c.data.name),
     );
-
-    this._recalculateSelection();
-    SelectionBookRenderer.populate(SelectionBookUI.controller);
     return true;
   }
 
@@ -163,22 +148,13 @@ export class PlayerManager {
     // Find the on-stage container for that index
     const containerOnStage = this.renderer?.cardsInPlayerHand?.[index];
     if (containerOnStage) {
-      // console.log(
-      //   "[Player Manager] Animating removal for visual container at index:",
-      //   index,
-      // );
       this.renderer.animateCardToHand(containerOnStage, index, true);
-    } else {
-      console.warn(
-        "[Player Manager] No visual container found for index:",
-        index,
-      );
     }
 
     // Return to deck
-    const archetype = this.deck.find((c) => c.data.id === card.data.id);
-    if (archetype) {
-      archetype.count++;
+    const deckCard = this.deck.find((c) => c.data.id === card.data.id);
+    if (deckCard) {
+      deckCard.remaining = (deckCard.remaining || 0) + 1;
     }
 
     console.log("[Player Manager] Removed card:", card.data.name);
@@ -204,15 +180,32 @@ export class PlayerManager {
 
   /** Reset hand completely */
   resetHand() {
-    if (debug.active) {
-      console.log(
-        "[Player Manager] Resetting player hand from:",
-        this.hand,
-        "to []",
-      );
+    console.log(
+      "[Player Manager] Resetting player hand from:",
+      this.hand,
+      "to []",
+    );
+
+    // Restore every deck card’s remaining count to its full stock
+    for (const deckCard of this.deck) {
+      deckCard.remaining = deckCard.count; // full reset
+      deckCard.selectedCount = 0;
     }
+
+    // Clear player hand
     this.hand = [];
-    this._recalculateSelection();
+
+    }
+
+    // Notify UI / SelectionBook to visually reset
+    this.selectionBook?.resetCounts?.();
+
+    // Reset animation indices / visual state
+    this.renderer?.resetHandSlots?.();
+
+    console.log(
+      "[Player Manager] Player hand reset complete. Deck state restored.",
+    );
   }
 
   /**
