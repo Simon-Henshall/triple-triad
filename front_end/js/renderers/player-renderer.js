@@ -1,7 +1,6 @@
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { offsets } from "../constants/offsets.js";
-import { createCardContainer } from "../utilities/cards.js";
 
 /**
  * Handles all visual rendering and animation of the player's hand.
@@ -115,21 +114,6 @@ export class PlayerRenderer {
     }
     this.cardsInPlayerHand = [];
     Game.stage.update();
-  }
-
-  /**
-   * Internal: create a container for a card
-   * @param {Object} card
-   * @param {number} index
-   * @returns {createjs.Container}
-   */
-  _createCardContainer(card, index) {
-    return createCardContainer(
-      card,
-      "blue",
-      this.stackOffsetX,
-      this.stackOffsetY + index * this.stackSpacing,
-    );
   }
 
   /**

@@ -1,7 +1,6 @@
 import { Game } from "../game/game.js";
 import { config } from "../config.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { createCardContainer, createScaledBitmap } from "../utilities/cards.js";
 
 /** Constants for layout */
 const ROW_HEIGHT = 35;
@@ -10,7 +9,6 @@ const CURSOR_X_OFFSET = -40;
 const CURSOR_Y_OFFSET = 48;
 const PREVIEW_X_OFFSET = 440;
 const PREVIEW_Y_OFFSET = 200;
-const ICON_SIZE = 30;
 const BACKGROUND_FILL = "#666666";
 const ZERO_COUNT_COLOR = "#909497";
 const NORMAL_COUNT_COLOR = "#ffffff";
@@ -137,25 +135,6 @@ export const SelectionBoardRenderer = {
     if (!sb.displayedCards.some((c) => c.id === cardData.id)) {
       sb.displayedCards.push(cardData);
     }
-
-    // Icon
-    const icon = createScaledBitmap(
-      "front_end/images/selection_card.png",
-      ICON_SIZE,
-      ICON_SIZE,
-      (bmp) => {
-        if (bmp.image?.complete) {
-          bmp.scaleX = ICON_SIZE / bmp.image.width;
-          bmp.scaleY = ICON_SIZE / bmp.image.height;
-          bmp.visible = true;
-        }
-      },
-    );
-    icon.visible = false;
-    icon.x = baseX + 15;
-    icon.y = baseY + ROW_HEIGHT * index + 35;
-
-    sb.shownCards.addChild(nameText, countText, icon);
   },
 
   /** Ensure shownCards container is above background */

@@ -45,7 +45,6 @@ export const SelectionBookRenderer = {
       sb.container.addChild(sb.shownCards);
     }
 
-    Game.stage.update();
   },
 
   _addCardRow(sb, card, rowIndex, remaining) {

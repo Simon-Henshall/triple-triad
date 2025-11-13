@@ -2,8 +2,6 @@ import { offsets } from "../constants/offsets.js";
 import { BoardManager } from "../managers/board-manager.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { Game } from "../game/game.js";
-import { createCardContainer } from "../utilities/cards.js";
-import { config } from "../config.js";
 
 /**
  * Represents a single AI card (logic + visual)

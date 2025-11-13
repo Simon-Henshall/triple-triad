@@ -2,7 +2,6 @@ import { config } from "../config.js";
 import { offsets } from "../constants/offsets.js";
 
 import { UIManager } from "../managers/ui-manager.js";
-import { UIRenderer } from "../renderers/ui-renderer.js";
 
 import { Game } from "./game.js";
 import { GameDeck } from "./game-deck.js";
@@ -240,8 +239,5 @@ export const gameInit = {
       "[Game-Init] Initialisation complete. Passing off to [Game]...",
     );
     Game._setupSelectionBoard(Game.managers.playerManager);
-
-    // Position the selection cursor as the top layer
-    Game.controllers.cursorController.selection.place();
   },
 };
