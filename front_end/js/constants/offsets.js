@@ -11,4 +11,10 @@ export const offsets = {
   cardHeight: 120,
   offscreenY: -200,
   offscreenX: 40,
+  previewX: 600,
+  previewY: 250,
+  previewWidth: 93,
+  previewHeight: 120,
+  scaledPreviewWidth: 160,
+  scaledPreviewHeight: 178,
 };

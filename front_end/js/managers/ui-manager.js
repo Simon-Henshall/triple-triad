@@ -1,3 +1,4 @@
+import { offsets } from "../constants/offsets.js";
 import { Game } from "../game/game.js";
 
 export const UIManager = {
@@ -32,39 +33,51 @@ export const UIManager = {
     displayedCardColour: undefined,
     selectedHandCardNumber: 0,
     selectedHandCard: undefined,
-    showPreviewCard() {
-      const sb = UIManager.selectionBook;
 
-      // Only proceed if there is a card to show
-      if (!sb.displayedCard) {
+    showPreviewCard(card) {
+      if (!card || !card.visuals || !card.visuals.container) {
         return;
       }
 
-      // Ensure the container exists
-      if (!sb.container) {
-        sb.container = new createjs.Container();
+      // Remove any existing preview first
+      this.hidePreviewCard();
+
+      // Deep clone
+      const original = card.visuals.container;
+      const previewContainer = original.clone(true);
+
+      // Force scale to match standard preview size
+      const targetWidth = offsets.scaledPreviewWidth;
+      const targetHeight = offsets.scaledPreviewHeight;
+
+      const bounds = original.getBounds();
+      if (bounds) {
+        previewContainer.scaleX = targetWidth / bounds.width;
+        previewContainer.scaleY = targetHeight / bounds.height;
+      } else {
+        // Fallback: scale proportionally if bounds not ready yet
+        previewContainer.scaleX = previewContainer.scaleY = 1;
       }
 
-      // Ensure the container is on the stage
-      if (!sb.container.parent) {
-        Game.stage?.addChild(sb.container);
-      }
+      // Position preview
+      previewContainer.x = offsets.previewX;
+      previewContainer.y = offsets.previewY;
 
-      // Ensure the card is inside the container
-      if (!sb.displayedCard.parent) {
-        sb.container.addChild(sb.displayedCard);
-      }
+      // Store reference for later removal
+      UIManager.previewCardContainer = previewContainer;
 
-      // Force stage redraw
-      Game.stage?.update();
+      Game.stage.addChild(previewContainer);
+      Game.stage.update();
     },
 
     hidePreviewCard() {
       console.log("[UI Manager] Hiding preview card...");
-      const sb = UIManager.selectionBook;
-      if (sb.displayedCard && sb.displayedCard.parent) {
-        sb.displayedCard.parent.removeChild(sb.displayedCard);
+      const preview = UIManager.previewCardContainer;
+      if (preview && Game.stage.contains(preview)) {
+        Game.stage.removeChild(preview);
       }
+      UIManager.previewCardContainer = undefined;
+      Game.stage.update();
     },
 
     updateCounts(deckCount, handCount) {

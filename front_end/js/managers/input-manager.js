@@ -4,11 +4,13 @@ import { ConfirmationController } from "../controllers/confirmation-controller.j
 import { Game } from "../game/game.js";
 
 /**
- *
+ * InputManager class, responsible for handling player input and
+ * coordinating logical state updates, visual rendering, and animation.
  */
 export class InputManager {
   /**
-   *
+   * Manages player input and coordinates logical state updates,
+   * visual rendering, and animation for the player's hand.
    */
   constructor(
     playerManager,
@@ -27,24 +29,28 @@ export class InputManager {
   // ------------------------------
 
   /**
-   *
+   * Handles player input on the selection book.
    */
   handleSelectionBookInput(event, renderer) {
     switch (event.key) {
       case "ArrowDown": {
         SelectionBookUI.moveSelection(true);
+        this.updatePreview();
         break;
       }
       case "ArrowUp": {
         SelectionBookUI.moveSelection(false);
+        this.updatePreview();
         break;
       }
       case "ArrowLeft": {
         SelectionBookUI.paginate("left");
+        this.updatePreview();
         break;
       }
       case "ArrowRight": {
         SelectionBookUI.paginate("right");
+        this.updatePreview();
         break;
       }
       case "Enter": {
@@ -56,6 +62,21 @@ export class InputManager {
         this.cancelLastSelection();
         break;
       }
+    }
+  }
+
+  /**
+   * Called when the player presses Enter on the selection book.
+   * Adds the selected card to their hand and animates it in.
+   */
+  updatePreview() {
+    // Get the currently selected card from the SelectionBookUI
+    const card = SelectionBookUI.getSelectedCard();
+    UIManager.selectionBook.showPreviewCard(card);
+    console.log(card);
+    if (!card) {
+      UIManager.selectionBook.hidePreviewCard();
+      return;
     }
   }
 
@@ -138,7 +159,8 @@ export class InputManager {
   // ------------------------------
 
   /**
-   *
+   * Handle confirmation events from keyboard.
+   * @param {KeyboardEvent} event
    */
   handleConfirmation(event) {
     switch (event.key) {
@@ -162,7 +184,8 @@ export class InputManager {
   }
 
   /**
-   *
+   * Handles the confirmation box choice (Yes/No).
+   * @param {string} [forcedChoice] Optional forced choice (yes/no).
    */
   handleConfirmationChoice(forcedChoice) {
     // Clear the confirmation box and cursor either way
@@ -188,6 +211,7 @@ export class InputManager {
       SelectionBookUI.populate();
       UIManager.playerConfirming = false;
       UIManager.playerSelectingHand = true;
+      this.updatePreview();
       Game.stage.update();
     }
   }

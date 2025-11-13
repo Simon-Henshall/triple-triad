@@ -98,8 +98,33 @@ export const Game = {
   _setupSelectionBoard() {
     console.log("[Game] Initialising selection book...");
     const playerManager = Game.managers.playerManager;
+
+    // Initialise selection book
     SelectionBookUI.initialise(playerManager.deck, playerManager);
+
     UIManager.playerSelectingHand = true;
+
+    // Show preview card for the default selected card
+    const card = SelectionBookUI.getSelectedCard();
+    if (card) {
+      console.log(
+        "[Game] Showing preview card for the default card:",
+        card.data.name,
+      );
+      // Ensure the visuals are ready before previewing
+      const faceBitmap = card.visuals?.faceBitmap;
+      if (faceBitmap && faceBitmap.image && !faceBitmap.image.complete) {
+        // Wait for image load
+        faceBitmap.image.addEventListener("load", () => {
+          UIManager.selectionBook.showPreviewCard(card);
+        });
+      } else {
+        UIManager.selectionBook.showPreviewCard(card);
+      }
+    }
+
+    // Place the selection cursor on top
+    Game.controllers.cursorController.selection.place();
   },
 
   /**
