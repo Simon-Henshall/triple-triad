@@ -60,6 +60,7 @@ export const UIManager = {
     },
 
     hidePreviewCard() {
+      console.log("[UI Manager] Hiding preview card...");
       const sb = UIManager.selectionBook;
       if (sb.displayedCard && sb.displayedCard.parent) {
         sb.displayedCard.parent.removeChild(sb.displayedCard);

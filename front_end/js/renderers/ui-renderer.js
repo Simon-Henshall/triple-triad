@@ -14,6 +14,15 @@ export const UIRenderer = {
   // Add background to the stage
   // -------------------------
 
+  addBackground() {
+    const background = new createjs.Bitmap(config.imagePath + "board.png");
+    background.x = 0;
+    background.y = 0;
+
+    Game.stage.addChild(background);
+    Game.stage.update();
+  },
+
   // -------------------------
   // Draw player and AI card counts
   // -------------------------

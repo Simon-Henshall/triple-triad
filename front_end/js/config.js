@@ -7,7 +7,7 @@ export const config = {
   cardPath: "front_end/images/cards/",
   actualCardWidth: 93,
   actualCardHeight: 120,
-  scaledCardWidth: 138,
+  scaledCardWidth: 160,
   scaledCardHeight: 178,
   fps: 60,
   elements: {

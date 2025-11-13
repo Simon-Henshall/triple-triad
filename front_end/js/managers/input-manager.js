@@ -96,6 +96,9 @@ export class InputManager {
 
     // Trigger confirmation if hand full
     if (this.playerManager.hand.length === 5) {
+      console.log(
+        "[Input Manager] Player's hand has reached 5 cards. Passing off to [Confirmation Controller]...",
+      );
       UIManager.playerSelectingHand = false;
       ConfirmationController.show();
     }
@@ -163,32 +166,31 @@ export class InputManager {
    *
    */
   handleConfirmationChoice(forcedChoice) {
+    // Clear the confirmation box and cursor either way
+    Game.stage.removeChild(UIManager.confirmation.container);
+    Game.controllers.cursorController.confirmation.remove();
+
     const choice =
       forcedChoice ||
       (UIManager.confirmation.selectedChoice === 0 ? "yes" : "no");
 
     if (choice === "yes") {
+      console.log("[Input Manager] Player confirmed their hand.");
       Game.stage.removeChild(UIManager.selectionBook.container);
-      Game.stage.removeChild(UIManager.confirmation.container);
-      Game.controllers.cursorController.confirmation.remove();
       Game.startGame();
       return;
     }
 
-    // "No" → reset hand and restore stock
-    const hand = [...this.playerManager.hand];
-    this.playerManager.resetHand();
+    if (choice === "no") {
+      console.log("[Input Manager] Player cancelled their hand.");
+      this.playerManager.resetHand();
+      this.playerManager.renderer.resetHand();
 
-    for (const card of hand) {
-      if (card.display?.parent) {
-        card.display.parent.removeChild(card.display);
-      }
+      SelectionBookUI.populate();
+      UIManager.playerConfirming = false;
+      UIManager.playerSelectingHand = true;
+      Game.stage.update();
     }
-
-    SelectionBookUI.populate();
-    UIManager.playerConfirming = false;
-    UIManager.playerSelectingHand = true;
-    Game.stage.update();
   }
 
   // ------------------------------

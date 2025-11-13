@@ -1,7 +1,6 @@
 import { SelectionBookRenderer } from "../selection-book/selection-book-renderer.js";
 import { debug } from "../debug.js";
 import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
-import { Game } from "../game/game.js";
 
 /**
  * Represents a single card in the game (logic + visual)
@@ -74,7 +73,10 @@ export class PlayerManager {
     const card = controller.cards[absoluteIndex];
 
     if (!card) {
-      console.warn("No card selected at index:", absoluteIndex);
+      console.warn(
+        "[Player Manager] No card selected at index:",
+        absoluteIndex,
+      );
       return;
     }
 
@@ -83,9 +85,13 @@ export class PlayerManager {
     if (added) {
       // Optionally give feedback or refresh UI
       SelectionBookRenderer.populate(controller);
-      console.log(`✅ Added ${card.data?.name ?? card.name} to hand.`);
+      console.log(
+        `[Player Manager] Added ${card.data?.name ?? card.name} to hand.`,
+      );
     } else {
-      console.log(`⚠️ Could not add card: ${card.data?.name ?? card.name}`);
+      console.warn(
+        `[Player Manager] Could not add card: ${card.data?.name ?? card.name}`,
+      );
     }
   }
 
@@ -103,7 +109,10 @@ export class PlayerManager {
 
     const deckEntry = this.deck.find((c) => c.data.id === card.data.id);
     if (!deckEntry || deckEntry.count <= 0) {
-      console.warn("No more copies available in deck for", card.data.name);
+      console.warn(
+        "[Player Manager] No more copies available in deck for",
+        card.data.name,
+      );
       return false;
     }
 
@@ -195,10 +204,14 @@ export class PlayerManager {
 
   /** Reset hand completely */
   resetHand() {
-    this.hand = [];
     if (debug.active) {
-      console.log("Resetting player hand from:", this.hand);
+      console.log(
+        "[Player Manager] Resetting player hand from:",
+        this.hand,
+        "to []",
+      );
     }
+    this.hand = [];
     this._recalculateSelection();
   }
 

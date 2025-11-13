@@ -139,10 +139,7 @@ export const gameInit = {
    * Initializes selectionBoard, confirmation, infoBox, and background.
    */
   uiContainers() {
-    UIRenderer.addBackground();
-
-    UIManager.selectionBoard.container = new createjs.Container();
-    UIManager.selectionBoard.shownCards = new createjs.Container();
+    //UIRenderer.addBackground();
     UIManager.confirmation.container = new createjs.Container();
     UIManager.infoBox.container = new createjs.Container();
     UIManager.previouslySelectedCard = [];
@@ -218,6 +215,7 @@ export const gameInit = {
     this.stage();
 
     this.offsets(); // TODO: Clean this up
+    this.uiContainers(); // Required to set up stuff for confirmation UI display
 
     console.log("[Game-Init] Drawing background...");
     this.addBackground();

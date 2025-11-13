@@ -1,7 +1,6 @@
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { UIRenderer } from "../renderers/ui-renderer.js";
-import { debug } from "../debug.js";
 
 /**
  * Controller responsible for showing and managing the
@@ -16,23 +15,18 @@ export const ConfirmationController = {
    * and hides any preview card from the selection board.
    */
   show() {
+    console.log("[Confirmation Controller] Showing confirmation dialog...");
     const config = UIManager.confirmation;
 
     if (Game.controllers.cursorController.selection) {
       Game.controllers.cursorController.selection.remove();
     }
 
-    // Clear any previous children to avoid duplicates
-    config.container.removeAllChildren();
-
     // Set the player state to 'confirming'
     UIManager.playerConfirming = true;
 
     // Reset the default choice index
     config.selectedChoice = 0;
-
-    // Position cursor relative to the confirmation box background
-    config.cursor.y = config.background.y + 60;
 
     // Render the confirmation box (UI only)
     UIRenderer.drawConfirmationBox(config);
@@ -44,8 +38,8 @@ export const ConfirmationController = {
     if (!Game.controllers.cursorController.confirmation) {
       Game.controllers.cursorController.confirmation = new Cursor({
         container: config.container,
-        x: config.background.x + 20, // starting x
-        y: config.background.y + 60, // starting y
+        x: 100, // starting x
+        y: 100, // starting y
       });
     }
 
@@ -53,7 +47,7 @@ export const ConfirmationController = {
     Game.controllers.cursorController.confirmation.place();
 
     // Hide any preview cards while confirmation is active
-    UIManager.selectionBoard.hidePreviewCard();
+    UIManager.selectionBook.hidePreviewCard();
 
     // Update the stage to reflect all changes
     Game.stage.update();
