@@ -234,6 +234,8 @@ export const gameInit = {
       aiDeck,
     });
 
+    Game.managers.aiManager.populateHand();
+
     console.log(
       "[Game-Init] Initialisation complete. Passing off to [Game]...",
     );

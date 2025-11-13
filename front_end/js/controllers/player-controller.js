@@ -55,14 +55,6 @@ export class PlayerController {
   }
 
   /**
-   * TODO: UNCALLED
-   * Populate and render the initial hand visually
-   */
-  populateHand() {
-    this.renderer.populateHand();
-  }
-
-  /**
    * Reset the player's hand completely
    */
   resetHand() {

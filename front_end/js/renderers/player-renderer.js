@@ -23,35 +23,6 @@ export class PlayerRenderer {
   }
 
   /**
-   * TODO: UNCALLED
-   * Populate the player's hand visually.
-   * @param {Array<Card>} hand
-   */
-  populateHand() {
-    this.resetHand();
-
-    for (const [index, card] of this.manager.hand.entries()) {
-      const container = this._createCardContainer(card, index);
-      this.cardsInPlayerHand.push(container);
-      Game.stage.addChild(container);
-    }
-
-    // Default selection
-    const firstCard = this.hand[0];
-    if (firstCard) {
-      UIManager.selectedCard = firstCard;
-      UIManager.previouslySelectedCard = [];
-      this.indentSelectedCard(firstCard);
-    }
-
-    // Ready state
-    UIManager.playerConfirming = false;
-    UIManager.playerChoosingCard = true;
-
-    Game.stage.update();
-  }
-
-  /**
    * Animate a card to the hand (or remove it)
    * @param {createjs.Container} cardContainer
    * @param {number} index - target index

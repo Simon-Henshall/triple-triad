@@ -2,16 +2,18 @@ import { offsets } from "../constants/offsets.js";
 import { BoardManager } from "../managers/board-manager.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { Game } from "../game/game.js";
-import { FlippingRenderer } from "../renderers/flipping-renderer.js";
-import { config } from "../config.js";
 import { createCardContainer } from "../utilities/cards.js";
-import { debug } from "../debug.js";
-import { shuffle } from "../utilities/shuffle.js";
+import { config } from "../config.js";
 
 /**
  * Represents a single AI card (logic + visual)
  */
 export class AICard {
+  /**
+   * AICard constructor
+   * @param {*} data
+   * @param {*} display
+   */
   constructor(data, display) {
     this.data = data;
     this.display = display;
@@ -22,6 +24,9 @@ export class AICard {
  * Manages the AI's logical and visual state: deck, hand, and turn actions.
  */
 export class AIManager {
+  /**
+   * AIManager constructor
+   */
   constructor() {
     /** @type {Array<AICard>} Cards in the AI's deck */
     this.deck = [];
@@ -50,21 +55,36 @@ export class AIManager {
    * If no logical hand exists yet, it generates a new one from the player's deck.
    */
   populateHand() {
-    // If deck not yet created, clone from player deck
-    if (!this.deck || this.deck.length === 0) {
-      const playerDeck = Game.managers.playerManager.deck;
-      this.deck = structuredClone(playerDeck); // or $.extend(true, [], playerDeck)
-    }
-
-    // Randomly pick 5 cards from AI deck
-    this.hand = [];
     for (let index = 0; index < 5 && this.deck.length > 0; index++) {
-      const index = Math.floor(Math.random() * this.deck.length);
-      const [card] = this.deck.splice(index, 1);
+      const randomIndex = Math.floor(Math.random() * this.deck.length);
+      const [card] = this.deck.splice(randomIndex, 1);
       this.hand.push(card);
+
+      const container = card.visuals.container;
+      container.x = this.handOffsetX || offsets.gameOffsetX / 2 || 100;
+      container.y =
+        (offsets.handOffsetY || 50) + index * (offsets.handCardOffset || 95);
+
+      // Hide face, show back (assuming these are named like before)
+      if (card.visuals.faceBitmap) {
+        card.visuals.faceBitmap.visible = false;
+      }
+      if (card.visuals.colourBitmap) {
+        card.visuals.colourBitmap.visible = false;
+      }
+      if (card.visuals.backBitmap) {
+        card.visuals.backBitmap.visible = true;
+      }
+
+      Game.stage.addChild(container);
     }
 
-    console.log("[AIManager] Hand populated:", this.hand);
+    Game.stage.update();
+
+    console.log(
+      "[AI Manager] AI has drawn their hand. AI hand is now:",
+      this.hand.map((c) => c.data.name),
+    );
   }
 
   /**
