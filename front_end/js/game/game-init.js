@@ -160,15 +160,10 @@ export const gameInit = {
     CursorManager.player = Game.managers.playerManager;
 
     CursorManager.player.playerHandCursor = new createjs.Bitmap(cursorPath);
-    CursorManager.player.playerHandCursor.visible = false;
-
     CursorManager.player.playerHandSelectionCursor = new createjs.Bitmap(
       cursorPath,
     );
-    CursorManager.player.playerHandSelectionCursor.visible = false;
-
     UIManager.gridCursor = new createjs.Bitmap(cursorPath);
-    UIManager.gridCursor.visible = false;
 
     Game.renderers.cursorRenderer = CursorRenderer(
       Game.managers.playerManager,
@@ -243,5 +238,8 @@ export const gameInit = {
       "[Game-Init] Initialisation complete. Passing off to [Game]...",
     );
     Game._setupSelectionBoard(Game.managers.playerManager);
+
+    // Position the selection cursor as the top layer
+    Game.controllers.cursorController.selection.place();
   },
 };

@@ -53,46 +53,7 @@ export class PlayerManager {
     /** index of currently selected card */
     this.selectedCardIndex = 0;
 
-    /** createjs.DisplayObject for cursor above hand */
-    this.playerHandCursor = undefined;
-
     this.renderer = renderer;
-  }
-
-  /**
-   * Handles the selection of a card from the selection book
-   *
-   * @param {*} controller
-   */
-  _handleSelectionConfirm(controller) {
-    const selectedIndex = controller.selectedIndexOnPage ?? 0;
-    const currentPage = controller.currentPage ?? 1;
-    const CARDS_PER_PAGE = controller.cardsPerPage ?? 11;
-    const absoluteIndex = (currentPage - 1) * CARDS_PER_PAGE + selectedIndex;
-
-    const card = controller.cards[absoluteIndex];
-
-    if (!card) {
-      console.warn(
-        "[Player Manager] No card selected at index:",
-        absoluteIndex,
-      );
-      return;
-    }
-
-    const added = this.addCardToHand(card);
-
-    if (added) {
-      // Optionally give feedback or refresh UI
-      SelectionBookRenderer.populate(controller);
-      console.log(
-        `[Player Manager] Added ${card.data?.name ?? card.name} to hand.`,
-      );
-    } else {
-      console.warn(
-        `[Player Manager] Could not add card: ${card.data?.name ?? card.name}`,
-      );
-    }
   }
 
   /**
@@ -194,7 +155,6 @@ export class PlayerManager {
 
     // Clear player hand
     this.hand = [];
-
 
     // Notify UI / SelectionBook to visually reset
     this.selectionBook?.resetCounts?.();

@@ -2,7 +2,6 @@ import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
 import { UIManager } from "./ui-manager.js";
 import { ConfirmationController } from "../controllers/confirmation-controller.js";
 import { Game } from "../game/game.js";
-import { createCardContainer } from "../utilities/cards.js";
 
 /**
  *

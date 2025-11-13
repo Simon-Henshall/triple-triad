@@ -33,30 +33,6 @@ export class PlayerController {
   }
 
   /**
-   * TODO: UNCALLED
-   * Confirm the currently selected card to add to the hand
-   */
-  confirmCardSelection() {
-    const card = this.manager.selectedCard;
-    if (!card) {
-      return;
-    }
-
-    console.log("PlayerController.confirmCardSelection:", card);
-    // Create visual container for the hand card
-    const container = this.renderer.createCardContainer(card, "blue");
-
-    // Attach a reference to the selection board card
-    container.id = card.card || card.image;
-
-    // Add to logical hand (this will also update the selection board count)
-    const added = this.manager.addCardToHand(card, container);
-    if (!added) {
-      return;
-    }
-  }
-
-  /**
    * Remove the last card from the hand (e.g., cancel action)
    */
   removeLastCard() {

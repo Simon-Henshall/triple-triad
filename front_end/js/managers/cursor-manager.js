@@ -31,9 +31,9 @@ export const CursorManager = {
       }
 
       CursorManager.player.playerHandSelectionCursor.x =
-        UIManager.selectionBoard.background.x - 40;
+        UIManager.selectionBook.background.x - 40;
       CursorManager.player.playerHandSelectionCursor.y =
-        UIManager.selectionBoard.background.y + 48;
+        UIManager.selectionBook.background.y + 58;
     },
 
     /**
