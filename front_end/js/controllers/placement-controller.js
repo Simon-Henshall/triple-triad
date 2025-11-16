@@ -114,6 +114,7 @@ export class PlacementController {
     playerManager.selectedCard = playerManager.hand[0] ?? undefined;
     UIManager.selectedCardNumber = 0;
     UIManager.selectedCard = playerManager.hand;
+    UIManager.selectedSquare = 5; // Center
 
     // Reset grid cursor to last selected square (don't force center)
     BoardManager.updateUISelection(UIManager.selectedSquare);
