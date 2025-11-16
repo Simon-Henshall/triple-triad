@@ -57,6 +57,11 @@ export class PlacementManager {
       return;
     }
 
+    // Increment played cards count
+    if (card.owner === "player") {
+      this.playerManager.playedCardsCount++;
+    }
+
     BoardManager.updateUISelection(UIManager.selectedSquare);
 
     const cellIndex = UIManager.selectedSquare - 1;

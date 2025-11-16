@@ -3,6 +3,7 @@ export const offsets = {
   gameOffsetY: 50,
   handOffsetY: 50,
   handCardOffset: 95,
+  playerCursorOffset: 120,
   cellWidth: 159,
   cellHeight: 184,
   cardOffsetX: 3,

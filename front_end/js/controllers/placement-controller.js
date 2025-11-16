@@ -53,17 +53,6 @@ export class PlacementController {
 
     // Animate and place the card
     this.manager.placeCard(card, x, y);
-
-    // Only now remove the card from hand
-    playerManager.hand.splice(playerManager.selectedCardIndex, 1);
-
-    // Increment played cards count
-    playerManager.playedCardsCount++;
-
-    // Reset selection / cursor for next turn
-    this._preparePlayerTurn();
-
-    return true;
   }
 
   /**

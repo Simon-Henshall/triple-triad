@@ -154,7 +154,7 @@ export const CursorManager = {
 
       player.playerHandCursor.x = player.handOffsetX - 50;
       player.playerHandCursor.y =
-        offsets.handOffsetY +
+        offsets.playerCursorOffset +
         (cardIndex + player.playedCardsCount) * (offsets.cardHeight / 2);
 
       Game.stage.update();
@@ -173,7 +173,7 @@ export const CursorManager = {
         return false;
       }
 
-      const handOffset = offsets.handCardOffset ?? 32;
+      const handOffset = offsets.handCardOffset;
 
       if (direction === "up") {
         if (UIManager.selectedCardNumber > 0) {

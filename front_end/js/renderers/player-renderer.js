@@ -17,8 +17,8 @@ export class PlayerRenderer {
 
     /** X/Y offsets for hand stack */
     this.stackOffsetX = offsets.gameOffsetX + 515; // right-hand side offset
-    this.stackOffsetY = offsets.handOffsetY || 50;
-    this.stackSpacing = offsets.handCardOffset || 95;
+    this.stackOffsetY = offsets.handOffsetY;
+    this.stackSpacing = offsets.handCardOffset;
   }
 
   /**

@@ -44,9 +44,8 @@ export class AIManager {
       this.hand.push(card);
 
       const container = card.visuals.container;
-      container.x = this.handOffsetX || offsets.gameOffsetX / 2 || 100;
-      container.y =
-        (offsets.handOffsetY || 50) + index * (offsets.handCardOffset || 95);
+      container.x = this.handOffsetX || offsets.gameOffsetX / 2;
+      container.y = offsets.handOffsetY + index * offsets.handCardOffset;
 
       // Hide face, show back
       if (card.visuals.faceBitmap) {

@@ -113,10 +113,9 @@ export const CursorController = (cursorRenderer) => ({
       cursorRenderer.playerHand.place();
 
       // Compute how far down the cursor should be, accounting for cards already played
-      const visualCardIndex =
-        selectedIndex + playerManager.playedCardsCount + 1; // +1 for 1-based offset
+      const visualCardIndex = selectedIndex + playerManager.playedCardsCount;
       playerManager.playerHandCursor.y =
-        offsets.handOffsetY + visualCardIndex * (offsets.cardHeight / 2);
+        offsets.playerCursorOffset + visualCardIndex * (offsets.cardHeight / 2);
 
       // Update info box for selected card
       const newlySelectedCard = playerManager.hand[selectedIndex];
@@ -124,9 +123,6 @@ export const CursorController = (cursorRenderer) => ({
         UIManager.selectedCard = newlySelectedCard;
         UIController.updateInfoBox(newlySelectedCard);
       }
-
-      // Increment for next placement
-      playerManager.playedCardsCount++;
 
       if (debug.active) {
         console.log(
