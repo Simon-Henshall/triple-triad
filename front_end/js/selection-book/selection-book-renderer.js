@@ -44,7 +44,6 @@ export const SelectionBookRenderer = {
     if (!sb.container.children.includes(sb.shownCards)) {
       sb.container.addChild(sb.shownCards);
     }
-
   },
 
   _addCardRow(sb, card, rowIndex, remaining) {

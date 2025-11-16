@@ -34,7 +34,7 @@ export class InputManager {
   /**
    * Handles player input on the selection book.
    */
-  handleSelectionBookInput(event, renderer) {
+  handleSelectionBookInput(event) {
     switch (event.key) {
       case "ArrowDown": {
         SelectionBookUI.moveSelection(true);

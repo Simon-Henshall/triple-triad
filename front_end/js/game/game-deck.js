@@ -1,4 +1,12 @@
+/**
+ * GameDeck represents the player's and AI's hands, as well as the card
+ * currently being previewed on the selection board.
+ */
 export class GameDeck {
+  /**
+   * Class representing the player's and AI's hands, as well as the card
+   * currently being previewed on the selection board.
+   */
   constructor(playerManager, aiManager) {
     /** Symbolic link to PlayerManager.hand */
     this.playerHand = playerManager.hand;

@@ -7,7 +7,8 @@ import { offsets } from "../constants/offsets.js";
  */
 export class PlayerRenderer {
   /**
-   * @param {PlayerManager} playerManager - instance of PlayerManager
+   * Creates an instance of PlayerRenderer.
+   * @param {PlayerManager} playerManager - The player manager instance.
    */
   constructor(playerManager) {
     this.manager = playerManager;
@@ -152,7 +153,9 @@ export class PlayerRenderer {
     }
 
     /**
-     *
+     * Attaches a ticker to the given card container, which maintains the
+     * preview card above the hand during animation.
+     * @param {createjs.Container} cardContainer
      */
     const tickHandler = () => {
       const confirmationContainer = UIManager.confirmation?.container;

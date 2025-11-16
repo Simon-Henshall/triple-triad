@@ -8,7 +8,7 @@ import { debug } from "../debug.js";
  */
 export class InputController {
   /**
-   *
+   * Main entry point for the InputController, handling all keyboard input logic.
    */
   constructor(inputManager) {
     this.manager = inputManager; // already has playerManager etc.
@@ -25,7 +25,7 @@ export class InputController {
     }
 
     if (UIManager.playerSelectingHand) {
-      this.manager.handleSelectionBookInput(event, this.renderer);
+      this.manager.handleSelectionBookInput(event);
     } else if (UIManager.playerConfirming) {
       this.manager.handleConfirmation(event, this.renderer);
     } else if (UIManager.playerChoosingCard) {

@@ -2,14 +2,15 @@ import { offsets } from "../constants/offsets.js";
 import { BoardManager } from "../managers/board-manager.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { Game } from "../game/game.js";
-import { FlippingController } from "../controllers/flipping-controller.js";
 
 /**
  * Manages the AI's logical and visual state: deck, hand, and turn actions.
  */
 export class AIManager {
   /**
+   * Manages the AI's logical and visual state: deck, hand, and turn actions.
    *
+   * @class AIManager
    */
   constructor() {
     /** @type {Array<AICard>} Cards in the AI's deck */
@@ -136,7 +137,7 @@ export class AIManager {
 
     // Get list of truly free cells
     const freeCells = BoardManager.boardArray
-      .map((cell, index) => (cell.occupant ? null : index + 1))
+      .map((cell, index) => (cell.occupant ? undefined : index + 1))
       .filter(Boolean);
 
     if (freeCells.length === 0) {

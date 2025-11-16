@@ -1,5 +1,4 @@
 import { config } from "../config";
-import { Game } from "../game/game";
 
 /**
  *  Card class representing a game card with properties and visuals.
@@ -86,6 +85,7 @@ export class Card {
   }
 
   /**
+   * Wait for the face bitmap to load and scale the container to the target dimensions.
    *
    */
   _waitForFaceAndScale() {
@@ -93,7 +93,8 @@ export class Card {
     const targetHeight = config.scaledCardHeight;
 
     /**
-     *
+     * Wait for the face bitmap to load and scale the container to the target dimensions.
+     * Listens for the load event of the face bitmap image and applies the scale when it fires.
      */
     const applyScale = () => this._scaleContainer(targetWidth, targetHeight);
 
@@ -102,7 +103,7 @@ export class Card {
       applyScale();
     } else {
       /**
-       *
+       * Private helper: waits for the face bitmap to load and scales the container to the target dimensions.
        */
       const onLoad = () => {
         img.removeEventListener("load", onLoad);
@@ -145,42 +146,37 @@ export class Card {
    *  @param {"player"|"ai"} owner
    */
   setOwner(owner) {
-    const normalizedOwner =
-      owner === "player" || owner === "ai"
-        ? owner
-        : owner === "blue"
-          ? "player"
-          : "ai";
-    this.owner = normalizedOwner;
-
-    console.log(this.visuals);
+    // TODO: Normalise this manually
+    let normalisedOwner;
+    if (owner === "player" || owner === "ai") {
+      normalisedOwner = owner;
+    } else if (owner === "blue") {
+      normalisedOwner = "player";
+    } else {
+      normalisedOwner = "ai";
+    }
+    this.owner = normalisedOwner;
 
     // Update colours for Player
     this.visuals.colourBitmap.image =
-      this.visuals.colourBitmaps[normalizedOwner].image;
+      this.visuals.colourBitmaps[normalisedOwner].image;
 
     // Update colours for AI
     this.visuals.container.children.find(
       (child) => child.name === "colourBitmap",
-    ).image = this.visuals.colourBitmaps[normalizedOwner].image;
+    ).image = this.visuals.colourBitmaps[normalisedOwner].image;
 
     // TODO: Work out why these are different!
     // NB: Believe to be because of different parent location
 
     this.visuals.container.stage?.update();
 
-    console.log(this.owner);
-
-    if (this.owner === "ai") {
-      //Game.stage.update();
-    }
-
     console.log(
-      `[Card] Setting owner to ${normalizedOwner} for card ${this.data.name}` +
+      `[Card] Setting owner to ${normalisedOwner} for card ${this.data.name}` +
         ` (${this.data.id})`,
     );
 
-    return normalizedOwner;
+    return normalisedOwner;
   }
 
   /**

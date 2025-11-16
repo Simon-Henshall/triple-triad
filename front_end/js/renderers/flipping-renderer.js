@@ -3,7 +3,7 @@
  */
 export class FlippingRenderer {
   /**
-   *
+   * Handles visual updates triggered by card flipping animations.
    */
   constructor(stage) {
     this.stage = stage;

@@ -1,6 +1,5 @@
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { shuffle } from "./shuffle.js";
 import { cards } from "../constants/cards.js";
 import { fallBackCardsForTesting } from "../constants/fallback-cards.js";
 
@@ -61,19 +60,4 @@ function _populateDeck(playerManager, parsedCards) {
   }
 
   console.log("Player deck populated:", playerManager.deck);
-}
-
-/**
- * Shuffle player's cards, populate AI hand, and start the game in random mode.
- * @param {Object} playerManager
- */
-function _initialiseRandomMode(playerManager) {
-  const aiManager = Game.managers.aiManager;
-  playerManager.hand = shuffle($.extend(true, [], playerManager.deck));
-
-  if (!aiManager.hand || aiManager.hand.length === 0) {
-    aiManager.hand.populate();
-  }
-
-  Game.startGame();
 }

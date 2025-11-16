@@ -101,7 +101,7 @@ export const BoardRenderer = {
     const elementId = BoardManager.boardArray[squareID - 1].element;
 
     if (elementId === 0) {
-      square.elementGraphic = null;
+      square.elementGraphic = undefined;
     } else {
       const elementGraphic = new createjs.Bitmap(
         `${config.imagePath}/elements/${config.elements[elementId].imagePath}`,

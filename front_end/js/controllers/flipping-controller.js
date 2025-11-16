@@ -3,30 +3,28 @@ import { directionMap } from "../constants/directions.js";
 import { getPlayerTurn } from "../utilities/turn.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { debug } from "../debug.js";
 
 /**
- *
+ * FlippingController is responsible for animating cards as they are flipped
+ * between the player's ownerships and the AI's ownership. It uses the FlippingRenderer
+ * to render the animation.
  */
 export class FlippingController {
   /**
-   *
+   * FlippingController handles animation of cards as they are flipped
+   * between the player's ownerships and the AI's ownership. It uses the FlippingRenderer
+   * to render the animation.
    */
   constructor() {
     this.renderer = new FlippingRenderer(Game.stage);
   }
 
   /**
-   *
+   * flipCardsCheck() checks if any adjacent cards can be flipped based on comparing strengths.
+   * If so, it calls flipCardOver() to animate the flip.
+   * @param {Card} card
    */
   flipCardsCheck(card) {
-    console.log("flipCardsCheck()", card);
-    console.log(
-      "flipCardsCheck() start | card:",
-      card.data.name,
-      "owner:",
-      card.owner,
-    );
     for (const [direction, map] of Object.entries(directionMap)) {
       const target = card[map.prop];
       if (!target) {
@@ -50,7 +48,9 @@ export class FlippingController {
   }
 
   /**
-   *
+   * flipCardOver() updates the ownership of a card and animates the flip.
+   * @param {Card} card - The card to be flipped to the active player's ownership.
+   * @param {string} direction - The direction of the card flip.
    */
   flipCardOver(card, direction) {
     const targetCard = card[directionMap[direction].prop];
@@ -71,7 +71,7 @@ export class FlippingController {
       console.warn(
         `[flipCardOver] colourBitmaps missing for card ${targetCard.data.name}`,
       );
-      targetCard.initVisuals(); // initialize now if necessary
+      targetCard.initVisuals();
     }
 
     // Update ownership
@@ -92,7 +92,9 @@ export class FlippingController {
   }
 
   /**
-   *
+   * Updates the counts of cards owned by the current player and AI,
+   * after a card has been flipped over.
+   * @param {number} flippedCount - The number of cards flipped over.
    */
   updateOwnershipCounts(flippedCount) {
     const turn = getPlayerTurn();

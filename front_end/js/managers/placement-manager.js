@@ -1,12 +1,9 @@
 import { Game } from "../game/game.js";
-import { getPlayerTurn } from "../utilities/turn.js";
 import { FlippingController } from "../controllers/flipping-controller.js";
 import { PlacementRenderer } from "../renderers/placement-renderer.js";
 import { BoardManager } from "./board-manager.js";
 import { UIManager } from "./ui-manager.js";
-import { debug } from "../debug.js";
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
-import { offsets } from "../constants/offsets.js";
 import { config } from "../config.js";
 
 /**
@@ -145,12 +142,12 @@ export class PlacementManager {
 
       // skip "none" squares
       if (squareIndex === "none") {
-        card[`card${direction}`] = null;
+        card[`card${direction}`] = undefined;
         continue;
       }
 
       const occupant = BoardManager.getOccupant(squareIndex - 1); // convert 1-based to 0-based
-      card[`card${direction}`] = occupant ?? null;
+      card[`card${direction}`] = occupant ?? undefined;
     }
   }
 
@@ -191,7 +188,12 @@ export class PlacementManager {
   }
 
   /**
+   * Check if the card placement is valid.
+   * Valid placement is a square with no adjacent cards of the same element.
    *
+   * @param {createjs.Container} card - The card being placed.
+   * @param {number} squareIndex - The board square (1-based) to check validity for.
+   * @returns {valid: boolean, adjacentCards: {Left: createjs.Container, Up: createjs.Container, Right: createjs.Container, Down: createjs.Container}}
    */
   applyElementEffects(card, squareElement) {
     if (!squareElement) {

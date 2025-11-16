@@ -1,13 +1,12 @@
-import { Game } from "../game/game.js";
-
 /**
  * Bridges player input, logical state, and rendering.
  */
 export class PlayerController {
   /**
-   * @param {PlayerManager} manager
-   * @param {PlayerRenderer} renderer
-   * @param {Object} uiManager
+   * Constructor for PlayerController
+   * @param {PlayerManager} manager - instance of PlayerManager
+   * @param {PlayerRenderer} renderer - instance of PlayerRenderer
+   * @param {Object} uiManager - instance of UIManager
    */
   constructor(manager, renderer, uiManager) {
     this.manager = manager;

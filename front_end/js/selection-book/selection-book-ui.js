@@ -92,24 +92,16 @@ export const SelectionBookUI = {
 
     const bx = sb.background.x;
     const by = sb.background.y;
-    /**
-     * Create text
-     * @param {string} text
-     * @param {number} x
-     * @param {number} y
-     */
-    const createText = (text, x, y) => {
-      const t = new createjs.Text(text, "20px Arial", "#ffffff");
-      t.x = x;
-      t.y = y;
-      return t;
-    };
 
-    sb.cardListText = createText("CARDS", bx + 10, by + 10);
-    sb.pageText = createText("P.", bx + 110, by + 10);
-    sb.numText = createText("NUM.", bx + 350, by + 10);
+    sb.cardListText = this.createText("CARDS", bx + 10, by + 10);
+    sb.pageText = this.createText("P.", bx + 110, by + 10);
+    sb.numText = this.createText("NUM.", bx + 350, by + 10);
 
-    sb.pageDisplay = createText(this.controller.currentPage, bx + 150, by + 10);
+    sb.pageDisplay = this.createText(
+      this.controller.currentPage,
+      bx + 150,
+      by + 10,
+    );
 
     sb.container.addChild(
       sb.cardListText,
@@ -119,6 +111,20 @@ export const SelectionBookUI = {
     );
 
     sb.headerDrawn = true;
+  },
+
+  /**
+   * Creates a text object with the given text and position.
+   * @param {string} text - the text to display
+   * @param {number} x - the x position of the text
+   * @param {number} y - the y position of the text
+   * @returns {Object} a createjs.Text object with the given text and position
+   */
+  createText(text, x, y) {
+    const t = new createjs.Text(text, "20px Arial", "#ffffff");
+    t.x = x;
+    t.y = y;
+    return t;
   },
 
   /**

@@ -5,14 +5,14 @@ import { debug } from "../debug.js";
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { PlacementManager } from "../managers/placement-manager.js";
 import { Game } from "../game/game.js";
-import { offsets } from "../constants/offsets.js";
 
 /**
- *
+ * Coordinates the logical flow of card placement, bridging player input,
+ * logical state, and rendering.
  */
 export class PlacementController {
   /**
-   *
+   * Initializes the PlacementController with the BoardManager and UIManager.
    */
   constructor(playerManager) {
     this.playerManager = playerManager;
@@ -21,14 +21,16 @@ export class PlacementController {
   }
 
   /**
-   *
+   * Handles the application of element effects on the board when a card is played.
+   * @param {Card} card The card being played.
    */
   init() {
     this.manager = new PlacementManager(this);
   }
 
   /**
-   *
+   * Returns the PlacementManager instance.
+   * @returns {PlacementManager} The PlacementManager instance.
    */
   applyElementEffects(card) {
     const { selectedSquare, squares } = UIManager;
@@ -40,7 +42,7 @@ export class PlacementController {
   }
 
   /**
-   * Switch the turn between player and AI
+   * Switch the turn between player and AI.
    */
   playerTurnSwitch() {
     swapPlayerTurn();
@@ -63,6 +65,7 @@ export class PlacementController {
    */
   _preparePlayerTurn() {
     const { playerManager } = this;
+    const { manager: placementManager } = this;
 
     console.log(
       "[_preparePlayerTurn] hand:",
@@ -104,6 +107,6 @@ export class PlacementController {
     UIManager.playerChoosingCard = true;
 
     // Reset card indentation for the player
-    this.manager.renderer.indentAfterPlacement();
+    placementManager.renderer.indentAfterPlacement();
   }
 }
