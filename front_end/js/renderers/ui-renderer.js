@@ -141,7 +141,7 @@ export const UIRenderer = {
 
     // Update selected card name
     if (ui.infoBox.cardName && card) {
-      ui.infoBox.cardName.text = card.display.name;
+      ui.infoBox.cardName.text = card.data.name;
 
       const verticalOffset = 30 / 2 + 10;
       ui.infoBox.cardName.x =

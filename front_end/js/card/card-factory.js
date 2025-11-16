@@ -36,7 +36,7 @@ export function createDeck(owner = "player") {
     };
 
     const card = new Card(cardData, owner, fallback.count);
-    card.initVisuals(config); // initialise bitmaps immediately
+    card.initVisuals(); // initialise bitmaps immediately
     deck.push(card);
   }
 

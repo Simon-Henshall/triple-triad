@@ -1,23 +1,5 @@
 import { SelectionBookRenderer } from "../selection-book/selection-book-renderer.js";
-import { debug } from "../debug.js";
 import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
-
-/**
- * Represents a single card in the game (logic + visual)
- */
-export class Card {
-  /**
-   * Creates an instance of Card.
-   *
-   * @constructor
-   * @param {*} data
-   * @param {*} display
-   */
-  constructor(data, display) {
-    this.data = data; // e.g., { displayName, image, strengthUp, ... }
-    this.display = display; // createjs.Container representing the card visually
-  }
-}
 
 /**
  * Manages the player's logical state: deck, hand, played cards, and counts.
@@ -169,16 +151,18 @@ export class PlayerManager {
 
   /**
    * Shift cards down after one is placed
-   * @param {object} offsets - offsets.handCardOffset
+   * @param {object} offset - offsets.handCardOffset
    */
-  shiftCardsDown(offsets) {
+  shiftCardsDown(offset) {
     const count = Math.min(this.cardsAboveSelection, this.hand.length);
 
     for (let index = 0; index < count; index++) {
       const card = this.hand[index];
+      console.log(card);
+      console.log("Offset:", offset);
       if (card) {
-        createjs.Tween.get(card.display).to(
-          { y: card.display.y + offsets.handCardOffset },
+        createjs.Tween.get(card.visuals.container).to(
+          { y: card.visuals.container.y + offset },
           200,
         );
       }

@@ -1,8 +1,6 @@
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { UIController } from "../controllers/ui-controller.js";
-import { SelectionBoardUI } from "./selection-board-ui.js";
-import { SelectionBoardRenderer } from "./selection-board-renderer.js";
 import { debug } from "../debug.js";
 
 /**
@@ -31,9 +29,9 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Update the selection cursor's Y position based on controller state.
      */
     updatePosition() {
-      const controller = SelectionBoardUI.controller;
+      const controller = SelectionBookUI.controller;
       if (controller !== undefined && controller !== null) {
-        const sb = UIManager.selectionBoard;
+        const sb = UIManager.selectionBook;
 
         if (
           playerManager.playerHandSelectionCursor !== undefined &&
@@ -55,11 +53,11 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Ensure the selection board is visually populated.
      */
     ensurePopulated() {
-      const controller = SelectionBoardUI.controller;
+      const controller = SelectionBookUI.controller;
       if (controller && typeof controller.clampSelectionToPage === "function") {
-        SelectionBoardRenderer.populate(controller);
+        SelectionBookRenderer.populate(controller);
       } else {
-        console.warn("SelectionBoard controller missing or uninitialized.");
+        console.warn("SelectionBook controller missing or uninitialized.");
       }
     },
 

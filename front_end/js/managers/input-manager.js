@@ -2,6 +2,9 @@ import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
 import { UIManager } from "./ui-manager.js";
 import { ConfirmationController } from "../controllers/confirmation-controller.js";
 import { Game } from "../game/game.js";
+import { BoardManager } from "./board-manager.js";
+import { offsets } from "../constants/offsets.js";
+import { CursorManager } from "./cursor-manager.js";
 
 /**
  * InputManager class, responsible for handling player input and
@@ -133,7 +136,7 @@ export class InputManager {
       return;
     }
 
-    const container = removedCard.display?.container;
+    const container = removedCard.visuals?.container;
     if (container && Game.stage.contains(container)) {
       Game.stage.removeChild(container);
     }
@@ -200,6 +203,7 @@ export class InputManager {
       console.log("[Input Manager] Player confirmed their hand.");
       Game.stage.removeChild(UIManager.selectionBook.container);
       Game.startGame();
+      CursorManager.playerHand.init();
       return;
     }
 
@@ -217,20 +221,134 @@ export class InputManager {
   }
 
   // ------------------------------
-  // PLAY PHASE (unchanged)
+  // PLAY PHASE
   // ------------------------------
 
   /**
-   *
+   * Handle player hand cursor movement and card play selection.
+   * @param {KeyboardEvent} event
    */
   handlePlayerCardChoice(event, renderer) {
-    // same as before
+    switch (event.key) {
+      case "ArrowUp": {
+        Game.controllers.cursorController.playerHand.move("up");
+        break;
+      }
+      case "ArrowDown": {
+        Game.controllers.cursorController.playerHand.move("down");
+        break;
+      }
+      case "Enter": {
+        this.playSelectedCard(renderer);
+        break;
+      }
+    }
   }
 
   /**
-   *
+   * Handle placement cursor movement and card placement.
+   * @param {KeyboardEvent} event
+   * @param {InputRenderer} renderer
    */
   handlePlacement(event, renderer) {
-    // same as before
+    switch (event.key) {
+      case "ArrowLeft": {
+        Game.controllers.cursorController.grid.move("left");
+        break;
+      }
+      case "ArrowRight": {
+        Game.controllers.cursorController.grid.move("right");
+        break;
+      }
+      case "ArrowUp": {
+        Game.controllers.cursorController.grid.move("up");
+        break;
+      }
+      case "ArrowDown": {
+        Game.controllers.cursorController.grid.move("down");
+        break;
+      }
+      case "Enter": {
+        this.placeCardOnBoard();
+        break;
+      }
+      case "Backspace":
+      case "Escape": {
+        renderer.toggleInfoBox(true);
+        renderer.restorePlayerHandCursor();
+        Game.controllers.cursorController.grid.remove();
+        break;
+      }
+    }
+  }
+
+  /**
+   * Play the selected card from the player's hand.
+   * Moves cursors and prepares for placement.
+   */
+  playSelectedCard(renderer) {
+    // Remove hand cursor
+    Game.controllers.cursorController.playerHand.remove();
+
+    // Set default selected cell BEFORE placing the cursor
+    UIManager.selectedRow = 2;
+    UIManager.selectedColumn = 2;
+
+    // Place grid cursor using current selectedRow/Column
+    Game.controllers.cursorController.grid.place();
+
+    // Immediately hide info box now that placement is active
+    renderer.toggleInfoBox(false);
+
+    // Remove hand cursor from stage
+    Game.stage.removeChild(this.playerManager.playerHandCursor);
+
+    // Enter placement mode
+    UIManager.playerSelectingPlacement = true;
+
+    // Actually play the card
+    const selectedIndex = UIManager.selectedCardNumber;
+    const selectedCard = this.playerManager.hand[selectedIndex];
+    if (!selectedCard) {
+      console.warn("No card selected!");
+      return;
+    }
+  }
+
+  /**
+   * Place the currently selected card onto the game board.
+   */
+  placeCardOnBoard() {
+    const selectedCard = this.playerManager.hand[UIManager.selectedCardNumber];
+    console.log("SELECTED", selectedCard);
+    console.log("HAND", this.playerManager.hand);
+    if (!selectedCard) {
+      return console.warn("No card selected!");
+    }
+
+    const cellIndex = UIManager.selectedSquare - 1;
+    if (BoardManager.cellOccupied(cellIndex)) {
+      console.warn("Player tried to place on occupied square");
+      return false;
+    }
+
+    // Remove card from hand *before* passing it to PlacementManager
+    this.playerManager.hand.splice(UIManager.selectedCardNumber, 1);
+
+    // Compute board pixel coordinates
+    const x =
+      offsets.gameOffsetX +
+      offsets.cellWidth * (UIManager.selectedColumn - 1) +
+      offsets.cardOffsetX;
+    const y =
+      offsets.gameOffsetY +
+      offsets.cellHeight * (UIManager.selectedRow - 1) +
+      offsets.cardOffsetY;
+
+    // Delegate placement to PlacementManager
+    Game.controllers.placementController.manager.placeCard(selectedCard, x, y);
+
+    // Remove grid cursor
+    Game.controllers.cursorController.grid.remove();
   }
 }

@@ -1,7 +1,6 @@
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { shuffle } from "./shuffle.js";
-import { SelectionBoardUI } from "../renderers/selection-board-ui.js";
 import { cards } from "../constants/cards.js";
 import { fallBackCardsForTesting } from "../constants/fallback-cards.js";
 
@@ -39,37 +38,8 @@ export function pickPlayerCards(selectedIndex) {
     );
   }
 
-  // Update UI (selection board display, counts, etc.)
-  // TODO: Implement updateCounts method
-  // UIManager.selectionBoard.updateCounts(
-  //   playerManager.deck.length,
-  //   playerManager.hand.length,
-  // );
-
   // Optional: update preview card
   gameDeck.setPreviewCard(playerManager.deck[selectedIndex]);
-}
-
-/** Reset selection board state before picking cards */
-function _resetSelectionBoardState() {
-  UIManager.selectionBoard.page = 1;
-  UIManager.selectionBoard.selectedHandCardNumber = 0;
-  UIManager.selectionBoard.displayedCards = [];
-  UIManager.selectionBoard.displayedCard = undefined;
-}
-
-/**
- * Parse owned cards JSON with fallback to hardcoded deck.
- * @param {string} deckJSON
- * @returns {Array} parsed card objects
- */
-function _parseDeck(json) {
-  try {
-    return JSON.parse(json);
-  } catch {
-    console.warn("Failed to parse deckJSON, falling back to hardcoded deck");
-    return fallBackCardsForTesting;
-  }
 }
 
 /**

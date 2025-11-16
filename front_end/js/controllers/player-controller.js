@@ -1,5 +1,4 @@
 import { Game } from "../game/game.js";
-import { SelectionBoardRenderer } from "../renderers/selection-board-renderer.js";
 
 /**
  * Bridges player input, logical state, and rendering.
@@ -14,22 +13,6 @@ export class PlayerController {
     this.manager = manager;
     this.renderer = renderer;
     this.ui = uiManager;
-  }
-
-  /**
-   * TODO: UNCALLED
-   * Select a card in hand by index
-   * @param {number} index
-   */
-  selectCard(index) {
-    const card = this.manager.getHandCard(index);
-    if (!card) {
-      return;
-    }
-
-    this.manager.selectedCard = card;
-    this.renderer.indentSelectedCard(card);
-    this.ui.selectedCard = card;
   }
 
   /**
@@ -49,9 +32,6 @@ export class PlayerController {
     // Immediately update z-order of remaining hand + preview
     this.renderer._updateHandAndPreviewZOrder();
     Game.stage.update();
-
-    // Update selection board preview card to match new selected card
-    SelectionBoardRenderer.updateDisplay({ skipTween: true });
   }
 
   /**

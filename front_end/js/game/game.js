@@ -44,7 +44,7 @@ export const Game = {
   startGame() {
     console.log("[Game] Starting new match...");
 
-    const sb = UIManager.selectionBoard;
+    const sb = UIManager.selectionBook;
 
     // Clear selection UI containers
     if (sb?.container) {
@@ -95,7 +95,7 @@ export const Game = {
    * Handles setup and operation of the selection board (hand selection screen)
    * where the player chooses 5 cards from their deck.
    */
-  _setupSelectionBoard() {
+  _setupSelectionBook() {
     console.log("[Game] Initialising selection book...");
     const playerManager = Game.managers.playerManager;
 
@@ -113,6 +113,7 @@ export const Game = {
       );
       // Ensure the visuals are ready before previewing
       const faceBitmap = card.visuals?.faceBitmap;
+      console.log(faceBitmap);
       if (faceBitmap && faceBitmap.image && !faceBitmap.image.complete) {
         // Wait for image load
         faceBitmap.image.addEventListener("load", () => {

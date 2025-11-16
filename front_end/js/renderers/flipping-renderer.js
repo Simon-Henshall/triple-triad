@@ -1,4 +1,10 @@
+/**
+ *
+ */
 export class FlippingRenderer {
+  /**
+   *
+   */
   constructor(stage) {
     this.stage = stage;
   }
@@ -8,24 +14,31 @@ export class FlippingRenderer {
    * @param {Object} card - The card to flip
    * @param {string} direction - Direction to flip
    */
-  flipCard(card, direction) {
+  flipCard(container, direction) {
+    // container is now `card.visuals.container`
     const sliceContainer = new createjs.Container();
-    const sliceWidth = card.children[1].image.width * card.scaleX;
-    const sliceHeight = card.children[1].image.height * card.scaleY;
-    const initialX = card.x;
-    const initialY = card.y;
+    const faceBitmap =
+      container.getChildByName("faceBitmap") || container.getChildAt(2);
+    const sliceWidth = faceBitmap.image.width * container.scaleX;
+    const sliceHeight = faceBitmap.image.height * container.scaleY;
 
-    sliceContainer.x = initialX + sliceWidth / 2;
-    sliceContainer.y = initialY;
+    sliceContainer.x = container.x + sliceWidth / 2;
+    sliceContainer.y = container.y;
 
-    // Cache the card for smoother animation
-    card.sourceRect = new createjs.Rectangle(0, 0, 0, sliceWidth);
-    card.cache(0, 0, sliceWidth, sliceHeight);
+    container.sourceRect = new createjs.Rectangle(0, 0, 0, sliceWidth);
+    container.cache(0, 0, sliceWidth, sliceHeight);
 
-    sliceContainer.addChild(card);
+    sliceContainer.addChild(container);
     this.stage.addChild(sliceContainer);
 
-    this._animateFlip(card, sliceContainer, direction, 0, initialX, initialY);
+    this._animateFlip(
+      container,
+      sliceContainer,
+      direction,
+      0,
+      container.x,
+      container.y,
+    );
   }
 
   /**

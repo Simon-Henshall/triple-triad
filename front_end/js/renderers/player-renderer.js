@@ -84,19 +84,20 @@ export class PlayerRenderer {
    * @param {createjs.Container} selectedCard
    */
   indentSelectedCard(selectedCard) {
-    console.log("Indenting selected card:", selectedCard.data.displayName);
+    console.log("Indenting selected card:", selectedCard.data.name);
     const previousCard = UIManager.previouslySelectedCard;
 
     if (selectedCard) {
-      selectedCard.display.x -= 30;
+      console.log(selectedCard);
+      selectedCard.visuals.container.x -= 30;
     }
 
-    if (previousCard && previousCard?.display?.x !== undefined) {
+    if (previousCard && previousCard?.visuals?.container?.x !== undefined) {
       console.log(
         "Unindenting previously selected card:",
-        previousCard.data.displayName,
+        previousCard.data.name,
       );
-      previousCard.display.x += 30;
+      previousCard.visuals.container.x += 30;
     }
 
     UIManager.previouslySelectedCard = selectedCard;
@@ -121,7 +122,7 @@ export class PlayerRenderer {
    * @param {boolean} updatePreview
    */
   _updateHandAndPreviewZOrder(updatePreview = true) {
-    const previewCard = UIManager.selectionBoard?.displayedCard;
+    const previewCard = UIManager.selectionBook?.displayedCard;
     let topIndex = Game.stage.numChildren;
 
     const confirmationContainer = UIManager.confirmation?.container;
@@ -145,7 +146,7 @@ export class PlayerRenderer {
    * @param {createjs.Container} cardContainer
    */
   _attachPreviewTicker(cardContainer) {
-    const previewCard = UIManager.selectionBoard?.displayedCard;
+    const previewCard = UIManager.selectionBook?.displayedCard;
     if (!previewCard) {
       return;
     }

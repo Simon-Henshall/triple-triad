@@ -1,56 +1,73 @@
 import { BoardManager } from "../managers/board-manager.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { getPlayerTurn } from "../utilities/turn.js";
+import { getPlayerTurn, swapPlayerTurn } from "../utilities/turn.js";
 import { debug } from "../debug.js";
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { PlacementManager } from "../managers/placement-manager.js";
 import { Game } from "../game/game.js";
-import { swapPlayerTurn } from "../utilities/turn.js";
+import { offsets } from "../constants/offsets.js";
 
 /**
- * Coordinates the placement of cards from the player's hand or AI hand
- * onto the board, including updating the game state, handling adjacency,
- * applying element effects, and swapping turns.
- * Acts as the main entry point for placement-related actions.
+ *
  */
 export class PlacementController {
+  /**
+   *
+   */
   constructor(playerManager) {
     this.playerManager = playerManager;
-    /** @type {FlippingRenderer} Handles card flipping animations */
     this.flippingRenderer = new FlippingRenderer(playerManager);
-
-    /** @type {PlacementManager} Handles the placement animations and completion callbacks */
-    this.manager = undefined; // Instantiated in Game.managers
+    this.manager = undefined; // set in init()
   }
 
+  /**
+   *
+   */
   init() {
     this.manager = new PlacementManager(this);
   }
 
   /**
-   * Begin placement of a card.
+   * Attempt to place a card on the currently selected square.
+   * Validates square occupancy and only increments playedCardsCount if successful.
    *
-   * @param {createjs.Container} card - The card to place.
-   * @param {number} x - X coordinate for placement on the board.
-   * @param {number} y - Y coordinate for placement on the board.
+   * @param {Card} card
    */
   placeCard(card, x, y) {
+    const { playerManager } = this;
+
     if (!card) {
-      console.warn("Attempted to place a null or undefined card.");
-      return;
+      console.warn("No card selected");
+      return false;
     }
-    BoardManager.checkSelectedSquare();
+
+    const square = UIManager.selectedSquare;
+
+    // Prevent placement on an occupied square
+    if (BoardManager.cellOccupied(square)) {
+      console.warn(
+        `[PlacementController] Cannot place on occupied square ${square}`,
+      );
+      return false;
+    }
+
+    // Animate and place the card
     this.manager.placeCard(card, x, y);
+
+    // Only now remove the card from hand
+    playerManager.hand.splice(playerManager.selectedCardIndex, 1);
+
+    // Increment played cards count
+    playerManager.playedCardsCount++;
+
+    // Reset selection / cursor for next turn
+    this._preparePlayerTurn();
+
+    return true;
   }
 
-  // ------------------------------
-  // Helper methods for placement logic
-  // ------------------------------
-
   /**
-   * Apply element effects (bonus or penalty) to the placed card.
    *
-   * @param {createjs.Container} card - The card being placed.
    */
   applyElementEffects(card) {
     const { selectedSquare, squares } = UIManager;
@@ -62,10 +79,9 @@ export class PlacementController {
   }
 
   /**
-   * Switch the turn between player and AI after card placement.
+   * Switch the turn between player and AI
    */
   playerTurnSwitch() {
-    // Swap active player
     swapPlayerTurn();
 
     if (debug.active) {
@@ -73,21 +89,36 @@ export class PlacementController {
     }
 
     const currentTurn = getPlayerTurn();
-
     if (currentTurn === "blue") {
       this._preparePlayerTurn();
-    } else if (currentTurn === "red") {
+    } else {
       Game.managers.aiManager.takeTurn();
     }
   }
 
   /**
-   * Prepare for the next player turn.
-   * Resets card selection, UI state, and player cursor.
-   * Called internally by playerTurnSwitch().
+   * Prepares the player for their next turn.
+   * Restores selection and cursor.
    */
   _preparePlayerTurn() {
     const { playerManager } = this;
+
+    console.log(
+      "[_preparePlayerTurn] hand:",
+      playerManager.hand.map((c, index) => ({
+        i: index,
+        name: c.data.name,
+        y: c.visuals.container.y,
+      })),
+    );
+    console.log(
+      "selectedCardIndex:",
+      playerManager.selectedCardIndex,
+      "UIManager.selectedCardNumber:",
+      UIManager.selectedCardNumber,
+      "selectedCard:",
+      playerManager.selectedCard?.data.name,
+    );
 
     // Reset selection to the first available card
     playerManager.selectedCardIndex = 0;
@@ -95,14 +126,10 @@ export class PlacementController {
     UIManager.selectedCardNumber = 0;
     UIManager.selectedCard = playerManager.hand;
 
-    // Default back to centre square
-    BoardManager.resetSelectionToCenter();
+    // Reset grid cursor to last selected square (don't force center)
+    BoardManager.updateUISelection(UIManager.selectedSquare);
 
-    // Increment played cards count
-    // TODO: This badly needs moving
-    playerManager.playedCardsCount++;
-
-    // Restore the player's cursor
+    // Restore the player's hand cursor
     const { cursorController } = Game.controllers;
     cursorController.playerHand.place();
 
@@ -114,7 +141,60 @@ export class PlacementController {
     // Swap back to the card choice phase
     UIManager.playerChoosingCard = true;
 
-    // Reset the card indentation for the player
+    // Reset card indentation for the player
     this.manager.renderer.indentAfterPlacement();
+  }
+
+  /**
+   * Animate a card from hand to board
+   */
+  animatePlacement(card, targetX, targetY, isAI, onComplete) {
+    console.log("[animatePlacement] card:", card.data.name);
+    if (!card?.visuals?.container) {
+      return;
+    }
+
+    const container = card.visuals.container;
+
+    const offscreenX =
+      getPlayerTurn() === "red"
+        ? container.x + offsets.aiOffscreenX
+        : container.x - offsets.playerOffscreenX;
+    const offscreenY = offsets.offscreenY;
+
+    // TODO: Redundant; animatePlacement will only *EVER* be called by AI
+    if (isAI) {
+      card.visuals.faceBitmap.visible = false;
+      card.visuals.colourBitmap.visible = false;
+      card.visuals.backBitmap.visible = true;
+    } else {
+      card.visuals.faceBitmap.visible = true;
+      card.visuals.colourBitmap.visible = true;
+      card.visuals.backBitmap.visible = false;
+    }
+
+    Game.stage.setChildIndex(container, Game.stage.getNumChildren() - 1);
+
+    createjs.Tween.get(container)
+      .to({ x: offscreenX, y: offscreenY }, 500)
+      .call(() => {
+        if (isAI) {
+          card.visuals.faceBitmap.visible = true;
+          card.visuals.colourBitmap.visible = true;
+          card.visuals.backBitmap.visible = false;
+        }
+
+        createjs.Tween.get(container)
+          .to({ x: targetX, y: targetY }, 500)
+          .call(() => {
+            card.visuals.faceBitmap.visible = true;
+            card.visuals.colourBitmap.visible = true;
+            card.visuals.backBitmap.visible = false;
+
+            if (onComplete) {
+              onComplete();
+            }
+          });
+      });
   }
 }

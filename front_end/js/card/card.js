@@ -1,3 +1,5 @@
+import { config } from "../config";
+
 /**
  *  Card class representing a game card with properties and visuals.
  *  @module Card
@@ -47,43 +49,67 @@ export class Card {
    *  Initialise CreateJS bitmaps and container for the card visuals.
    *  @param {createjs.Stage
    */
-  initVisuals(config) {
+  initVisuals() {
     const imagePath = this.data.imagePath;
 
-    // Create bitmaps
+    // Face & back
     this.visuals.faceBitmap = new createjs.Bitmap(imagePath);
-
-    const colourFile = this.owner === "player" ? "blue.png" : "red.png";
-    this.visuals.colourBitmap = new createjs.Bitmap(
-      `${config.imagePath}cards/${colourFile}`,
-    );
+    this.visuals.faceBitmap.name = "faceBitmap";
 
     this.visuals.backBitmap = new createjs.Bitmap(
       `${config.imagePath}cards/back.png`,
     );
+    this.visuals.backBitmap.name = "backBitmap";
 
-    // Create container and add children (layer order: back -> colour -> face)
-    this.visuals.container = new createjs.Container();
-    this.visuals.container.addChild(
+    // Preload colour bitmaps
+    this.visuals.colourBitmaps = {
+      player: new createjs.Bitmap(`${config.imagePath}cards/blue.png`),
+      ai: new createjs.Bitmap(`${config.imagePath}cards/red.png`),
+    };
+
+    this.visuals.colourBitmap = this.visuals.colourBitmaps[this.owner];
+    this.visuals.colourBitmap.name = "colourBitmap";
+
+    // Container
+    const container = new createjs.Container();
+    container.name = "cardContainer";
+
+    container.addChild(
       this.visuals.backBitmap,
       this.visuals.colourBitmap,
       this.visuals.faceBitmap,
     );
 
-    // Target dimensions
+    this.visuals.container = container;
+
+    // Scale after face image loads
+    this._waitForFaceAndScale();
+  }
+
+  /**
+   *
+   */
+  _waitForFaceAndScale() {
     const targetWidth = config.scaledCardWidth;
     const targetHeight = config.scaledCardHeight;
 
-    // Ensure face image is loaded before scaling
-    if (this.visuals.faceBitmap.image.complete) {
-      this._scaleContainer(targetWidth, targetHeight);
+    /**
+     *
+     */
+    const applyScale = () => this._scaleContainer(targetWidth, targetHeight);
+
+    const img = this.visuals.faceBitmap.image;
+    if (img.complete && img.naturalWidth !== 0) {
+      applyScale();
     } else {
       /**
        *
        */
-      this.visuals.faceBitmap.image.addEventListener("load", () => {
-        this._scaleContainer(targetWidth, targetHeight);
-      });
+      const onLoad = () => {
+        img.removeEventListener("load", onLoad);
+        applyScale();
+      };
+      img.addEventListener("load", onLoad);
     }
   }
 
@@ -120,14 +146,23 @@ export class Card {
    *  @param {"player"|"ai"} owner
    */
   setOwner(owner) {
-    this.owner = owner;
+    const normalizedOwner =
+      owner === "player" || owner === "ai"
+        ? owner
+        : (owner === "blue"
+          ? "player"
+          : "ai");
+    this.owner = normalizedOwner;
 
-    // Update colour bitmap if visuals exist
-    if (this.visuals.colourBitmap) {
-      const colourFile = owner === "player" ? "blue.png" : "red.png";
-      this.visuals.colourBitmap.image = new Image();
-      this.visuals.colourBitmap.image.src = `/cards/${colourFile}`;
+    if (!this.visuals?.container || !this.visuals.colourBitmap) {
+      return normalizedOwner;
     }
+
+    this.visuals.colourBitmap.image =
+      this.visuals.colourBitmaps[normalizedOwner].image;
+    this.visuals.container.stage?.update();
+
+    return normalizedOwner;
   }
 
   /**
@@ -145,13 +180,15 @@ export class Card {
   clone({ owner = this.owner, count = this.count } = {}) {
     const copy = new Card(this.data, owner, count);
 
-    // If a visual container exists, clone it for the new hand instance
     if (this.visuals.container) {
-      const containerClone = this.visuals.container.clone(true); // deep clone bitmaps
+      const containerClone = this.visuals.container.clone(true);
+
       copy.visuals.container = containerClone;
-      copy.visuals.faceBitmap = containerClone.getChildByName("faceBitmap");
-      copy.visuals.colourBitmap = containerClone.getChildByName("colourBitmap");
+
+      // Fix: fetch children by name
       copy.visuals.backBitmap = containerClone.getChildByName("backBitmap");
+      copy.visuals.colourBitmap = containerClone.getChildByName("colourBitmap");
+      copy.visuals.faceBitmap = containerClone.getChildByName("faceBitmap");
     }
 
     return copy;

@@ -135,7 +135,7 @@ export const gameInit = {
 
   /**
    * Setup basic UI containers for the game.
-   * Initializes selectionBoard, confirmation, infoBox, and background.
+   * Initializes confirmation, infoBox, and background.
    */
   uiContainers() {
     //UIRenderer.addBackground();
@@ -188,8 +188,18 @@ export const gameInit = {
    * This is a static image and does not require updates.
    */
   addBackground() {
+    // TODO: Combine this
     const background = new createjs.Bitmap(config.imagePath + "board.png");
     Game.stage.addChild(background);
+
+    UIManager.boardContainer.x = offsets.gameOffsetX;
+    UIManager.boardContainer.y = offsets.gameOffsetY;
+
+    UIManager.boardCardsContainer.x = offsets.gameOffsetX;
+    UIManager.boardCardsContainer.y = offsets.gameOffsetY;
+
+    Game.stage.addChild(UIManager.boardContainer);
+    Game.stage.addChild(UIManager.boardCardsContainer);
     Game.stage.update();
   },
 
@@ -238,6 +248,6 @@ export const gameInit = {
     console.log(
       "[Game-Init] Initialisation complete. Passing off to [Game]...",
     );
-    Game._setupSelectionBoard(Game.managers.playerManager);
+    Game._setupSelectionBook(Game.managers.playerManager);
   },
 };

@@ -5,15 +5,17 @@ export const UIManager = {
   // -------------------------
   // Grid / Selection state
   // -------------------------
+  boardContainer: new createjs.Container(),
+  boardCardsContainer: new createjs.Container(),
   squares: [],
+  selectedSquare: 5,
   selectedRow: 2,
   selectedColumn: 2,
-  selectedSquare: 5,
+  squareLeft: "none",
+  squareUp: "none",
+  squareRight: "none",
+  squareDown: "none",
   selectedAISquare: undefined,
-  squareLeft: undefined,
-  squareUp: undefined,
-  squareRight: undefined,
-  squareDown: undefined,
   gridCursor: undefined,
 
   // -------------------------
@@ -39,31 +41,22 @@ export const UIManager = {
         return;
       }
 
-      // Remove any existing preview first
       this.hidePreviewCard();
 
-      // Deep clone
       const original = card.visuals.container;
       const previewContainer = original.clone(true);
 
-      // Force scale to match standard preview size
-      const targetWidth = offsets.scaledPreviewWidth;
-      const targetHeight = offsets.scaledPreviewHeight;
-
       const bounds = original.getBounds();
       if (bounds) {
-        previewContainer.scaleX = targetWidth / bounds.width;
-        previewContainer.scaleY = targetHeight / bounds.height;
+        previewContainer.scaleX = offsets.scaledPreviewWidth / bounds.width;
+        previewContainer.scaleY = offsets.scaledPreviewHeight / bounds.height;
       } else {
-        // Fallback: scale proportionally if bounds not ready yet
         previewContainer.scaleX = previewContainer.scaleY = 1;
       }
 
-      // Position preview
       previewContainer.x = offsets.previewX;
       previewContainer.y = offsets.previewY;
 
-      // Store reference for later removal
       UIManager.previewCardContainer = previewContainer;
 
       Game.stage.addChild(previewContainer);
@@ -71,7 +64,6 @@ export const UIManager = {
     },
 
     hidePreviewCard() {
-      console.log("[UI Manager] Hiding preview card...");
       const preview = UIManager.previewCardContainer;
       if (preview && Game.stage.contains(preview)) {
         Game.stage.removeChild(preview);
@@ -126,12 +118,13 @@ export const UIManager = {
   cardImage: undefined,
 
   bringToFront() {
-    // Ensure info box is visible and topmost
     const { infoBox } = UIManager;
-    Game.stage.setChildIndex(
-      infoBox.container,
-      Game.stage.getNumChildren() - 1,
-    );
-    infoBox.container.visible = true;
+    if (infoBox.container) {
+      Game.stage.setChildIndex(
+        infoBox.container,
+        Game.stage.getNumChildren() - 1,
+      );
+      infoBox.container.visible = true;
+    }
   },
 };
