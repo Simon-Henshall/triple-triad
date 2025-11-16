@@ -1,4 +1,5 @@
 import { config } from "../config";
+import { Game } from "../game/game";
 
 /**
  *  Card class representing a game card with properties and visuals.
@@ -34,6 +35,10 @@ export class Card {
     this.visuals = {
       faceBitmap: undefined,
       colourBitmap: undefined,
+      colourBitmaps: {
+        player: new createjs.Bitmap(`${config.imagePath}cards/blue.png`),
+        ai: new createjs.Bitmap(`${config.imagePath}cards/red.png`),
+      },
       backBitmap: undefined,
       container: undefined,
     };
@@ -60,12 +65,6 @@ export class Card {
       `${config.imagePath}cards/back.png`,
     );
     this.visuals.backBitmap.name = "backBitmap";
-
-    // Preload colour bitmaps
-    this.visuals.colourBitmaps = {
-      player: new createjs.Bitmap(`${config.imagePath}cards/blue.png`),
-      ai: new createjs.Bitmap(`${config.imagePath}cards/red.png`),
-    };
 
     this.visuals.colourBitmap = this.visuals.colourBitmaps[this.owner];
     this.visuals.colourBitmap.name = "colourBitmap";
@@ -154,6 +153,8 @@ export class Card {
           : "ai");
     this.owner = normalizedOwner;
 
+    console.log(this.visuals);
+
     if (!this.visuals?.container || !this.visuals.colourBitmap) {
       return normalizedOwner;
     }
@@ -161,6 +162,17 @@ export class Card {
     this.visuals.colourBitmap.image =
       this.visuals.colourBitmaps[normalizedOwner].image;
     this.visuals.container.stage?.update();
+
+    console.log(this.owner);
+
+    if (this.owner === "ai") {
+      //Game.stage.update();
+    }
+
+    console.log(
+      `[Card] Setting owner to ${normalizedOwner} for card ${this.data.name}` +
+        ` (${this.data.id})`,
+    );
 
     return normalizedOwner;
   }

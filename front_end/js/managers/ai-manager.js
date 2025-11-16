@@ -148,65 +148,27 @@ export class AIManager {
     // Pick a random free cell
     const selectedSquare =
       freeCells[Math.floor(Math.random() * freeCells.length)];
-    UIManager.selectedAISquare = selectedSquare;
+    UIManager.selectedSquare = selectedSquare;
 
     // Update UIManager row/column for placement
-    BoardManager.updateUISelection(UIManager.selectedAISquare);
+    BoardManager.updateUISelection(UIManager.selectedSquare);
 
     this.cardsAboveSelection = cardIndex;
 
-    setTimeout(() => {
-      // Remove played card from hand
-      this.hand.splice(cardIndex, 1);
+    // Remove played card from hand
+    this.hand.splice(cardIndex, 1);
 
-      // Shift cards above visually
-      this.shiftCardsDown(offsets.handCardOffset, cardIndex);
+    // Shift cards above visually
+    this.shiftCardsDown(offsets.handCardOffset, cardIndex);
 
-      // Ensure played card renders on top
-      Game.stage.addChild(playedCard.visuals.container);
-
-      const cellIndex = UIManager.selectedAISquare - 1;
-
-      // Only register the card if the square is empty
-      if (BoardManager.boardArray[cellIndex].occupant) {
-        console.error(
-          `[AI] Attempted to place on occupied square ${UIManager.selectedAISquare - 1}!`,
-        );
-      } else {
-        // Register the card on the board
-        BoardManager.boardArray[cellIndex].occupant = playedCard;
-        UIManager.squares[cellIndex].card = playedCard;
-
-        // Set adjacent cards for flipping
-        Game.managers.placementManager.setCardAdjacents(playedCard);
-
-        // Trigger flipping logic
-        this.flippingController = new FlippingController();
-        this.flippingController.flipCardsCheck(playedCard);
-
-        console.log(
-          `[AI] Placed card '${playedCard.data.name}' on square ${UIManager.selectedAISquare - 1}`,
-        );
-      }
-
-      // Animate placement
-      Game.controllers.placementController.animatePlacement(
-        playedCard,
-        offsets.gameOffsetX +
-          offsets.cellWidth * (UIManager.selectedColumn - 1) +
-          offsets.cardOffsetX,
-        offsets.gameOffsetY +
-          offsets.cellHeight * (UIManager.selectedRow - 1) +
-          offsets.cardOffsetY,
-        true, // AI flag
-        () => {
-          // Turn back to player
-          Game.controllers.placementController.playerTurnSwitch();
-        },
-      );
-
-      // Reorder remaining AI hand for consistent layering
-      this.reorderHand();
-    }, this.aiDelay);
+    Game.controllers.placementController.manager.placeCard(
+      playedCard,
+      offsets.gameOffsetX +
+        offsets.cellWidth * (UIManager.selectedColumn - 1) +
+        offsets.cardOffsetX,
+      offsets.gameOffsetY +
+        offsets.cellHeight * (UIManager.selectedRow - 1) +
+        offsets.cardOffsetY,
+    );
   }
 }

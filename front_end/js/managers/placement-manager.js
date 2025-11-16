@@ -66,6 +66,18 @@ export class PlacementManager {
 
     // Animate card offscreen first
     this.renderer.moveCardOffscreen(card, () => {
+      // Flip the AI card over
+      if (card.owner === "ai" && !Game.rules.includes("open")) {
+        card.visuals.container.children.find(
+          (child) => child.name === "backBitmap",
+        ).visible = false;
+        card.visuals.container.children.find(
+          (child) => child.name === "colourBitmap",
+        ).visible = true;
+        card.visuals.container.children.find(
+          (child) => child.name === "faceBitmap",
+        ).visible = true;
+      }
       this.onCardOffscreenComplete(card, x, y);
     });
 
@@ -81,9 +93,9 @@ export class PlacementManager {
    * @param {number} placementX
    * @param {number} placementY
    */
-  onCardOffscreenComplete(card, x, y, isAI = false) {
+  onCardOffscreenComplete(card, x, y) {
     this.renderer.moveCardToBoard(card, x, y, (c) => {
-      this.onCardPlacementComplete(c, isAI);
+      this.onCardPlacementComplete(c);
     });
   }
 
@@ -93,14 +105,12 @@ export class PlacementManager {
    *
    * @param {createjs.Container} card
    */
-  onCardPlacementComplete(card, isAI = false) {
-    const square = isAI ? UIManager.selectedAISquare : UIManager.selectedSquare;
-
+  onCardPlacementComplete(card) {
     // Correctly calculate adjacency for this card
-    this.setCardAdjacents(card, square);
+    this.setCardAdjacents(card, UIManager.selectedSquare);
 
     // Add card to board data
-    this.addCardToBoard(card, square);
+    this.addCardToBoard(card, UIManager.selectedSquare);
 
     // Apply element effects
     this.controller.applyElementEffects(card);

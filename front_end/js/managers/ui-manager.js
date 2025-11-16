@@ -15,7 +15,6 @@ export const UIManager = {
   squareUp: "none",
   squareRight: "none",
   squareDown: "none",
-  selectedAISquare: undefined,
   gridCursor: undefined,
 
   // -------------------------

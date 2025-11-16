@@ -49,8 +49,10 @@ export class PlacementRenderer {
    */
   moveCardOffscreen(card, onComplete) {
     console.log("moveCardOffscreen:", card);
+
     createjs.Tween.get(card.visuals.container)
       .to({ x: offsets.offscreenX, y: offsets.offscreenY }, 500)
+      // .to({ x: offsets.aiOffscreenX / playerOffscreenX, y: offsets.offscreenY }, 500)
       .call(() => onComplete?.(card));
   }
 
