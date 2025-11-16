@@ -28,34 +28,6 @@ export class PlacementController {
   }
 
   /**
-   * Attempt to place a card on the currently selected square.
-   * Validates square occupancy and only increments playedCardsCount if successful.
-   *
-   * @param {Card} card
-   */
-  placeCard(card, x, y) {
-    const { playerManager } = this;
-
-    if (!card) {
-      console.warn("No card selected");
-      return false;
-    }
-
-    const square = UIManager.selectedSquare;
-
-    // Prevent placement on an occupied square
-    if (BoardManager.cellOccupied(square)) {
-      console.warn(
-        `[PlacementController] Cannot place on occupied square ${square}`,
-      );
-      return false;
-    }
-
-    // Animate and place the card
-    this.manager.placeCard(card, x, y);
-  }
-
-  /**
    *
    */
   applyElementEffects(card) {

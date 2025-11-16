@@ -60,37 +60,4 @@ export const BoardController = {
     console.log(squareID);
     BoardManager.updateUISelection(squareID);
   },
-
-  /**
-   * Get the currently selected square's occupant, if any.
-   * @returns {object|false} occupant or false if empty
-   */
-  getSelectedOccupant() {
-    return BoardManager.cellOccupied(UIManager.selectedSquare);
-  },
-
-  /**
-   * Get the currently selected square's element ID.
-   * @returns {number}
-   */
-  getSelectedElement() {
-    return BoardManager.boardArray[UIManager.selectedSquare - 1].element;
-  },
-
-  /**
-   * Attempt to select a square manually by ID
-   * Only selects if the square is free
-   *
-   * @param {number} squareID
-   * @returns {boolean} true if selection successful
-   */
-  selectSquare(squareID) {
-    const index = squareID - 1;
-    if (!BoardManager.boardArray[index].occupant) {
-      this.updateRowColumnFromSquare(squareID);
-      return true;
-    }
-    console.warn(`[BoardController] Cannot select occupied square ${squareID}`);
-    return false;
-  },
 };
