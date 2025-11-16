@@ -148,19 +148,25 @@ export class Card {
     const normalizedOwner =
       owner === "player" || owner === "ai"
         ? owner
-        : (owner === "blue"
+        : owner === "blue"
           ? "player"
-          : "ai");
+          : "ai";
     this.owner = normalizedOwner;
 
     console.log(this.visuals);
 
-    if (!this.visuals?.container || !this.visuals.colourBitmap) {
-      return normalizedOwner;
-    }
-
+    // Update colours for Player
     this.visuals.colourBitmap.image =
       this.visuals.colourBitmaps[normalizedOwner].image;
+
+    // Update colours for AI
+    this.visuals.container.children.find(
+      (child) => child.name === "colourBitmap",
+    ).image = this.visuals.colourBitmaps[normalizedOwner].image;
+
+    // TODO: Work out why these are different!
+    // NB: Believe to be because of different parent location
+
     this.visuals.container.stage?.update();
 
     console.log(this.owner);
