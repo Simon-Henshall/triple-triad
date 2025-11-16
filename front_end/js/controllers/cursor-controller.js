@@ -3,6 +3,7 @@ import { debug } from "../debug.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { UIController } from "./ui-controller.js";
+import { offsets } from "../constants/offsets.js";
 
 /**
  * High-level controller that bridges cursor state and visual updates.
@@ -105,25 +106,30 @@ export const CursorController = (cursorRenderer) => ({
      * Place the player hand cursor at its initial position.
      */
     place() {
-      CursorManager.playerHand.init();
-      cursorRenderer.playerHand.place();
-
-      // Update info box for the newly selected card
       const playerManager = Game.managers.playerManager;
       const selectedIndex = UIManager.selectedCardNumber ?? 0;
+
+      // Ensure cursor is visible and added to stage
+      cursorRenderer.playerHand.place();
+
+      // Compute how far down the cursor should be, accounting for cards already played
+      const visualCardIndex = selectedIndex + playerManager.playedCardsCount;
+      playerManager.playerHandCursor.y =
+        offsets.playerCursorOffset + visualCardIndex * (offsets.cardHeight / 2);
+
+      // Update info box for selected card
       const newlySelectedCard = playerManager.hand[selectedIndex];
-      console.log(
-        "CursorController.playerHand.place() -> selected card index:",
-        selectedIndex,
-        newlySelectedCard,
-      );
       if (newlySelectedCard) {
         UIManager.selectedCard = newlySelectedCard;
         UIController.updateInfoBox(newlySelectedCard);
       }
 
       if (debug.active) {
-        //console.log("CursorController.playerHand.place() -> infoBox updated");
+        console.log(
+          "CursorController.playerHand.place() -> cursor positioned",
+          selectedIndex,
+          playerManager.playerHandCursor.y,
+        );
       }
     },
 

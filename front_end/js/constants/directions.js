@@ -5,22 +5,22 @@
 export const directionMap = {
   left: {
     prop: "cardLeft",
-    playerStrength: "strengthLeft",
-    opponentStrength: "strengthRight",
+    playerStrength: "left",
+    opponentStrength: "right",
   },
   right: {
     prop: "cardRight",
-    playerStrength: "strengthRight",
-    opponentStrength: "strengthLeft",
+    playerStrength: "right",
+    opponentStrength: "left",
   },
   up: {
     prop: "cardUp",
-    playerStrength: "strengthUp",
-    opponentStrength: "strengthDown",
+    playerStrength: "up",
+    opponentStrength: "down",
   },
   down: {
     prop: "cardDown",
-    playerStrength: "strengthDown",
-    opponentStrength: "strengthUp",
+    playerStrength: "down",
+    opponentStrength: "up",
   },
 };

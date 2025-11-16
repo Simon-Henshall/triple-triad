@@ -1,56 +1,36 @@
 import { BoardManager } from "../managers/board-manager.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { getPlayerTurn } from "../utilities/turn.js";
+import { getPlayerTurn, swapPlayerTurn } from "../utilities/turn.js";
 import { debug } from "../debug.js";
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { PlacementManager } from "../managers/placement-manager.js";
 import { Game } from "../game/game.js";
-import { swapPlayerTurn } from "../utilities/turn.js";
 
 /**
- * Coordinates the placement of cards from the player's hand or AI hand
- * onto the board, including updating the game state, handling adjacency,
- * applying element effects, and swapping turns.
- * Acts as the main entry point for placement-related actions.
+ * Coordinates the logical flow of card placement, bridging player input,
+ * logical state, and rendering.
  */
 export class PlacementController {
+  /**
+   * Initializes the PlacementController with the BoardManager and UIManager.
+   */
   constructor(playerManager) {
     this.playerManager = playerManager;
-    /** @type {FlippingRenderer} Handles card flipping animations */
     this.flippingRenderer = new FlippingRenderer(playerManager);
-
-    /** @type {PlacementManager} Handles the placement animations and completion callbacks */
-    this.manager = undefined; // Instantiated in Game.managers
+    this.manager = undefined; // set in init()
   }
 
+  /**
+   * Handles the application of element effects on the board when a card is played.
+   * @param {Card} card The card being played.
+   */
   init() {
     this.manager = new PlacementManager(this);
   }
 
   /**
-   * Begin placement of a card.
-   *
-   * @param {createjs.Container} card - The card to place.
-   * @param {number} x - X coordinate for placement on the board.
-   * @param {number} y - Y coordinate for placement on the board.
-   */
-  placeCard(card, x, y) {
-    if (!card) {
-      console.warn("Attempted to place a null or undefined card.");
-      return;
-    }
-    BoardManager.checkSelectedSquare();
-    this.manager.placeCard(card, x, y);
-  }
-
-  // ------------------------------
-  // Helper methods for placement logic
-  // ------------------------------
-
-  /**
-   * Apply element effects (bonus or penalty) to the placed card.
-   *
-   * @param {createjs.Container} card - The card being placed.
+   * Returns the PlacementManager instance.
+   * @returns {PlacementManager} The PlacementManager instance.
    */
   applyElementEffects(card) {
     const { selectedSquare, squares } = UIManager;
@@ -62,10 +42,9 @@ export class PlacementController {
   }
 
   /**
-   * Switch the turn between player and AI after card placement.
+   * Switch the turn between player and AI.
    */
   playerTurnSwitch() {
-    // Swap active player
     swapPlayerTurn();
 
     if (debug.active) {
@@ -73,36 +52,49 @@ export class PlacementController {
     }
 
     const currentTurn = getPlayerTurn();
-
     if (currentTurn === "blue") {
       this._preparePlayerTurn();
-    } else if (currentTurn === "red") {
+    } else {
       Game.managers.aiManager.takeTurn();
     }
   }
 
   /**
-   * Prepare for the next player turn.
-   * Resets card selection, UI state, and player cursor.
-   * Called internally by playerTurnSwitch().
+   * Prepares the player for their next turn.
+   * Restores selection and cursor.
    */
   _preparePlayerTurn() {
     const { playerManager } = this;
+    const { manager: placementManager } = this;
+
+    console.log(
+      "[_preparePlayerTurn] hand:",
+      playerManager.hand.map((c, index) => ({
+        i: index,
+        name: c.data.name,
+        y: c.visuals.container.y,
+      })),
+    );
+    console.log(
+      "selectedCardIndex:",
+      playerManager.selectedCardIndex,
+      "UIManager.selectedCardNumber:",
+      UIManager.selectedCardNumber,
+      "selectedCard:",
+      playerManager.selectedCard?.data.name,
+    );
 
     // Reset selection to the first available card
     playerManager.selectedCardIndex = 0;
     playerManager.selectedCard = playerManager.hand[0] ?? undefined;
     UIManager.selectedCardNumber = 0;
     UIManager.selectedCard = playerManager.hand;
+    UIManager.selectedSquare = 5; // Center
 
-    // Default back to centre square
-    BoardManager.resetSelectionToCenter();
+    // Reset grid cursor to last selected square (don't force center)
+    BoardManager.updateUISelection(UIManager.selectedSquare);
 
-    // Increment played cards count
-    // TODO: This badly needs moving
-    playerManager.playedCardsCount++;
-
-    // Restore the player's cursor
+    // Restore the player's hand cursor
     const { cursorController } = Game.controllers;
     cursorController.playerHand.place();
 
@@ -114,7 +106,7 @@ export class PlacementController {
     // Swap back to the card choice phase
     UIManager.playerChoosingCard = true;
 
-    // Reset the card indentation for the player
-    this.manager.renderer.indentAfterPlacement();
+    // Reset card indentation for the player
+    placementManager.renderer.indentAfterPlacement();
   }
 }

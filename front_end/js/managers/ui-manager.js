@@ -1,24 +1,26 @@
+import { offsets } from "../constants/offsets.js";
 import { Game } from "../game/game.js";
 
 export const UIManager = {
   // -------------------------
   // Grid / Selection state
   // -------------------------
+  boardContainer: new createjs.Container(),
+  boardCardsContainer: new createjs.Container(),
   squares: [],
+  selectedSquare: 5,
   selectedRow: 2,
   selectedColumn: 2,
-  selectedSquare: 5,
-  selectedAISquare: undefined,
-  squareLeft: undefined,
-  squareUp: undefined,
-  squareRight: undefined,
-  squareDown: undefined,
+  squareLeft: "none",
+  squareUp: "none",
+  squareRight: "none",
+  squareDown: "none",
   gridCursor: undefined,
 
   // -------------------------
   // Selection board state
   // -------------------------
-  selectionBoard: {
+  selectionBook: {
     container: undefined,
     background: undefined,
     shownCards: undefined,
@@ -32,37 +34,46 @@ export const UIManager = {
     displayedCardColour: undefined,
     selectedHandCardNumber: 0,
     selectedHandCard: undefined,
-    showPreviewCard() {
-      const sb = UIManager.selectionBoard;
 
-      // Only proceed if there is a card to show
-      if (!sb.displayedCard) {
+    showPreviewCard(card) {
+      if (!card || !card.visuals || !card.visuals.container) {
         return;
       }
 
-      // Ensure the container exists
-      if (!sb.container) {
-        sb.container = new createjs.Container();
+      this.hidePreviewCard();
+
+      const original = card.visuals.container;
+      const previewContainer = original.clone(true);
+
+      const bounds = original.getBounds();
+      if (bounds) {
+        previewContainer.scaleX = offsets.scaledPreviewWidth / bounds.width;
+        previewContainer.scaleY = offsets.scaledPreviewHeight / bounds.height;
+      } else {
+        previewContainer.scaleX = previewContainer.scaleY = 1;
       }
 
-      // Ensure the container is on the stage
-      if (!sb.container.parent) {
-        Game.stage?.addChild(sb.container);
-      }
+      previewContainer.x = offsets.previewX;
+      previewContainer.y = offsets.previewY;
 
-      // Ensure the card is inside the container
-      if (!sb.displayedCard.parent) {
-        sb.container.addChild(sb.displayedCard);
-      }
+      UIManager.previewCardContainer = previewContainer;
 
-      // Force stage redraw
-      Game.stage?.update();
+      Game.stage.addChild(previewContainer);
+      Game.stage.update();
     },
 
     hidePreviewCard() {
-      const sb = UIManager.selectionBoard;
-      if (sb.displayedCard && sb.displayedCard.parent) {
-        sb.displayedCard.parent.removeChild(sb.displayedCard);
+      const preview = UIManager.previewCardContainer;
+      if (preview && Game.stage.contains(preview)) {
+        Game.stage.removeChild(preview);
+      }
+      UIManager.previewCardContainer = undefined;
+      Game.stage.update();
+    },
+
+    updateCounts(deckCount, handCount) {
+      if (this.countText) {
+        this.countText.text = `Deck: ${deckCount} | Hand: ${handCount}`;
       }
     },
   },
@@ -106,12 +117,13 @@ export const UIManager = {
   cardImage: undefined,
 
   bringToFront() {
-    // Ensure info box is visible and topmost
     const { infoBox } = UIManager;
-    Game.stage.setChildIndex(
-      infoBox.container,
-      Game.stage.getNumChildren() - 1,
-    );
-    infoBox.container.visible = true;
+    if (infoBox.container) {
+      Game.stage.setChildIndex(
+        infoBox.container,
+        Game.stage.getNumChildren() - 1,
+      );
+      infoBox.container.visible = true;
+    }
   },
 };

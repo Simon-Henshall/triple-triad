@@ -1,6 +1,5 @@
 import { UIManager } from "./ui-manager.js";
 import { offsets } from "../constants/offsets.js";
-import { SelectionBoardUI } from "../renderers/selection-board-ui.js";
 import { BoardManager } from "../managers/board-manager.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
@@ -31,9 +30,9 @@ export const CursorManager = {
       }
 
       CursorManager.player.playerHandSelectionCursor.x =
-        UIManager.selectionBoard.background.x - 40;
+        UIManager.selectionBook.background.x - 40;
       CursorManager.player.playerHandSelectionCursor.y =
-        UIManager.selectionBoard.background.y + 48;
+        UIManager.selectionBook.background.y + 58;
     },
 
     /**
@@ -42,7 +41,7 @@ export const CursorManager = {
      * @param {"up"|"down"|"left"|"right"} direction
      */
     move(direction) {
-      const controller = SelectionBoardUI.controller;
+      const controller = SelectionBook.controller;
       if (!controller) {
         return;
       }
@@ -155,9 +154,8 @@ export const CursorManager = {
 
       player.playerHandCursor.x = player.handOffsetX - 50;
       player.playerHandCursor.y =
-        offsets.handOffsetY +
-        (cardIndex + 1 + (player.playedCardsCount || 0)) *
-          (offsets.cardHeight / 2);
+        offsets.playerCursorOffset +
+        (cardIndex + player.playedCardsCount) * (offsets.cardHeight / 2);
 
       Game.stage.update();
     },
@@ -175,7 +173,7 @@ export const CursorManager = {
         return false;
       }
 
-      const handOffset = offsets.handCardOffset ?? 32;
+      const handOffset = offsets.handCardOffset;
 
       if (direction === "up") {
         if (UIManager.selectedCardNumber > 0) {
@@ -304,12 +302,17 @@ export const CursorManager = {
         }
       }
 
-      BoardManager.checkSelectedSquare();
+      // Update selectedSquare based on row/column
+      UIManager.selectedSquare =
+        (UIManager.selectedRow - 1) * 3 + UIManager.selectedColumn;
+
+      // Update BoardManager/UI
+      BoardManager.updateUISelection(UIManager.selectedSquare);
       Game.stage.update();
 
       if (debug.active) {
         console.log(
-          `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${UIManager.gridCursor.x}, Y:${UIManager.gridCursor.y}`,
+          `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${UIManager.gridCursor.x}, Y:${UIManager.gridCursor.y}, selectedSquare=${UIManager.selectedSquare}`,
         );
       }
     },

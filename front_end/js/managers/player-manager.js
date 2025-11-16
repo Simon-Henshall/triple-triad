@@ -1,22 +1,16 @@
-import { Game } from "../game/game.js";
-import { SelectionBoardRenderer } from "../renderers/selection-board-renderer.js";
-import { debug } from "../debug.js";
-
-/**
- * Represents a single card in the game (logic + visual)
- */
-export class Card {
-  constructor(data, display) {
-    this.data = data; // e.g., { displayName, image, strengthUp, ... }
-    this.display = display; // createjs.Container representing the card visually
-  }
-}
+import { SelectionBookRenderer } from "../selection-book/selection-book-renderer.js";
+import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
 
 /**
  * Manages the player's logical state: deck, hand, played cards, and counts.
  */
 export class PlayerManager {
-  constructor() {
+  /**
+   * Creates an instance of PlayerManager.
+   *
+   * @constructor
+   */
+  constructor({ renderer } = {}) {
     /** @type {Array<Card>} All owned cards in the game */
     this.deck = [];
 
@@ -41,73 +35,81 @@ export class PlayerManager {
     /** index of currently selected card */
     this.selectedCardIndex = 0;
 
-    /** createjs.DisplayObject for cursor above hand */
-    this.playerHandCursor = undefined;
+    this.renderer = renderer;
   }
 
   /**
-   * Add a card to the player's hand (max 5)
-   * @param {Object} cardData
-   * @param {createjs.Container} cardDisplay
-   * @returns {boolean}
+   * Adds a card from deck to hand.
+   * Moves the actual Card instance, respects max hand size.
+   *
+   * @param {Card} card
+   * @returns {boolean} true if added, false otherwise
    */
-  addCardToHand(cardData, cardDisplay) {
-    if (!cardData || !cardDisplay || this.hand.length >= 5) {
+  addCardToHand(card) {
+    const deckCard = this.deck.find((d) => d.data.id === card.data.id);
+    if (!deckCard || deckCard.remaining <= 0) {
+      console.warn(
+        `[Player Manager] No more copies available in deck for ${card.data?.name}`,
+      );
       return false;
     }
 
-    // Update logical count
-    if (cardData.id != undefined) {
-      cardData.count = (cardData.count || 0) - 1;
-    }
+    deckCard.remaining--;
+    deckCard.selectedCount = (deckCard.selectedCount || 0) + 1;
 
-    this.hand.push(new Card(cardData, cardDisplay));
-
-    console.log("Added card to hand:", cardData, cardDisplay);
-    console.log("Current hand is now:", this.hand);
-
-    // Always recalc selection
-    this._recalculateSelection();
-
-    // Refresh board count display
-    if (cardData.id != undefined) {
-      SelectionBoardRenderer.updateBoardCount(cardData.id, 0);
-    }
-
+    this.hand.push(card);
+    console.log("[Player Manager] Added card:", card.data.name);
+    console.log(
+      "[Player Manager] Player hand is now:",
+      this.hand.map((c) => c.data.name),
+    );
     return true;
   }
 
   /**
-   * Remove last card from hand
-   * @returns {createjs.Container|null} removed container
+   * Removes the most recently added card from hand and returns it to the deck.
+   * Accepts a specific card instance to remove (default: top of stack).
+   *
+   * @param {Card} [card] - Optional specific card instance to remove
+   * @returns {boolean} true if removed, false otherwise
    */
-  removeLastCard() {
+  /**
+   * Removes the most recently added card from the player's hand
+   * and returns it to the deck.
+   */
+  removeLastCardFromHand() {
     if (this.hand.length === 0) {
-      return;
+      return false;
     }
 
-    const removedCard = this.hand.pop();
+    // Index before popping
+    const index = this.hand.length - 1;
 
-    console.log("Removed card from hand:", removedCard);
-    console.log("Current hand is now:", this.hand);
+    // Pop the last logical card
+    const card = this.hand.pop();
 
-    if (removedCard.data && removedCard.data.id != undefined) {
-      removedCard.data.count = (removedCard.data.count || 0) + 1;
-      SelectionBoardRenderer.updateBoardCount(removedCard.data.id, 0);
+    // Find the on-stage container for that index
+    const containerOnStage = this.renderer?.cardsInPlayerHand?.[index];
+    if (containerOnStage) {
+      this.renderer.animateCardToHand(containerOnStage, index, true);
     }
 
-    // Animate removal
-    createjs.Tween.get(removedCard.display)
-      .to({ y: Game.stage.canvas.height + 200 }, 500, createjs.Ease.quadIn)
-      .call(() => {
-        removedCard.display.remove();
-        Game.stage.update();
-      });
+    // Return to deck
+    const deckCard = this.deck.find((c) => c.data.id === card.data.id);
+    if (deckCard) {
+      deckCard.remaining = (deckCard.remaining || 0) + 1;
+    }
 
-    // Recalculate selection
+    console.log("[Player Manager] Removed card:", card.data.name);
+    console.log(
+      "[Player Manager] Player hand is now:",
+      this.hand.map((c) => c.data.name),
+    );
+
     this._recalculateSelection();
+    SelectionBookRenderer.populate(SelectionBookUI.controller);
 
-    return removedCard.display;
+    return card;
   }
 
   /**
@@ -121,25 +123,46 @@ export class PlayerManager {
 
   /** Reset hand completely */
   resetHand() {
-    this.hand = [];
-    if (debug.active) {
-      console.log("Resetting player hand from:", this.hand);
+    console.log(
+      "[Player Manager] Resetting player hand from:",
+      this.hand,
+      "to []",
+    );
+
+    // Restore every deck card’s remaining count to its full stock
+    for (const deckCard of this.deck) {
+      deckCard.remaining = deckCard.count; // full reset
+      deckCard.selectedCount = 0;
     }
-    this._recalculateSelection();
+
+    // Clear player hand
+    this.hand = [];
+
+    // Notify UI / SelectionBook to visually reset
+    this.selectionBook?.resetCounts?.();
+
+    // Reset animation indices / visual state
+    this.renderer?.resetHandSlots?.();
+
+    console.log(
+      "[Player Manager] Player hand reset complete. Deck state restored.",
+    );
   }
 
   /**
    * Shift cards down after one is placed
-   * @param {object} offsets - offsets.handCardOffset
+   * @param {object} offset - offsets.handCardOffset
    */
-  shiftCardsDown(offsets) {
+  shiftCardsDown(offset) {
     const count = Math.min(this.cardsAboveSelection, this.hand.length);
 
     for (let index = 0; index < count; index++) {
       const card = this.hand[index];
+      console.log(card);
+      console.log("Offset:", offset);
       if (card) {
-        createjs.Tween.get(card.display).to(
-          { y: card.display.y + offsets.handCardOffset },
+        createjs.Tween.get(card.visuals.container).to(
+          { y: card.visuals.container.y + offset },
           200,
         );
       }

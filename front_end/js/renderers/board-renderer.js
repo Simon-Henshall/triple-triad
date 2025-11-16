@@ -17,7 +17,10 @@ export const BoardRenderer = {
    */
   generateGrid() {
     const elements = BoardManager.generateElements();
-    UIManager.squares = []; // Reset any previous squares
+    UIManager.squares = [];
+
+    // Clear existing squares from the board container
+    UIManager.boardContainer.removeAllChildren();
 
     let squareID = 0;
 
@@ -26,7 +29,7 @@ export const BoardRenderer = {
         squareID++;
         const elementId = elements[squareID - 1];
 
-        // Update BoardManager state
+        // Update board logic state
         BoardManager.boardArray[squareID - 1].element = elementId;
 
         // Create square container
@@ -38,35 +41,40 @@ export const BoardRenderer = {
           container: new createjs.Container(),
         };
 
-        square.container.x = square.x;
-        square.container.y = square.y;
-        square.container.name = String(squareID);
+        const c = square.container;
+        c.x = square.x;
+        c.y = square.y;
+        c.name = String(squareID);
 
-        // If the cell has an element, display it
+        // Element graphic (LOCAL offsets!)
         if (elementId !== 0) {
           const elementGraphic = new createjs.Bitmap(
-            ` ${config.imagePath}/elements/${config.elements[elementId].imagePath}`,
+            `${config.imagePath}/elements/${config.elements[elementId].imagePath}`,
           );
-          elementGraphic.x = offsets.gameOffsetX + 60;
-          elementGraphic.y = offsets.gameOffsetY + 70;
-          square.container.addChild(elementGraphic);
+
+          elementGraphic.x = 60; // <- relative to square
+          elementGraphic.y = 70;
+
+          // store reference for redraw
+          square.elementGraphic = elementGraphic;
+
+          c.addChild(elementGraphic);
         }
 
-        // Add transparent hit area
+        // Hit area (not added as visible child)
         const hit = new createjs.Shape();
         hit.graphics
           .beginFill("#000")
           .drawRect(0, 0, offsets.cellWidth, offsets.cellHeight);
-        square.container.hitArea = hit;
+        c.hitArea = hit;
 
-        // Click handler delegates to debug for now
-        square.container.addEventListener("click", (event) => {
-          debug.clickHandler(event);
-        });
+        // Click handler
+        c.addEventListener("click", debug.clickHandler);
 
-        // Store and add to stage
         UIManager.squares.push(square);
-        Game.stage.addChild(square.container);
+
+        // Add square to board layer (not the stage!)
+        UIManager.boardContainer.addChild(c);
       }
     }
 
@@ -83,27 +91,28 @@ export const BoardRenderer = {
       return;
     }
 
-    // Clear previous children
-    square.container.removeAllChildren();
+    const c = square.container;
+
+    // Remove old element graphic if it exists
+    if (square.elementGraphic && c.contains(square.elementGraphic)) {
+      c.removeChild(square.elementGraphic);
+    }
 
     const elementId = BoardManager.boardArray[squareID - 1].element;
 
-    // Re-add element graphic if exists
-    if (elementId !== 0) {
+    if (elementId === 0) {
+      square.elementGraphic = undefined;
+    } else {
       const elementGraphic = new createjs.Bitmap(
         `${config.imagePath}/elements/${config.elements[elementId].imagePath}`,
       );
-      elementGraphic.x = offsets.gameOffsetX + 60;
-      elementGraphic.y = offsets.gameOffsetY + 70;
-      square.container.addChild(elementGraphic);
-    }
 
-    // Re-add hit area
-    const hit = new createjs.Shape();
-    hit.graphics
-      .beginFill("#000")
-      .drawRect(0, 0, offsets.cellWidth, offsets.cellHeight);
-    square.container.hitArea = hit;
+      elementGraphic.x = 60;
+      elementGraphic.y = 70;
+
+      square.elementGraphic = elementGraphic;
+      c.addChild(elementGraphic);
+    }
 
     Game.stage.update();
   },

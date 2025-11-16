@@ -2,82 +2,62 @@ import { UIManager } from "../managers/ui-manager.js";
 import { BoardManager } from "../managers/board-manager.js";
 
 /**
- * Handles player selection on the board:
- * - Mapping row/column to square ID
- * - Moving selection cursor
- * - Retrieving selected cell info
+ * Handles player selection and navigation on the board
  */
 export const BoardController = {
   /**
-   * TODO: UNCALLED
-   * Move selection in the specified direction.
-   * Updates UIManager.selectedRow/Column and selectedSquare.
+   * Move the selection cursor in a given direction,
+   * skipping occupied squares.
    *
    * @param {"up"|"down"|"left"|"right"} direction
    */
   moveSelection(direction) {
+    let nextSquare = "none";
+
     switch (direction) {
       case "up": {
-        if (UIManager.squareUp !== "none") {
-          UIManager.selectedSquare = UIManager.squareUp;
-          this.updateRowColumnFromSquare(UIManager.selectedSquare);
-        }
+        nextSquare = UIManager.squareUp;
         break;
       }
-
       case "down": {
-        if (UIManager.squareDown !== "none") {
-          UIManager.selectedSquare = UIManager.squareDown;
-          this.updateRowColumnFromSquare(UIManager.selectedSquare);
-        }
+        nextSquare = UIManager.squareDown;
         break;
       }
-
       case "left": {
-        if (UIManager.squareLeft !== "none") {
-          UIManager.selectedSquare = UIManager.squareLeft;
-          this.updateRowColumnFromSquare(UIManager.selectedSquare);
-        }
+        nextSquare = UIManager.squareLeft;
         break;
       }
-
       case "right": {
-        if (UIManager.squareRight !== "none") {
-          UIManager.selectedSquare = UIManager.squareRight;
-          this.updateRowColumnFromSquare(UIManager.selectedSquare);
-        }
+        nextSquare = UIManager.squareRight;
         break;
       }
-
       default: {
-        console.warn(`Unknown direction: ${direction}`);
+        console.warn(`[BoardController] Unknown direction: ${direction}`);
+        return;
+      }
+    }
+
+    // If the target is valid and not occupied, move there
+    if (nextSquare !== "none") {
+      const cellIndex = nextSquare - 1;
+      const cellOccupied = BoardManager.boardArray[cellIndex].occupant;
+      if (cellOccupied) {
+        console.warn(
+          `[BoardController] Target square ${nextSquare} is occupied`,
+        );
+      } else {
+        this.updateRowColumnFromSquare(nextSquare);
       }
     }
   },
 
   /**
-   * Update UIManager.selectedRow and selectedColumn from a squareID
-   * Also updates adjacency for movement.
+   * Update UIManager.selectedRow/Column and adjacency from a squareID
    *
    * @param {number} squareID
    */
   updateRowColumnFromSquare(squareID) {
-    BoardManager.checkSelectedRowColumn(squareID);
-  },
-
-  /**
-   * Get the currently selected square's occupant, if any.
-   * @returns {object|false} occupant or false if empty
-   */
-  getSelectedOccupant() {
-    return BoardManager.cellOccupied(UIManager.selectedSquare);
-  },
-
-  /**
-   * Get the currently selected square's element ID.
-   * @returns {number}
-   */
-  getSelectedElement() {
-    return BoardManager.boardArray[UIManager.selectedSquare - 1].element;
+    console.log(squareID);
+    BoardManager.updateUISelection(squareID);
   },
 };

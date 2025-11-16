@@ -3,60 +3,54 @@ import { directionMap } from "../constants/directions.js";
 import { getPlayerTurn } from "../utilities/turn.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { debug } from "../debug.js";
 
 /**
- * Handles the core logic for flipping cards after placement,
- * including ownership updates, count tracking, and visual refreshes.
+ * FlippingController is responsible for animating cards as they are flipped
+ * between the player's ownerships and the AI's ownership. It uses the FlippingRenderer
+ * to render the animation.
  */
 export class FlippingController {
   /**
-   * TODO: Look into consideration of these paramaters.
-   * @param {Object} [gameState] - Optional reference to the current game state.
-   * @param {Object} [player] - Optional reference to player data.
-   * @param {Object} [aiInstance] - Optional reference to AI data.
+   * FlippingController handles animation of cards as they are flipped
+   * between the player's ownerships and the AI's ownership. It uses the FlippingRenderer
+   * to render the animation.
    */
-  constructor(gameState, player, aiInstance) {
-    this.gameState = gameState;
-    this.player = player;
-    this.ai = aiInstance;
+  constructor() {
+    this.renderer = new FlippingRenderer(Game.stage);
   }
 
   /**
-   * Checks adjacent cards for flip conditions based on attack/defence strengths.
-   *
-   * @param {createjs.Container} card - The card just placed or triggering the flip check.
+   * flipCardsCheck() checks if any adjacent cards can be flipped based on comparing strengths.
+   * If so, it calls flipCardOver() to animate the flip.
+   * @param {Card} card
    */
   flipCardsCheck(card) {
-    for (const [
-      direction,
-      { prop, playerStrength, opponentStrength },
-    ] of Object.entries(directionMap)) {
-      const target = card[prop];
-
-      if (debug.active) {
-        console.log(
-          "FlippingController.flipCardsCheck() -> checking",
-          card,
-          target,
-        );
+    for (const [direction, map] of Object.entries(directionMap)) {
+      const target = card[map.prop];
+      if (!target) {
+        continue;
       }
 
+      console.log(
+        `flipCardsCheck(), Card: ${card.data.name} | owner: ${card.owner} | ` +
+          `Target: ${target.data.name} | target.owner: ${target.owner} | Direction: ${direction}`,
+      );
+
       if (
-        target &&
         card.owner !== target.owner &&
-        card[playerStrength] > target[opponentStrength]
+        card.data.strength[direction] >
+          target.data.strength[map.opponentStrength]
       ) {
+        console.log("Flipping card over!");
         this.flipCardOver(card, direction);
       }
     }
   }
 
   /**
-   * Flips a single adjacent card to the current player's side, updates visuals and counts.
-   *
-   * @param {createjs.Container} card - The source card triggering the flip.
-   * @param {string} direction - Direction to flip ("left", "right", "up", "down").
+   * flipCardOver() updates the ownership of a card and animates the flip.
+   * @param {Card} card - The card to be flipped to the active player's ownership.
+   * @param {string} direction - The direction of the card flip.
    */
   flipCardOver(card, direction) {
     const targetCard = card[directionMap[direction].prop];
@@ -64,18 +58,33 @@ export class FlippingController {
       return;
     }
 
-    // Change ownership
-    targetCard.owner = getPlayerTurn();
+    console.log(
+      "flipCardOver() called | targetCard:",
+      targetCard.data.name,
+      "currentOwner:",
+      targetCard.owner,
+      "newOwner (getPlayerTurn()):",
+      getPlayerTurn(),
+    );
 
-    // Refresh visuals
-    const playerManager = Game.managers.playerManager;
-    const flippingRenderer = new FlippingRenderer(playerManager);
-    flippingRenderer.refreshCardFace(targetCard);
+    if (!targetCard.visuals?.colourBitmaps) {
+      console.warn(
+        `[flipCardOver] colourBitmaps missing for card ${targetCard.data.name}`,
+      );
+      targetCard.initVisuals();
+    }
 
-    // Update ownership counts
+    // Update ownership
+    targetCard.setOwner(getPlayerTurn());
+
+    // Animate flip visually
+    // TODO: FIX THIS
+    //this.renderer.flipCard(targetCard.visuals.container, direction);
+
+    // Update counts
     this.updateOwnershipCounts(1);
 
-    // Maintain UI consistency
+    // Maintain UI references
     const squareObject = UIManager.squares[targetCard.inCell - 1];
     if (squareObject) {
       squareObject.card = targetCard;
@@ -83,12 +92,12 @@ export class FlippingController {
   }
 
   /**
-   * Updates the displayed counts for red and blue card ownership after flips.
-   *
-   * @param {number} flippedCount - Number of cards flipped this turn.
+   * Updates the counts of cards owned by the current player and AI,
+   * after a card has been flipped over.
+   * @param {number} flippedCount - The number of cards flipped over.
    */
   updateOwnershipCounts(flippedCount) {
-    const playerColour = getPlayerTurn();
+    const turn = getPlayerTurn();
     const playerManager = Game.managers.playerManager;
     const aiManager = Game.managers.aiManager;
 
@@ -97,10 +106,9 @@ export class FlippingController {
       red: { player: -1, ai: 1 },
     };
 
-    playerManager.totalBlueCards += delta[playerColour].player * flippedCount;
-    aiManager.totalRedCards += delta[playerColour].ai * flippedCount;
+    playerManager.totalBlueCards += delta[turn].player * flippedCount;
+    aiManager.totalRedCards += delta[turn].ai * flippedCount;
 
-    // Update on-screen text
     aiManager.aiCardCount.text = aiManager.totalRedCards;
     playerManager.playerCardCount.text = playerManager.totalBlueCards;
 

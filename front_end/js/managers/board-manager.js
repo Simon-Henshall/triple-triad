@@ -4,12 +4,16 @@ import { UIManager } from "./ui-manager.js";
 
 /**
  * BoardManager handles the logical state of the 3x3 board,
- * including square occupancy, selected square, and elements.
+ * including square occupancy, selection, and elements.
  */
 export const BoardManager = {
-  boardArray: Array.from({ length: 9 })
-    .fill()
-    .map(() => ({ element: 0, occupant: undefined })),
+  // Each cell has an element and an occupant (card)
+  boardArray: Array.from({ length: 9 }).map(() => ({
+    element: 0,
+    occupant: undefined,
+  })),
+
+  // Tracks free square indices (1-based)
   freeCells: [1, 2, 3, 4, 5, 6, 7, 8, 9],
 
   // Lookup table for square positions and adjacency
@@ -26,52 +30,39 @@ export const BoardManager = {
   ],
 
   /**
-   * Given UIManager.selectedRow and selectedColumn,
-   * sets the current selected square and adjacent squares.
+   * Returns true if a cell is occupied.
+   * @param {number} index 0-based
+   * @returns {boolean}
    */
-  checkSelectedSquare() {
-    for (let index = 0; index < this.squareMap.length; index++) {
-      const s = this.squareMap[index];
-      if (
-        s.row === UIManager.selectedRow &&
-        s.col === UIManager.selectedColumn
-      ) {
-        UIManager.selectedSquare = index + 1;
-        UIManager.squareLeft = s.left;
-        UIManager.squareUp = s.up;
-        UIManager.squareRight = s.right;
-        UIManager.squareDown = s.down;
-        break;
-      }
+  cellOccupied(index) {
+    const cell = this.boardArray[index];
+    return !!cell?.occupant;
+  },
+
+  /**
+   * Get the occupant of a square
+   * @param {number} index 0-based
+   * @returns {object|undefined}
+   */
+  getOccupant(index) {
+    return this.boardArray[index]?.occupant;
+  },
+
+  /**
+   * Reset the board to empty state
+   */
+  resetBoard() {
+    for (const cell of this.boardArray) {
+      cell.element = 0;
+      cell.occupant = undefined;
     }
+
+    this.freeCells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   },
 
   /**
-   * Given UIManager.selectedAISquare, sets row/column and adjacency.
-   */
-  checkSelectedRowColumn() {
-    const s = this.squareMap[UIManager.selectedAISquare - 1];
-    UIManager.selectedRow = s.row;
-    UIManager.selectedColumn = s.col;
-    UIManager.squareLeft = s.left;
-    UIManager.squareUp = s.up;
-    UIManager.squareRight = s.right;
-    UIManager.squareDown = s.down;
-  },
-
-  /**
-   * Checks whether the currently selected square is occupied.
-   * @returns {object|false} Occupant object or false if empty.
-   */
-  cellOccupied() {
-    const cell = this.boardArray[UIManager.selectedSquare - 1];
-    return cell.occupant ?? false;
-  },
-
-  /**
-   * Assign elements to the board in a random way.
-   * Returns an array of element IDs for each cell.
-   * Does not render anything.
+   * Generate random elements for the board
+   * @returns {number[]}
    */
   generateElements() {
     const possibleElements = Object.keys(config.elements);
@@ -90,31 +81,27 @@ export const BoardManager = {
   },
 
   /**
-   * Reset the board to initial empty state.
+   * Returns true if the board is completely filled
+   * @returns {boolean}
    */
-  resetBoard() {
-    for (const cell of this.boardArray) {
-      cell.element = 0;
-      cell.occupant = undefined;
-    }
-    this.freeCells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  },
-
-  getOccupant: (index) => {
-    const cell = BoardManager.boardArray[index - 1];
-    return cell ? (cell.occupant ?? undefined) : undefined;
+  isGameOver() {
+    return this.boardArray.every((cell) => !!cell.occupant);
   },
 
   /**
-   * Check if the game is over (all cells occupied).
-   *
-   * @returns {boolean} True if the board is full, else false.
+   * Given a square index (1-based), update UIManager row/col & adjacency
    */
-  isGameOver() {
-    return BoardManager.boardArray.every((cell) => cell.occupant);
-  },
+  updateUISelection(square1Based) {
+    const s = this.squareMap[square1Based - 1];
 
-  resetSelectionToCenter() {
-    UIManager.selectedSquare = 5;
+    UIManager.selectedSquare = square1Based;
+    UIManager.selectedRow = s.row;
+    UIManager.selectedColumn = s.col;
+
+    // Adjacency values are now direct numbers (or "none")
+    UIManager.squareLeft = s.left;
+    UIManager.squareUp = s.up;
+    UIManager.squareRight = s.right;
+    UIManager.squareDown = s.down;
   },
 };

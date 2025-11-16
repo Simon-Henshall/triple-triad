@@ -2,7 +2,7 @@ import { UIManager } from "../managers/ui-manager.js";
 import { UIRenderer } from "../renderers/ui-renderer.js";
 import { UIController } from "../controllers/ui-controller.js";
 import { BoardRenderer } from "../renderers/board-renderer.js";
-import { pickPlayerCards } from "../utilities/selection.js";
+import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
 
 /**
  * Core game logic container.
@@ -44,7 +44,7 @@ export const Game = {
   startGame() {
     console.log("[Game] Starting new match...");
 
-    const sb = UIManager.selectionBoard;
+    const sb = UIManager.selectionBook;
 
     // Clear selection UI containers
     if (sb?.container) {
@@ -57,7 +57,7 @@ export const Game = {
     // Generate the game board
     BoardRenderer.generateGrid();
 
-    const { playerManager, aiManager } = this.managers;
+    const { playerManager } = this.managers;
     const { playerRenderer } = this.renderers;
 
     // Render player's hand
@@ -92,32 +92,40 @@ export const Game = {
   },
 
   /**
-   * Begin the hand selection phase for the player.
-   * Renders the selection board, picks cards, and
-   * prepares the preview card.
+   * Handles setup and operation of the selection board (hand selection screen)
+   * where the player chooses 5 cards from their deck.
    */
-  startSelection() {
-    console.log("[Game] Starting hand selection...");
-    pickPlayerCards();
-    // TODO: Actually make use of this; note that this does noth
-    /*
-    // Get the cards for hand selection
-    const cards = pickPlayerCards(); // should return array of card objects
+  _setupSelectionBook() {
+    console.log("[Game] Initialising selection book...");
+    const playerManager = Game.managers.playerManager;
 
-    // Initialise selection board
-    SelectionBoardUI.initialise(cards);
+    // Initialise selection book
+    SelectionBookUI.initialise(playerManager.deck, playerManager);
 
-    // Set UI flags
     UIManager.playerSelectingHand = true;
-    UIManager.playerChoosingCard = false;
-    UIManager.playerConfirming = false;
 
-    // Show first card preview
-    UIManager.selectedCard = cards[0] ?? null;
-    UIRenderer.drawInfoBox();
+    // Show preview card for the default selected card
+    const card = SelectionBookUI.getSelectedCard();
+    if (card) {
+      console.log(
+        "[Game] Showing preview card for the default card:",
+        card.data.name,
+      );
+      // Ensure the visuals are ready before previewing
+      const faceBitmap = card.visuals?.faceBitmap;
+      console.log(faceBitmap);
+      if (faceBitmap && faceBitmap.image && !faceBitmap.image.complete) {
+        // Wait for image load
+        faceBitmap.image.addEventListener("load", () => {
+          UIManager.selectionBook.showPreviewCard(card);
+        });
+      } else {
+        UIManager.selectionBook.showPreviewCard(card);
+      }
+    }
 
-    this.stage.update();
-    */
+    // Place the selection cursor on top
+    Game.controllers.cursorController.selection.place();
   },
 
   /**

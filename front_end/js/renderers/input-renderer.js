@@ -47,8 +47,11 @@ export class InputRenderer {
   restorePlayerHandCursor() {
     Game.controllers.cursorController.playerHand.place();
     if (debug.active) {
-      //console.log("Player hand cursor restored");
+      console.log("Player hand cursor restored");
     }
+    // Restore cursors
+    UIManager.playerSelectingPlacement = false;
+    UIManager.playerChoosingCard = true;
   }
 
   /**

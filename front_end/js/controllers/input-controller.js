@@ -7,6 +7,9 @@ import { debug } from "../debug.js";
  * Delegates logic to InputManager and visual updates to InputRenderer.
  */
 export class InputController {
+  /**
+   * Main entry point for the InputController, handling all keyboard input logic.
+   */
   constructor(inputManager) {
     this.manager = inputManager; // already has playerManager etc.
     this.renderer = new InputRenderer();
@@ -22,7 +25,7 @@ export class InputController {
     }
 
     if (UIManager.playerSelectingHand) {
-      this.manager.handlePlayerHandSelection(event, this.renderer);
+      this.manager.handleSelectionBookInput(event);
     } else if (UIManager.playerConfirming) {
       this.manager.handleConfirmation(event, this.renderer);
     } else if (UIManager.playerChoosingCard) {

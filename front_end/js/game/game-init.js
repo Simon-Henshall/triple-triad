@@ -2,9 +2,11 @@ import { config } from "../config.js";
 import { offsets } from "../constants/offsets.js";
 
 import { UIManager } from "../managers/ui-manager.js";
-import { UIRenderer } from "../renderers/ui-renderer.js";
 
 import { Game } from "./game.js";
+import { GameDeck } from "./game-deck.js";
+
+import { createDeck } from "../card/card-factory.js";
 
 // Managers & Controllers
 import { AIManager } from "../managers/ai-manager.js";
@@ -65,11 +67,13 @@ export const gameInit = {
     const aiManager = new AIManager();
     const playerManager = new PlayerManager();
     const playerRenderer = new PlayerRenderer(playerManager);
+    playerManager.renderer = playerRenderer;
     const playerController = new PlayerController(
       playerManager,
       playerRenderer,
       UIManager,
     );
+    const gameDeck = new GameDeck(playerManager, aiManager);
 
     const placementController = new PlacementController(playerManager);
     placementController.init();
@@ -92,6 +96,7 @@ export const gameInit = {
       placementManager,
       inputManager,
       boardManager: BoardManager,
+      gameDeck,
     };
 
     Game.controllers = {
@@ -110,6 +115,7 @@ export const gameInit = {
       playerRenderer,
       playerController,
       placementManager,
+      gameDeck,
       placementController,
       inputManager,
       inputController,
@@ -129,13 +135,10 @@ export const gameInit = {
 
   /**
    * Setup basic UI containers for the game.
-   * Initializes selectionBoard, confirmation, infoBox, and background.
+   * Initializes confirmation, infoBox, and background.
    */
   uiContainers() {
-    UIRenderer.addBackground();
-
-    UIManager.selectionBoard.container = new createjs.Container();
-    UIManager.selectionBoard.shownCards = new createjs.Container();
+    //UIRenderer.addBackground();
     UIManager.confirmation.container = new createjs.Container();
     UIManager.infoBox.container = new createjs.Container();
     UIManager.previouslySelectedCard = [];
@@ -156,15 +159,10 @@ export const gameInit = {
     CursorManager.player = Game.managers.playerManager;
 
     CursorManager.player.playerHandCursor = new createjs.Bitmap(cursorPath);
-    CursorManager.player.playerHandCursor.visible = false;
-
     CursorManager.player.playerHandSelectionCursor = new createjs.Bitmap(
       cursorPath,
     );
-    CursorManager.player.playerHandSelectionCursor.visible = false;
-
     UIManager.gridCursor = new createjs.Bitmap(cursorPath);
-    UIManager.gridCursor.visible = false;
 
     Game.renderers.cursorRenderer = CursorRenderer(
       Game.managers.playerManager,
@@ -186,6 +184,26 @@ export const gameInit = {
   },
 
   /**
+   * Adds the main board background to the game stage.
+   * This is a static image and does not require updates.
+   */
+  addBackground() {
+    // TODO: Combine this
+    const background = new createjs.Bitmap(config.imagePath + "board.png");
+    Game.stage.addChild(background);
+
+    UIManager.boardContainer.x = offsets.gameOffsetX;
+    UIManager.boardContainer.y = offsets.gameOffsetY;
+
+    UIManager.boardCardsContainer.x = offsets.gameOffsetX;
+    UIManager.boardCardsContainer.y = offsets.gameOffsetY;
+
+    Game.stage.addChild(UIManager.boardContainer);
+    Game.stage.addChild(UIManager.boardCardsContainer);
+    Game.stage.update();
+  },
+
+  /**
    * Run full initialization sequence in order:
    * 1. Stage setup
    * 2. Compute offsets
@@ -197,16 +215,39 @@ export const gameInit = {
    * 8. Start hand selection
    */
   all() {
+    console.log("[Game-Init] Setting up canvas...");
     this.stage();
-    this.offsets();
+
+    this.offsets(); // TODO: Clean this up
+    this.uiContainers(); // Required to set up stuff for confirmation UI display
+
+    console.log("[Game-Init] Drawing background...");
+    this.addBackground();
 
     const { inputController } = this.managers();
 
-    this.uiContainers();
     this.handPositions();
     this.cursors();
     this.events(inputController);
 
-    Game.startSelection();
+    console.log("[Game-Init] Starting deck creation...");
+
+    const playerDeck = createDeck("player");
+    const aiDeck = createDeck("ai");
+
+    Game.managers.playerManager.deck = playerDeck;
+    Game.managers.aiManager.deck = aiDeck;
+
+    console.log("[Game-Init] Decks created:", {
+      playerDeck,
+      aiDeck,
+    });
+
+    Game.managers.aiManager.populateHand();
+
+    console.log(
+      "[Game-Init] Initialisation complete. Passing off to [Game]...",
+    );
+    Game._setupSelectionBook(Game.managers.playerManager);
   },
 };

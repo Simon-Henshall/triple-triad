@@ -1,12 +1,10 @@
 import { Game } from "../game/game.js";
-import { getPlayerTurn } from "../utilities/turn.js";
 import { FlippingController } from "../controllers/flipping-controller.js";
 import { PlacementRenderer } from "../renderers/placement-renderer.js";
 import { BoardManager } from "./board-manager.js";
 import { UIManager } from "./ui-manager.js";
-import { debug } from "../debug.js";
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
-import { offsets } from "../constants/offsets.js";
+import { config } from "../config.js";
 
 /**
  * Handles the logical flow of card placement, coordinating animations and
@@ -41,24 +39,49 @@ export class PlacementManager {
    * @param {number} placementX - X coordinate on the board.
    * @param {number} placementY - Y coordinate on the board.
    */
-  placeCard(card, placementX, placementY) {
-    if (!card) {
-      console.warn("Attempted to place a null or undefined card.");
+  placeCard(card, x, y) {
+    console.log(
+      "[PLACEMENT MANAGER] Placing card:",
+      card,
+      "selectedSquare:",
+      UIManager.selectedSquare,
+      "x:",
+      x,
+      "y:",
+      y,
+    );
+    if (!card.visuals?.container) {
       return;
     }
 
-    // Animate the card offscreen first
-    const offscreenX =
-      getPlayerTurn() === "red"
-        ? card.x + offsets.offscreenX
-        : card.x - offsets.offscreenX;
-    const offscreenY = offsets.offscreenY;
-    this.renderer.moveCardOffscreen(card, offscreenX, offscreenY, (c) => {
-      this.onCardOffscreenComplete(c, placementX, placementY);
-    });
+    // Increment played cards count
+    if (card.owner === "player") {
+      this.playerManager.playedCardsCount++;
+    }
 
-    // TODO: Gets called twice
-    //debugger;
+    BoardManager.updateUISelection(UIManager.selectedSquare);
+
+    const cellIndex = UIManager.selectedSquare - 1;
+    if (BoardManager.boardArray[cellIndex].occupant) {
+      return;
+    }
+
+    // Animate card offscreen first
+    this.renderer.moveCardOffscreen(card, () => {
+      // Flip the AI card over
+      if (card.owner === "ai" && !Game.rules.includes("open")) {
+        card.visuals.container.children.find(
+          (child) => child.name === "backBitmap",
+        ).visible = false;
+        card.visuals.container.children.find(
+          (child) => child.name === "colourBitmap",
+        ).visible = true;
+        card.visuals.container.children.find(
+          (child) => child.name === "faceBitmap",
+        ).visible = true;
+      }
+      this.onCardOffscreenComplete(card, x, y);
+    });
 
     // Shift remaining hand cards down
     this.renderer.shiftHandCardsDown();
@@ -72,21 +95,8 @@ export class PlacementManager {
    * @param {number} placementX
    * @param {number} placementY
    */
-  onCardOffscreenComplete(card, placementX, placementY) {
-    // Ensure card is rendered on top
-    Game.stage.setChildIndex(card, Game.stage.getNumChildren() - 1);
-
-    // Update card visuals for red player
-    if (getPlayerTurn() === "red") {
-      const face = card.children?.[1];
-      if (face?.image) {
-        face.image.src = card.frontImage;
-      }
-    }
-    this.flippingRenderer.refreshCardFace(card);
-
-    // Animate card onto board
-    this.renderer.moveCardToBoard(card, placementX, placementY, (c) => {
+  onCardOffscreenComplete(card, x, y) {
+    this.renderer.moveCardToBoard(card, x, y, (c) => {
       this.onCardPlacementComplete(c);
     });
   }
@@ -98,45 +108,46 @@ export class PlacementManager {
    * @param {createjs.Container} card
    */
   onCardPlacementComplete(card) {
-    // Update adjacency references
-    this.setCardAdjacents(card);
+    // Correctly calculate adjacency for this card
+    this.setCardAdjacents(card, UIManager.selectedSquare);
 
-    // Add card to board data structure
-    this.addCardToBoard(card);
+    // Add card to board data
+    this.addCardToBoard(card, UIManager.selectedSquare);
 
-    // Apply element effects based on board square
+    // Apply element effects
     this.controller.applyElementEffects(card);
 
-    // Check for flips triggered by placement
+    // Trigger flips
     this.flippingController.flipCardsCheck(card);
 
-    // Update the stage to reflect all changes
     Game.stage.update();
 
-    // Check for game over
     if (BoardManager.isGameOver()) {
       Game.endGame();
     } else {
-      // Switch to next player turn
       this.controller.playerTurnSwitch();
     }
   }
 
   /**
-   * Determine adjacent cards around the selected square.
+   * Determine adjacent cards around the given square.
    *
    * @param {createjs.Container} card - The card being placed.
+   * @param {number} square - The board square (1-based) to check adjacency for.
    */
   setCardAdjacents(card) {
     const directions = ["Left", "Up", "Right", "Down"];
     for (const direction of directions) {
-      card[`card${direction}`] = BoardManager.getOccupant(
-        UIManager[`square${direction}`],
-      );
-    }
+      const squareIndex = UIManager[`square${direction}`];
 
-    if (debug.active) {
-      console.log(card);
+      // skip "none" squares
+      if (squareIndex === "none") {
+        card[`card${direction}`] = undefined;
+        continue;
+      }
+
+      const occupant = BoardManager.getOccupant(squareIndex - 1); // convert 1-based to 0-based
+      card[`card${direction}`] = occupant ?? undefined;
     }
   }
 
@@ -145,31 +156,55 @@ export class PlacementManager {
    *
    * @param {createjs.Container} card - The card being placed.
    */
-  addCardToBoard(card) {
-    card.inCell = UIManager.selectedSquare;
-    BoardManager.boardArray[UIManager.selectedSquare - 1].occupant = card;
+  addCardToBoard(card, square = UIManager.selectedSquare) {
+    card.inCell = square;
+    BoardManager.boardArray[square - 1].occupant = card;
 
-    const freeCellIndex = BoardManager.freeCells.indexOf(
-      UIManager.selectedSquare,
-    );
-    if (freeCellIndex !== -1) {
-      BoardManager.freeCells.splice(freeCellIndex, 1);
+    // Remove from free cells
+    const freeIndex = BoardManager.freeCells.indexOf(square);
+    if (freeIndex !== -1) {
+      BoardManager.freeCells.splice(freeIndex, 1);
     }
 
-    this.flippingRenderer.refreshCardFace(card);
-    BoardManager.lastPlacedSquare = UIManager.selectedSquare;
+    BoardManager.lastPlacedSquare = square;
+
+    const cardContainer = card.visuals.container;
+
+    const bounds = cardContainer.getBounds();
+    cardContainer.scaleX = config.scaledCardWidth / bounds.width;
+    cardContainer.scaleY = config.scaledCardHeight / bounds.height;
+
+    // Convert GLOBAL → LOCAL
+    const pt = UIManager.boardCardsContainer.globalToLocal(
+      cardContainer.x,
+      cardContainer.y,
+    );
+    cardContainer.x = pt.x;
+    cardContainer.y = pt.y;
+
+    if (!UIManager.boardCardsContainer.contains(cardContainer)) {
+      UIManager.boardCardsContainer.addChild(cardContainer);
+    }
   }
 
+  /**
+   * Check if the card placement is valid.
+   * Valid placement is a square with no adjacent cards of the same element.
+   *
+   * @param {createjs.Container} card - The card being placed.
+   * @param {number} squareIndex - The board square (1-based) to check validity for.
+   * @returns {valid: boolean, adjacentCards: {Left: createjs.Container, Up: createjs.Container, Right: createjs.Container, Down: createjs.Container}}
+   */
   applyElementEffects(card, squareElement) {
     if (!squareElement) {
       return { modified: false };
     }
 
     const modifier = card.element === squareElement ? 1 : -1;
-    card.strengthLeft += modifier;
-    card.strengthUp += modifier;
-    card.strengthRight += modifier;
-    card.strengthDown += modifier;
+    card.data.strength.left += modifier;
+    card.data.strength.up += modifier;
+    card.data.strength.right += modifier;
+    card.data.strength.down += modifier;
 
     return {
       modified: true,

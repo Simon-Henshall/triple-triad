@@ -14,10 +14,6 @@ export const UIRenderer = {
   // Add background to the stage
   // -------------------------
 
-  /**
-   * Adds the main board background to the game stage.
-   * This is a static image and does not require updates.
-   */
   addBackground() {
     const background = new createjs.Bitmap(config.imagePath + "board.png");
     background.x = 0;
@@ -145,7 +141,7 @@ export const UIRenderer = {
 
     // Update selected card name
     if (ui.infoBox.cardName && card) {
-      ui.infoBox.cardName.text = card.display.name;
+      ui.infoBox.cardName.text = card.data.name;
 
       const verticalOffset = 30 / 2 + 10;
       ui.infoBox.cardName.x =
