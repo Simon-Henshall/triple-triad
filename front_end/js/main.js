@@ -1,4 +1,4 @@
-import { gameInit } from "./game/game-init.js";
+import { gameInit } from "./shared/game/game-init.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {

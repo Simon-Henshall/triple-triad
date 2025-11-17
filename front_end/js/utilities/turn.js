@@ -1,4 +1,4 @@
-import { UIManager } from "../ui/ui-manager";
+import { UIManager } from "../shared/ui/ui-manager.js";
 
 /**
  * Get the current player's turn colour.

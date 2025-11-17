@@ -1,8 +1,8 @@
-import { BoardManager } from "../board/board-manager.js";
-import { UIManager } from "../ui/ui-manager.js";
+import { BoardManager } from "../shared/board/board-manager.js";
+import { UIManager } from "../shared/ui/ui-manager.js";
 import { getPlayerTurn } from "./turn.js";
 import { config } from "../constants/config.js";
-import { Game } from "../game/game.js";
+import { Game } from "../shared/game/game.js";
 
 export const debug = {
   active: true, // Toggle for debug mode
