@@ -1,8 +1,8 @@
 import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
-import { UIManager } from "./ui-manager.js";
-import { ConfirmationController } from "../controllers/confirmation-controller.js";
+import { UIManager } from "../ui/ui-manager.js";
+import { ConfirmationController } from "../confirmation/confirmation-controller.js";
 import { Game } from "../game/game.js";
-import { CursorManager } from "./cursor-manager.js";
+import { CursorManager } from "../cursor/cursor-manager.js";
 
 /**
  * InputManager class, responsible for handling player input and

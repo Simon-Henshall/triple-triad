@@ -1,6 +1,6 @@
 import { offsets } from "../constants/offsets.js";
 import { Game } from "../game/game.js";
-import { debug } from "../debug.js";
+import { debug } from "../utilities/debug.js";
 
 export const UIManager = {
   // -------------------------

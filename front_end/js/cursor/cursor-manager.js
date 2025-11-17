@@ -1,8 +1,8 @@
-import { UIManager } from "./ui-manager.js";
+import { UIManager } from "../ui/ui-manager.js";
 import { offsets } from "../constants/offsets.js";
-import { BoardManager } from "../managers/board-manager.js";
+import { BoardManager } from "../board/board-manager.js";
 import { Game } from "../game/game.js";
-import { debug } from "../debug.js";
+import { debug } from "../utilities/debug.js";
 
 /**
  * Manages the logical state of all cursors in the game.

@@ -1,5 +1,5 @@
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/ui-manager.js";
+import { UIManager } from "../ui/ui-manager.js";
 
 const ROW_HEIGHT = 35;
 const CARD_ROW_START_Y = 40;

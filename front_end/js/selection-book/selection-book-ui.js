@@ -1,4 +1,4 @@
-import { UIManager } from "../managers/ui-manager.js";
+import { UIManager } from "../ui/ui-manager.js";
 import { SelectionBookRenderer } from "./selection-book-renderer.js";
 import { SelectionBookController } from "./selection-book-controller.js";
 import { Game } from "../game/game.js";

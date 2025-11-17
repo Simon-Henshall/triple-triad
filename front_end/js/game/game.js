@@ -1,6 +1,6 @@
-import { UIManager } from "../managers/ui-manager.js";
-import { UIRenderer } from "../renderers/ui-renderer.js";
-import { BoardRenderer } from "../renderers/board-renderer.js";
+import { UIManager } from "../ui/ui-manager.js";
+import { UIRenderer } from "../ui/ui-renderer.js";
+import { BoardRenderer } from "../board/board-renderer.js";
 import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
 
 /**

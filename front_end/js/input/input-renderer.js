@@ -1,5 +1,5 @@
 import { Game } from "../game/game.js";
-import { debug } from "../debug.js";
+import { debug } from "../utilities/debug.js";
 
 /**
  * Handles visual updates triggered by player input.

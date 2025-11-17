@@ -1,29 +1,29 @@
-import { config } from "../config.js";
+import { config } from "../constants/config.js";
 import { offsets } from "../constants/offsets.js";
 
-import { UIManager } from "../managers/ui-manager.js";
+import { UIManager } from "../ui/ui-manager.js";
 
 import { Game } from "./game.js";
 import { GameDeck } from "./game-deck.js";
 
 import { createDeck } from "../card/card-factory.js";
 
-// Managers & Controllers
-import { AIManager } from "../managers/ai-manager.js";
-import { PlayerManager } from "../managers/player-manager.js";
-import { PlayerRenderer } from "../renderers/player-renderer.js";
+import { AIManager } from "../ai/ai-manager.js";
 
-import { PlacementManager } from "../managers/placement-manager.js";
-import { PlacementController } from "../controllers/placement-controller.js";
+import { PlayerManager } from "../player/player-manager.js";
+import { PlayerRenderer } from "../player/player-renderer.js";
 
-import { InputManager } from "../managers/input-manager.js";
-import { InputController } from "../controllers/input-controller.js";
+import { PlacementManager } from "../placement/placement-manager.js";
+import { PlacementController } from "../placement/placement-controller.js";
 
-import { CursorManager } from "../managers/cursor-manager.js";
-import { CursorRenderer } from "../renderers/cursor-renderer.js";
-import { CursorController } from "../controllers/cursor-controller.js";
+import { InputManager } from "../input/input-manager.js";
+import { InputController } from "../input/input-controller.js";
 
-import { BoardManager } from "../managers/board-manager.js";
+import { CursorManager } from "../cursor/cursor-manager.js";
+import { CursorRenderer } from "../cursor/cursor-renderer.js";
+import { CursorController } from "../cursor/cursor-controller.js";
+
+import { BoardManager } from "../board/board-manager.js";
 
 /**
  * Handles full initialization of the game environment:

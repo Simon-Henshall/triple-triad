@@ -1,9 +1,9 @@
-import { BoardManager } from "../managers/board-manager.js";
-import { UIManager } from "../managers/ui-manager.js";
+import { BoardManager } from "../board/board-manager.js";
+import { UIManager } from "../ui/ui-manager.js";
 import { getPlayerTurn, swapPlayerTurn } from "../utilities/turn.js";
-import { debug } from "../debug.js";
-import { FlippingRenderer } from "../renderers/flipping-renderer.js";
-import { PlacementManager } from "../managers/placement-manager.js";
+import { debug } from "../utilities/debug.js";
+import { FlippingRenderer } from "../flipping/flipping-renderer.js";
+import { PlacementManager } from "../placement/placement-manager.js";
 import { Game } from "../game/game.js";
 
 /**

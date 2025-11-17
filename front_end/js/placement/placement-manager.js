@@ -1,10 +1,10 @@
 import { Game } from "../game/game.js";
-import { FlippingController } from "../controllers/flipping-controller.js";
-import { PlacementRenderer } from "../renderers/placement-renderer.js";
-import { BoardManager } from "./board-manager.js";
-import { UIManager } from "./ui-manager.js";
-import { FlippingRenderer } from "../renderers/flipping-renderer.js";
-import { config } from "../config.js";
+import { FlippingController } from "../flipping/flipping-controller.js";
+import { PlacementRenderer } from "../placement/placement-renderer.js";
+import { BoardManager } from "../board/board-manager.js";
+import { UIManager } from "../ui/ui-manager.js";
+import { FlippingRenderer } from "../flipping/flipping-renderer.js";
+import { config } from "../constants/config.js";
 import { offsets } from "../constants/offsets.js";
 
 /**

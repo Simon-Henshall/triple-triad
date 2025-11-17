@@ -1,4 +1,4 @@
-import { config } from "../config";
+import { config } from "../constants/config";
 
 // eslint-disable-next-line no-commented-code/no-commented-code
 /**

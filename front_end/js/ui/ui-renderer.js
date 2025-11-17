@@ -1,7 +1,7 @@
-import { config } from "../config.js";
+import { config } from "../constants/config.js";
 import { offsets } from "../constants/offsets.js";
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/ui-manager.js";
+import { UIManager } from "./ui-manager.js";
 
 // Info box layout constants
 const INFO_BOX_WIDTH = 420;

@@ -1,6 +1,6 @@
 import { offsets } from "../constants/offsets.js";
-import { BoardManager } from "../managers/board-manager.js";
-import { UIManager } from "../managers/ui-manager.js";
+import { BoardManager } from "../board/board-manager.js";
+import { UIManager } from "../ui/ui-manager.js";
 import { Game } from "../game/game.js";
 
 /**

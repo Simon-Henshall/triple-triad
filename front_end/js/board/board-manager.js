@@ -1,6 +1,6 @@
-import { config } from "../config.js";
+import { config } from "../constants/config.js";
 import { shuffle } from "../utilities/shuffle.js";
-import { UIManager } from "./ui-manager.js";
+import { UIManager } from "../ui/ui-manager.js";
 
 /**
  * BoardManager handles the logical state of the 3x3 board,

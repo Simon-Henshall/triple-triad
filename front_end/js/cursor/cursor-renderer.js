@@ -1,7 +1,7 @@
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/ui-manager.js";
-import { UIRenderer } from "./ui-renderer.js";
-import { debug } from "../debug.js";
+import { UIManager } from "../ui/ui-manager.js";
+import { UIRenderer } from "../ui/ui-renderer.js";
+import { debug } from "../utilities/debug.js";
 
 /**
  * Handles all visual rendering of cursors.

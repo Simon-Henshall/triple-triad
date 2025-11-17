@@ -1,10 +1,10 @@
-import { CursorManager } from "../managers/cursor-manager.js";
-import { debug } from "../debug.js";
+import { CursorManager } from "../cursor/cursor-manager.js";
+import { debug } from "../utilities/debug.js";
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/ui-manager.js";
-import { UIRenderer } from "../renderers/ui-renderer.js";
+import { UIManager } from "../ui/ui-manager.js";
+import { UIRenderer } from "../ui/ui-renderer.js";
 import { offsets } from "../constants/offsets.js";
-import { config } from "../config.js";
+import { config } from "../constants/config.js";
 
 /**
  * High-level controller that bridges cursor state and visual updates.

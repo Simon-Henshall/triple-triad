@@ -1,9 +1,9 @@
 import { offsets } from "../constants/offsets.js";
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/ui-manager.js";
-import { BoardManager } from "../managers/board-manager.js";
-import { debug } from "../debug.js";
-import { config } from "../config.js";
+import { UIManager } from "../ui/ui-manager.js";
+import { BoardManager } from "../board/board-manager.js";
+import { debug } from "../utilities/debug.js";
+import { config } from "../constants/config.js";
 
 /**
  * Handles all visual rendering of the board,

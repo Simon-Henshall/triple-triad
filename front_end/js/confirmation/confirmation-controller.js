@@ -1,6 +1,6 @@
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/ui-manager.js";
-import { UIRenderer } from "../renderers/ui-renderer.js";
+import { UIManager } from "../ui/ui-manager.js";
+import { UIRenderer } from "../ui/ui-renderer.js";
 
 /**
  * Controller responsible for showing and managing the

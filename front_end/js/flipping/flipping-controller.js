@@ -1,8 +1,8 @@
-import { FlippingRenderer } from "../renderers/flipping-renderer.js";
+import { FlippingRenderer } from "./flipping-renderer.js";
 import { directionMap } from "../constants/directions.js";
 import { getPlayerTurn } from "../utilities/turn.js";
 import { Game } from "../game/game.js";
-import { UIManager } from "../managers/ui-manager.js";
+import { UIManager } from "../ui/ui-manager.js";
 
 /**
  * FlippingController is responsible for animating cards as they are flipped

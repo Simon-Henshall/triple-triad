@@ -1,6 +1,6 @@
-import { UIManager } from "../managers/ui-manager.js";
-import { InputRenderer } from "../renderers/input-renderer.js";
-import { debug } from "../debug.js";
+import { UIManager } from "../ui/ui-manager.js";
+import { InputRenderer } from "../input/input-renderer.js";
+import { debug } from "../utilities/debug.js";
 
 /**
  * Top-level controller for keyboard input.

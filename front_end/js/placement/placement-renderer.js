@@ -1,7 +1,7 @@
 import { Game } from "../game/game.js";
 import { offsets } from "../constants/offsets.js";
 import { getPlayerTurn } from "../utilities/turn.js";
-import { UIManager } from "../managers/ui-manager.js";
+import { UIManager } from "../ui/ui-manager.js";
 
 /**
  * Handles all visual animations and effects for card placement,
