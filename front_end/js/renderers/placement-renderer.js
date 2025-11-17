@@ -43,16 +43,18 @@ export class PlacementRenderer {
    * Animate a card moving offscreen (before being placed on the board).
    *
    * @param {createjs.Container} card - The card to animate.
-   * @param {number} offscreenX - Target X coordinate offscreen.
-   * @param {number} offscreenY - Target Y coordinate offscreen.
    * @param {(card: createjs.Container) => void} [onComplete] - Callback when animation finishes.
    */
   moveCardOffscreen(card, onComplete) {
     console.log("moveCardOffscreen:", card);
 
+    const offScreenX =
+      getPlayerTurn() === "blue"
+        ? offsets.playerOffscreenX
+        : offsets.aiOffscreenX;
+
     createjs.Tween.get(card.visuals.container)
-      .to({ x: offsets.offscreenX, y: offsets.offscreenY }, 500)
-      // .to({ x: offsets.aiOffscreenX / playerOffscreenX, y: offsets.offscreenY }, 500)
+      .to({ x: offScreenX, y: offsets.offscreenY }, 500)
       .call(() => onComplete?.(card));
   }
 

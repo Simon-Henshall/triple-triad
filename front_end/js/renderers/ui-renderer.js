@@ -41,7 +41,7 @@ export const UIRenderer = {
       "90px Arial",
       "#ffffff",
     );
-    aiManager.aiCardCount.x = aiManager.handOffsetX + offsets.cardWidth / 3;
+    aiManager.aiCardCount.x = aiManager.handOffsetX + offsets.cardWidth / 2; // Center of AI card
     aiManager.aiCardCount.y = Game.stageHeight - 15;
     aiManager.aiCardCount.textBaseline = "alphabetic";
     Game.stage.addChild(aiManager.aiCardCount);
@@ -52,7 +52,8 @@ export const UIRenderer = {
       "90px Arial",
       "#ffffff",
     );
-    playerManager.playerCardCount.x = Game.stageWidth - offsets.cardWidth;
+    playerManager.playerCardCount.x =
+      playerManager.handOffsetX + offsets.cardWidth / 1.5; // Center of player card
     playerManager.playerCardCount.y = Game.stageHeight - 15;
     playerManager.playerCardCount.textBaseline = "alphabetic";
     Game.stage.addChild(playerManager.playerCardCount);

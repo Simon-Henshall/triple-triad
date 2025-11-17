@@ -4,6 +4,7 @@ import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
 import { UIController } from "./ui-controller.js";
 import { offsets } from "../constants/offsets.js";
+import { config } from "../config.js";
 
 /**
  * High-level controller that bridges cursor state and visual updates.
@@ -115,7 +116,9 @@ export const CursorController = (cursorRenderer) => ({
       // Compute how far down the cursor should be, accounting for cards already played
       const visualCardIndex = selectedIndex + playerManager.playedCardsCount;
       playerManager.playerHandCursor.y =
-        offsets.playerCursorOffset + visualCardIndex * (offsets.cardHeight / 2);
+        offsets.playerCursorOffset +
+        visualCardIndex * (config.scaledCardHeight / 2); // TODO: Work out where there is slight drift upwards here
+      // NB: This should be the same as (visualCardIndex * (offsets.cellHeight - offsets.cardOffsetY * 2)) / 2
 
       // Update info box for selected card
       const newlySelectedCard = playerManager.hand[selectedIndex];

@@ -67,19 +67,11 @@ export class FlippingController {
       getPlayerTurn(),
     );
 
-    if (!targetCard.visuals?.colourBitmaps) {
-      console.warn(
-        `[flipCardOver] colourBitmaps missing for card ${targetCard.data.name}`,
-      );
-      targetCard.initVisuals();
-    }
-
     // Update ownership
     targetCard.setOwner(getPlayerTurn());
 
     // Animate flip visually
-    // TODO: FIX THIS
-    //this.renderer.flipCard(targetCard.visuals.container, direction);
+    this.renderer.flipCard(targetCard.visuals.container, direction);
 
     // Update counts
     this.updateOwnershipCounts(1);

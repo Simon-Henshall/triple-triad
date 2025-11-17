@@ -34,10 +34,6 @@ export class Card {
     this.visuals = {
       faceBitmap: undefined,
       colourBitmap: undefined,
-      colourBitmaps: {
-        player: new createjs.Bitmap(`${config.imagePath}cards/blue.png`),
-        ai: new createjs.Bitmap(`${config.imagePath}cards/red.png`),
-      },
       backBitmap: undefined,
       container: undefined,
     };
@@ -55,6 +51,7 @@ export class Card {
    */
   initVisuals() {
     const imagePath = this.data.imagePath;
+    const colour = this.owner === "player" ? "blue" : "red";
 
     // Face & back
     this.visuals.faceBitmap = new createjs.Bitmap(imagePath);
@@ -65,7 +62,9 @@ export class Card {
     );
     this.visuals.backBitmap.name = "backBitmap";
 
-    this.visuals.colourBitmap = this.visuals.colourBitmaps[this.owner];
+    this.visuals.colourBitmap = new createjs.Bitmap(
+      `${config.imagePath}cards/${colour}.png`,
+    );
     this.visuals.colourBitmap.name = "colourBitmap";
 
     // Container
@@ -146,37 +145,21 @@ export class Card {
    *  @param {"player"|"ai"} owner
    */
   setOwner(owner) {
-    // TODO: Normalise this manually
-    let normalisedOwner;
-    if (owner === "player" || owner === "ai") {
-      normalisedOwner = owner;
-    } else if (owner === "blue") {
-      normalisedOwner = "player";
-    } else {
-      normalisedOwner = "ai";
-    }
-    this.owner = normalisedOwner;
+    this.owner = owner;
 
-    // Update colours for Player
-    this.visuals.colourBitmap.image =
-      this.visuals.colourBitmaps[normalisedOwner].image;
-
-    // Update colours for AI
+    // Update colours for flipped card
     this.visuals.container.children.find(
       (child) => child.name === "colourBitmap",
-    ).image = this.visuals.colourBitmaps[normalisedOwner].image;
-
-    // TODO: Work out why these are different!
-    // NB: Believe to be because of different parent location
+    ).image.src = `${config.imagePath}cards/${owner}.png`;
 
     this.visuals.container.stage?.update();
 
     console.log(
-      `[Card] Setting owner to ${normalisedOwner} for card ${this.data.name}` +
+      `[Card] Setting owner to ${owner} for card ${this.data.name}` +
         ` (${this.data.id})`,
     );
 
-    return normalisedOwner;
+    return owner;
   }
 
   /**

@@ -50,15 +50,6 @@ export const gameInit = {
   },
 
   /**
-   * Compute card dimensions based on grid offsets.
-   * Populates offsets.cardWidth and offsets.cardHeight.
-   */
-  offsets() {
-    offsets.cardWidth = offsets.cellWidth - offsets.cardOffsetX * 2;
-    offsets.cardHeight = offsets.cellHeight - offsets.cardOffsetY * 2;
-  },
-
-  /**
    * Instantiate all core managers, controllers, and renderers.
    * Wires necessary references to Game object.
    * @returns {Object} References to created managers/controllers/renderers
@@ -188,18 +179,13 @@ export const gameInit = {
    * This is a static image and does not require updates.
    */
   addBackground() {
-    // TODO: Combine this
     const background = new createjs.Bitmap(config.imagePath + "board.png");
     Game.stage.addChild(background);
 
     UIManager.boardContainer.x = offsets.gameOffsetX;
     UIManager.boardContainer.y = offsets.gameOffsetY;
+    background.stage.addChild(UIManager.boardContainer);
 
-    UIManager.boardCardsContainer.x = offsets.gameOffsetX;
-    UIManager.boardCardsContainer.y = offsets.gameOffsetY;
-
-    Game.stage.addChild(UIManager.boardContainer);
-    Game.stage.addChild(UIManager.boardCardsContainer);
     Game.stage.update();
   },
 
@@ -218,7 +204,6 @@ export const gameInit = {
     console.log("[Game-Init] Setting up canvas...");
     this.stage();
 
-    this.offsets(); // TODO: Clean this up
     this.uiContainers(); // Required to set up stuff for confirmation UI display
 
     console.log("[Game-Init] Drawing background...");

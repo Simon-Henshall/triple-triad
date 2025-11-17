@@ -6,7 +6,6 @@ export const UIManager = {
   // Grid / Selection state
   // -------------------------
   boardContainer: new createjs.Container(),
-  boardCardsContainer: new createjs.Container(),
   squares: [],
   selectedSquare: 5,
   selectedRow: 2,

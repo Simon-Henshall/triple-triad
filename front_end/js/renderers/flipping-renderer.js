@@ -15,30 +15,26 @@ export class FlippingRenderer {
    * @param {string} direction - Direction to flip
    */
   flipCard(container, direction) {
-    // container is now `card.visuals.container`
-    const sliceContainer = new createjs.Container();
-    const faceBitmap =
-      container.getChildByName("faceBitmap") || container.getChildAt(2);
-    const sliceWidth = faceBitmap.image.width * container.scaleX;
-    const sliceHeight = faceBitmap.image.height * container.scaleY;
-
-    sliceContainer.x = container.x + sliceWidth / 2;
-    sliceContainer.y = container.y;
-
-    container.sourceRect = new createjs.Rectangle(0, 0, 0, sliceWidth);
-    container.cache(0, 0, sliceWidth, sliceHeight);
-
-    sliceContainer.addChild(container);
-    this.stage.addChild(sliceContainer);
-
-    this._animateFlip(
-      container,
-      sliceContainer,
-      direction,
-      0,
-      container.x,
-      container.y,
-    );
+    // TODO: FIX THIS
+    // const sliceContainer = new createjs.Container();
+    // const faceBitmap =
+    //   container.getChildByName("faceBitmap") || container.getChildAt(2);
+    // const sliceWidth = faceBitmap.image.width * container.scaleX;
+    // const sliceHeight = faceBitmap.image.height * container.scaleY;
+    // sliceContainer.x = container.x + sliceWidth / 2;
+    // sliceContainer.y = container.y;
+    // container.sourceRect = new createjs.Rectangle(0, 0, 0, sliceWidth);
+    // container.cache(0, 0, sliceWidth, sliceHeight);
+    // sliceContainer.addChild(container);
+    // this.stage.addChild(sliceContainer);
+    // this._animateFlip(
+    //   container,
+    //   sliceContainer,
+    //   direction,
+    //   0,
+    //   container.x,
+    //   container.y,
+    // );
   }
 
   /**

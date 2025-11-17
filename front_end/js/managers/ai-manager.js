@@ -28,9 +28,6 @@ export class AIManager {
     /** @type {number} Index offset for the next card to be played */
     this.cardsAboveSelection = 0;
 
-    /** @type {Array<AICard>} Essentially just totalRedCards - TODO: Improve this linkage */
-    this.aiCardCount = [];
-
     /** @type {number} Delay between AI decision and placement (ms) */
     this.aiDelay = 1000;
   }

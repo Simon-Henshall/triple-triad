@@ -175,15 +175,15 @@ export class PlacementManager {
     cardContainer.scaleY = config.scaledCardHeight / bounds.height;
 
     // Convert GLOBAL → LOCAL
-    const pt = UIManager.boardCardsContainer.globalToLocal(
+    const pt = UIManager.boardContainer.globalToLocal(
       cardContainer.x,
       cardContainer.y,
     );
     cardContainer.x = pt.x;
     cardContainer.y = pt.y;
 
-    if (!UIManager.boardCardsContainer.contains(cardContainer)) {
-      UIManager.boardCardsContainer.addChild(cardContainer);
+    if (!UIManager.boardContainer.contains(cardContainer)) {
+      UIManager.boardContainer.addChild(cardContainer);
     }
   }
 
