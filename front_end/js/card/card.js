@@ -1,5 +1,6 @@
 import { config } from "../config";
 
+// eslint-disable-next-line no-commented-code/no-commented-code
 /**
  *  Card class representing a game card with properties and visuals.
  *  @module Card

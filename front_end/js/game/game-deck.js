@@ -69,12 +69,4 @@ export class GameDeck {
 
     return card;
   }
-
-  /**
-   * Update preview card shown on selection board
-   * @param {Card} card
-   */
-  setPreviewCard(card) {
-    this.previewCard = card;
-  }
 }

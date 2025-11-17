@@ -1,6 +1,6 @@
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { UIController } from "../controllers/ui-controller.js";
+import { UIRenderer } from "./ui-renderer.js";
 import { debug } from "../debug.js";
 
 /**
@@ -57,7 +57,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       if (controller && typeof controller.clampSelectionToPage === "function") {
         SelectionBookRenderer.populate(controller);
       } else {
-        console.warn("SelectionBook controller missing or uninitialized.");
+        console.warn("SelectionBook controller missing or uninitialised.");
       }
     },
 
@@ -151,7 +151,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
       UIManager.previouslySelectedCard = UIManager.selectedCard;
       UIManager.selectedCard = playerManager.hand[UIManager.selectedCardNumber];
 
-      UIController.updateInfoBox(UIManager.selectedCard);
+      UIRenderer.updateInfoBox(UIManager.selectedCard);
       playerRenderer.indentSelectedCard(UIManager.selectedCard);
     },
 

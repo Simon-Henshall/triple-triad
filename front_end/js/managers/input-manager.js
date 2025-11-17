@@ -2,8 +2,6 @@ import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
 import { UIManager } from "./ui-manager.js";
 import { ConfirmationController } from "../controllers/confirmation-controller.js";
 import { Game } from "../game/game.js";
-import { BoardManager } from "./board-manager.js";
-import { offsets } from "../constants/offsets.js";
 import { CursorManager } from "./cursor-manager.js";
 
 /**
@@ -15,15 +13,9 @@ export class InputManager {
    * Manages player input and coordinates logical state updates,
    * visual rendering, and animation for the player's hand.
    */
-  constructor(
-    playerManager,
-    playerRenderer,
-    playerController,
-    placementController,
-  ) {
+  constructor(playerManager, playerRenderer, placementController) {
     this.playerManager = playerManager;
     this.playerRenderer = playerRenderer;
-    this.playerController = playerController;
     this.placementController = placementController;
   }
 
@@ -228,7 +220,7 @@ export class InputManager {
    * Handle player hand cursor movement and card play selection.
    * @param {KeyboardEvent} event
    */
-  handlePlayerCardChoice(event, renderer) {
+  handlePlayerCardChoice(event) {
     switch (event.key) {
       case "ArrowUp": {
         Game.controllers.cursorController.playerHand.move("up");
@@ -239,7 +231,7 @@ export class InputManager {
         break;
       }
       case "Enter": {
-        this.playSelectedCard(renderer);
+        this.playSelectedCard();
         break;
       }
     }
@@ -250,7 +242,7 @@ export class InputManager {
    * @param {KeyboardEvent} event
    * @param {InputRenderer} renderer
    */
-  handlePlacement(event, renderer) {
+  handlePlacement(event) {
     switch (event.key) {
       case "ArrowLeft": {
         Game.controllers.cursorController.grid.move("left");
@@ -269,13 +261,13 @@ export class InputManager {
         break;
       }
       case "Enter": {
-        this.placeCardOnBoard();
+        Game.controllers.placementController.manager.placeCardOnBoard();
         break;
       }
       case "Backspace":
       case "Escape": {
-        renderer.toggleInfoBox(true);
-        renderer.restorePlayerHandCursor();
+        UIManager.toggleInfoBox(true);
+        UIManager.restorePlayerHandCursor();
         Game.controllers.cursorController.grid.remove();
         break;
       }
@@ -286,7 +278,7 @@ export class InputManager {
    * Play the selected card from the player's hand.
    * Moves cursors and prepares for placement.
    */
-  playSelectedCard(renderer) {
+  playSelectedCard() {
     // Remove hand cursor
     Game.controllers.cursorController.playerHand.remove();
 
@@ -298,7 +290,7 @@ export class InputManager {
     Game.controllers.cursorController.grid.place();
 
     // Immediately hide info box now that placement is active
-    renderer.toggleInfoBox(false);
+    UIManager.toggleInfoBox(false);
 
     // Remove hand cursor from stage
     Game.stage.removeChild(this.playerManager.playerHandCursor);
@@ -313,42 +305,5 @@ export class InputManager {
       console.warn("No card selected!");
       return;
     }
-  }
-
-  /**
-   * Place the currently selected card onto the game board.
-   */
-  placeCardOnBoard() {
-    const selectedCard = this.playerManager.hand[UIManager.selectedCardNumber];
-    console.log("SELECTED", selectedCard);
-    console.log("HAND", this.playerManager.hand);
-    if (!selectedCard) {
-      return console.warn("No card selected!");
-    }
-
-    const cellIndex = UIManager.selectedSquare - 1;
-    if (BoardManager.cellOccupied(cellIndex)) {
-      console.warn("Player tried to place on occupied square");
-      return false;
-    }
-
-    // Remove card from hand *before* passing it to PlacementManager
-    this.playerManager.hand.splice(UIManager.selectedCardNumber, 1);
-
-    // Compute board pixel coordinates
-    const x =
-      offsets.gameOffsetX +
-      offsets.cellWidth * (UIManager.selectedColumn - 1) +
-      offsets.cardOffsetX;
-    const y =
-      offsets.gameOffsetY +
-      offsets.cellHeight * (UIManager.selectedRow - 1) +
-      offsets.cardOffsetY;
-
-    // Delegate placement to PlacementManager
-    Game.controllers.placementController.manager.placeCard(selectedCard, x, y);
-
-    // Remove grid cursor
-    Game.controllers.cursorController.grid.remove();
   }
 }

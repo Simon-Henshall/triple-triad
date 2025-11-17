@@ -1,4 +1,3 @@
-import { UIManager } from "../managers/ui-manager.js";
 import { Game } from "../game/game.js";
 import { debug } from "../debug.js";
 
@@ -38,33 +37,6 @@ export class InputRenderer {
     Game.controllers.cursorController.confirmation.move(direction);
     if (debug.active) {
       //console.log(`Confirmation cursor moved: ${direction}`);
-    }
-  }
-
-  /**
-   * Restore player hand cursor visually (used on cancel).
-   */
-  restorePlayerHandCursor() {
-    Game.controllers.cursorController.playerHand.place();
-    if (debug.active) {
-      console.log("Player hand cursor restored");
-    }
-    // Restore cursors
-    UIManager.playerSelectingPlacement = false;
-    UIManager.playerChoosingCard = true;
-  }
-
-  /**
-   * Show or hide the info box.
-   * @param {boolean} visible
-   */
-  toggleInfoBox(visible) {
-    if (UIManager.infoBox.container) {
-      UIManager.infoBox.container.visible = visible;
-      Game.stage.update();
-      if (debug.active) {
-        //console.log(`Info box visibility set to: ${visible}`);
-      }
     }
   }
 }

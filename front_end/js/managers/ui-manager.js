@@ -1,5 +1,6 @@
 import { offsets } from "../constants/offsets.js";
 import { Game } from "../game/game.js";
+import { debug } from "../debug.js";
 
 export const UIManager = {
   // -------------------------
@@ -95,6 +96,20 @@ export const UIManager = {
     cardName: undefined,
   },
 
+  /**
+   * Show or hide the info box.
+   * @param {boolean} visible
+   */
+  toggleInfoBox(visible) {
+    if (this.infoBox.container) {
+      this.infoBox.container.visible = visible;
+      Game.stage.update();
+      if (debug.active) {
+        //console.log(`Info box visibility set to: ${visible}`);
+      }
+    }
+  },
+
   // -------------------------
   // Player interaction flags
   // -------------------------
@@ -106,6 +121,19 @@ export const UIManager = {
   playerChoosingCard: false,
   playerSelectingPlacement: false,
   playerTurn: "blue",
+
+  /**
+   * Restore player hand cursor visually (used on cancel).
+   */
+  restorePlayerHandCursor() {
+    Game.controllers.cursorController.playerHand.place();
+    if (debug.active) {
+      console.log("Player hand cursor restored");
+    }
+    // Restore cursors
+    UIManager.playerSelectingPlacement = false;
+    UIManager.playerChoosingCard = true;
+  },
 
   // -------------------------
   // Cards

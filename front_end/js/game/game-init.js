@@ -12,7 +12,6 @@ import { createDeck } from "../card/card-factory.js";
 import { AIManager } from "../managers/ai-manager.js";
 import { PlayerManager } from "../managers/player-manager.js";
 import { PlayerRenderer } from "../renderers/player-renderer.js";
-import { PlayerController } from "../controllers/player-controller.js";
 
 import { PlacementManager } from "../managers/placement-manager.js";
 import { PlacementController } from "../controllers/placement-controller.js";
@@ -59,11 +58,6 @@ export const gameInit = {
     const playerManager = new PlayerManager();
     const playerRenderer = new PlayerRenderer(playerManager);
     playerManager.renderer = playerRenderer;
-    const playerController = new PlayerController(
-      playerManager,
-      playerRenderer,
-      UIManager,
-    );
     const gameDeck = new GameDeck(playerManager, aiManager);
 
     const placementController = new PlacementController(playerManager);
@@ -76,7 +70,6 @@ export const gameInit = {
     const inputManager = new InputManager(
       playerManager,
       playerRenderer,
-      playerController,
       placementController,
     );
     const inputController = new InputController(inputManager);
@@ -91,7 +84,6 @@ export const gameInit = {
     };
 
     Game.controllers = {
-      playerController,
       placementController,
       inputController,
     };
@@ -104,7 +96,6 @@ export const gameInit = {
       aiManager,
       playerManager,
       playerRenderer,
-      playerController,
       placementManager,
       gameDeck,
       placementController,
@@ -190,15 +181,8 @@ export const gameInit = {
   },
 
   /**
-   * Run full initialization sequence in order:
-   * 1. Stage setup
-   * 2. Compute offsets
-   * 3. Create managers/controllers/renderers
-   * 4. Setup UI containers
-   * 5. Compute hand positions
-   * 6. Setup cursors
-   * 7. Register input events
-   * 8. Start hand selection
+   * Initializs the game environment, setting up the CreateJS stage,
+   * ticker, managers, controllers, renderers, and event listeners.
    */
   all() {
     console.log("[Game-Init] Setting up canvas...");
@@ -233,6 +217,6 @@ export const gameInit = {
     console.log(
       "[Game-Init] Initialisation complete. Passing off to [Game]...",
     );
-    Game._setupSelectionBook(Game.managers.playerManager);
+    Game.setupSelectionBook(Game.managers.playerManager);
   },
 };

@@ -11,7 +11,7 @@ export class InputController {
    * Main entry point for the InputController, handling all keyboard input logic.
    */
   constructor(inputManager) {
-    this.manager = inputManager; // already has playerManager etc.
+    this.manager = inputManager;
     this.renderer = new InputRenderer();
   }
 
@@ -27,11 +27,11 @@ export class InputController {
     if (UIManager.playerSelectingHand) {
       this.manager.handleSelectionBookInput(event);
     } else if (UIManager.playerConfirming) {
-      this.manager.handleConfirmation(event, this.renderer);
+      this.manager.handleConfirmation(event);
     } else if (UIManager.playerChoosingCard) {
-      this.manager.handlePlayerCardChoice(event, this.renderer);
+      this.manager.handlePlayerCardChoice(event);
     } else if (UIManager.playerSelectingPlacement) {
-      this.manager.handlePlacement(event, this.renderer);
+      this.manager.handlePlacement(event);
     }
   }
 }

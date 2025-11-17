@@ -2,7 +2,7 @@ import { CursorManager } from "../managers/cursor-manager.js";
 import { debug } from "../debug.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "../managers/ui-manager.js";
-import { UIController } from "./ui-controller.js";
+import { UIRenderer } from "../renderers/ui-renderer.js";
 import { offsets } from "../constants/offsets.js";
 import { config } from "../config.js";
 
@@ -44,7 +44,6 @@ export const CursorController = (cursorRenderer) => ({
      * Remove the selection cursor from the stage and clear state.
      */
     remove() {
-      CursorManager.selection.clear();
       cursorRenderer.selection.remove();
 
       if (debug.active) {
@@ -90,7 +89,6 @@ export const CursorController = (cursorRenderer) => ({
      * Remove the confirmation cursor from the stage.
      */
     remove() {
-      CursorManager.confirmation.clear();
       cursorRenderer.confirmation.remove();
 
       if (debug.active) {
@@ -124,7 +122,7 @@ export const CursorController = (cursorRenderer) => ({
       const newlySelectedCard = playerManager.hand[selectedIndex];
       if (newlySelectedCard) {
         UIManager.selectedCard = newlySelectedCard;
-        UIController.updateInfoBox(newlySelectedCard);
+        UIRenderer.updateInfoBox(newlySelectedCard);
       }
 
       if (debug.active) {

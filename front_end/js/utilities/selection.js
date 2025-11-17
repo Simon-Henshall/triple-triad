@@ -10,7 +10,7 @@ import { fallBackCardsForTesting } from "../constants/fallback-cards.js";
 export function pickPlayerCards(selectedIndex) {
   const { playerManager, gameDeck } = Game.managers;
 
-  // Ensure player deck is initialized if not already
+  // Ensure player deck is initialised if not already
   if (!playerManager.deck || playerManager.deck.length === 0) {
     const parsedCards = fallBackCardsForTesting;
     _populateDeck(playerManager, parsedCards);
@@ -36,9 +36,6 @@ export function pickPlayerCards(selectedIndex) {
       selectedIndex,
     );
   }
-
-  // Optional: update preview card
-  gameDeck.setPreviewCard(playerManager.deck[selectedIndex]);
 }
 
 /**

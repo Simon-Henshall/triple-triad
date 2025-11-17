@@ -1,6 +1,5 @@
 import { UIManager } from "../managers/ui-manager.js";
 import { UIRenderer } from "../renderers/ui-renderer.js";
-import { UIController } from "../controllers/ui-controller.js";
 import { BoardRenderer } from "../renderers/board-renderer.js";
 import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
 
@@ -11,9 +10,6 @@ import { SelectionBookUI } from "../selection-book/selection-book-ui.js";
  * match rounds, hand selection, and outcomes.
  */
 export const Game = {
-  /** Flag indicating if the game has been initialized */
-  initialized: false,
-
   /** Rules active for the current match */
   rules: ["elemental"],
 
@@ -73,7 +69,7 @@ export const Game = {
       UIManager.selectedCard = firstCard;
       playerRenderer.indentSelectedCard(firstCard);
       UIRenderer.drawInfoBox();
-      UIController.updateInfoBox(firstCard);
+      UIRenderer.updateInfoBox(firstCard);
     }
 
     // Update UI state flags
@@ -95,7 +91,7 @@ export const Game = {
    * Handles setup and operation of the selection board (hand selection screen)
    * where the player chooses 5 cards from their deck.
    */
-  _setupSelectionBook() {
+  setupSelectionBook() {
     console.log("[Game] Initialising selection book...");
     const playerManager = Game.managers.playerManager;
 

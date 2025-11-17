@@ -76,13 +76,6 @@ export const CursorManager = {
         }
       }
     },
-
-    /**
-     * Clears the selection cursor state.
-     */
-    clear() {
-      // No persistent state to clear; visual removal handled by renderer.
-    },
   },
 
   /**
@@ -124,13 +117,6 @@ export const CursorManager = {
       );
 
       return previousChoice !== UIManager.confirmation.selectedChoice;
-    },
-
-    /**
-     * Clears the confirmation cursor state.
-     */
-    clear() {
-      // Visual cleanup handled elsewhere
     },
   },
 

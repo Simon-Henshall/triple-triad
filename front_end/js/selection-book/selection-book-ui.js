@@ -129,7 +129,7 @@ export const SelectionBookUI = {
 
   /**
    * Returns the currently selected card object from the selection board.
-   * If the selection board is empty or not initialized, returns null.
+   * If the selection board is empty or not initialised, returns null.
    * @returns {Object|undefined} The selected card object
    */
   getSelectedCard() {

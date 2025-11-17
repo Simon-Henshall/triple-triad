@@ -5,6 +5,7 @@ import { BoardManager } from "./board-manager.js";
 import { UIManager } from "./ui-manager.js";
 import { FlippingRenderer } from "../renderers/flipping-renderer.js";
 import { config } from "../config.js";
+import { offsets } from "../constants/offsets.js";
 
 /**
  * Handles the logical flow of card placement, coordinating animations and
@@ -30,6 +31,42 @@ export class PlacementManager {
 
     /** @type {FlippingRenderer} */
     this.flippingRenderer = new FlippingRenderer(this.playerManager);
+  }
+
+  /**
+   * Place the currently selected card onto the game board.
+   */
+  placeCardOnBoard() {
+    const selectedCard = this.playerManager.hand[UIManager.selectedCardNumber];
+    console.log("SELECTED", selectedCard);
+    console.log("HAND", this.playerManager.hand);
+    if (!selectedCard) {
+      return console.warn("No card selected!");
+    }
+
+    const cellIndex = UIManager.selectedSquare - 1;
+    if (BoardManager.cellOccupied(cellIndex)) {
+      console.warn("Player tried to place on occupied square");
+      return false;
+    }
+
+    // Remove card from hand *before* passing it to PlacementManager
+    this.playerManager.hand.splice(UIManager.selectedCardNumber, 1);
+
+    // Compute board pixel coordinates
+    const x =
+      offsets.gameOffsetX +
+      offsets.cellWidth * (UIManager.selectedColumn - 1) +
+      offsets.cardOffsetX;
+    const y =
+      offsets.gameOffsetY +
+      offsets.cellHeight * (UIManager.selectedRow - 1) +
+      offsets.cardOffsetY;
+
+    this.placeCard(selectedCard, x, y);
+
+    // Remove grid cursor
+    Game.controllers.cursorController.grid.remove();
   }
 
   /**
@@ -187,6 +224,7 @@ export class PlacementManager {
     }
   }
 
+  // eslint-disable-next-line no-commented-code/no-commented-code
   /**
    * Check if the card placement is valid.
    * Valid placement is a square with no adjacent cards of the same element.
