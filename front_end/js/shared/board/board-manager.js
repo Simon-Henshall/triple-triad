@@ -1,4 +1,4 @@
-import { config } from "../../constants/config.js";
+import { elements } from "../../constants/elements.js";
 import { shuffle } from "../../utilities/shuffle.js";
 import { UIManager } from "../ui/ui-manager.js";
 
@@ -65,19 +65,21 @@ export const BoardManager = {
    * @returns {number[]}
    */
   generateElements() {
-    const possibleElements = Object.keys(config.elements);
-    const elements = [];
+    const possibleElements = Object.keys(elements);
+    const elementArray = [];
     const numberOfElements = Math.floor(Math.random() * 3) + 1;
 
     for (let index = 0; index < numberOfElements; index++) {
       const randomIndex = Math.floor(Math.random() * possibleElements.length);
-      elements.push(Number(possibleElements[randomIndex]));
+      elementArray.push(Number(possibleElements[randomIndex]));
     }
     for (let index = numberOfElements; index < 9; index++) {
-      elements.push(0);
+      elementArray.push(0);
     }
 
-    return shuffle(elements);
+    console.log(elementArray);
+
+    return shuffle(elementArray);
   },
 
   /**

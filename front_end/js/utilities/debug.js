@@ -1,7 +1,7 @@
 import { BoardManager } from "../shared/board/board-manager.js";
 import { UIManager } from "../shared/ui/ui-manager.js";
 import { getPlayerTurn } from "./turn.js";
-import { config } from "../constants/config.js";
+import { elements } from "../constants/elements.js";
 import { Game } from "../shared/game/game.js";
 
 export const debug = {
@@ -54,7 +54,7 @@ export const debug = {
         .slice(index * 3, index * 3 + 3)
         .map((cell) => {
           const element = cell.element
-            ? `Cell Element: ${config.elements[cell.element].name}`
+            ? `Cell Element: ${elements[cell.element].name}`
             : "No Element";
           if (!cell.occupant) {
             return `[Empty | ${element}]`;

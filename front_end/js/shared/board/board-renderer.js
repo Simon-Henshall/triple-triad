@@ -4,6 +4,7 @@ import { UIManager } from "../ui/ui-manager.js";
 import { BoardManager } from "./board-manager.js";
 import { debug } from "../../utilities/debug.js";
 import { config } from "../../constants/config.js";
+import { elements } from "../../constants/elements.js";
 
 /**
  * Handles all visual rendering of the board,
@@ -16,7 +17,7 @@ export const BoardRenderer = {
    * and creates createjs.Containers for each square.
    */
   generateGrid() {
-    const elements = BoardManager.generateElements();
+    const elementIDs = BoardManager.generateElements();
     UIManager.squares = [];
 
     // Clear existing squares from the board container
@@ -27,17 +28,17 @@ export const BoardRenderer = {
     for (let y = 0; y < 3; y++) {
       for (let x = 0; x < 3; x++) {
         squareID++;
-        const elementId = elements[squareID - 1];
+        const elementID = elementIDs[squareID - 1];
 
         // Update board logic state
-        BoardManager.boardArray[squareID - 1].element = elementId;
+        BoardManager.boardArray[squareID - 1].element = elementID;
 
         // Create square container
         const square = {
           id: squareID,
           x: x * offsets.cellWidth,
           y: y * offsets.cellHeight,
-          element: elementId,
+          element: elementID,
           container: new createjs.Container(),
         };
 
@@ -47,10 +48,12 @@ export const BoardRenderer = {
         c.name = String(squareID);
 
         // Element graphic (LOCAL offsets!)
-        if (elementId !== 0) {
+        if (elementID !== 0) {
           const elementGraphic = new createjs.Bitmap(
-            `${config.imagePath}/elements/${config.elements[elementId].imagePath}`,
+            `${config.imagePath}elements/${elements[elementID].imagePath}`,
           );
+
+          console.log(elementGraphic)
 
           elementGraphic.x = 60; // <- relative to square
           elementGraphic.y = 70;
@@ -104,7 +107,7 @@ export const BoardRenderer = {
       square.elementGraphic = undefined;
     } else {
       const elementGraphic = new createjs.Bitmap(
-        `${config.imagePath}/elements/${config.elements[elementId].imagePath}`,
+        `${config.imagePath}/elements/${elements[elementId].imagePath}`,
       );
 
       elementGraphic.x = 60;

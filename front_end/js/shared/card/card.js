@@ -1,4 +1,5 @@
 import { config } from "../../constants/config.js";
+import { offsets } from "../../constants/offsets.js";
 
 // eslint-disable-next-line no-commented-code/no-commented-code
 /**
@@ -89,8 +90,8 @@ export class Card {
    *
    */
   _waitForFaceAndScale() {
-    const targetWidth = config.scaledCardWidth;
-    const targetHeight = config.scaledCardHeight;
+    const targetWidth = offsets.scaledCardWidth;
+    const targetHeight = offsets.scaledCardHeight;
 
     /**
      * Wait for the face bitmap to load and scale the container to the target dimensions.

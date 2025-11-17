@@ -208,8 +208,8 @@ export class PlacementManager {
     const cardContainer = card.visuals.container;
 
     const bounds = cardContainer.getBounds();
-    cardContainer.scaleX = config.scaledCardWidth / bounds.width;
-    cardContainer.scaleY = config.scaledCardHeight / bounds.height;
+    cardContainer.scaleX = offsets.scaledCardWidth / bounds.width;
+    cardContainer.scaleY = offsets.scaledCardHeight / bounds.height;
 
     // Convert GLOBAL → LOCAL
     const pt = UIManager.boardContainer.globalToLocal(

@@ -1,5 +1,5 @@
-import { fallBackCardsForTesting } from "../../constants/fallback-cards.js";
-import { cards } from "../../constants/cards.js";
+import { fallBackCardsForTesting } from "../../data/fallback-cards.js";
+import { cards } from "../../data/cards.js";
 import { config } from "../../constants/config.js";
 import { Card } from "./card.js";
 
