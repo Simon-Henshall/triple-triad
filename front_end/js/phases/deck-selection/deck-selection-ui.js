@@ -1,10 +1,10 @@
-import { UIManager } from "../../../shared/ui/ui-manager.js";
-import { SelectionBookRenderer } from "./selection-book-renderer.js";
-import { SelectionBookController } from "./selection-book-controller.js";
-import { Game } from "../../../shared/game/game.js";
-import { Card } from "../../../shared/card/card.js";
+import { UIManager } from "../../shared/ui/ui-manager.js";
+import { DeckSelectionView } from "./deck-selection-view.js";
+import { DeckSelectionController } from "./deck-selection-controller.js";
+import { Game } from "../../shared/game/game.js";
+import { Card } from "../../shared/card/card.js";
 
-export const SelectionBookUI = {
+export const DeckSelectionUI = {
   controller: undefined,
 
   /**
@@ -13,7 +13,7 @@ export const SelectionBookUI = {
    */
   initialise(deck, playerManager) {
     // Create controller
-    this.controller = new SelectionBookController(deck, playerManager);
+    this.controller = new DeckSelectionController(deck, playerManager);
 
     const sb = UIManager.selectionBook;
     if (!sb.container) {
@@ -38,7 +38,7 @@ export const SelectionBookUI = {
     if (!this.controller) {
       return;
     }
-    SelectionBookRenderer.populate(this.controller);
+    DeckSelectionView.populate(this.controller);
   },
 
   /**

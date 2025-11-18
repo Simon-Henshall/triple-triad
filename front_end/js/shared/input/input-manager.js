@@ -1,6 +1,6 @@
-import { SelectionBookUI } from "../../phase-1-pregame/phase-1.1-card-selection-phase/selection-book/selection-book-ui.js";
+import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
 import { UIManager } from "../ui/ui-manager.js";
-import { ConfirmationController } from "../../phase-1-pregame/phase-1.2-confirmation-phase/confirmation/confirmation-controller.js"
+import { ConfirmationController } from "../../phases/confirmation/confirmation-controller.js";
 import { Game } from "../game/game.js";
 import { CursorManager } from "../cursor/cursor-manager.js";
 
@@ -29,22 +29,22 @@ export class InputManager {
   handleSelectionBookInput(event) {
     switch (event.key) {
       case "ArrowDown": {
-        SelectionBookUI.moveSelection(true);
+        DeckSelectionUI.moveSelection(true);
         this.updatePreview();
         break;
       }
       case "ArrowUp": {
-        SelectionBookUI.moveSelection(false);
+        DeckSelectionUI.moveSelection(false);
         this.updatePreview();
         break;
       }
       case "ArrowLeft": {
-        SelectionBookUI.paginate("left");
+        DeckSelectionUI.paginate("left");
         this.updatePreview();
         break;
       }
       case "ArrowRight": {
-        SelectionBookUI.paginate("right");
+        DeckSelectionUI.paginate("right");
         this.updatePreview();
         break;
       }
@@ -65,8 +65,8 @@ export class InputManager {
    * Adds the selected card to their hand and animates it in.
    */
   updatePreview() {
-    // Get the currently selected card from the SelectionBookUI
-    const card = SelectionBookUI.getSelectedCard();
+    // Get the currently selected card from the DeckSelectionUI
+    const card = DeckSelectionUI.getSelectedCard();
     UIManager.selectionBook.showPreviewCard(card);
     console.log(card);
     if (!card) {
@@ -80,7 +80,7 @@ export class InputManager {
    * Adds the selected card to hand and animates it in.
    */
   selectCardFromBook() {
-    const selectedCard = SelectionBookUI.getSelectedCard();
+    const selectedCard = DeckSelectionUI.getSelectedCard();
     if (!selectedCard) {
       return;
     }
@@ -106,7 +106,7 @@ export class InputManager {
     this.playerRenderer._updateHandAndPreviewZOrder();
 
     // Refresh book visuals
-    SelectionBookUI.populate();
+    DeckSelectionUI.populate();
     Game.stage.update();
 
     // Trigger confirmation if hand full
@@ -139,7 +139,7 @@ export class InputManager {
     }
 
     // Refresh book and stage
-    SelectionBookUI.populate();
+    DeckSelectionUI.populate();
     Game.stage.update();
 
     // Reset flags if hand < 5
@@ -204,7 +204,7 @@ export class InputManager {
       this.playerManager.resetHand();
       this.playerManager.renderer.resetHand();
 
-      SelectionBookUI.populate();
+      DeckSelectionUI.populate();
       UIManager.playerConfirming = false;
       UIManager.playerSelectingHand = true;
       this.updatePreview();

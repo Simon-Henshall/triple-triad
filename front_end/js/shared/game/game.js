@@ -1,11 +1,11 @@
 import { UIManager } from "../ui/ui-manager.js";
 import { UIRenderer } from "../ui/ui-renderer.js";
 import { BoardRenderer } from "../board/board-renderer.js";
-import { SelectionBookUI } from "../../phase-1-pregame/phase-1.1-card-selection-phase/selection-book/selection-book-ui.js";
+import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
 
 /**
  * Core game logic container.
- * All initialization, rendering, and manager setup
+ * All initialisation, rendering, and manager setup
  * should happen via game-init.js. Game only handles
  * match rounds, hand selection, and outcomes.
  */
@@ -96,12 +96,12 @@ export const Game = {
     const playerManager = Game.managers.playerManager;
 
     // Initialise selection book
-    SelectionBookUI.initialise(playerManager.deck, playerManager);
+    DeckSelectionUI.initialise(playerManager.deck, playerManager);
 
     UIManager.playerSelectingHand = true;
 
     // Show preview card for the default selected card
-    const card = SelectionBookUI.getSelectedCard();
+    const card = DeckSelectionUI.getSelectedCard();
     if (card) {
       console.log(
         "[Game] Showing preview card for the default card:",

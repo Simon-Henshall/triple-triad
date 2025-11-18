@@ -1,7 +1,5 @@
-import { SelectionBookRenderer } from "../../phase-1-pregame/phase-1.1-card-selection-phase/selection-book/selection-book-renderer.js";
-
-import { SelectionBookUI } from "../../phase-1-pregame/phase-1.1-card-selection-phase/selection-book/selection-book-ui.js";
-
+import { DeckSelectionView } from "../../phases/deck-selection/deck-selection-view.js";
+import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
 
 /**
  * Manages the player's logical state: deck, hand, played cards, and counts.
@@ -109,7 +107,7 @@ export class PlayerManager {
     );
 
     this._recalculateSelection();
-    SelectionBookRenderer.populate(SelectionBookUI.controller);
+    DeckSelectionView.populate(DeckSelectionUI.controller);
 
     return card;
   }

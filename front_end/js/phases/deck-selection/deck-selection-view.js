@@ -1,5 +1,5 @@
-import { Game } from "../../../shared/game/game.js";
-import { UIManager } from "../../../shared/ui/ui-manager.js";
+import { Game } from "../../shared/game/game.js";
+import { UIManager } from "../../shared/ui/ui-manager.js";
 
 const ROW_HEIGHT = 35;
 const CARD_ROW_START_Y = 40;
@@ -8,7 +8,7 @@ const CURSOR_Y_OFFSET = 60;
 const NORMAL_COLOR = "#ffffff";
 const ZERO_COLOR = "#888"; // grey for zero counts
 
-export const SelectionBookRenderer = {
+export const DeckSelectionView = {
   populate(controller) {
     const sb = UIManager.selectionBook;
     if (!sb.container) {
