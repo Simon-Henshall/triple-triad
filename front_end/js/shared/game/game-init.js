@@ -13,8 +13,8 @@ import { AIManager } from "../ai/ai-manager.js";
 import { PlayerManager } from "../player/player-manager.js";
 import { PlayerRenderer } from "../player/player-renderer.js";
 
-import { PlacementManager } from "../../phase-2-game/phase-2.2-card-placement-phase/placement/placement-manager.js";
-import { PlacementController } from "../../phase-2-game/phase-2.2-card-placement-phase/placement/placement-controller.js";
+import { PlacementModel } from "../../phases/placement/placement-model.js";
+import { PlacementController } from "../../phases/placement/placement-controller.js";
 
 import { InputManager } from "../input/input-manager.js";
 import { InputController } from "../input/input-controller.js";
@@ -64,24 +64,24 @@ export const gameInit = {
 
     const placementController = new PlacementController(playerManager);
     placementController.init();
-    const placementManager = new PlacementManager(placementController);
-    if (placementManager.setController) {
-      placementManager.setController(placementController);
+    const placementModel = new PlacementModel(placementController);
+    if (placementModel.setController) {
+      placementModel.setController(placementController);
     }
 
-    const stateMachine = new (StateMachine);
+    const stateMachine = new StateMachine();
 
     const inputManager = new InputManager(
       playerManager,
       playerRenderer,
-      placementController,
+      placementController
     );
     const inputController = new InputController(inputManager);
 
     Game.managers = {
       aiManager,
       playerManager,
-      placementManager,
+      placementModel,
       inputManager,
       boardManager: BoardManager,
       gameDeck,
@@ -101,7 +101,7 @@ export const gameInit = {
       aiManager,
       playerManager,
       playerRenderer,
-      placementManager,
+      placementModel,
       gameDeck,
       placementController,
       inputManager,
@@ -133,7 +133,7 @@ export const gameInit = {
 
     UIManager.confirmation.background = new createjs.Shape();
     UIManager.confirmation.cursor = new createjs.Bitmap(
-      config.imagePath + "cursor.png",
+      config.imagePath + "cursor.png"
     );
   },
 
@@ -148,16 +148,16 @@ export const gameInit = {
 
     CursorManager.player.playerHandCursor = new createjs.Bitmap(cursorPath);
     CursorManager.player.playerHandSelectionCursor = new createjs.Bitmap(
-      cursorPath,
+      cursorPath
     );
     UIManager.gridCursor = new createjs.Bitmap(cursorPath);
 
     Game.renderers.cursorRenderer = CursorRenderer(
       Game.managers.playerManager,
-      Game.renderers.playerRenderer,
+      Game.renderers.playerRenderer
     );
     Game.controllers.cursorController = CursorController(
-      Game.renderers.cursorRenderer,
+      Game.renderers.cursorRenderer
     );
   },
 
@@ -167,7 +167,7 @@ export const gameInit = {
    */
   events(inputController) {
     document.addEventListener("keydown", (event) =>
-      inputController.handleKey(event),
+      inputController.handleKey(event)
     );
   },
 
@@ -221,11 +221,9 @@ export const gameInit = {
     Game.managers.aiManager.populateHand();
 
     console.log(
-      "[Game-Init] Initialisation complete. Passing off to [Game]...",
+      "[Game-Init] Initialisation complete. Passing off to [Game]..."
     );
 
-    
-
-    Game.managers.stateMachine.transitionTo('deck-selection');
+    Game.managers.stateMachine.transitionTo("deck-selection");
   },
 };
