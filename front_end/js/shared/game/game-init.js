@@ -25,6 +25,8 @@ import { CursorController } from "../cursor/cursor-controller.js";
 
 import { BoardManager } from "../board/board-manager.js";
 
+import { StateMachine } from "../../game/game-state-machine.js";
+
 /**
  * Handles full initialization of the game environment:
  * - Stage & ticker
@@ -67,6 +69,8 @@ export const gameInit = {
       placementManager.setController(placementController);
     }
 
+    const stateMachine = new (StateMachine);
+
     const inputManager = new InputManager(
       playerManager,
       playerRenderer,
@@ -81,6 +85,7 @@ export const gameInit = {
       inputManager,
       boardManager: BoardManager,
       gameDeck,
+      stateMachine,
     };
 
     Game.controllers = {
@@ -101,6 +106,7 @@ export const gameInit = {
       placementController,
       inputManager,
       inputController,
+      stateMachine,
     };
   },
 
@@ -217,6 +223,9 @@ export const gameInit = {
     console.log(
       "[Game-Init] Initialisation complete. Passing off to [Game]...",
     );
-    Game.setupSelectionBook(Game.managers.playerManager);
+
+    
+
+    Game.managers.stateMachine.transitionTo('deck-selection');
   },
 };

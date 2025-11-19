@@ -1,3 +1,5 @@
+import { Game } from "../../shared/game/game";
+
 /**
  * Deck Selection Controller
  * @export
@@ -30,7 +32,7 @@ export class DeckSelectionController {
     return this.cards
       .map((archetype) => {
         const inHandCount = this.playerManager?.hand.filter(
-          (h) => h.data.id === archetype.data.id,
+          (h) => h.data.id === archetype.data.id
         ).length;
         return {
           ...archetype,
@@ -57,7 +59,7 @@ export class DeckSelectionController {
   get totalPages() {
     return Math.max(
       1,
-      Math.ceil(this.displayedCards.length / this.cardsPerPage),
+      Math.ceil(this.displayedCards.length / this.cardsPerPage)
     );
   }
 
@@ -74,7 +76,7 @@ export class DeckSelectionController {
     }
     this.selectedIndexOnPage = Math.min(
       this.selectedIndexOnPage + 1,
-      cards.length - 1,
+      cards.length - 1
     );
   }
 
@@ -101,5 +103,20 @@ export class DeckSelectionController {
       this.currentPage--;
     }
     this.selectedIndexOnPage = 0;
+  }
+
+  activate() {
+    Game.setupSelectionBook(Game.managers.playerManager);
+
+    // If the view exists later, notify it here:
+    // this.view?.show();
+  }
+
+  deactivate() {
+    // For now this can remain empty or contain minimal cleanup.
+    // Later maybe:
+    // - hide/remove selection book UI
+    // - detach input handlers
+    // - reset cursor visuals
   }
 }
