@@ -11,16 +11,15 @@ export class DeckSelectionController {
    * Constructor for the DeckSelectionController
    * @param {Array} deck - Array of Card objects with count and selected properties
    * @param {PlayerManager} playerManager - Reference to the player manager
-   * @param {number} cardsPerPage - Number of cards to display on each page
    */
-  constructor(deck = [], playerManager, cardsPerPage = 11) {
+  constructor(deck = [], playerManager) {
     this.cards = deck.map((c) => ({
       ...c,
       remaining: (c.count ?? 0) - (c.selected ?? 0),
       initiallyHidden: (c.count ?? 0) === 0,
     }));
     this.playerManager = playerManager;
-    this.cardsPerPage = cardsPerPage;
+    this.cardsPerPage = 11;
 
     this.currentPage = 1;
     this.selectedIndexOnPage = 0;
@@ -106,7 +105,7 @@ export class DeckSelectionController {
   }
 
   activate() {
-    Game.setupSelectionBook(Game.managers.playerManager);
+    Game.setupSelectionBook(this.playerManager);
 
     // If the view exists later, notify it here:
     // this.view?.show();

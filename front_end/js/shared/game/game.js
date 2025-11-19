@@ -91,9 +91,8 @@ export const Game = {
    * Handles setup and operation of the selection board (hand selection screen)
    * where the player chooses 5 cards from their deck.
    */
-  setupSelectionBook() {
+  setupSelectionBook(playerManager) {
     console.log("[Game] Initialising selection book...");
-    const playerManager = Game.managers.playerManager;
 
     // Initialise selection book
     DeckSelectionUI.initialise(playerManager.deck, playerManager);
@@ -121,7 +120,9 @@ export const Game = {
     }
 
     // Place the selection cursor on top
-    Game.controllers.cursorController.selection.place();
+    queueMicrotask(() => {
+      Game.controllers.cursorController?.selection?.place?.();
+    });
   },
 
   /**
