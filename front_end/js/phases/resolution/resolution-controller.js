@@ -33,7 +33,7 @@ export class ResolutionController {
 
       console.log(
         `flipCardsCheck(), Card: ${card.data.name} | owner: ${card.owner} | ` +
-          `Target: ${target.data.name} | target.owner: ${target.owner} | Direction: ${direction}`
+          `Target: ${target.data.name} | target.owner: ${target.owner} | Direction: ${direction}`,
       );
 
       if (
@@ -64,7 +64,7 @@ export class ResolutionController {
       "currentOwner:",
       targetCard.owner,
       "newOwner (getPlayerTurn()):",
-      getPlayerTurn()
+      getPlayerTurn(),
     );
 
     // Update ownership
@@ -91,7 +91,7 @@ export class ResolutionController {
   updateOwnershipCounts(flippedCount) {
     const turn = getPlayerTurn();
     const playerManager = Game.managers.playerManager;
-    const aiManager = Game.managers.aiManager;
+    const aiTurnModel = Game.models.aiTurnModel;
 
     const delta = {
       blue: { player: 1, ai: -1 },
@@ -99,9 +99,9 @@ export class ResolutionController {
     };
 
     playerManager.totalBlueCards += delta[turn].player * flippedCount;
-    aiManager.totalRedCards += delta[turn].ai * flippedCount;
+    aiTurnModel.currentlyOwnedCards += delta[turn].ai * flippedCount;
 
-    aiManager.aiCardCount.text = aiManager.totalRedCards;
+    aiTurnModel.aiCardCount.text = aiTurnModel.currentlyOwnedCards;
     playerManager.playerCardCount.text = playerManager.totalBlueCards;
 
     Game.stage.update();

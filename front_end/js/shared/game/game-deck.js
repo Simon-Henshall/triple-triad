@@ -7,24 +7,24 @@ export class GameDeck {
    * Class representing the player's and AI's hands, as well as the card
    * currently being previewed on the selection board.
    */
-  constructor(playerManager, aiManager) {
+  constructor(playerManager, aiTurnModel) {
     /** Symbolic link to PlayerManager.hand */
     this.playerHand = playerManager.hand;
 
-    /** Symbolic link to AIManager.hand */
-    this.aiHand = aiManager.hand;
+    /** Symbolic link to AITurnModel.hand */
+    this.aiHand = aiTurnModel.hand;
 
     /** Card currently previewed on selection board */
     this.previewCard = undefined;
 
     /** Keep references to the managers for deck operations */
     this.playerManager = playerManager;
-    this.aiManager = aiManager;
+    this.aiTurnModel = aiTurnModel;
   }
 
   /**
    * Move a card from a deck to a hand.
-   * @param {Card[]} fromDeck - playerManager.deck or aiManager.deck
+   * @param {Card[]} fromDeck - playerManager.deck or AITurnModel.deck
    * @param {Card[]} toHand - playerHand or aiHand
    * @param {number} cardIndex - index in the deck
    */
@@ -40,7 +40,7 @@ export class GameDeck {
     if (toHand === this.playerHand) {
       this.playerHand = this.playerManager.hand;
     } else if (toHand === this.aiHand) {
-      this.aiHand = this.aiManager.hand;
+      this.aiHand = this.aiTurnModel.hand;
     }
 
     return card;
@@ -49,7 +49,7 @@ export class GameDeck {
   /**
    * Move a card from a hand back to the deck.
    * @param {Card[]} fromHand - playerHand or aiHand
-   * @param {Card[]} toDeck - playerManager.deck or aiManager.deck
+   * @param {Card[]} toDeck - playerManager.deck or AITurnModel.deck
    * @param {number} cardIndex - index in the hand
    */
   moveCardFromHandToDeck(fromHand, toDeck, cardIndex) {
@@ -64,7 +64,7 @@ export class GameDeck {
     if (fromHand === this.playerHand) {
       this.playerHand = this.playerManager.hand;
     } else if (fromHand === this.aiHand) {
-      this.aiHand = this.aiManager.hand;
+      this.aiHand = this.aiTurnModel.hand;
     }
 
     return card;

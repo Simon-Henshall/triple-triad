@@ -7,7 +7,8 @@ import { Game } from "./game.js";
 
 import { createDeck } from "../card/card-factory.js";
 
-import { AIManager } from "../ai/ai-manager.js";
+import { AITurnController } from "../../phases/ai-turn/ai-turn-controller.js";
+import { AITurnModel } from "../../phases/ai-turn/ai-turn-model.js";
 
 import { PlayerManager } from "../player/player-manager.js";
 import { PlayerRenderer } from "../player/player-renderer.js";
@@ -50,7 +51,8 @@ export const gameInit = {
    * @returns {Object} References to created managers/controllers/renderers
    */
   managers() {
-    const aiManager = new AIManager();
+    const aiTurnModel = new AITurnModel();
+    const aiTurnController = new AITurnController(aiTurnModel);
     const playerManager = new PlayerManager();
     const playerRenderer = new PlayerRenderer(playerManager);
     playerManager.renderer = playerRenderer;
@@ -71,8 +73,11 @@ export const gameInit = {
     // Instantiate the state machine with the phase registry and an empty deps object for now
     const stateMachine = new StateMachine(phases, {});
 
+    Game.models = {
+      aiTurnModel,
+    };
+
     Game.managers = {
-      aiManager,
       playerManager,
       placementModel,
       inputManager,
@@ -80,11 +85,16 @@ export const gameInit = {
       stateMachine,
     };
 
-    Game.controllers = { placementController, inputController };
+    Game.controllers = {
+      aiTurnController,
+      placementController,
+      inputController,
+    };
     Game.renderers = { playerRenderer };
 
     return {
-      aiManager,
+      aiTurnModel,
+      aiTurnController,
       playerManager,
       playerRenderer,
       placementModel,
@@ -100,10 +110,12 @@ export const gameInit = {
    * Depends on offsets computed from the grid.
    */
   handPositions() {
-    const { aiManager, playerManager } = Game.managers;
+    const { playerManager } = Game.managers;
     playerManager.handOffsetX =
       offsets.gameOffsetX + offsets.cellWidth * 3 + offsets.cardWidth / 4;
-    aiManager.handOffsetX = offsets.gameOffsetX / 2 - offsets.cardWidth / 2;
+    const { aiTurnController } = Game.controllers;
+    aiTurnController.handOffsetX =
+      offsets.gameOffsetX / 2 - offsets.cardWidth / 2;
   },
 
   /**
@@ -174,24 +186,40 @@ export const gameInit = {
     this.uiContainers();
     this.addBackground();
 
-    const { inputController, playerManager, aiManager, stateMachine } =
-      this.managers();
+    const {
+      inputController,
+      playerManager,
+      aiTurnController,
+      aiTurnModel,
+      stateMachine,
+    } = this.managers();
 
-    this.handPositions();
     this.cursors();
     this.events(inputController);
 
-    // Create decks BEFORE instantiating the phase
+    // Create decks first
     const playerDeck = createDeck("player");
     const aiDeck = createDeck("ai");
     playerManager.deck = playerDeck;
-    aiManager.deck = aiDeck;
-    aiManager.populateHand();
+    aiTurnModel.deck = aiDeck;
 
-    // Pass dependencies to the state machine
+    // Populate AI hand in the model
+    const drawnCards = aiTurnModel.populateHand();
+
+    // Now set up visual offsets based on hand
+    playerManager.handOffsetX =
+      offsets.gameOffsetX + offsets.cellWidth * 3 + offsets.cardWidth / 4;
+    aiTurnController.handOffsetX =
+      offsets.gameOffsetX / 2 - offsets.cardWidth / 2;
+    aiTurnModel.handOffsetX = aiTurnController.handOffsetX;
+
+    // Initialise AI hand visuals
+    aiTurnController.initHand(drawnCards);
+
+    // Set dependencies for the state machine
     stateMachine.setDependencies({
       playerManager,
-      aiManager,
+      aiTurnController,
       deck: playerDeck,
     });
 

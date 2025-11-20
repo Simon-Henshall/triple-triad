@@ -19,8 +19,8 @@ export class PlacementView {
       playerManager.shiftCardsDown(offsets.handCardOffset);
     } else {
       // AI hand movement
-      const aiManager = Game.managers.aiManager;
-      this.animateDown(aiManager.hand, aiManager.cardsAboveSelection);
+      const aiTurnModel = Game.models.aiTurnModel;
+      this.animateDown(aiTurnModel.hand, aiTurnModel.cardsAboveSelection);
     }
   }
 
@@ -34,7 +34,7 @@ export class PlacementView {
     for (let index = 0; index < count; index++) {
       createjs.Tween.get(hand[index].visuals.container).to(
         { y: hand[index].visuals.container.y + offsets.handCardOffset },
-        200
+        200,
       );
     }
   }
@@ -109,7 +109,7 @@ export class PlacementView {
     if (UIManager.selectedCard) {
       console.log(
         "Indenting selected card after placement",
-        UIManager.selectedCard
+        UIManager.selectedCard,
       );
       UIManager.selectedCard.visuals.container.x -= 30;
     }

@@ -55,7 +55,7 @@ export class PlacementController {
     if (currentTurn === "blue") {
       this._preparePlayerTurn();
     } else {
-      Game.managers.aiManager.takeTurn();
+      Game.controllers.aiTurnController.takeTurn();
     }
   }
 
@@ -73,7 +73,7 @@ export class PlacementController {
         i: index,
         name: c.data.name,
         y: c.visuals.container.y,
-      }))
+      })),
     );
     console.log(
       "selectedCardIndex:",
@@ -81,7 +81,7 @@ export class PlacementController {
       "UIManager.selectedCardNumber:",
       UIManager.selectedCardNumber,
       "selectedCard:",
-      playerManager.selectedCard?.data.name
+      playerManager.selectedCard?.data.name,
     );
 
     // Reset selection to the first available card

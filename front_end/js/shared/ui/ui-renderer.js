@@ -33,18 +33,18 @@ export const UIRenderer = {
    */
   drawCardCounts() {
     const playerManager = Game.managers.playerManager;
-    const aiManager = Game.managers.aiManager;
+    const aiTurnModel = Game.models.aiTurnModel;
 
     // Create and position AI card count
-    aiManager.aiCardCount = new createjs.Text(
-      aiManager.totalRedCards,
+    aiTurnModel.aiCardCount = new createjs.Text(
+      aiTurnModel.currentlyOwnedCards,
       "90px Arial",
       "#ffffff",
     );
-    aiManager.aiCardCount.x = aiManager.handOffsetX + offsets.cardWidth / 2; // Center of AI card
-    aiManager.aiCardCount.y = Game.stageHeight - 15;
-    aiManager.aiCardCount.textBaseline = "alphabetic";
-    Game.stage.addChild(aiManager.aiCardCount);
+    aiTurnModel.aiCardCount.x = aiTurnModel.handOffsetX + offsets.cardWidth / 2; // Center of AI card
+    aiTurnModel.aiCardCount.y = Game.stageHeight - 15;
+    aiTurnModel.aiCardCount.textBaseline = "alphabetic";
+    Game.stage.addChild(aiTurnModel.aiCardCount);
 
     // Create and position player card count
     playerManager.playerCardCount = new createjs.Text(

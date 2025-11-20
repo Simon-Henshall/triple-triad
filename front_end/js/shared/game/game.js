@@ -131,11 +131,12 @@ export const Game = {
    * sudden-death rules if applicable.
    */
   endGame() {
-    const { playerManager, aiManager } = this.managers;
+    const { playerManager } = this.managers;
+    const { aiTurnModel } = this.models;
 
-    if (aiManager.totalRedCards > playerManager.totalBlueCards) {
+    if (aiTurnModel.currentlyOwnedCards > playerManager.totalBlueCards) {
       alert("lose");
-    } else if (playerManager.totalBlueCards > aiManager.totalRedCards) {
+    } else if (playerManager.totalBlueCards > aiTurnModel.currentlyOwnedCards) {
       alert("win");
     } else {
       alert("draw");

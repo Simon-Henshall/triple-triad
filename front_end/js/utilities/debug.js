@@ -79,8 +79,8 @@ export const debug = {
     }
 
     console.log("=============== AI HAND ===================");
-    const aiManager = Game.managers.aiManager;
-    for (const [index, card] of aiManager.hand.entries()) {
+    const aiTurnModel = Game.models.aiTurnModel;
+    for (const [index, card] of aiTurnModel.hand.entries()) {
       console.log(
         `Card ${index}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
       );
@@ -94,12 +94,12 @@ export const debug = {
   logTurn() {
     const currentPlayer = getPlayerTurn();
     const playerManager = Game.managers.playerManager;
-    const aiManager = Game.managers.aiManager;
+    const aiTurnModel = Game.models.aiTurnModel;
     console.log(
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`,
     );
     console.log(
-      `SCORE | Player: ${playerManager.totalBlueCards} AI: ${aiManager.totalRedCards}`,
+      `SCORE | Player: ${playerManager.totalBlueCards} AI: ${aiTurnModel.currentlyOwnedCards}`,
     );
     console.log(`Free cells remaining: ${BoardManager.freeCells.join(", ")}`);
     console.log("*****************************************");
