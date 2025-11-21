@@ -1,5 +1,6 @@
 import { Game } from "../../shared/game/game";
 
+// eslint-disable-next-line no-commented-code/no-commented-code
 /**
  * Deck Selection Controller
  * @export
@@ -105,7 +106,8 @@ export class DeckSelectionController {
   }
 
   /**
-   *
+   * Selection phase setup.
+   * Called when the selection phase has started.
    */
   activate() {
     Game.setupSelectionBook(this.playerModel);
@@ -115,7 +117,8 @@ export class DeckSelectionController {
   }
 
   /**
-   *
+   * Selection phase cleanup.
+   * Called when the selection phase has ended.
    */
   deactivate() {
     // For now this can remain empty or contain minimal cleanup.

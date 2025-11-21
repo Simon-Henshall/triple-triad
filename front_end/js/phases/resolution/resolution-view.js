@@ -67,7 +67,7 @@ export class ResolutionView {
         direction,
         counter,
         initialX,
-        initialY
+        initialY,
       );
     }, 2);
   }
@@ -139,7 +139,7 @@ export class ResolutionView {
       cardToReplace.children[0].image.src = `front_end/images/cards/${cardToReplace.owner}.png`;
     } else {
       const ownerBmp = new createjs.Bitmap(
-        `front_end/images/cards/${cardToReplace.owner}.png`
+        `front_end/images/cards/${cardToReplace.owner}.png`,
       );
       cardToReplace.addChildAt(ownerBmp, 0);
     }
@@ -148,7 +148,7 @@ export class ResolutionView {
     if (cardToReplace.children[1]) {
       cardToReplace.setChildIndex(
         cardToReplace.children[1],
-        cardToReplace.getNumChildren() - 1
+        cardToReplace.getNumChildren() - 1,
       );
     }
   }

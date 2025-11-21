@@ -1,4 +1,3 @@
-import { AITurnModel } from "./ai-turn-model.js";
 import { AITurnView } from "./ai-turn-view.js";
 import { BoardModel } from "../../shared/board/board-model.js";
 import { UIModel } from "../../shared/ui/ui-model.js";

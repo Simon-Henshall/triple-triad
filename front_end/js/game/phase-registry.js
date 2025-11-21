@@ -2,9 +2,8 @@ import phases from "./phases.js";
 
 const phaseControllers = {};
 
-Object.keys(phases).forEach((phaseName) => {
-  phaseControllers[phaseName] = null;
-});
-
+for (const phaseName of Object.keys(phases)) {
+  phaseControllers[phaseName] = undefined;
+}
 
 export { phaseControllers };

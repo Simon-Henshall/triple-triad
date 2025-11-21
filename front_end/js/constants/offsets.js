@@ -14,7 +14,7 @@ export const offsets = {
   offscreenY: -200,
   aiOffscreenX: 120,
   playerOffscreenX: 620,
-  
+
   cardWidth: 93,
   cardHeight: 120,
   scaledCardWidth: 152,
