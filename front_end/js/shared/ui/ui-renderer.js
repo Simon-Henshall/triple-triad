@@ -1,5 +1,4 @@
 import { config } from "../../constants/config.js";
-import { offsets } from "../../constants/offsets.js";
 import { Game } from "../game/game.js";
 import { UIManager } from "./ui-manager.js";
 
@@ -20,44 +19,6 @@ export const UIRenderer = {
     background.y = 0;
 
     Game.stage.addChild(background);
-    Game.stage.update();
-  },
-
-  // -------------------------
-  // Draw player and AI card counts
-  // -------------------------
-
-  /**
-   * Draws the total card counts for both the AI and player hands.
-   * Removes previous counts to avoid duplicates.
-   */
-  drawCardCounts() {
-    const playerManager = Game.managers.playerManager;
-    const aiTurnModel = Game.models.aiTurnModel;
-
-    // Create and position AI card count
-    aiTurnModel.aiCardCount = new createjs.Text(
-      aiTurnModel.currentlyOwnedCards,
-      "90px Arial",
-      "#ffffff",
-    );
-    aiTurnModel.aiCardCount.x = aiTurnModel.handOffsetX + offsets.cardWidth / 2; // Center of AI card
-    aiTurnModel.aiCardCount.y = Game.stageHeight - 15;
-    aiTurnModel.aiCardCount.textBaseline = "alphabetic";
-    Game.stage.addChild(aiTurnModel.aiCardCount);
-
-    // Create and position player card count
-    playerManager.playerCardCount = new createjs.Text(
-      playerManager.totalBlueCards,
-      "90px Arial",
-      "#ffffff",
-    );
-    playerManager.playerCardCount.x =
-      playerManager.handOffsetX + offsets.cardWidth / 1.5; // Center of player card
-    playerManager.playerCardCount.y = Game.stageHeight - 15;
-    playerManager.playerCardCount.textBaseline = "alphabetic";
-    Game.stage.addChild(playerManager.playerCardCount);
-
     Game.stage.update();
   },
 

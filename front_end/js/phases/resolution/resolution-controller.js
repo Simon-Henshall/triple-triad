@@ -75,6 +75,7 @@ export class ResolutionController {
 
     // Update counts
     this.updateOwnershipCounts(1);
+    Game.ui.scoreBoard.update();
 
     // Maintain UI references
     const squareObject = UIManager.squares[targetCard.inCell - 1];
@@ -100,10 +101,5 @@ export class ResolutionController {
 
     playerManager.totalBlueCards += delta[turn].player * flippedCount;
     aiTurnModel.currentlyOwnedCards += delta[turn].ai * flippedCount;
-
-    aiTurnModel.aiCardCount.text = aiTurnModel.currentlyOwnedCards;
-    playerManager.playerCardCount.text = playerManager.totalBlueCards;
-
-    Game.stage.update();
   }
 }

@@ -77,8 +77,12 @@ export const Game = {
     UIManager.playerChoosingCard = true;
     UIManager.playerSelectingHand = false;
 
-    // Draw overlays
-    UIRenderer.drawCardCounts();
+    // Draw scoreboard overlays
+    Game.ui.scoreBoard.draw();
+    Game.stage.setChildIndex(
+      Game.ui.scoreBoard.container,
+      Game.stage.numChildren - 1,
+    );
 
     // Place the player's hand cursor
     this.controllers.cursorController?.playerHand?.place?.();

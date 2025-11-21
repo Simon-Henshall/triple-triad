@@ -27,6 +27,8 @@ import { BoardManager } from "../board/board-manager.js";
 import phases from "../../game/phases.js";
 import { StateMachine } from "../../game/game-state-machine.js";
 
+import { ScoreBoard } from "../ui/scoreboard.js";
+
 /**
  * Initialises the game state, managers, and controllers.
  * Sets up the game state machine and phases.
@@ -91,6 +93,9 @@ export const gameInit = {
       inputController,
     };
     Game.renderers = { playerRenderer };
+
+    Game.ui = Game.ui || {};
+    Game.ui.scoreBoard = new ScoreBoard(Game.stage, playerManager, aiTurnModel);
 
     return {
       aiTurnModel,
