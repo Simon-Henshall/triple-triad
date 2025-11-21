@@ -1,21 +1,21 @@
 import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
-import { UIManager } from "../ui/ui-manager.js";
+import { UIModel } from "../ui/ui-model.js";
 import { ConfirmationController } from "../../phases/confirmation/confirmation-controller.js";
 import { Game } from "../game/game.js";
-import { CursorManager } from "../cursor/cursor-manager.js";
+import { CursorModel } from "../cursor/cursor-model.js";
 
 /**
- * InputManager class, responsible for handling player input and
+ * InputModel class, responsible for handling player input and
  * coordinating logical state updates, visual rendering, and animation.
  */
-export class InputManager {
+export class InputModel {
   /**
    * Manages player input and coordinates logical state updates,
    * visual rendering, and animation for the player's hand.
    */
-  constructor(playerManager, playerRenderer, placementController) {
-    this.playerManager = playerManager;
-    this.playerRenderer = playerRenderer;
+  constructor(playerModel, playerView, placementController) {
+    this.playerModel = playerModel;
+    this.playerView = playerView;
     this.placementController = placementController;
   }
 
@@ -67,10 +67,10 @@ export class InputManager {
   updatePreview() {
     // Get the currently selected card from the DeckSelectionUI
     const card = DeckSelectionUI.getSelectedCard();
-    UIManager.selectionBook.showPreviewCard(card);
+    UIModel.selectionBook.showPreviewCard(card);
     console.log(card);
     if (!card) {
-      UIManager.selectionBook.hidePreviewCard();
+      UIModel.selectionBook.hidePreviewCard();
       return;
     }
   }
@@ -90,31 +90,31 @@ export class InputManager {
 
     // Start the card offscreen for animation
     const container = selectedCard.visuals.container.clone(true); // true = deep clone children
-    container.x = this.playerManager.handOffsetX;
+    container.x = this.playerModel.handOffsetX;
     container.y = Game.stage.canvas.height + 200;
     handCard.visuals.container = container;
 
     // Add to hand logically
-    this.playerManager.addCardToHand(handCard);
-    this.playerRenderer.cardsInPlayerHand.push(container);
+    this.playerModel.addCardToHand(handCard);
+    this.playerView.cardsInPlayerHand.push(container);
 
     // Animate into hand
-    this.playerRenderer.animateCardToHand(
+    this.playerView.animateCardToHand(
       container,
-      this.playerManager.hand.length - 1,
+      this.playerModel.hand.length - 1,
     );
-    this.playerRenderer._updateHandAndPreviewZOrder();
+    this.playerView._updateHandAndPreviewZOrder();
 
     // Refresh book visuals
     DeckSelectionUI.populate();
     Game.stage.update();
 
     // Trigger confirmation if hand full
-    if (this.playerManager.hand.length === 5) {
+    if (this.playerModel.hand.length === 5) {
       console.log(
-        "[Input Manager] Player's hand has reached 5 cards. Passing off to [Confirmation Controller]...",
+        "[Input Model] Player's hand has reached 5 cards. Passing off to [Confirmation Controller]...",
       );
-      UIManager.playerSelectingHand = false;
+      UIModel.playerSelectingHand = false;
       ConfirmationController.show();
     }
   }
@@ -123,7 +123,7 @@ export class InputManager {
    * Undo last selection and refresh UI.
    */
   cancelLastSelection() {
-    const removedCard = this.playerManager.removeLastCardFromHand();
+    const removedCard = this.playerModel.removeLastCardFromHand();
     if (!removedCard) {
       return;
     }
@@ -133,9 +133,9 @@ export class InputManager {
       Game.stage.removeChild(container);
     }
 
-    const index = this.playerRenderer.cardsInPlayerHand.indexOf(container);
+    const index = this.playerView.cardsInPlayerHand.indexOf(container);
     if (index !== -1) {
-      this.playerRenderer.cardsInPlayerHand.splice(index, 1);
+      this.playerView.cardsInPlayerHand.splice(index, 1);
     }
 
     // Refresh book and stage
@@ -143,9 +143,9 @@ export class InputManager {
     Game.stage.update();
 
     // Reset flags if hand < 5
-    if (this.playerManager.hand.length < 5) {
-      UIManager.playerSelectingHand = true;
-      UIManager.playerConfirming = false;
+    if (this.playerModel.hand.length < 5) {
+      UIModel.playerSelectingHand = true;
+      UIModel.playerConfirming = false;
     }
   }
 
@@ -184,29 +184,29 @@ export class InputManager {
    */
   handleConfirmationChoice(forcedChoice) {
     // Clear the confirmation box and cursor either way
-    Game.stage.removeChild(UIManager.confirmation.container);
+    Game.stage.removeChild(UIModel.confirmation.container);
     Game.controllers.cursorController.confirmation.remove();
 
     const choice =
       forcedChoice ||
-      (UIManager.confirmation.selectedChoice === 0 ? "yes" : "no");
+      (UIModel.confirmation.selectedChoice === 0 ? "yes" : "no");
 
     if (choice === "yes") {
-      console.log("[Input Manager] Player confirmed their hand.");
-      Game.stage.removeChild(UIManager.selectionBook.container);
+      console.log("[Input Model] Player confirmed their hand.");
+      Game.stage.removeChild(UIModel.selectionBook.container);
       Game.startGame();
-      CursorManager.playerHand.init();
+      CursorModel.playerHand.init();
       return;
     }
 
     if (choice === "no") {
-      console.log("[Input Manager] Player cancelled their hand.");
-      this.playerManager.resetHand();
-      this.playerManager.renderer.resetHand();
+      console.log("[Input Model] Player cancelled their hand.");
+      this.playerModel.resetHand();
+      this.playerModel.view.resetHand();
 
       DeckSelectionUI.populate();
-      UIManager.playerConfirming = false;
-      UIManager.playerSelectingHand = true;
+      UIModel.playerConfirming = false;
+      UIModel.playerSelectingHand = true;
       this.updatePreview();
       Game.stage.update();
     }
@@ -240,7 +240,7 @@ export class InputManager {
   /**
    * Handle placement cursor movement and card placement.
    * @param {KeyboardEvent} event
-   * @param {InputRenderer} renderer
+   * @param {InputView} view
    */
   handlePlacement(event) {
     switch (event.key) {
@@ -261,13 +261,13 @@ export class InputManager {
         break;
       }
       case "Enter": {
-        Game.controllers.placementController.manager.placeCardOnBoard();
+        Game.controllers.placementController.model.placeCardOnBoard();
         break;
       }
       case "Backspace":
       case "Escape": {
-        UIManager.toggleInfoBox(true);
-        UIManager.restorePlayerHandCursor();
+        UIModel.toggleInfoBox(true);
+        UIModel.restorePlayerHandCursor();
         Game.controllers.cursorController.grid.remove();
         break;
       }
@@ -283,24 +283,24 @@ export class InputManager {
     Game.controllers.cursorController.playerHand.remove();
 
     // Set default selected cell BEFORE placing the cursor
-    UIManager.selectedRow = 2;
-    UIManager.selectedColumn = 2;
+    UIModel.selectedRow = 2;
+    UIModel.selectedColumn = 2;
 
     // Place grid cursor using current selectedRow/Column
     Game.controllers.cursorController.grid.place();
 
     // Immediately hide info box now that placement is active
-    UIManager.toggleInfoBox(false);
+    UIModel.toggleInfoBox(false);
 
     // Remove hand cursor from stage
-    Game.stage.removeChild(this.playerManager.playerHandCursor);
+    Game.stage.removeChild(this.playerModel.playerHandCursor);
 
     // Enter placement mode
-    UIManager.playerSelectingPlacement = true;
+    UIModel.playerSelectingPlacement = true;
 
     // Actually play the card
-    const selectedIndex = UIManager.selectedCardNumber;
-    const selectedCard = this.playerManager.hand[selectedIndex];
+    const selectedIndex = UIModel.selectedCardNumber;
+    const selectedCard = this.playerModel.hand[selectedIndex];
     if (!selectedCard) {
       console.warn("No card selected!");
       return;

@@ -1,7 +1,7 @@
 import { offsets } from "../../constants/offsets.js";
 import { Game } from "../game/game.js";
-import { UIManager } from "../ui/ui-manager.js";
-import { BoardManager } from "./board-manager.js";
+import { UIModel } from "../ui/ui-model.js";
+import { BoardModel } from "./board-model.js";
 import { debug } from "../../utilities/debug.js";
 import { config } from "../../constants/config.js";
 import { elements } from "../../constants/elements.js";
@@ -10,18 +10,18 @@ import { elements } from "../../constants/elements.js";
  * Handles all visual rendering of the board,
  * including the 3x3 grid, elements, and hit areas.
  */
-export const BoardRenderer = {
+export const BoardView = {
   /**
    * Generate the 3x3 board visually.
-   * Pulls element IDs from BoardManager.generateElements()
+   * Pulls element IDs from BoardModel.generateElements()
    * and creates createjs.Containers for each square.
    */
   generateGrid() {
-    const elementIDs = BoardManager.generateElements();
-    UIManager.squares = [];
+    const elementIDs = BoardModel.generateElements();
+    UIModel.squares = [];
 
     // Clear existing squares from the board container
-    UIManager.boardContainer.removeAllChildren();
+    UIModel.boardContainer.removeAllChildren();
 
     let squareID = 0;
 
@@ -31,7 +31,7 @@ export const BoardRenderer = {
         const elementID = elementIDs[squareID - 1];
 
         // Update board logic state
-        BoardManager.boardArray[squareID - 1].element = elementID;
+        BoardModel.boardArray[squareID - 1].element = elementID;
 
         // Create square container
         const square = {
@@ -53,7 +53,7 @@ export const BoardRenderer = {
             `${config.imagePath}elements/${elements[elementID].imagePath}`,
           );
 
-          console.log(elementGraphic)
+          console.log(elementGraphic);
 
           elementGraphic.x = 60; // <- relative to square
           elementGraphic.y = 70;
@@ -74,10 +74,10 @@ export const BoardRenderer = {
         // Click handler
         c.addEventListener("click", debug.clickHandler);
 
-        UIManager.squares.push(square);
+        UIModel.squares.push(square);
 
         // Add square to board layer (not the stage!)
-        UIManager.boardContainer.addChild(c);
+        UIModel.boardContainer.addChild(c);
       }
     }
 
@@ -89,7 +89,7 @@ export const BoardRenderer = {
    * @param {number} squareID
    */
   redrawSquare(squareID) {
-    const square = UIManager.squares[squareID - 1];
+    const square = UIModel.squares[squareID - 1];
     if (!square) {
       return;
     }
@@ -101,7 +101,7 @@ export const BoardRenderer = {
       c.removeChild(square.elementGraphic);
     }
 
-    const elementId = BoardManager.boardArray[squareID - 1].element;
+    const elementId = BoardModel.boardArray[squareID - 1].element;
 
     if (elementId === 0) {
       square.elementGraphic = undefined;
@@ -124,12 +124,12 @@ export const BoardRenderer = {
    * Clears all squares from stage.
    */
   clearBoard() {
-    for (const square of UIManager.squares) {
+    for (const square of UIModel.squares) {
       if (square.container.parent) {
         square.container.remove();
       }
     }
-    UIManager.squares = [];
+    UIModel.squares = [];
     Game.stage.update();
   },
 };

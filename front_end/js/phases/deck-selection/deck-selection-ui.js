@@ -1,4 +1,4 @@
-import { UIManager } from "../../shared/ui/ui-manager.js";
+import { UIModel } from "../../shared/ui/ui-model.js";
 import { DeckSelectionView } from "./deck-selection-view.js";
 import { DeckSelectionController } from "./deck-selection-controller.js";
 import { Game } from "../../shared/game/game.js";
@@ -11,11 +11,11 @@ export const DeckSelectionUI = {
    * Initialise the Selection Book UI with a deck
    * @param {Array} deck
    */
-  initialise(deck, playerManager) {
+  initialise(deck, playerModel) {
     // Create controller
-    this.controller = new DeckSelectionController(deck, playerManager);
+    this.controller = new DeckSelectionController(deck, playerModel);
 
-    const sb = UIManager.selectionBook;
+    const sb = UIModel.selectionBook;
     if (!sb.container) {
       sb.container = new createjs.Container();
     }
@@ -73,7 +73,7 @@ export const DeckSelectionUI = {
 
   /** Draw static background */
   _drawBackground() {
-    const sb = UIManager.selectionBook;
+    const sb = UIModel.selectionBook;
     if (!sb.background) {
       sb.background = new createjs.Shape();
       sb.background.graphics.beginFill("#666").drawRect(0, 0, 420, 450);
@@ -85,7 +85,7 @@ export const DeckSelectionUI = {
 
   /** Draw static header text */
   _drawHeaderText() {
-    const sb = UIManager.selectionBook;
+    const sb = UIModel.selectionBook;
     if (sb.headerDrawn) {
       return;
     }

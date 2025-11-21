@@ -1,8 +1,8 @@
 import { Game } from "../../shared/game/game.js";
 import { ResolutionController } from "../resolution/resolution-controller.js";
 import { PlacementView } from "./placement-view.js";
-import { BoardManager } from "../../shared/board/board-manager.js";
-import { UIManager } from "../../shared/ui/ui-manager.js";
+import { BoardModel } from "../../shared/board/board-model.js";
+import { UIModel } from "../../shared/ui/ui-model.js";
 import { ResolutionView } from "../resolution/resolution-view.js";
 import { offsets } from "../../constants/offsets.js";
 
@@ -25,41 +25,41 @@ export class PlacementModel {
     /** @type {ResolutionController} */
     this.resolutionController = new ResolutionController();
 
-    /** @type {PlayerManager} */
-    this.playerManager = controller.playerManager;
+    /** @type {PlayerModel} */
+    this.playerModel = controller.playerModel;
 
     /** @type {ResolutionView} */
-    this.resolutionView = new ResolutionView(this.playerManager);
+    this.resolutionView = new ResolutionView(this.playerModel);
   }
 
   /**
    * Place the currently selected card onto the game board.
    */
   placeCardOnBoard() {
-    const selectedCard = this.playerManager.hand[UIManager.selectedCardNumber];
+    const selectedCard = this.playerModel.hand[UIModel.selectedCardNumber];
     console.log("SELECTED", selectedCard);
-    console.log("HAND", this.playerManager.hand);
+    console.log("HAND", this.playerModel.hand);
     if (!selectedCard) {
       return console.warn("No card selected!");
     }
 
-    const cellIndex = UIManager.selectedSquare - 1;
-    if (BoardManager.cellOccupied(cellIndex)) {
+    const cellIndex = UIModel.selectedSquare - 1;
+    if (BoardModel.cellOccupied(cellIndex)) {
       console.warn("Player tried to place on occupied square");
       return false;
     }
 
-    // Remove card from hand *before* passing it to PlacementManager
-    this.playerManager.hand.splice(UIManager.selectedCardNumber, 1);
+    // Remove card from hand *before* passing it to PlacementModel
+    this.playerModel.hand.splice(UIModel.selectedCardNumber, 1);
 
     // Compute board pixel coordinates
     const x =
       offsets.gameOffsetX +
-      offsets.cellWidth * (UIManager.selectedColumn - 1) +
+      offsets.cellWidth * (UIModel.selectedColumn - 1) +
       offsets.cardOffsetX;
     const y =
       offsets.gameOffsetY +
-      offsets.cellHeight * (UIManager.selectedRow - 1) +
+      offsets.cellHeight * (UIModel.selectedRow - 1) +
       offsets.cardOffsetY;
 
     this.placeCard(selectedCard, x, y);
@@ -80,11 +80,11 @@ export class PlacementModel {
       "[PLACEMENT MANAGER] Placing card:",
       card,
       "selectedSquare:",
-      UIManager.selectedSquare,
+      UIModel.selectedSquare,
       "x:",
       x,
       "y:",
-      y
+      y,
     );
     if (!card.visuals?.container) {
       return;
@@ -92,13 +92,13 @@ export class PlacementModel {
 
     // Increment played cards count
     if (card.owner === "player") {
-      this.playerManager.playedCardsCount++;
+      this.playerModel.playedCardsCount++;
     }
 
-    BoardManager.updateUISelection(UIManager.selectedSquare);
+    BoardModel.updateUISelection(UIModel.selectedSquare);
 
-    const cellIndex = UIManager.selectedSquare - 1;
-    if (BoardManager.boardArray[cellIndex].occupant) {
+    const cellIndex = UIModel.selectedSquare - 1;
+    if (BoardModel.boardArray[cellIndex].occupant) {
       return;
     }
 
@@ -107,13 +107,13 @@ export class PlacementModel {
       // Flip the AI card over
       if (card.owner === "ai" && !Game.rules.includes("open")) {
         card.visuals.container.children.find(
-          (child) => child.name === "backBitmap"
+          (child) => child.name === "backBitmap",
         ).visible = false;
         card.visuals.container.children.find(
-          (child) => child.name === "colourBitmap"
+          (child) => child.name === "colourBitmap",
         ).visible = true;
         card.visuals.container.children.find(
-          (child) => child.name === "faceBitmap"
+          (child) => child.name === "faceBitmap",
         ).visible = true;
       }
       this.onCardOffscreenComplete(card, x, y);
@@ -145,10 +145,10 @@ export class PlacementModel {
    */
   onCardPlacementComplete(card) {
     // Correctly calculate adjacency for this card
-    this.setCardAdjacents(card, UIManager.selectedSquare);
+    this.setCardAdjacents(card, UIModel.selectedSquare);
 
     // Add card to board data
-    this.addCardToBoard(card, UIManager.selectedSquare);
+    this.addCardToBoard(card, UIModel.selectedSquare);
 
     // Apply element effects
     this.controller.applyElementEffects(card);
@@ -158,7 +158,7 @@ export class PlacementModel {
 
     Game.stage.update();
 
-    if (BoardManager.isGameOver()) {
+    if (BoardModel.isGameOver()) {
       Game.endGame();
     } else {
       this.controller.playerTurnSwitch();
@@ -174,7 +174,7 @@ export class PlacementModel {
   setCardAdjacents(card) {
     const directions = ["Left", "Up", "Right", "Down"];
     for (const direction of directions) {
-      const squareIndex = UIManager[`square${direction}`];
+      const squareIndex = UIModel[`square${direction}`];
 
       // skip "none" squares
       if (squareIndex === "none") {
@@ -182,7 +182,7 @@ export class PlacementModel {
         continue;
       }
 
-      const occupant = BoardManager.getOccupant(squareIndex - 1); // convert 1-based to 0-based
+      const occupant = BoardModel.getOccupant(squareIndex - 1); // convert 1-based to 0-based
       card[`card${direction}`] = occupant ?? undefined;
     }
   }
@@ -192,17 +192,17 @@ export class PlacementModel {
    *
    * @param {createjs.Container} card - The card being placed.
    */
-  addCardToBoard(card, square = UIManager.selectedSquare) {
+  addCardToBoard(card, square = UIModel.selectedSquare) {
     card.inCell = square;
-    BoardManager.boardArray[square - 1].occupant = card;
+    BoardModel.boardArray[square - 1].occupant = card;
 
     // Remove from free cells
-    const freeIndex = BoardManager.freeCells.indexOf(square);
+    const freeIndex = BoardModel.freeCells.indexOf(square);
     if (freeIndex !== -1) {
-      BoardManager.freeCells.splice(freeIndex, 1);
+      BoardModel.freeCells.splice(freeIndex, 1);
     }
 
-    BoardManager.lastPlacedSquare = square;
+    BoardModel.lastPlacedSquare = square;
 
     const cardContainer = card.visuals.container;
 
@@ -211,15 +211,15 @@ export class PlacementModel {
     cardContainer.scaleY = offsets.scaledCardHeight / bounds.height;
 
     // Convert GLOBAL → LOCAL
-    const pt = UIManager.boardContainer.globalToLocal(
+    const pt = UIModel.boardContainer.globalToLocal(
       cardContainer.x,
-      cardContainer.y
+      cardContainer.y,
     );
     cardContainer.x = pt.x;
     cardContainer.y = pt.y;
 
-    if (!UIManager.boardContainer.contains(cardContainer)) {
-      UIManager.boardContainer.addChild(cardContainer);
+    if (!UIModel.boardContainer.contains(cardContainer)) {
+      UIModel.boardContainer.addChild(cardContainer);
     }
   }
 

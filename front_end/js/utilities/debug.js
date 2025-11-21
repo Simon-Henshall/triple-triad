@@ -1,5 +1,5 @@
-import { BoardManager } from "../shared/board/board-manager.js";
-import { UIManager } from "../shared/ui/ui-manager.js";
+import { BoardModel } from "../shared/board/board-model.js";
+import { UIModel } from "../shared/ui/ui-model.js";
 import { getPlayerTurn } from "./turn.js";
 import { elements } from "../constants/elements.js";
 import { Game } from "../shared/game/game.js";
@@ -17,8 +17,8 @@ export const debug = {
    */
   logCell(eventOrSquare) {
     const squareID = eventOrSquare.name ?? eventOrSquare.id;
-    const squareObject = UIManager.squares[squareID - 1];
-    const cardHere = BoardManager.boardArray[squareID - 1].occupant;
+    const squareObject = UIModel.squares[squareID - 1];
+    const cardHere = BoardModel.boardArray[squareID - 1].occupant;
 
     console.log("======================================================");
     console.log(`CELL DEBUG | Square ID: ${squareID}`);
@@ -50,7 +50,7 @@ export const debug = {
   logBoard() {
     console.log("--------------- BOARD STATE ---------------");
     for (let index = 0; index < 3; index++) {
-      const row = BoardManager.boardArray
+      const row = BoardModel.boardArray
         .slice(index * 3, index * 3 + 3)
         .map((cell) => {
           const element = cell.element
@@ -71,8 +71,8 @@ export const debug = {
    */
   logHands() {
     console.log("=============== PLAYER HAND ===============");
-    const playerManager = Game.managers.playerManager;
-    for (const [index, card] of playerManager.cardsInPlayerHand.entries()) {
+    const playerModel = Game.models.playerModel;
+    for (const [index, card] of playerModel.cardsInPlayerHand.entries()) {
       console.log(
         `Card ${index}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
       );
@@ -93,15 +93,15 @@ export const debug = {
    */
   logTurn() {
     const currentPlayer = getPlayerTurn();
-    const playerManager = Game.managers.playerManager;
+    const playerModel = Game.models.playerModel;
     const aiTurnModel = Game.models.aiTurnModel;
     console.log(
       `********** CURRENT TURN: ${currentPlayer.toUpperCase()} **********`,
     );
     console.log(
-      `SCORE | Player: ${playerManager.totalBlueCards} AI: ${aiTurnModel.currentlyOwnedCards}`,
+      `SCORE | Player: ${playerModel.totalBlueCards} AI: ${aiTurnModel.currentlyOwnedCards}`,
     );
-    console.log(`Free cells remaining: ${BoardManager.freeCells.join(", ")}`);
+    console.log(`Free cells remaining: ${BoardModel.freeCells.join(", ")}`);
     console.log("*****************************************");
   },
 

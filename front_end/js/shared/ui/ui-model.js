@@ -2,7 +2,7 @@ import { offsets } from "../../constants/offsets.js";
 import { Game } from "../game/game.js";
 import { debug } from "../../utilities/debug.js";
 
-export const UIManager = {
+export const UIModel = {
   // -------------------------
   // Grid / Selection state
   // -------------------------
@@ -56,18 +56,18 @@ export const UIManager = {
       previewContainer.x = offsets.previewX;
       previewContainer.y = offsets.previewY;
 
-      UIManager.previewCardContainer = previewContainer;
+      UIModel.previewCardContainer = previewContainer;
 
       Game.stage.addChild(previewContainer);
       Game.stage.update();
     },
 
     hidePreviewCard() {
-      const preview = UIManager.previewCardContainer;
+      const preview = UIModel.previewCardContainer;
       if (preview && Game.stage.contains(preview)) {
         Game.stage.removeChild(preview);
       }
-      UIManager.previewCardContainer = undefined;
+      UIModel.previewCardContainer = undefined;
       Game.stage.update();
     },
 
@@ -131,8 +131,8 @@ export const UIManager = {
       console.log("Player hand cursor restored");
     }
     // Restore cursors
-    UIManager.playerSelectingPlacement = false;
-    UIManager.playerChoosingCard = true;
+    UIModel.playerSelectingPlacement = false;
+    UIModel.playerChoosingCard = true;
   },
 
   // -------------------------
@@ -144,7 +144,7 @@ export const UIManager = {
   cardImage: undefined,
 
   bringToFront() {
-    const { infoBox } = UIManager;
+    const { infoBox } = UIModel;
     if (infoBox.container) {
       Game.stage.setChildIndex(
         infoBox.container,

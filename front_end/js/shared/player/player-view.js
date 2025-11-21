@@ -1,17 +1,17 @@
 import { Game } from "../game/game.js";
-import { UIManager } from "../ui/ui-manager.js";
+import { UIModel } from "../ui/ui-model.js";
 import { offsets } from "../../constants/offsets.js";
 
 /**
  * Handles all visual rendering and animation of the player's hand.
  */
-export class PlayerRenderer {
+export class PlayerView {
   /**
-   * Creates an instance of PlayerRenderer.
-   * @param {PlayerManager} playerManager - The player manager instance.
+   * Creates an instance of PlayerView.
+   * @param {PlayerModel} playerModel - The player model instance.
    */
-  constructor(playerManager) {
-    this.manager = playerManager;
+  constructor(playerModel) {
+    this.model = playerModel;
 
     /** @type {Array<createjs.Container>} visual containers for hand cards */
     this.cardsInPlayerHand = [];
@@ -33,7 +33,7 @@ export class PlayerRenderer {
     const targetY = this.stackOffsetY + index * this.stackSpacing;
 
     // console.log(
-    //   `[Player Renderer] Animating ${isRemoving ? "removal" : "addition"} at index ${index}:`,
+    //   `[Player View] Animating ${isRemoving ? "removal" : "addition"} at index ${index}:`,
     //   cardContainer,
     // );
 
@@ -52,14 +52,14 @@ export class PlayerRenderer {
       .call(() => {
         if (isRemoving) {
           // console.log(
-          //   "[Player Renderer] Removal tween finished for:",
+          //   "[Player View] Removal tween finished for:",
           //   cardContainer,
           // );
 
           const index_ = this.cardsInPlayerHand.indexOf(cardContainer);
           if (index_ === -1) {
             console.warn(
-              "[Player Renderer] Container not found; array out of sync",
+              "[Player View] Container not found; array out of sync",
             );
           } else {
             this.cardsInPlayerHand.splice(index_, 1);
@@ -86,7 +86,7 @@ export class PlayerRenderer {
    */
   indentSelectedCard(selectedCard) {
     console.log("Indenting selected card:", selectedCard.data.name);
-    const previousCard = UIManager.previouslySelectedCard;
+    const previousCard = UIModel.previouslySelectedCard;
 
     if (selectedCard) {
       console.log(selectedCard);
@@ -101,7 +101,7 @@ export class PlayerRenderer {
       previousCard.visuals.container.x += 30;
     }
 
-    UIManager.previouslySelectedCard = selectedCard;
+    UIModel.previouslySelectedCard = selectedCard;
     Game.stage.update();
   }
 
@@ -123,10 +123,10 @@ export class PlayerRenderer {
    * @param {boolean} updatePreview
    */
   _updateHandAndPreviewZOrder(updatePreview = true) {
-    const previewCard = UIManager.selectionBook?.displayedCard;
+    const previewCard = UIModel.selectionBook?.displayedCard;
     let topIndex = Game.stage.numChildren;
 
-    const confirmationContainer = UIManager.confirmation?.container;
+    const confirmationContainer = UIModel.confirmation?.container;
     if (confirmationContainer && Game.stage.contains(confirmationContainer)) {
       topIndex = Game.stage.getChildIndex(confirmationContainer);
     }
@@ -147,7 +147,7 @@ export class PlayerRenderer {
    * @param {createjs.Container} cardContainer
    */
   _attachPreviewTicker(cardContainer) {
-    const previewCard = UIManager.selectionBook?.displayedCard;
+    const previewCard = UIModel.selectionBook?.displayedCard;
     if (!previewCard) {
       return;
     }
@@ -158,7 +158,7 @@ export class PlayerRenderer {
      * @param {createjs.Container} cardContainer
      */
     const tickHandler = () => {
-      const confirmationContainer = UIManager.confirmation?.container;
+      const confirmationContainer = UIModel.confirmation?.container;
       let topIndex = Game.stage.numChildren;
       if (confirmationContainer && Game.stage.contains(confirmationContainer)) {
         topIndex = Game.stage.getChildIndex(confirmationContainer);

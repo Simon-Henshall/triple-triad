@@ -8,11 +8,11 @@ export default {
    * @return {Object} - Phase controllers.
    */
   "deck-selection": (deps) =>
-    new DeckSelectionController(deps.deck, deps.playerManager),
+    new DeckSelectionController(deps.deck, deps.playerModel),
   /**
    * Hand selection phase controller.
    * @param {Object} deps - Dependencies for phase controllers.
    * @return {Object} - Phase controllers.
    */
-  "hand-select": (deps) => new HandSelectController(deps.playerManager),
+  "hand-select": (deps) => new HandSelectController(deps.playerModel),
 };

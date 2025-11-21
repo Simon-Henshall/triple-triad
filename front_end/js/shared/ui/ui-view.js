@@ -1,6 +1,6 @@
 import { config } from "../../constants/config.js";
 import { Game } from "../game/game.js";
-import { UIManager } from "./ui-manager.js";
+import { UIModel } from "./ui-model.js";
 
 // Info box layout constants
 const INFO_BOX_WIDTH = 420;
@@ -8,7 +8,7 @@ const INFO_BOX_HEIGHT = 65;
 const INFO_BOX_X = 260;
 const INFO_BOX_Y = 540;
 
-export const UIRenderer = {
+export const UIView = {
   // -------------------------
   // Add background to the stage
   // -------------------------
@@ -31,7 +31,7 @@ export const UIRenderer = {
    * Initializes the container and text elements if they don't exist yet.
    */
   drawInfoBox() {
-    const ui = UIManager;
+    const ui = UIModel;
 
     // Initialize container if missing, otherwise clear previous children
     if (ui.infoBox.container) {
@@ -98,8 +98,8 @@ export const UIRenderer = {
    * Updates player/AI card counts as well.
    */
   updateInfoBox(card) {
-    const ui = UIManager;
-    console.log("UIRenderer.updateInfoBox() called", ui, card);
+    const ui = UIModel;
+    console.log("UIView.updateInfoBox() called", ui, card);
 
     // Update selected card name
     if (ui.infoBox.cardName && card) {
@@ -135,7 +135,7 @@ export const UIRenderer = {
   /**
    * Draws the "Are you sure?" confirmation box with text and border.
    *
-   * @param {object} conf - The confirmation box state from UIManager
+   * @param {object} conf - The confirmation box state from UIModel
    * @property {createjs.Container} conf.container - Container for all confirmation elements
    * @property {createjs.Shape} conf.background - Background rectangle
    */

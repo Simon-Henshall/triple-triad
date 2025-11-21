@@ -1,13 +1,13 @@
 import { Game } from "../game/game.js";
-import { UIManager } from "../ui/ui-manager.js";
-import { UIRenderer } from "../ui/ui-renderer.js";
+import { UIModel } from "../ui/ui-model.js";
+import { UIView } from "../ui/ui-view.js";
 import { debug } from "../../utilities/debug.js";
 
 /**
  * Handles all visual rendering of cursors.
  * Works with CreateJS stage and visual containers, separate from logical state.
  */
-export const CursorRenderer = (playerManager, playerRenderer) => ({
+export const CursorView = (playerModel, playerView) => ({
   /**
    * Visual handling of the selection board cursor.
    */
@@ -16,8 +16,8 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Place the selection cursor on the stage.
      */
     place() {
-      playerManager.playerHandSelectionCursor.visible = true;
-      Game.stage.addChild(playerManager.playerHandSelectionCursor);
+      playerModel.playerHandSelectionCursor.visible = true;
+      Game.stage.addChild(playerModel.playerHandSelectionCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -31,17 +31,17 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
     updatePosition() {
       const controller = SelectionBookUI.controller;
       if (controller !== undefined && controller !== null) {
-        const sb = UIManager.selectionBook;
+        const sb = UIModel.selectionBook;
 
         if (
-          playerManager.playerHandSelectionCursor !== undefined &&
+          playerModel.playerHandSelectionCursor !== undefined &&
           sb.shownCards !== undefined &&
           sb.background !== undefined
         ) {
           const relativeIndex = controller.selectedIndex - controller.pageStart;
           const rowStep = 35;
 
-          playerManager.playerHandSelectionCursor.y =
+          playerModel.playerHandSelectionCursor.y =
             sb.background.y + 48 + rowStep * relativeIndex;
         }
       }
@@ -55,7 +55,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
     ensurePopulated() {
       const controller = SelectionBookUI.controller;
       if (controller && typeof controller.clampSelectionToPage === "function") {
-        SelectionBookRenderer.populate(controller);
+        SelectionBookView.populate(controller);
       } else {
         console.warn("SelectionBook controller missing or uninitialised.");
       }
@@ -65,7 +65,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Remove the selection cursor from the stage.
      */
     remove() {
-      Game.stage.removeChild(playerManager.playerHandSelectionCursor);
+      Game.stage.removeChild(playerModel.playerHandSelectionCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -82,12 +82,10 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Place the confirmation cursor at its initial visual position.
      */
     place() {
-      UIManager.confirmation.cursor.x =
-        UIManager.confirmation.background.x + 50;
-      UIManager.confirmation.cursor.y =
-        UIManager.confirmation.background.y + 60;
+      UIModel.confirmation.cursor.x = UIModel.confirmation.background.x + 50;
+      UIModel.confirmation.cursor.y = UIModel.confirmation.background.y + 60;
 
-      Game.stage.addChild(UIManager.confirmation.cursor);
+      Game.stage.addChild(UIModel.confirmation.cursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -99,10 +97,10 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Update the confirmation cursor's Y position according to selected choice.
      */
     updatePosition() {
-      UIManager.confirmation.cursor.y =
-        UIManager.confirmation.background.y +
+      UIModel.confirmation.cursor.y =
+        UIModel.confirmation.background.y +
         60 +
-        UIManager.confirmation.selectedChoice * 30;
+        UIModel.confirmation.selectedChoice * 30;
       Game.stage.update();
     },
 
@@ -110,7 +108,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Remove the confirmation cursor from the stage.
      */
     remove() {
-      Game.stage.removeChild(UIManager.confirmation.cursor);
+      Game.stage.removeChild(UIModel.confirmation.cursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -127,8 +125,8 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Place the player hand cursor on the stage.
      */
     place() {
-      playerManager.playerHandCursor.visible = true;
-      Game.stage.addChild(playerManager.playerHandCursor);
+      playerModel.playerHandCursor.visible = true;
+      Game.stage.addChild(playerModel.playerHandCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -138,7 +136,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
 
     /**
      * Update the player hand cursor's position visually.
-     * Note: Y position is managed by CursorManager; this just refreshes stage.
+     * Note: Y position is managed by CursorModel; this just refreshes stage.
      */
     updatePosition() {
       Game.stage.update();
@@ -148,18 +146,18 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Sync visual selection with logical selected card.
      */
     syncSelection() {
-      UIManager.previouslySelectedCard = UIManager.selectedCard;
-      UIManager.selectedCard = playerManager.hand[UIManager.selectedCardNumber];
+      UIModel.previouslySelectedCard = UIModel.selectedCard;
+      UIModel.selectedCard = playerModel.hand[UIModel.selectedCardNumber];
 
-      UIRenderer.updateInfoBox(UIManager.selectedCard);
-      playerRenderer.indentSelectedCard(UIManager.selectedCard);
+      UIView.updateInfoBox(UIModel.selectedCard);
+      playerView.indentSelectedCard(UIModel.selectedCard);
     },
 
     /**
      * Remove the player hand cursor from the stage.
      */
     remove() {
-      Game.stage.removeChild(playerManager.playerHandCursor);
+      Game.stage.removeChild(playerModel.playerHandCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -176,9 +174,9 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Place the grid cursor on the stage.
      */
     place() {
-      UIManager.playerSelectingPlacement = true;
+      UIModel.playerSelectingPlacement = true;
 
-      Game.stage.addChild(UIManager.gridCursor);
+      Game.stage.addChild(UIModel.gridCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -188,7 +186,7 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
 
     /**
      * Update the grid cursor's position visually.
-     * Note: exact X/Y is managed by CursorManager.move().
+     * Note: exact X/Y is managed by CursorModel.move().
      */
     updatePosition() {
       Game.stage.update();
@@ -198,9 +196,9 @@ export const CursorRenderer = (playerManager, playerRenderer) => ({
      * Remove the grid cursor from the stage.
      */
     remove() {
-      UIManager.playerSelectingPlacement = false;
+      UIModel.playerSelectingPlacement = false;
 
-      Game.stage.removeChild(UIManager.gridCursor);
+      Game.stage.removeChild(UIModel.gridCursor);
       Game.stage.update();
 
       if (debug.active) {

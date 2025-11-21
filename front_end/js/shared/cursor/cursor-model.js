@@ -1,6 +1,6 @@
-import { UIManager } from "../ui/ui-manager.js";
+import { UIModel } from "../ui/ui-model.js";
 import { offsets } from "../../constants/offsets.js";
-import { BoardManager } from "../board/board-manager.js";
+import { BoardModel } from "../board/board-model.js";
 import { Game } from "../game/game.js";
 import { debug } from "../../utilities/debug.js";
 
@@ -8,7 +8,7 @@ import { debug } from "../../utilities/debug.js";
  * Manages the logical state of all cursors in the game.
  * Handles position, movement, and state changes without directly touching the stage.
  */
-export const CursorManager = {
+export const CursorModel = {
   /** Dynamically set in gameInit.all() */
   player: undefined,
 
@@ -22,17 +22,17 @@ export const CursorManager = {
      */
     initPosition() {
       if (
-        !CursorManager.player ||
-        !CursorManager.player.playerHandSelectionCursor
+        !CursorModel.player ||
+        !CursorModel.player.playerHandSelectionCursor
       ) {
-        console.warn("CursorManager.player not set yet");
+        console.warn("CursorModel.player not set yet");
         return;
       }
 
-      CursorManager.player.playerHandSelectionCursor.x =
-        UIManager.selectionBook.background.x - 40;
-      CursorManager.player.playerHandSelectionCursor.y =
-        UIManager.selectionBook.background.y + 58;
+      CursorModel.player.playerHandSelectionCursor.x =
+        UIModel.selectionBook.background.x - 40;
+      CursorModel.player.playerHandSelectionCursor.y =
+        UIModel.selectionBook.background.y + 58;
     },
 
     /**
@@ -86,7 +86,7 @@ export const CursorManager = {
      * Reset the currently selected choice to default (0).
      */
     resetChoice() {
-      UIManager.confirmation.selectedChoice = 0;
+      UIModel.confirmation.selectedChoice = 0;
     },
 
     /**
@@ -96,27 +96,27 @@ export const CursorManager = {
      * @returns {boolean} True if the selection changed, false otherwise.
      */
     move(direction) {
-      const previousChoice = UIManager.confirmation.selectedChoice;
+      const previousChoice = UIModel.confirmation.selectedChoice;
 
       if (direction === "up") {
-        if (UIManager.confirmation.selectedChoice > 0) {
-          UIManager.confirmation.selectedChoice -= 1;
+        if (UIModel.confirmation.selectedChoice > 0) {
+          UIModel.confirmation.selectedChoice -= 1;
         }
       } else if (direction === "down") {
-        if (UIManager.confirmation.selectedChoice < 1) {
-          UIManager.confirmation.selectedChoice += 1;
+        if (UIModel.confirmation.selectedChoice < 1) {
+          UIModel.confirmation.selectedChoice += 1;
         }
       } else {
         console.warn(`Unknown or out-of-bounds direction: ${direction}`);
       }
 
       // Clamp choice to valid range
-      UIManager.confirmation.selectedChoice = Math.max(
+      UIModel.confirmation.selectedChoice = Math.max(
         0,
-        Math.min(1, UIManager.confirmation.selectedChoice),
+        Math.min(1, UIModel.confirmation.selectedChoice),
       );
 
-      return previousChoice !== UIManager.confirmation.selectedChoice;
+      return previousChoice !== UIModel.confirmation.selectedChoice;
     },
   },
 
@@ -128,15 +128,15 @@ export const CursorManager = {
      * Initialize the player hand cursor position based on selected card index.
      */
     init() {
-      if (!CursorManager.player || !CursorManager.player.playerHandCursor) {
-        console.warn("CursorManager.playerHandCursor not available yet");
+      if (!CursorModel.player || !CursorModel.player.playerHandCursor) {
+        console.warn("CursorModel.playerHandCursor not available yet");
         return;
       }
 
-      UIManager.playerChoosingCard = true;
+      UIModel.playerChoosingCard = true;
 
-      const player = CursorManager.player;
-      const cardIndex = UIManager.selectedCardNumber ?? 0;
+      const player = CursorModel.player;
+      const cardIndex = UIModel.selectedCardNumber ?? 0;
 
       player.playerHandCursor.x = player.handOffsetX - 50;
       player.playerHandCursor.y =
@@ -153,7 +153,7 @@ export const CursorManager = {
      * @returns {boolean} True if movement succeeded, false if out of bounds.
      */
     move(direction) {
-      const player = CursorManager.player;
+      const player = CursorModel.player;
       if (!player || !player.playerHandCursor) {
         console.warn("Player or playerHandCursor not found");
         return false;
@@ -162,18 +162,18 @@ export const CursorManager = {
       const handOffset = offsets.handCardOffset;
 
       if (direction === "up") {
-        if (UIManager.selectedCardNumber > 0) {
+        if (UIModel.selectedCardNumber > 0) {
           player.playerHandCursor.y -= handOffset;
-          UIManager.selectedCardNumber--;
+          UIModel.selectedCardNumber--;
           player.cardsAboveSelection--;
         } else {
           console.warn("Cannot move player hand cursor up - out of bounds");
           return false;
         }
       } else if (direction === "down") {
-        if (UIManager.selectedCardNumber < player.hand.length - 1) {
+        if (UIModel.selectedCardNumber < player.hand.length - 1) {
           player.playerHandCursor.y += handOffset;
-          UIManager.selectedCardNumber++;
+          UIModel.selectedCardNumber++;
           player.cardsAboveSelection++;
         } else {
           console.warn("Cannot move player hand cursor down - out of bounds");
@@ -192,8 +192,8 @@ export const CursorManager = {
      * Clears the player hand cursor state.
      */
     clear() {
-      UIManager.playerChoosingCard = false;
-      const player = CursorManager.player;
+      UIModel.playerChoosingCard = false;
+      const player = CursorModel.player;
       if (player?.playerHandCursor) {
         player.playerHandCursor.visible = false;
       }
@@ -209,18 +209,18 @@ export const CursorManager = {
      * Initialize the grid cursor to the starting cell (1,1 visual).
      */
     init() {
-      UIManager.playerSelectingPlacement = true;
+      UIModel.playerSelectingPlacement = true;
 
-      UIManager.gridCursor.x = offsets.gameOffsetX + offsets.cellWidth + 16;
-      UIManager.gridCursor.y = offsets.gameOffsetY + offsets.cellHeight + 80;
+      UIModel.gridCursor.x = offsets.gameOffsetX + offsets.cellWidth + 16;
+      UIModel.gridCursor.y = offsets.gameOffsetY + offsets.cellHeight + 80;
 
-      UIManager.gridCursor.visible = true;
-      Game.stage.addChild(UIManager.gridCursor);
+      UIModel.gridCursor.visible = true;
+      Game.stage.addChild(UIModel.gridCursor);
       Game.stage.update();
 
       if (debug.active) {
         console.log(
-          `Grid cursor placed at X:${UIManager.gridCursor.x}, Y:${UIManager.gridCursor.y}`,
+          `Grid cursor placed at X:${UIModel.gridCursor.x}, Y:${UIModel.gridCursor.y}`,
         );
       }
     },
@@ -231,14 +231,14 @@ export const CursorManager = {
      * @param {"left"|"up"|"right"|"down"} direction
      */
     move(direction) {
-      const oldX = UIManager.gridCursor.x;
-      const oldY = UIManager.gridCursor.y;
+      const oldX = UIModel.gridCursor.x;
+      const oldY = UIModel.gridCursor.y;
 
       switch (direction) {
         case "left": {
-          if (UIManager.gridCursor.x > offsets.gameOffsetX + 16) {
-            UIManager.gridCursor.x -= offsets.cellWidth;
-            UIManager.selectedColumn--;
+          if (UIModel.gridCursor.x > offsets.gameOffsetX + 16) {
+            UIModel.gridCursor.x -= offsets.cellWidth;
+            UIModel.selectedColumn--;
           } else {
             return console.warn("Cannot move grid cursor left - out of bounds");
           }
@@ -246,9 +246,9 @@ export const CursorManager = {
         }
 
         case "up": {
-          if (UIManager.gridCursor.y > offsets.gameOffsetY + 80) {
-            UIManager.gridCursor.y -= offsets.cellHeight;
-            UIManager.selectedRow--;
+          if (UIModel.gridCursor.y > offsets.gameOffsetY + 80) {
+            UIModel.gridCursor.y -= offsets.cellHeight;
+            UIModel.selectedRow--;
           } else {
             return console.warn("Cannot move grid cursor up - out of bounds");
           }
@@ -257,11 +257,11 @@ export const CursorManager = {
 
         case "right": {
           if (
-            UIManager.gridCursor.x <
+            UIModel.gridCursor.x <
             offsets.gameOffsetX + offsets.cellWidth * 2 + 16
           ) {
-            UIManager.gridCursor.x += offsets.cellWidth;
-            UIManager.selectedColumn++;
+            UIModel.gridCursor.x += offsets.cellWidth;
+            UIModel.selectedColumn++;
           } else {
             return console.warn(
               "Cannot move grid cursor right - out of bounds",
@@ -272,11 +272,11 @@ export const CursorManager = {
 
         case "down": {
           if (
-            UIManager.gridCursor.y <
+            UIModel.gridCursor.y <
             offsets.gameOffsetY + offsets.cellHeight * 2 + 80
           ) {
-            UIManager.gridCursor.y += offsets.cellHeight;
-            UIManager.selectedRow++;
+            UIModel.gridCursor.y += offsets.cellHeight;
+            UIModel.selectedRow++;
           } else {
             return console.warn("Cannot move grid cursor down - out of bounds");
           }
@@ -289,16 +289,16 @@ export const CursorManager = {
       }
 
       // Update selectedSquare based on row/column
-      UIManager.selectedSquare =
-        (UIManager.selectedRow - 1) * 3 + UIManager.selectedColumn;
+      UIModel.selectedSquare =
+        (UIModel.selectedRow - 1) * 3 + UIModel.selectedColumn;
 
-      // Update BoardManager/UI
-      BoardManager.updateUISelection(UIManager.selectedSquare);
+      // Update BoardModel/UI
+      BoardModel.updateUISelection(UIModel.selectedSquare);
       Game.stage.update();
 
       if (debug.active) {
         console.log(
-          `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${UIManager.gridCursor.x}, Y:${UIManager.gridCursor.y}, selectedSquare=${UIManager.selectedSquare}`,
+          `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${UIModel.gridCursor.x}, Y:${UIModel.gridCursor.y}, selectedSquare=${UIModel.selectedSquare}`,
         );
       }
     },
@@ -307,8 +307,8 @@ export const CursorManager = {
      * Clears the grid cursor state.
      */
     clear() {
-      UIManager.playerSelectingPlacement = false;
-      Game.stage.removeChild(UIManager.gridCursor);
+      UIModel.playerSelectingPlacement = false;
+      Game.stage.removeChild(UIModel.gridCursor);
       Game.stage.update();
 
       if (debug.active) {

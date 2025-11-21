@@ -1,7 +1,7 @@
 import { Game } from "../../shared/game/game.js";
 import { offsets } from "../../constants/offsets.js";
 import { getPlayerTurn } from "../../utilities/turn.js";
-import { UIManager } from "../../shared/ui/ui-manager.js";
+import { UIModel } from "../../shared/ui/ui-model.js";
 
 /**
  * Handles all visual animations and effects for card placement,
@@ -15,8 +15,8 @@ export class PlacementView {
   shiftHandCardsDown() {
     console.log("shiftHandCardsDown");
     if (getPlayerTurn() === "blue") {
-      const playerManager = Game.managers.playerManager;
-      playerManager.shiftCardsDown(offsets.handCardOffset);
+      const playerModel = Game.models.playerModel;
+      playerModel.shiftCardsDown(offsets.handCardOffset);
     } else {
       // AI hand movement
       const aiTurnModel = Game.models.aiTurnModel;
@@ -106,12 +106,12 @@ export class PlacementView {
    * Indent the newly selected default card after placement (visual feedback).
    */
   indentAfterPlacement() {
-    if (UIManager.selectedCard) {
+    if (UIModel.selectedCard) {
       console.log(
         "Indenting selected card after placement",
-        UIManager.selectedCard,
+        UIModel.selectedCard,
       );
-      UIManager.selectedCard.visuals.container.x -= 30;
+      UIModel.selectedCard.visuals.container.x -= 30;
     }
   }
 }

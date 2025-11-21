@@ -2,7 +2,7 @@ import { ResolutionView } from "./resolution-view.js";
 import { directionMap } from "../../constants/directions.js";
 import { getPlayerTurn } from "../../utilities/turn.js";
 import { Game } from "../../shared/game/game.js";
-import { UIManager } from "../../shared/ui/ui-manager.js";
+import { UIModel } from "../../shared/ui/ui-model.js";
 
 /**
  * ResolutionController is responsible for animating cards as they are flipped
@@ -78,7 +78,7 @@ export class ResolutionController {
     Game.ui.scoreBoard.update();
 
     // Maintain UI references
-    const squareObject = UIManager.squares[targetCard.inCell - 1];
+    const squareObject = UIModel.squares[targetCard.inCell - 1];
     if (squareObject) {
       squareObject.card = targetCard;
     }
@@ -91,7 +91,7 @@ export class ResolutionController {
    */
   updateOwnershipCounts(flippedCount) {
     const turn = getPlayerTurn();
-    const playerManager = Game.managers.playerManager;
+    const playerModel = Game.models.playerModel;
     const aiTurnModel = Game.models.aiTurnModel;
 
     const delta = {
@@ -99,7 +99,7 @@ export class ResolutionController {
       red: { player: -1, ai: 1 },
     };
 
-    playerManager.totalBlueCards += delta[turn].player * flippedCount;
+    playerModel.totalBlueCards += delta[turn].player * flippedCount;
     aiTurnModel.currentlyOwnedCards += delta[turn].ai * flippedCount;
   }
 }

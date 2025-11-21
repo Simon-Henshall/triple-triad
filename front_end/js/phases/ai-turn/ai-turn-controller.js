@@ -1,13 +1,13 @@
 import { AITurnModel } from "./ai-turn-model.js";
 import { AITurnView } from "./ai-turn-view.js";
-import { BoardManager } from "../../shared/board/board-manager.js";
-import { UIManager } from "../../shared/ui/ui-manager.js";
+import { BoardModel } from "../../shared/board/board-model.js";
+import { UIModel } from "../../shared/ui/ui-model.js";
 import { Game } from "../../shared/game/game.js";
 import { offsets } from "../../constants/offsets.js";
 
 /**
  * AI Turn Controller
- * Handles the AI's decision-making, interacts with BoardManager, and updates the view.
+ * Handles the AI's decision-making, interacts with BoardModel, and updates the view.
  */
 export class AITurnController {
   /**
@@ -48,7 +48,7 @@ export class AITurnController {
     }
 
     // Determine free cells
-    const freeCells = BoardManager.boardArray
+    const freeCells = BoardModel.boardArray
       .map((cell, index) => (cell.occupant ? undefined : index + 1))
       .filter(Boolean);
 
@@ -60,8 +60,8 @@ export class AITurnController {
     // Pick random free cell
     const selectedSquare =
       freeCells[Math.floor(Math.random() * freeCells.length)];
-    UIManager.selectedSquare = selectedSquare;
-    BoardManager.updateUISelection(UIManager.selectedSquare);
+    UIModel.selectedSquare = selectedSquare;
+    BoardModel.updateUISelection(UIModel.selectedSquare);
 
     // Animate cards above selection down
     this.view.shiftCardsDown(
@@ -71,13 +71,13 @@ export class AITurnController {
     );
 
     // Place the card on the board
-    Game.controllers.placementController.manager.placeCard(
+    Game.controllers.placementController.model.placeCard(
       playedCard,
       offsets.gameOffsetX +
-        offsets.cellWidth * (UIManager.selectedColumn - 1) +
+        offsets.cellWidth * (UIModel.selectedColumn - 1) +
         offsets.cardOffsetX,
       offsets.gameOffsetY +
-        offsets.cellHeight * (UIManager.selectedRow - 1) +
+        offsets.cellHeight * (UIModel.selectedRow - 1) +
         offsets.cardOffsetY,
     );
 

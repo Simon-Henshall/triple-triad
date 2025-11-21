@@ -9,9 +9,9 @@ export class ScoreBoard {
    * Class representing the scoreboard display.
    * Manages the visual updates of the scoreboard based on game state.
    */
-  constructor(stage, playerManager, aiTurnModel) {
+  constructor(stage, playerModel, aiTurnModel) {
     this.stage = stage;
-    this.playerManager = playerManager;
+    this.playerModel = playerModel;
     this.aiTurnModel = aiTurnModel;
 
     this.container = new createjs.Container();
@@ -39,12 +39,11 @@ export class ScoreBoard {
 
     // --- Player Count ---
     this.playerText = new createjs.Text(
-      this.playerManager.totalBlueCards,
+      this.playerModel.totalBlueCards,
       font,
       color,
     );
-    this.playerText.x =
-      this.playerManager.handOffsetX + offsets.cardWidth / 1.5;
+    this.playerText.x = this.playerModel.handOffsetX + offsets.cardWidth / 1.5;
     this.playerText.y = height;
     this.playerText.textBaseline = textBaseline;
 
@@ -57,7 +56,7 @@ export class ScoreBoard {
    */
   update() {
     this.aiText.text = this.aiTurnModel.currentlyOwnedCards;
-    this.playerText.text = this.playerManager.totalBlueCards;
+    this.playerText.text = this.playerModel.totalBlueCards;
     this.stage.update();
   }
 }

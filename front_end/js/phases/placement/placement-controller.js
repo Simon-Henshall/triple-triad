@@ -1,5 +1,5 @@
-import { BoardManager } from "../../shared/board/board-manager.js";
-import { UIManager } from "../../shared/ui/ui-manager.js";
+import { BoardModel } from "../../shared/board/board-model.js";
+import { UIModel } from "../../shared/ui/ui-model.js";
 import { getPlayerTurn, swapPlayerTurn } from "../../utilities/turn.js";
 import { debug } from "../../utilities/debug.js";
 import { ResolutionView } from "../resolution/resolution-view.js";
@@ -12,12 +12,12 @@ import { Game } from "../../shared/game/game.js";
  */
 export class PlacementController {
   /**
-   * Initializes the PlacementController with the BoardManager and UIManager.
+   * Initializes the PlacementController with the BoardModel and UIModel.
    */
-  constructor(playerManager) {
-    this.playerManager = playerManager;
-    this.resolutionView = new ResolutionView(playerManager);
-    this.manager = undefined; // set in init()
+  constructor(playerModel) {
+    this.playerModel = playerModel;
+    this.resolutionView = new ResolutionView(playerModel);
+    this.model = undefined; // set in init()
   }
 
   /**
@@ -25,7 +25,7 @@ export class PlacementController {
    * @param {Card} card The card being played.
    */
   init() {
-    this.manager = new PlacementModel(this);
+    this.model = new PlacementModel(this);
   }
 
   /**
@@ -33,11 +33,11 @@ export class PlacementController {
    * @param {Card} card The card being played.
    */
   applyElementEffects(card) {
-    const { selectedSquare, squares } = UIManager;
+    const { selectedSquare, squares } = UIModel;
     const squareElement = squares[selectedSquare - 1]?.element;
-    const effect = this.manager.applyElementEffects(card, squareElement);
+    const effect = this.model.applyElementEffects(card, squareElement);
     if (effect.modified) {
-      this.manager.view.showElementEffect(card, effect.image);
+      this.model.view.showElementEffect(card, effect.image);
     }
   }
 
@@ -64,12 +64,12 @@ export class PlacementController {
    * Restores selection and cursor.
    */
   _preparePlayerTurn() {
-    const { playerManager } = this;
-    const { manager: placementModel } = this;
+    const { playerModel } = this;
+    const { model: placementModel } = this;
 
     console.log(
       "[_preparePlayerTurn] hand:",
-      playerManager.hand.map((c, index) => ({
+      playerModel.hand.map((c, index) => ({
         i: index,
         name: c.data.name,
         y: c.visuals.container.y,
@@ -77,34 +77,34 @@ export class PlacementController {
     );
     console.log(
       "selectedCardIndex:",
-      playerManager.selectedCardIndex,
-      "UIManager.selectedCardNumber:",
-      UIManager.selectedCardNumber,
+      playerModel.selectedCardIndex,
+      "UIModel.selectedCardNumber:",
+      UIModel.selectedCardNumber,
       "selectedCard:",
-      playerManager.selectedCard?.data.name,
+      playerModel.selectedCard?.data.name,
     );
 
     // Reset selection to the first available card
-    playerManager.selectedCardIndex = 0;
-    playerManager.selectedCard = playerManager.hand[0] ?? undefined;
-    UIManager.selectedCardNumber = 0;
-    UIManager.selectedCard = playerManager.hand;
-    UIManager.selectedSquare = 5; // Center
+    playerModel.selectedCardIndex = 0;
+    playerModel.selectedCard = playerModel.hand[0] ?? undefined;
+    UIModel.selectedCardNumber = 0;
+    UIModel.selectedCard = playerModel.hand;
+    UIModel.selectedSquare = 5; // Center
 
     // Reset grid cursor to last selected square (don't force center)
-    BoardManager.updateUISelection(UIManager.selectedSquare);
+    BoardModel.updateUISelection(UIModel.selectedSquare);
 
     // Restore the player's hand cursor
     const { cursorController } = Game.controllers;
     cursorController.playerHand.place();
 
-    Game.stage.addChild(playerManager.playerHandCursor);
+    Game.stage.addChild(playerModel.playerHandCursor);
 
     // Ensure info box is visible and topmost
-    UIManager.bringToFront();
+    UIModel.bringToFront();
 
     // Swap back to the card choice phase
-    UIManager.playerChoosingCard = true;
+    UIModel.playerChoosingCard = true;
 
     // Reset card indentation for the player
     placementModel.view.indentAfterPlacement();

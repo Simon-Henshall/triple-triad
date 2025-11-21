@@ -4,13 +4,13 @@ import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.j
 /**
  * Manages the player's logical state: deck, hand, played cards, and counts.
  */
-export class PlayerManager {
+export class PlayerModel {
   /**
-   * Creates an instance of PlayerManager.
+   * Creates an instance of PlayerModel.
    *
    * @constructor
    */
-  constructor({ renderer } = {}) {
+  constructor({ view } = {}) {
     /** @type {Array<Card>} All owned cards in the game */
     this.deck = [];
 
@@ -23,7 +23,7 @@ export class PlayerManager {
     /** @type {number} Total blue cards (score) */
     this.totalBlueCards = 5;
 
-    /** @type {number} Horizontal offset for hand rendering (can be used by renderer) */
+    /** @type {number} Horizontal offset for hand rendering (can be used by view) */
     this.handOffsetX = 0;
 
     /** @type {number} Number of cards above current selection */
@@ -35,7 +35,7 @@ export class PlayerManager {
     /** index of currently selected card */
     this.selectedCardIndex = 0;
 
-    this.renderer = renderer;
+    this.view = view;
   }
 
   /**
@@ -49,7 +49,7 @@ export class PlayerManager {
     const deckCard = this.deck.find((d) => d.data.id === card.data.id);
     if (!deckCard || deckCard.remaining <= 0) {
       console.warn(
-        `[Player Manager] No more copies available in deck for ${card.data?.name}`,
+        `[Player Model] No more copies available in deck for ${card.data?.name}`,
       );
       return false;
     }
@@ -58,9 +58,9 @@ export class PlayerManager {
     deckCard.selectedCount = (deckCard.selectedCount || 0) + 1;
 
     this.hand.push(card);
-    console.log("[Player Manager] Added card:", card.data.name);
+    console.log("[Player Model] Added card:", card.data.name);
     console.log(
-      "[Player Manager] Player hand is now:",
+      "[Player Model] Player hand is now:",
       this.hand.map((c) => c.data.name),
     );
     return true;
@@ -89,9 +89,9 @@ export class PlayerManager {
     const card = this.hand.pop();
 
     // Find the on-stage container for that index
-    const containerOnStage = this.renderer?.cardsInPlayerHand?.[index];
+    const containerOnStage = this.view?.cardsInPlayerHand?.[index];
     if (containerOnStage) {
-      this.renderer.animateCardToHand(containerOnStage, index, true);
+      this.view.animateCardToHand(containerOnStage, index, true);
     }
 
     // Return to deck
@@ -100,9 +100,9 @@ export class PlayerManager {
       deckCard.remaining = (deckCard.remaining || 0) + 1;
     }
 
-    console.log("[Player Manager] Removed card:", card.data.name);
+    console.log("[Player Model] Removed card:", card.data.name);
     console.log(
-      "[Player Manager] Player hand is now:",
+      "[Player Model] Player hand is now:",
       this.hand.map((c) => c.data.name),
     );
 
@@ -124,7 +124,7 @@ export class PlayerManager {
   /** Reset hand completely */
   resetHand() {
     console.log(
-      "[Player Manager] Resetting player hand from:",
+      "[Player Model] Resetting player hand from:",
       this.hand,
       "to []",
     );
@@ -142,10 +142,10 @@ export class PlayerManager {
     this.selectionBook?.resetCounts?.();
 
     // Reset animation indices / visual state
-    this.renderer?.resetHandSlots?.();
+    this.view?.resetHandSlots?.();
 
     console.log(
-      "[Player Manager] Player hand reset complete. Deck state restored.",
+      "[Player Model] Player hand reset complete. Deck state restored.",
     );
   }
 

@@ -1,6 +1,6 @@
 import { Game } from "../../shared/game/game.js";
-import { UIManager } from "../../shared/ui/ui-manager.js";
-import { UIRenderer } from "../../shared/ui/ui-renderer.js";
+import { UIModel } from "../../shared/ui/ui-model.js";
+import { UIView } from "../../shared/ui/ui-view.js";
 
 /**
  * Controller responsible for showing and managing the
@@ -16,20 +16,20 @@ export const ConfirmationController = {
    */
   show() {
     console.log("[Confirmation Controller] Showing confirmation dialog...");
-    const config = UIManager.confirmation;
+    const config = UIModel.confirmation;
 
     if (Game.controllers.cursorController.selection) {
       Game.controllers.cursorController.selection.remove();
     }
 
     // Set the player state to 'confirming'
-    UIManager.playerConfirming = true;
+    UIModel.playerConfirming = true;
 
     // Reset the default choice index
     config.selectedChoice = 0;
 
     // Render the confirmation box (UI only)
-    UIRenderer.drawConfirmationBox(config);
+    UIView.drawConfirmationBox(config);
 
     // Add container to the stage
     Game.stage.addChild(config.container);
@@ -47,7 +47,7 @@ export const ConfirmationController = {
     Game.controllers.cursorController.confirmation.place();
 
     // Hide any preview cards while confirmation is active
-    UIManager.selectionBook.hidePreviewCard();
+    UIModel.selectionBook.hidePreviewCard();
 
     // Update the stage to reflect all changes
     Game.stage.update();

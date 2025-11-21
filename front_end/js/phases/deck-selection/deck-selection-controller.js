@@ -10,15 +10,15 @@ export class DeckSelectionController {
   /**
    * Constructor for the DeckSelectionController
    * @param {Array} deck - Array of Card objects with count and selected properties
-   * @param {PlayerManager} playerManager - Reference to the player manager
+   * @param {PlayerModel} playerModel - Reference to the player model
    */
-  constructor(deck = [], playerManager) {
+  constructor(deck = [], playerModel) {
     this.cards = deck.map((c) => ({
       ...c,
       remaining: (c.count ?? 0) - (c.selected ?? 0),
       initiallyHidden: (c.count ?? 0) === 0,
     }));
-    this.playerManager = playerManager;
+    this.playerModel = playerModel;
     this.cardsPerPage = 11;
 
     this.currentPage = 1;
@@ -30,8 +30,8 @@ export class DeckSelectionController {
     // Recalculate remaining per archetype
     return this.cards
       .map((archetype) => {
-        const inHandCount = this.playerManager?.hand.filter(
-          (h) => h.data.id === archetype.data.id
+        const inHandCount = this.playerModel?.hand.filter(
+          (h) => h.data.id === archetype.data.id,
         ).length;
         return {
           ...archetype,
@@ -58,7 +58,7 @@ export class DeckSelectionController {
   get totalPages() {
     return Math.max(
       1,
-      Math.ceil(this.displayedCards.length / this.cardsPerPage)
+      Math.ceil(this.displayedCards.length / this.cardsPerPage),
     );
   }
 
@@ -75,7 +75,7 @@ export class DeckSelectionController {
     }
     this.selectedIndexOnPage = Math.min(
       this.selectedIndexOnPage + 1,
-      cards.length - 1
+      cards.length - 1,
     );
   }
 
@@ -104,13 +104,19 @@ export class DeckSelectionController {
     this.selectedIndexOnPage = 0;
   }
 
+  /**
+   *
+   */
   activate() {
-    Game.setupSelectionBook(this.playerManager);
+    Game.setupSelectionBook(this.playerModel);
 
     // If the view exists later, notify it here:
     // this.view?.show();
   }
 
+  /**
+   *
+   */
   deactivate() {
     // For now this can remain empty or contain minimal cleanup.
     // Later maybe:

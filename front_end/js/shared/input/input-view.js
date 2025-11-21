@@ -6,7 +6,7 @@ import { debug } from "../../utilities/debug.js";
  * This includes cursor movements, card animations, and
  * selection board / confirmation UI updates.
  */
-export class InputRenderer {
+export class InputView {
   /**
    * Move the selection cursor on the selection board.
    * @param {"left"|"up"|"right"|"down"} direction

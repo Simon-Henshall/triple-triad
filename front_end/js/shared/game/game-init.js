@@ -1,7 +1,7 @@
 import { config } from "../../constants/config.js";
 import { offsets } from "../../constants/offsets.js";
 
-import { UIManager } from "../ui/ui-manager.js";
+import { UIModel } from "../ui/ui-model.js";
 
 import { Game } from "./game.js";
 
@@ -10,27 +10,27 @@ import { createDeck } from "../card/card-factory.js";
 import { AITurnController } from "../../phases/ai-turn/ai-turn-controller.js";
 import { AITurnModel } from "../../phases/ai-turn/ai-turn-model.js";
 
-import { PlayerManager } from "../player/player-manager.js";
-import { PlayerRenderer } from "../player/player-renderer.js";
+import { PlayerModel } from "../player/player-model.js";
+import { PlayerView } from "../player/player-view.js";
 
 import { PlacementModel } from "../../phases/placement/placement-model.js";
 import { PlacementController } from "../../phases/placement/placement-controller.js";
 
-import { InputManager } from "../input/input-manager.js";
+import { InputModel } from "../input/input-model.js";
 import { InputController } from "../input/input-controller.js";
 
-import { CursorManager } from "../cursor/cursor-manager.js";
-import { CursorRenderer } from "../cursor/cursor-renderer.js";
+import { CursorModel } from "../cursor/cursor-model.js";
+import { CursorView } from "../cursor/cursor-view.js";
 import { CursorController } from "../cursor/cursor-controller.js";
 
-import { BoardManager } from "../board/board-manager.js";
+import { BoardModel } from "../board/board-model.js";
 import phases from "../../game/phases.js";
 import { StateMachine } from "../../game/game-state-machine.js";
 
 import { ScoreBoard } from "../ui/scoreboard.js";
 
 /**
- * Initialises the game state, managers, and controllers.
+ * Initialises the game state, models, and controllers.
  * Sets up the game state machine and phases.
  */
 export const gameInit = {
@@ -48,42 +48,39 @@ export const gameInit = {
   },
 
   /**
-   * Instantiate all core managers, controllers, and renderers.
+   * Instantiate all core models, controllers, and views.
    * Wires necessary references to Game object.
-   * @returns {Object} References to created managers/controllers/renderers
+   * @returns {Object} References to created models/controllers/views
    */
-  managers() {
+  models() {
     const aiTurnModel = new AITurnModel();
     const aiTurnController = new AITurnController(aiTurnModel);
-    const playerManager = new PlayerManager();
-    const playerRenderer = new PlayerRenderer(playerManager);
-    playerManager.renderer = playerRenderer;
-    const placementController = new PlacementController(playerManager);
+    const playerModel = new PlayerModel();
+    const playerView = new PlayerView(playerModel);
+    playerModel.view = playerView;
+    const placementController = new PlacementController(playerModel);
     placementController.init();
     const placementModel = new PlacementModel(placementController);
     if (placementModel.setController) {
       placementModel.setController(placementController);
     }
 
-    const inputManager = new InputManager(
-      playerManager,
-      playerRenderer,
+    const inputModel = new InputModel(
+      playerModel,
+      playerView,
       placementController,
     );
-    const inputController = new InputController(inputManager);
+    const inputController = new InputController(inputModel);
 
     // Instantiate the state machine with the phase registry and an empty deps object for now
     const stateMachine = new StateMachine(phases, {});
 
     Game.models = {
       aiTurnModel,
-    };
-
-    Game.managers = {
-      playerManager,
+      playerModel,
       placementModel,
-      inputManager,
-      boardManager: BoardManager,
+      inputModel,
+      boardModel: BoardModel,
       stateMachine,
     };
 
@@ -92,19 +89,20 @@ export const gameInit = {
       placementController,
       inputController,
     };
-    Game.renderers = { playerRenderer };
+
+    Game.views = { playerView };
 
     Game.ui = Game.ui || {};
-    Game.ui.scoreBoard = new ScoreBoard(Game.stage, playerManager, aiTurnModel);
+    Game.ui.scoreBoard = new ScoreBoard(Game.stage, playerModel, aiTurnModel);
 
     return {
       aiTurnModel,
       aiTurnController,
-      playerManager,
-      playerRenderer,
+      playerModel,
+      playerView,
       placementModel,
       placementController,
-      inputManager,
+      inputModel,
       inputController,
       stateMachine,
     };
@@ -115,8 +113,8 @@ export const gameInit = {
    * Depends on offsets computed from the grid.
    */
   handPositions() {
-    const { playerManager } = Game.managers;
-    playerManager.handOffsetX =
+    const { playerModel } = Game.models;
+    playerModel.handOffsetX =
       offsets.gameOffsetX + offsets.cellWidth * 3 + offsets.cardWidth / 4;
     const { aiTurnController } = Game.controllers;
     aiTurnController.handOffsetX =
@@ -128,35 +126,30 @@ export const gameInit = {
    * Initializes confirmation, infoBox, and background.
    */
   uiContainers() {
-    UIManager.confirmation.container = new createjs.Container();
-    UIManager.infoBox.container = new createjs.Container();
-    UIManager.previouslySelectedCard = [];
-    UIManager.confirmation.background = new createjs.Shape();
-    UIManager.confirmation.cursor = new createjs.Bitmap(
+    UIModel.confirmation.container = new createjs.Container();
+    UIModel.infoBox.container = new createjs.Container();
+    UIModel.previouslySelectedCard = [];
+    UIModel.confirmation.background = new createjs.Shape();
+    UIModel.confirmation.cursor = new createjs.Bitmap(
       config.imagePath + "cursor.png",
     );
   },
 
   /**
    * Create cursors for player hand, selection board, and grid.
-   * Wires CursorManager and Game renderers/controllers.
+   * Wires CursorModel and Game views/controllers.
    */
   cursors() {
     const cursorPath = config.imagePath + "cursor.png";
-    const playerManager = Game.managers.playerManager;
-    CursorManager.player = playerManager;
-    CursorManager.player.playerHandCursor = new createjs.Bitmap(cursorPath);
-    CursorManager.player.playerHandSelectionCursor = new createjs.Bitmap(
+    const playerModel = Game.models.playerModel;
+    CursorModel.player = playerModel;
+    CursorModel.player.playerHandCursor = new createjs.Bitmap(cursorPath);
+    CursorModel.player.playerHandSelectionCursor = new createjs.Bitmap(
       cursorPath,
     );
-    UIManager.gridCursor = new createjs.Bitmap(cursorPath);
-    Game.renderers.cursorRenderer = CursorRenderer(
-      playerManager,
-      Game.renderers.playerRenderer,
-    );
-    Game.controllers.cursorController = CursorController(
-      Game.renderers.cursorRenderer,
-    );
+    UIModel.gridCursor = new createjs.Bitmap(cursorPath);
+    Game.views.cursorView = CursorView(playerModel, Game.views.playerView);
+    Game.controllers.cursorController = CursorController(Game.views.cursorView);
   },
 
   /**
@@ -176,14 +169,14 @@ export const gameInit = {
   addBackground() {
     const background = new createjs.Bitmap(config.imagePath + "board.png");
     Game.stage.addChild(background);
-    UIManager.boardContainer.x = offsets.gameOffsetX;
-    UIManager.boardContainer.y = offsets.gameOffsetY;
-    background.stage.addChild(UIManager.boardContainer);
+    UIModel.boardContainer.x = offsets.gameOffsetX;
+    UIModel.boardContainer.y = offsets.gameOffsetY;
+    background.stage.addChild(UIModel.boardContainer);
     Game.stage.update();
   },
 
   /* Initialises the game environment, setting up the CreateJS stage,
-   * ticker, managers, controllers, renderers, and event listeners.
+   * ticker, models, controllers, views, and event listeners.
    */
   all() {
     console.log("[Game-Init] Setting up canvas...");
@@ -193,11 +186,11 @@ export const gameInit = {
 
     const {
       inputController,
-      playerManager,
+      playerModel,
       aiTurnController,
       aiTurnModel,
       stateMachine,
-    } = this.managers();
+    } = this.models();
 
     this.cursors();
     this.events(inputController);
@@ -205,14 +198,14 @@ export const gameInit = {
     // Create decks first
     const playerDeck = createDeck("player");
     const aiDeck = createDeck("ai");
-    playerManager.deck = playerDeck;
+    playerModel.deck = playerDeck;
     aiTurnModel.deck = aiDeck;
 
     // Populate AI hand in the model
     const drawnCards = aiTurnModel.populateHand();
 
     // Now set up visual offsets based on hand
-    playerManager.handOffsetX =
+    playerModel.handOffsetX =
       offsets.gameOffsetX + offsets.cellWidth * 3 + offsets.cardWidth / 4;
     aiTurnController.handOffsetX =
       offsets.gameOffsetX / 2 - offsets.cardWidth / 2;
@@ -223,7 +216,7 @@ export const gameInit = {
 
     // Set dependencies for the state machine
     stateMachine.setDependencies({
-      playerManager,
+      playerModel,
       aiTurnController,
       deck: playerDeck,
     });

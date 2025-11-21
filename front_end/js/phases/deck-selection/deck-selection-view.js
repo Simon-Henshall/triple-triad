@@ -1,5 +1,5 @@
 import { Game } from "../../shared/game/game.js";
-import { UIManager } from "../../shared/ui/ui-manager.js";
+import { UIModel } from "../../shared/ui/ui-model.js";
 
 const ROW_HEIGHT = 35;
 const CARD_ROW_START_Y = 40;
@@ -10,7 +10,7 @@ const ZERO_COLOR = "#888"; // grey for zero counts
 
 export const DeckSelectionView = {
   populate(controller) {
-    const sb = UIManager.selectionBook;
+    const sb = UIModel.selectionBook;
     if (!sb.container) {
       return;
     }
@@ -102,8 +102,8 @@ export const DeckSelectionView = {
   },
 
   _updateCursor(controller) {
-    const sb = UIManager.selectionBook;
-    const cursor = Game.managers.playerManager.playerHandSelectionCursor;
+    const sb = UIModel.selectionBook;
+    const cursor = Game.models.playerModel.playerHandSelectionCursor;
     if (!cursor) {
       return;
     }

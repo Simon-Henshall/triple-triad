@@ -1,12 +1,12 @@
 import { elements } from "../../constants/elements.js";
 import { shuffle } from "../../utilities/shuffle.js";
-import { UIManager } from "../ui/ui-manager.js";
+import { UIModel } from "../ui/ui-model.js";
 
 /**
- * BoardManager handles the logical state of the 3x3 board,
+ * BoardModel handles the logical state of the 3x3 board,
  * including square occupancy, selection, and elements.
  */
-export const BoardManager = {
+export const BoardModel = {
   // Each cell has an element and an occupant (card)
   boardArray: Array.from({ length: 9 }).map(() => ({
     element: 0,
@@ -91,19 +91,19 @@ export const BoardManager = {
   },
 
   /**
-   * Given a square index (1-based), update UIManager row/col & adjacency
+   * Given a square index (1-based), update UIModel row/col & adjacency
    */
   updateUISelection(square1Based) {
     const s = this.squareMap[square1Based - 1];
 
-    UIManager.selectedSquare = square1Based;
-    UIManager.selectedRow = s.row;
-    UIManager.selectedColumn = s.col;
+    UIModel.selectedSquare = square1Based;
+    UIModel.selectedRow = s.row;
+    UIModel.selectedColumn = s.col;
 
     // Adjacency values are now direct numbers (or "none")
-    UIManager.squareLeft = s.left;
-    UIManager.squareUp = s.up;
-    UIManager.squareRight = s.right;
-    UIManager.squareDown = s.down;
+    UIModel.squareLeft = s.left;
+    UIModel.squareUp = s.up;
+    UIModel.squareRight = s.right;
+    UIModel.squareDown = s.down;
   },
 };
