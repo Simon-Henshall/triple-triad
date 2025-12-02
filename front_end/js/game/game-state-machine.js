@@ -53,22 +53,4 @@ export class StateMachine {
   getCurrentPhase() {
     return this.currentPhase;
   }
-
-  /**
-   * Updates the state machine's dependencies.
-   * @param {number} delta - The time since the last update in milliseconds.
-   */
-  update(delta) {
-    if (this.currentPhase?.update) {
-      this.currentPhase.update(delta);
-    }
-  }
-
-  /**
-   * Handles input events for the current phase.
-   * @param {Event} event - The input event to handle.
-   */
-  handleInput(event) {
-    this.currentPhase?.handleInput?.(event);
-  }
 }

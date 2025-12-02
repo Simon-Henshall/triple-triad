@@ -76,11 +76,12 @@ export const gameInit = {
     const stateMachine = new StateMachine(phases, {});
 
     Game.models = {
-      aiTurnModel: AITurnModel,
-      playerModel: PlayerModel,
-      placementModel: PlacementModel,
-      inputModel: InputModel,
+      aiTurnModel,
+      playerModel,
+      placementModel,
+      inputModel,
       boardModel: BoardModel,
+      stateMachine,
     };
 
     Game.controllers = {
@@ -153,11 +154,12 @@ export const gameInit = {
 
   /**
    * Register keydown event handlers for player input.
+   * @param {InputController} inputController
    */
-  events(stateMachine) {
-    globalThis.addEventListener("keydown", (event) => {
-      stateMachine.handleInput(event);
-    });
+  events(inputController) {
+    document.addEventListener("keydown", (event) =>
+      inputController.handleKey(event),
+    );
   },
 
   /**
@@ -182,11 +184,16 @@ export const gameInit = {
     this.uiContainers();
     this.addBackground();
 
-    const { playerModel, aiTurnController, aiTurnModel, stateMachine } =
-      this.models();
+    const {
+      inputController,
+      playerModel,
+      aiTurnController,
+      aiTurnModel,
+      stateMachine,
+    } = this.models();
 
     this.cursors();
-    this.events(stateMachine);
+    this.events(inputController);
 
     // Create decks first
     const playerDeck = createDeck("player");
