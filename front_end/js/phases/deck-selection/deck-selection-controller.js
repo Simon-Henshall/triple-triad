@@ -13,7 +13,7 @@ export class DeckSelectionController {
    * @param {Array} deck - Array of Card objects with count and selected properties
    * @param {PlayerModel} playerModel - Reference to the player model
    */
-  constructor(deck = [], playerModel) {
+  constructor({ deck = [], playerModel }, transition) {
     this.cards = deck.map((c) => ({
       ...c,
       remaining: (c.count ?? 0) - (c.selected ?? 0),

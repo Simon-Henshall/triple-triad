@@ -99,7 +99,11 @@ export const Game = {
     console.log("[Game] Initialising selection book...");
 
     // Initialise selection book
-    DeckSelectionUI.initialise(playerModel.deck, playerModel);
+    DeckSelectionUI.initialise(
+      playerModel.deck,
+      playerModel,
+      DeckSelectionUI.controller,
+    );
 
     UIModel.playerSelectingHand = true;
 

@@ -11,9 +11,10 @@ export const DeckSelectionUI = {
    * Initialise the Selection Book UI with a deck
    * @param {Array} deck
    */
-  initialise(deck, playerModel) {
+  initialise(deck, playerModel, existingController) {
     // Create controller
-    this.controller = new DeckSelectionController(deck, playerModel);
+    this.controller =
+      existingController ?? new DeckSelectionController({ deck, playerModel });
 
     const sb = UIModel.selectionBook;
     if (!sb.container) {
