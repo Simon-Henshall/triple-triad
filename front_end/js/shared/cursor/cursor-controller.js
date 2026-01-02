@@ -113,9 +113,8 @@ export const CursorController = (cursorView) => ({
       // Compute how far down the cursor should be, accounting for cards already played
       const visualCardIndex = selectedIndex + playerModel.playedCardsCount;
       playerModel.playerHandCursor.y =
-        offsets.playerCursorOffset +
-        visualCardIndex * (offsets.scaledCardHeight / 2); // TODO: Work out where there is slight drift upwards here
-      // NB: This should be the same as (visualCardIndex * (offsets.cellHeight - offsets.cardOffsetY * 2)) / 2
+        offsets.playerCursorOffset + visualCardIndex * offsets.handCardOffset;
+      // NB: Use the same spacing as the visual hand stack (`offsets.handCardOffset`).
 
       // Update info box for selected card
       const newlySelectedCard = playerModel.hand[selectedIndex];

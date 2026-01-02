@@ -5,7 +5,6 @@ import { debug } from "../../utilities/debug.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
 import { PhaseChecker } from "../../game/phases.js";
-import { PlayerModel } from "../player/player-model.js";
 
 /**
  * Manages the logical state of all cursors in the game.
@@ -145,7 +144,7 @@ export const CursorModel = {
       player.playerHandCursor.x = player.handOffsetX - 50;
       player.playerHandCursor.y =
         offsets.playerCursorOffset +
-        (cardIndex + player.playedCardsCount) * (offsets.cardHeight / 2);
+        (cardIndex + player.playedCardsCount) * offsets.handCardOffset;
 
       Game.stage.update();
     },
