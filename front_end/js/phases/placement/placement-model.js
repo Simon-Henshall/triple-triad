@@ -2,7 +2,6 @@ import { Game } from "../../shared/game/game.js";
 import { ResolutionController } from "../resolution/resolution-controller.js";
 import { PlacementView } from "./placement-view.js";
 import { BoardModel } from "../../shared/board/board-model.js";
-import { UIModel } from "../../shared/ui/ui-model.js";
 import { ResolutionView } from "../resolution/resolution-view.js";
 import { offsets } from "../../constants/offsets.js";
 
@@ -36,30 +35,31 @@ export class PlacementModel {
    * Place the currently selected card onto the game board.
    */
   placeCardOnBoard() {
-    const selectedCard = this.playerModel.hand[UIModel.selectedCardNumber];
+    const selectedCard =
+      this.playerModel.hand[this.playerModel.selectedCardNumber];
     console.log("SELECTED", selectedCard);
     console.log("HAND", this.playerModel.hand);
     if (!selectedCard) {
       return console.warn("No card selected!");
     }
 
-    const cellIndex = UIModel.selectedSquare - 1;
+    const cellIndex = BoardModel.selectedSquare - 1;
     if (BoardModel.cellOccupied(cellIndex)) {
       console.warn("Player tried to place on occupied square");
       return false;
     }
 
     // Remove card from hand *before* passing it to PlacementModel
-    this.playerModel.hand.splice(UIModel.selectedCardNumber, 1);
+    this.playerModel.hand.splice(this.playerModel.selectedCardNumber, 1);
 
     // Compute board pixel coordinates
     const x =
       offsets.gameOffsetX +
-      offsets.cellWidth * (UIModel.selectedColumn - 1) +
+      offsets.cellWidth * (BoardModel.selectedColumn - 1) +
       offsets.cardOffsetX;
     const y =
       offsets.gameOffsetY +
-      offsets.cellHeight * (UIModel.selectedRow - 1) +
+      offsets.cellHeight * (BoardModel.selectedRow - 1) +
       offsets.cardOffsetY;
 
     this.placeCard(selectedCard, x, y);
@@ -80,7 +80,7 @@ export class PlacementModel {
       "[PLACEMENT MANAGER] Placing card:",
       card,
       "selectedSquare:",
-      UIModel.selectedSquare,
+      BoardModel.selectedSquare,
       "x:",
       x,
       "y:",
@@ -95,9 +95,9 @@ export class PlacementModel {
       this.playerModel.playedCardsCount++;
     }
 
-    BoardModel.updateUISelection(UIModel.selectedSquare);
+    BoardModel.updateUISelection(BoardModel.selectedSquare);
 
-    const cellIndex = UIModel.selectedSquare - 1;
+    const cellIndex = BoardModel.selectedSquare - 1;
     if (BoardModel.boardArray[cellIndex].occupant) {
       return;
     }
@@ -145,10 +145,10 @@ export class PlacementModel {
    */
   onCardPlacementComplete(card) {
     // Correctly calculate adjacency for this card
-    this.setCardAdjacents(card, UIModel.selectedSquare);
+    this.setCardAdjacents(card, BoardModel.selectedSquare);
 
     // Add card to board data
-    this.addCardToBoard(card, UIModel.selectedSquare);
+    this.addCardToBoard(card, BoardModel.selectedSquare);
 
     // Apply element effects
     this.controller.applyElementEffects(card);
@@ -174,7 +174,7 @@ export class PlacementModel {
   setCardAdjacents(card) {
     const directions = ["Left", "Up", "Right", "Down"];
     for (const direction of directions) {
-      const squareIndex = UIModel[`square${direction}`];
+      const squareIndex = BoardModel[`square${direction}`];
 
       // skip "none" squares
       if (squareIndex === "none") {
@@ -192,7 +192,7 @@ export class PlacementModel {
    *
    * @param {createjs.Container} card - The card being placed.
    */
-  addCardToBoard(card, square = UIModel.selectedSquare) {
+  addCardToBoard(card, square = BoardModel.selectedSquare) {
     card.inCell = square;
     BoardModel.boardArray[square - 1].occupant = card;
 
@@ -211,15 +211,15 @@ export class PlacementModel {
     cardContainer.scaleY = offsets.scaledCardHeight / bounds.height;
 
     // Convert GLOBAL → LOCAL
-    const pt = UIModel.boardContainer.globalToLocal(
+    const pt = BoardModel.boardContainer.globalToLocal(
       cardContainer.x,
       cardContainer.y,
     );
     cardContainer.x = pt.x;
     cardContainer.y = pt.y;
 
-    if (!UIModel.boardContainer.contains(cardContainer)) {
-      UIModel.boardContainer.addChild(cardContainer);
+    if (!BoardModel.boardContainer.contains(cardContainer)) {
+      BoardModel.boardContainer.addChild(cardContainer);
     }
   }
 

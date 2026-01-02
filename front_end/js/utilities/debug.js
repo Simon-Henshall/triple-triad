@@ -1,5 +1,4 @@
 import { BoardModel } from "../shared/board/board-model.js";
-import { UIModel } from "../shared/ui/ui-model.js";
 import { getPlayerTurn } from "./turn.js";
 import { elements } from "../constants/elements.js";
 import { Game } from "../shared/game/game.js";
@@ -17,7 +16,7 @@ export const debug = {
    */
   logCell(eventOrSquare) {
     const squareID = eventOrSquare.name ?? eventOrSquare.id;
-    const squareObject = UIModel.squares[squareID - 1];
+    const squareObject = BoardModel.squares[squareID - 1];
     const cardHere = BoardModel.boardArray[squareID - 1].occupant;
 
     console.log("======================================================");

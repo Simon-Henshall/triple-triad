@@ -1,5 +1,4 @@
 import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
-import { UIModel } from "../ui/ui-model.js";
 import { ConfirmationController } from "../../phases/confirmation/confirmation-controller.js";
 import { Game } from "../game/game.js";
 import { CursorModel } from "../cursor/cursor-model.js";
@@ -7,6 +6,8 @@ import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 import { PreviewCard } from "../ui/preview-card.js";
 import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
+import { PhaseChecker } from "../../game/phases.js";
+import { BoardModel } from "../board/board-model.js";
 
 /**
  * InputModel class, responsible for handling player input and
@@ -118,7 +119,7 @@ export class InputModel {
       console.log(
         "[Input Model] Player's hand has reached 5 cards. Passing off to [Confirmation Controller]...",
       );
-      UIModel.playerSelectingHand = false;
+      PhaseChecker.playerSelectingHand = false;
       ConfirmationController.show();
     }
   }
@@ -148,8 +149,8 @@ export class InputModel {
 
     // Reset flags if hand < 5
     if (this.playerModel.hand.length < 5) {
-      UIModel.playerSelectingHand = true;
-      UIModel.playerConfirming = false;
+      PhaseChecker.playerSelectingHand = true;
+      PhaseChecker.playerConfirming = false;
     }
   }
 
@@ -208,8 +209,8 @@ export class InputModel {
       this.playerModel.view.resetHand();
 
       DeckSelectionUI.populate();
-      UIModel.playerConfirming = false;
-      UIModel.playerSelectingHand = true;
+      PhaseChecker.playerConfirming = false;
+      PhaseChecker.playerSelectingHand = true;
       this.updatePreview();
       Game.stage.update();
     }
@@ -286,8 +287,8 @@ export class InputModel {
     Game.controllers.cursorController.playerHand.remove();
 
     // Set default selected cell BEFORE placing the cursor
-    UIModel.selectedRow = 2;
-    UIModel.selectedColumn = 2;
+    BoardModel.selectedRow = 2;
+    BoardModel.selectedColumn = 2;
 
     // Place grid cursor using current selectedRow/Column
     Game.controllers.cursorController.grid.place();
@@ -299,10 +300,10 @@ export class InputModel {
     Game.stage.removeChild(this.playerModel.playerHandCursor);
 
     // Enter placement mode
-    UIModel.playerSelectingPlacement = true;
+    PhaseChecker.playerSelectingPlacement = true;
 
     // Actually play the card
-    const selectedIndex = UIModel.selectedCardNumber;
+    const selectedIndex = this.playerModel.selectedCardNumber;
     const selectedCard = this.playerModel.hand[selectedIndex];
     if (!selectedCard) {
       console.warn("No card selected!");

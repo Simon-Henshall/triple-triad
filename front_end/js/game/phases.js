@@ -21,6 +21,14 @@ import EndTurnController from "../phases/end-turn/end-turn-controller.js";
 import { AITurnController } from "../phases/ai-turn/ai-turn-controller.js";
 import GameOverController from "../phases/game-over/game-over-controller.js";
 
+export const PhaseChecker = {
+  playerSelectingHand: false,
+  playerConfirming: false,
+  playerChoosingCard: false,
+  playerSelectingPlacement: false,
+  playerTurn: "blue", // TODO: fall back to getPlayerTurn() exclusively
+};
+
 export default {
   // Deck selection where the player chooses 5 cards.
   "deck-selection": {

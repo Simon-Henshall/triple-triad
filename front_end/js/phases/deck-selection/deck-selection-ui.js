@@ -1,4 +1,3 @@
-import { UIModel } from "../../shared/ui/ui-model.js";
 import { DeckSelectionView } from "./deck-selection-view.js";
 import { DeckSelectionController } from "./deck-selection-controller.js";
 import { Game } from "../../shared/game/game.js";

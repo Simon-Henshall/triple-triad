@@ -2,7 +2,7 @@ import { ResolutionView } from "./resolution-view.js";
 import { directionMap } from "../../constants/directions.js";
 import { getPlayerTurn } from "../../utilities/turn.js";
 import { Game } from "../../shared/game/game.js";
-import { UIModel } from "../../shared/ui/ui-model.js";
+import { BoardModel } from "../../shared/board/board-model.js";
 
 /**
  * ResolutionController is responsible for animating cards as they are flipped
@@ -26,6 +26,12 @@ export class ResolutionController {
    */
   flipCardsCheck(card) {
     for (const [direction, map] of Object.entries(directionMap)) {
+      console.log(`Checking direction: ${direction}`);
+      console.log("map:", map);
+      console.log("card:", card);
+      console.log("target:", card[map.prop]);
+      console.log("target data:", card[map.prop]?.data);
+      console.log("target strength:", card[map.prop]?.data?.strength);
       const target = card[map.prop];
       if (!target) {
         continue;
@@ -78,7 +84,7 @@ export class ResolutionController {
     Game.ui.scoreBoard.update();
 
     // Maintain UI references
-    const squareObject = UIModel.squares[targetCard.inCell - 1];
+    const squareObject = BoardModel.squares[targetCard.inCell - 1];
     if (squareObject) {
       squareObject.card = targetCard;
     }

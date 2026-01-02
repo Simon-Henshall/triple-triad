@@ -1,9 +1,9 @@
 import { CursorModel } from "./cursor-model.js";
 import { debug } from "../../utilities/debug.js";
 import { Game } from "../game/game.js";
-import { UIModel } from "../ui/ui-model.js";
 import { offsets } from "../../constants/offsets.js";
 import { InfoBox } from "../ui/info-box.js";
+import { PhaseChecker } from "../../game/phases.js";
 
 /**
  * High-level controller that bridges cursor state and visual updates.
@@ -105,7 +105,7 @@ export const CursorController = (cursorView) => ({
      */
     place() {
       const playerModel = Game.models.playerModel;
-      const selectedIndex = UIModel.selectedCardNumber ?? 0;
+      const selectedIndex = playerModel.selectedCardNumber ?? 0;
 
       // Ensure cursor is visible and added to stage
       cursorView.playerHand.place();
@@ -120,7 +120,7 @@ export const CursorController = (cursorView) => ({
       // Update info box for selected card
       const newlySelectedCard = playerModel.hand[selectedIndex];
       if (newlySelectedCard) {
-        UIModel.selectedCard = newlySelectedCard;
+        playerModel.selectedCard = newlySelectedCard;
         InfoBox.updateInfoBox(Game, newlySelectedCard);
       }
 
@@ -171,8 +171,8 @@ export const CursorController = (cursorView) => ({
         console.log("Player hand cursor restored");
       }
       // Restore cursors
-      UIModel.playerSelectingPlacement = false;
-      UIModel.playerChoosingCard = true;
+      PhaseChecker.playerSelectingPlacement = false;
+      PhaseChecker.playerChoosingCard = true;
     },
   },
 

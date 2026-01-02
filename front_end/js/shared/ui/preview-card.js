@@ -1,8 +1,9 @@
 import { offsets } from "../../constants/offsets.js";
 import { Game } from "../game/game.js";
-import { UIModel } from "./ui-model.js";
 
 export const PreviewCard = {
+  shown: false,
+
   showPreviewCard(card) {
     if (!card || !card.visuals || !card.visuals.container) {
       return;
@@ -24,18 +25,18 @@ export const PreviewCard = {
     previewContainer.x = offsets.previewX;
     previewContainer.y = offsets.previewY;
 
-    UIModel.previewCardContainer = previewContainer;
+    this.shown = previewContainer;
 
     Game.stage.addChild(previewContainer);
     Game.stage.update();
   },
 
   hidePreviewCard() {
-    const preview = UIModel.previewCardContainer;
+    const preview = this.shown;
     if (preview && Game.stage.contains(preview)) {
       Game.stage.removeChild(preview);
     }
-    UIModel.previewCardContainer = undefined;
+    this.shown = undefined;
     Game.stage.update();
   },
 };

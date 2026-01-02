@@ -1,6 +1,6 @@
-import { UIModel } from "../ui/ui-model.js";
 import { InputView } from "./input-view.js";
 import { debug } from "../../utilities/debug.js";
+import { PhaseChecker } from "../../game/phases.js";
 
 /**
  * Top-level controller for keyboard input.
@@ -24,13 +24,13 @@ export class InputController {
       //console.log("Key pressed:", event.key);
     }
 
-    if (UIModel.playerSelectingHand) {
+    if (PhaseChecker.playerSelectingHand) {
       this.model.handleSelectionBookInput(event);
-    } else if (UIModel.playerConfirming) {
+    } else if (PhaseChecker.playerConfirming) {
       this.model.handleConfirmation(event);
-    } else if (UIModel.playerChoosingCard) {
+    } else if (PhaseChecker.playerChoosingCard) {
       this.model.handlePlayerCardChoice(event);
-    } else if (UIModel.playerSelectingPlacement) {
+    } else if (PhaseChecker.playerSelectingPlacement) {
       this.model.handlePlacement(event);
     }
   }

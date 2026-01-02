@@ -1,6 +1,5 @@
 import { offsets } from "../../constants/offsets.js";
 import { Game } from "../game/game.js";
-import { UIModel } from "../ui/ui-model.js";
 import { BoardModel } from "./board-model.js";
 import { debug } from "../../utilities/debug.js";
 import { config } from "../../constants/config.js";
@@ -18,10 +17,10 @@ export const BoardView = {
    */
   generateGrid() {
     const elementIDs = BoardModel.generateElements();
-    UIModel.squares = [];
+    BoardModel.squares = [];
 
     // Clear existing squares from the board container
-    UIModel.boardContainer.removeAllChildren();
+    BoardModel.boardContainer.removeAllChildren();
 
     let squareID = 0;
 
@@ -74,10 +73,10 @@ export const BoardView = {
         // Click handler
         c.addEventListener("click", debug.clickHandler);
 
-        UIModel.squares.push(square);
+        BoardModel.squares.push(square);
 
         // Add square to board layer (not the stage!)
-        UIModel.boardContainer.addChild(c);
+        BoardModel.boardContainer.addChild(c);
       }
     }
 
@@ -89,7 +88,7 @@ export const BoardView = {
    * @param {number} squareID
    */
   redrawSquare(squareID) {
-    const square = UIModel.squares[squareID - 1];
+    const square = BoardModel.squares[squareID - 1];
     if (!square) {
       return;
     }
@@ -124,12 +123,12 @@ export const BoardView = {
    * Clears all squares from stage.
    */
   clearBoard() {
-    for (const square of UIModel.squares) {
+    for (const square of BoardModel.squares) {
       if (square.container.parent) {
         square.container.remove();
       }
     }
-    UIModel.squares = [];
+    BoardModel.squares = [];
     Game.stage.update();
   },
 };

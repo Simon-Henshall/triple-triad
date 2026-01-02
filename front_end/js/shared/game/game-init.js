@@ -5,7 +5,6 @@ import { offsets } from "../../constants/offsets.js";
 import phases from "../../game/phases.js";
 import StateMachine from "../../game/game-state-machine.js";
 
-import { UIModel } from "../ui/ui-model.js";
 import { ScoreBoard } from "../ui/scoreboard.js";
 
 import { CursorModel } from "../cursor/cursor-model.js";
@@ -53,9 +52,8 @@ export const gameInit = {
     );
 
     InfoBox.container = new createjs.Container();
-    UIModel.previouslySelectedCard = [];
 
-    UIModel.boardContainer = new createjs.Container();
+    BoardModel.boardContainer = new createjs.Container();
   },
 
   // ---------------------------------------------
@@ -65,10 +63,10 @@ export const gameInit = {
     const background = new createjs.Bitmap(config.imagePath + "board.png");
     Game.stage.addChild(background);
 
-    UIModel.boardContainer.x = offsets.gameOffsetX;
-    UIModel.boardContainer.y = offsets.gameOffsetY;
+    BoardModel.boardContainer.x = offsets.gameOffsetX;
+    BoardModel.boardContainer.y = offsets.gameOffsetY;
 
-    Game.stage.addChild(UIModel.boardContainer);
+    Game.stage.addChild(BoardModel.boardContainer);
   },
 
   // ---------------------------------------------
@@ -154,7 +152,7 @@ export const gameInit = {
       cursorPath,
     );
 
-    UIModel.gridCursor = new createjs.Bitmap(cursorPath);
+    BoardModel.gridCursor = new createjs.Bitmap(cursorPath);
 
     Game.views.cursorView = CursorView(playerModel, Game.views.playerView);
     Game.controllers.cursorController = CursorController(Game.views.cursorView);
@@ -217,7 +215,7 @@ export const gameInit = {
       playerModel,
       playerDeck,
       cursorController: Game.controllers.cursorController,
-      selectionUI: UIModel,
+      selectionUI: playerModel,
 
       aiTurnModel,
       aiTurnController,

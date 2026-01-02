@@ -1,5 +1,4 @@
 import { Game } from "../../shared/game/game.js";
-import { UIModel } from "../../shared/ui/ui-model.js";
 import DeckSelectionModel from "./deck-selection-model.js";
 
 const ROW_HEIGHT = 35;

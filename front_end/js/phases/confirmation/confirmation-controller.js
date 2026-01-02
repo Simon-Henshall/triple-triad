@@ -1,6 +1,6 @@
+import { PhaseChecker } from "../../game/phases.js";
 import { Game } from "../../shared/game/game.js";
 import { PreviewCard } from "../../shared/ui/preview-card.js";
-import { UIModel } from "../../shared/ui/ui-model.js";
 import { ConfirmationView } from "./confirmation-view.js";
 
 /**
@@ -22,7 +22,7 @@ export const ConfirmationController = {
     }
 
     // Set the player state to 'confirming'
-    UIModel.playerConfirming = true;
+    PhaseChecker.playerConfirming = true;
 
     // Reset the default choice index
     ConfirmationView.selectedChoice = 0;

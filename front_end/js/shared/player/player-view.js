@@ -1,8 +1,8 @@
 import { Game } from "../game/game.js";
-import { UIModel } from "../ui/ui-model.js";
 import { offsets } from "../../constants/offsets.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
+import { PlayerModel } from "./player-model.js";
 
 /**
  * Handles all visual rendering and animation of the player's hand.
@@ -88,7 +88,7 @@ export class PlayerView {
    */
   indentSelectedCard(selectedCard) {
     console.log("Indenting selected card:", selectedCard.data.name);
-    const previousCard = UIModel.previouslySelectedCard;
+    const previousCard = this.model.previouslySelectedCard;
 
     if (selectedCard) {
       console.log(selectedCard);
@@ -103,7 +103,7 @@ export class PlayerView {
       previousCard.visuals.container.x += 30;
     }
 
-    UIModel.previouslySelectedCard = selectedCard;
+    this.model.previouslySelectedCard = selectedCard;
     Game.stage.update();
   }
 

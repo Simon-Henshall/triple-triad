@@ -1,12 +1,25 @@
 import { elements } from "../../constants/elements.js";
 import { shuffle } from "../../utilities/shuffle.js";
-import { UIModel } from "../ui/ui-model.js";
 
 /**
  * BoardModel handles the logical state of the 3x3 board,
  * including square occupancy, selection, and elements.
  */
 export const BoardModel = {
+  // -------------------------
+  // Board state
+  // -------------------------
+  boardContainer: new createjs.Container(),
+  squares: [],
+  selectedSquare: 5,
+  selectedRow: 2,
+  selectedColumn: 2,
+  squareLeft: "none",
+  squareUp: "none",
+  squareRight: "none",
+  squareDown: "none",
+  gridCursor: undefined,
+
   // Each cell has an element and an occupant (card)
   boardArray: Array.from({ length: 9 }).map(() => ({
     element: 0,
@@ -91,19 +104,19 @@ export const BoardModel = {
   },
 
   /**
-   * Given a square index (1-based), update UIModel row/col & adjacency
+   * Given a square index (1-based), update row/col & adjacency
    */
   updateUISelection(square1Based) {
     const s = this.squareMap[square1Based - 1];
 
-    UIModel.selectedSquare = square1Based;
-    UIModel.selectedRow = s.row;
-    UIModel.selectedColumn = s.col;
+    this.selectedSquare = square1Based;
+    this.selectedRow = s.row;
+    this.selectedColumn = s.col;
 
     // Adjacency values are now direct numbers (or "none")
-    UIModel.squareLeft = s.left;
-    UIModel.squareUp = s.up;
-    UIModel.squareRight = s.right;
-    UIModel.squareDown = s.down;
+    this.squareLeft = s.left;
+    this.squareUp = s.up;
+    this.squareRight = s.right;
+    this.squareDown = s.down;
   },
 };

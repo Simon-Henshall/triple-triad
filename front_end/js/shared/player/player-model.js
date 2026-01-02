@@ -36,6 +36,10 @@ export class PlayerModel {
     this.selectedCardIndex = 0;
 
     this.view = view;
+
+    this.selectedCardNumber = 0;
+    this.selectedCard = undefined;
+    this.previouslySelectedCard = [];
   }
 
   /**

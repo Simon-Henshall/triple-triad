@@ -1,11 +1,11 @@
 import { BoardModel } from "../../shared/board/board-model.js";
-import { UIModel } from "../../shared/ui/ui-model.js";
 import { getPlayerTurn, swapPlayerTurn } from "../../utilities/turn.js";
 import { debug } from "../../utilities/debug.js";
 import { ResolutionView } from "../resolution/resolution-view.js";
 import { PlacementModel } from "./placement-model.js";
 import { Game } from "../../shared/game/game.js";
 import { InfoBox } from "../../shared/ui/info-box.js";
+import { PhaseChecker } from "../../game/phases.js";
 
 /**
  * Coordinates the logical flow of card placement, bridging player input,
@@ -13,7 +13,7 @@ import { InfoBox } from "../../shared/ui/info-box.js";
  */
 export class PlacementController {
   /**
-   * Initializes the PlacementController with the BoardModel and UIModel.
+   * Initializes the PlacementController with the BoardModel and PlayerModel.
    */
   constructor(playerModel) {
     this.playerModel = playerModel;
@@ -34,7 +34,7 @@ export class PlacementController {
    * @param {Card} card The card being played.
    */
   applyElementEffects(card) {
-    const { selectedSquare, squares } = UIModel;
+    const { selectedSquare, squares } = BoardModel;
     const squareElement = squares[selectedSquare - 1]?.element;
     const effect = this.model.applyElementEffects(card, squareElement);
     if (effect.modified) {
@@ -79,8 +79,8 @@ export class PlacementController {
     console.log(
       "selectedCardIndex:",
       playerModel.selectedCardIndex,
-      "UIModel.selectedCardNumber:",
-      UIModel.selectedCardNumber,
+      "selectedCardNumber:",
+      playerModel.selectedCardNumber,
       "selectedCard:",
       playerModel.selectedCard?.data.name,
     );
@@ -88,12 +88,12 @@ export class PlacementController {
     // Reset selection to the first available card
     playerModel.selectedCardIndex = 0;
     playerModel.selectedCard = playerModel.hand[0] ?? undefined;
-    UIModel.selectedCardNumber = 0;
-    UIModel.selectedCard = playerModel.hand;
-    UIModel.selectedSquare = 5; // Center
+    playerModel.selectedCardNumber = 0;
+    playerModel.selectedCard = playerModel.hand;
+    BoardModel.selectedSquare = 5; // Center
 
     // Reset grid cursor to last selected square (don't force center)
-    BoardModel.updateUISelection(UIModel.selectedSquare);
+    BoardModel.updateUISelection(BoardModel.selectedSquare);
 
     // Restore the player's hand cursor
     const { cursorController } = Game.controllers;
@@ -105,7 +105,7 @@ export class PlacementController {
     InfoBox.bringToFront();
 
     // Swap back to the card choice phase
-    UIModel.playerChoosingCard = true;
+    PhaseChecker.playerChoosingCard = true;
 
     // Reset card indentation for the player
     placementModel.view.indentAfterPlacement();

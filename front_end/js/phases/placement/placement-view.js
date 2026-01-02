@@ -1,7 +1,6 @@
 import { Game } from "../../shared/game/game.js";
 import { offsets } from "../../constants/offsets.js";
 import { getPlayerTurn } from "../../utilities/turn.js";
-import { UIModel } from "../../shared/ui/ui-model.js";
 
 /**
  * Handles all visual animations and effects for card placement,
@@ -106,12 +105,13 @@ export class PlacementView {
    * Indent the newly selected default card after placement (visual feedback).
    */
   indentAfterPlacement() {
-    if (UIModel.selectedCard) {
+    const playerModel = Game.models.playerModel;
+    if (playerModel.selectedCard) {
       console.log(
         "Indenting selected card after placement",
-        UIModel.selectedCard,
+        playerModel.selectedCard,
       );
-      UIModel.selectedCard.visuals.container.x -= 30;
+      playerModel.selectedCard.visuals.container.x -= 30;
     }
   }
 }

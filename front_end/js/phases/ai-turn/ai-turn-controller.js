@@ -1,6 +1,5 @@
 import { AITurnView } from "./ai-turn-view.js";
 import { BoardModel } from "../../shared/board/board-model.js";
-import { UIModel } from "../../shared/ui/ui-model.js";
 import { Game } from "../../shared/game/game.js";
 import { offsets } from "../../constants/offsets.js";
 
@@ -59,8 +58,8 @@ export class AITurnController {
     // Pick random free cell
     const selectedSquare =
       freeCells[Math.floor(Math.random() * freeCells.length)];
-    UIModel.selectedSquare = selectedSquare;
-    BoardModel.updateUISelection(UIModel.selectedSquare);
+    BoardModel.selectedSquare = selectedSquare;
+    BoardModel.updateUISelection(BoardModel.selectedSquare);
 
     // Animate cards above selection down
     this.view.shiftCardsDown(
@@ -73,10 +72,10 @@ export class AITurnController {
     Game.controllers.placementController.model.placeCard(
       playedCard,
       offsets.gameOffsetX +
-        offsets.cellWidth * (UIModel.selectedColumn - 1) +
+        offsets.cellWidth * (BoardModel.selectedColumn - 1) +
         offsets.cardOffsetX,
       offsets.gameOffsetY +
-        offsets.cellHeight * (UIModel.selectedRow - 1) +
+        offsets.cellHeight * (BoardModel.selectedRow - 1) +
         offsets.cardOffsetY,
     );
 

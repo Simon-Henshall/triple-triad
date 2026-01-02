@@ -1,10 +1,10 @@
-import { UIModel } from "../ui/ui-model.js";
 import { BoardView } from "../board/board-view.js";
 import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 import { PreviewCard } from "../ui/preview-card.js";
 import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
+import { PhaseChecker } from "../../game/phases.js";
 
 /**
  * Core game logic container.
@@ -69,16 +69,16 @@ export const Game = {
     // Setup info box for first card
     const firstCard = playerModel.hand[0];
     if (firstCard) {
-      UIModel.selectedCard = firstCard;
+      playerModel.selectedCard = firstCard;
       playerView.indentSelectedCard(firstCard);
       InfoBox.drawInfoBox(this);
       InfoBox.updateInfoBox(this, firstCard);
     }
 
     // Update UI state flags
-    UIModel.playerConfirming = false;
-    UIModel.playerChoosingCard = true;
-    UIModel.playerSelectingHand = false;
+    PhaseChecker.playerConfirming = false;
+    PhaseChecker.playerChoosingCard = true;
+    PhaseChecker.playerSelectingHand = false;
 
     // Draw scoreboard overlays
     Game.ui.scoreBoard.draw();
@@ -108,7 +108,7 @@ export const Game = {
       DeckSelectionUI.controller,
     );
 
-    UIModel.playerSelectingHand = true;
+    PhaseChecker.playerSelectingHand = true;
 
     // Show preview card for the default selected card
     const card = DeckSelectionUI.getSelectedCard();

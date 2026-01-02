@@ -1,6 +1,6 @@
-import { UIModel } from "./ui-model.js";
 import { debug } from "../../utilities/debug.js";
 import { Game } from "../game/game.js";
+import { PlayerModel } from "../player/player-model.js";
 
 // Info box layout constants
 const INFO_BOX_WIDTH = 420;
@@ -22,7 +22,8 @@ export const InfoBox = {
    */
   drawInfoBox(gameInstance) {
     console.log(gameInstance);
-    const ui = UIModel;
+    const playerModel = Game.models.playerModel;
+    const ui = playerModel;
 
     // Initialize container if missing, otherwise clear previous children
     if (this.container) {
@@ -88,7 +89,8 @@ export const InfoBox = {
    */
   updateInfoBox(gameInstance, card) {
     console.log(gameInstance);
-    const ui = UIModel;
+    const playerModel = Game.models.playerModel;
+    const ui = playerModel;
     console.log("InfoBox.updateInfoBox() called", ui, card);
 
     // Update selected card name

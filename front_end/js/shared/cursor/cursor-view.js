@@ -1,9 +1,10 @@
 import { Game } from "../game/game.js";
-import { UIModel } from "../ui/ui-model.js";
 import { debug } from "../../utilities/debug.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
+import { PhaseChecker } from "../../game/phases.js";
+import { BoardModel } from "../board/board-model.js";
 
 /**
  * Handles all visual rendering of cursors.
@@ -148,11 +149,12 @@ export const CursorView = (playerModel, playerView) => ({
      * Sync visual selection with logical selected card.
      */
     syncSelection() {
-      UIModel.previouslySelectedCard = UIModel.selectedCard;
-      UIModel.selectedCard = playerModel.hand[UIModel.selectedCardNumber];
+      playerModel.previouslySelectedCard = playerModel.selectedCard;
+      playerModel.selectedCard =
+        playerModel.hand[playerModel.selectedCardNumber];
 
-      InfoBox.updateInfoBox(Game, UIModel.selectedCard);
-      playerView.indentSelectedCard(UIModel.selectedCard);
+      InfoBox.updateInfoBox(Game, playerModel.selectedCard);
+      playerView.indentSelectedCard(playerModel.selectedCard);
     },
 
     /**
@@ -176,9 +178,9 @@ export const CursorView = (playerModel, playerView) => ({
      * Place the grid cursor on the stage.
      */
     place() {
-      UIModel.playerSelectingPlacement = true;
+      PhaseChecker.playerSelectingPlacement = true;
 
-      Game.stage.addChild(UIModel.gridCursor);
+      Game.stage.addChild(BoardModel.gridCursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -198,9 +200,9 @@ export const CursorView = (playerModel, playerView) => ({
      * Remove the grid cursor from the stage.
      */
     remove() {
-      UIModel.playerSelectingPlacement = false;
+      PhaseChecker.playerSelectingPlacement = false;
 
-      Game.stage.removeChild(UIModel.gridCursor);
+      Game.stage.removeChild(BoardModel.gridCursor);
       Game.stage.update();
 
       if (debug.active) {
