@@ -1,44 +1,37 @@
+import { Game } from "./game.js";
 import { config } from "../../constants/config.js";
 import { offsets } from "../../constants/offsets.js";
 
-import { UIManager } from "../ui/ui-manager.js";
+import phases from "../../game/phases.js";
+import StateMachine from "../../game/game-state-machine.js";
 
-import { Game } from "./game.js";
-import { GameDeck } from "./game-deck.js";
+import { ScoreBoard } from "../ui/scoreboard.js";
 
-import { createDeck } from "../card/card-factory.js";
-
-import { AIManager } from "../ai/ai-manager.js";
-
-import { PlayerManager } from "../player/player-manager.js";
-import { PlayerRenderer } from "../player/player-renderer.js";
-
-import { PlacementManager } from "../../phase-2-game/phase-2.2-card-placement-phase/placement/placement-manager.js";
-import { PlacementController } from "../../phase-2-game/phase-2.2-card-placement-phase/placement/placement-controller.js";
-
-import { InputManager } from "../input/input-manager.js";
-import { InputController } from "../input/input-controller.js";
-
-import { CursorManager } from "../cursor/cursor-manager.js";
-import { CursorRenderer } from "../cursor/cursor-renderer.js";
+import { CursorModel } from "../cursor/cursor-model.js";
+import { CursorView } from "../cursor/cursor-view.js";
 import { CursorController } from "../cursor/cursor-controller.js";
 
-import { BoardManager } from "../board/board-manager.js";
+import { PlayerModel } from "../player/player-model.js";
+import { PlayerView } from "../player/player-view.js";
 
-/**
- * Handles full initialization of the game environment:
- * - Stage & ticker
- * - UI containers
- * - Managers, controllers, renderers
- * - Cursor setup
- * - Event listeners
- * - Hand selection setup
- */
+import { AITurnModel } from "../../phases/ai-turn/ai-turn-model.js";
+import { AITurnController } from "../../phases/ai-turn/ai-turn-controller.js";
+
+import { PlacementModel } from "../../phases/placement/placement-model.js";
+import { PlacementController } from "../../phases/placement/placement-controller.js";
+
+import { InputModel } from "../input/input-model.js";
+import { InputController } from "../input/input-controller.js";
+
+import { BoardModel } from "../board/board-model.js";
+import { createDeck } from "../card/card-factory.js";
+import { InfoBox } from "../ui/info-box.js";
+import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
+
 export const gameInit = {
-  /**
-   * Initialize the CreateJS stage and ticker.
-   * Sets Game.stage, Game.stageWidth, and Game.stageHeight.
-   */
+  // ---------------------------------------------
+  // CreateJS Stage
+  // ---------------------------------------------
   stage() {
     Game.stage = new createjs.Stage("gameArea");
     Game.stageWidth = Game.stage.canvas.width;
@@ -48,175 +41,193 @@ export const gameInit = {
     createjs.Ticker.addEventListener("tick", () => Game.stage.update());
   },
 
-  /**
-   * Instantiate all core managers, controllers, and renderers.
-   * Wires necessary references to Game object.
-   * @returns {Object} References to created managers/controllers/renderers
-   */
-  managers() {
-    const aiManager = new AIManager();
-    const playerManager = new PlayerManager();
-    const playerRenderer = new PlayerRenderer(playerManager);
-    playerManager.renderer = playerRenderer;
-    const gameDeck = new GameDeck(playerManager, aiManager);
+  // ---------------------------------------------
+  // UI Containers
+  // ---------------------------------------------
+  uiContainers() {
+    ConfirmationView.container = new createjs.Container();
+    ConfirmationView.background = new createjs.Shape();
+    ConfirmationView.cursor = new createjs.Bitmap(
+      config.imagePath + "cursor.png",
+    );
 
-    const placementController = new PlacementController(playerManager);
+    InfoBox.container = new createjs.Container();
+
+    BoardModel.boardContainer = new createjs.Container();
+  },
+
+  // ---------------------------------------------
+  // Add static board background
+  // ---------------------------------------------
+  addBackground() {
+    const background = new createjs.Bitmap(config.imagePath + "board.png");
+    Game.stage.addChild(background);
+
+    BoardModel.boardContainer.x = offsets.gameOffsetX;
+    BoardModel.boardContainer.y = offsets.gameOffsetY;
+
+    Game.stage.addChild(BoardModel.boardContainer);
+  },
+
+  // ---------------------------------------------
+  // Initialise legacy models + new state machine
+  // ---------------------------------------------
+  models() {
+    const aiTurnModel = new AITurnModel();
+    const aiTurnController = new AITurnController(aiTurnModel);
+
+    const playerModel = new PlayerModel();
+    const playerView = new PlayerView(playerModel);
+    playerModel.view = playerView;
+
+    const placementController = new PlacementController(playerModel);
     placementController.init();
-    const placementManager = new PlacementManager(placementController);
-    if (placementManager.setController) {
-      placementManager.setController(placementController);
-    }
 
-    const inputManager = new InputManager(
-      playerManager,
-      playerRenderer,
+    const placementModel = new PlacementModel(placementController);
+    placementModel.setController?.(placementController);
+
+    const inputModel = new InputModel(
+      playerModel,
+      playerView,
       placementController,
     );
-    const inputController = new InputController(inputManager);
+    const inputController = new InputController(inputModel);
 
-    Game.managers = {
-      aiManager,
-      playerManager,
-      placementManager,
-      inputManager,
-      boardManager: BoardManager,
-      gameDeck,
+    const stateMachine = new StateMachine(phases, {
+      allowedTransitions: {
+        "deck-selection": ["confirmation"],
+        confirmation: ["deck-selection", "hand-select"],
+        "hand-select": ["placement"],
+        placement: ["resolution"],
+        resolution: ["end-turn"],
+        "end-turn": ["ai-turn", "hand-select"],
+        "ai-turn": ["placement"],
+        "game-over": [],
+      },
+      rootDeps: {},
+    });
+
+    Game.models = {
+      aiTurnModel,
+      playerModel,
+      placementModel,
+      inputModel,
+      boardModel: BoardModel,
+      stateMachine,
     };
 
     Game.controllers = {
+      aiTurnController,
       placementController,
       inputController,
     };
 
-    Game.renderers = {
-      playerRenderer,
-    };
+    Game.views = { playerView };
+
+    Game.ui.scoreBoard = new ScoreBoard(Game.stage, playerModel, aiTurnModel);
 
     return {
-      aiManager,
-      playerManager,
-      playerRenderer,
-      placementManager,
-      gameDeck,
+      aiTurnModel,
+      aiTurnController,
+      playerModel,
+      playerView,
+      placementModel,
       placementController,
-      inputManager,
+      inputModel,
       inputController,
+      stateMachine,
     };
   },
 
-  /**
-   * Compute visual hand positions for player and AI hands.
-   * Depends on offsets computed from the grid.
-   */
-  handPositions() {
-    const { aiManager, playerManager } = Game.managers;
-    playerManager.handOffsetX =
-      offsets.gameOffsetX + offsets.cellWidth * 3 + offsets.cardWidth / 4;
-    aiManager.handOffsetX = offsets.gameOffsetX / 2 - offsets.cardWidth / 2;
-  },
-
-  /**
-   * Setup basic UI containers for the game.
-   * Initializes confirmation, infoBox, and background.
-   */
-  uiContainers() {
-    //UIRenderer.addBackground();
-    UIManager.confirmation.container = new createjs.Container();
-    UIManager.infoBox.container = new createjs.Container();
-    UIManager.previouslySelectedCard = [];
-
-    UIManager.confirmation.background = new createjs.Shape();
-    UIManager.confirmation.cursor = new createjs.Bitmap(
-      config.imagePath + "cursor.png",
-    );
-  },
-
-  /**
-   * Create cursors for player hand, selection board, and grid.
-   * Wires CursorManager and Game renderers/controllers.
-   */
+  // ---------------------------------------------
+  // Create cursors
+  // ---------------------------------------------
   cursors() {
     const cursorPath = config.imagePath + "cursor.png";
+    const playerModel = Game.models.playerModel;
 
-    CursorManager.player = Game.managers.playerManager;
-
-    CursorManager.player.playerHandCursor = new createjs.Bitmap(cursorPath);
-    CursorManager.player.playerHandSelectionCursor = new createjs.Bitmap(
+    CursorModel.player = playerModel;
+    CursorModel.player.playerHandCursor = new createjs.Bitmap(cursorPath);
+    CursorModel.player.playerHandSelectionCursor = new createjs.Bitmap(
       cursorPath,
     );
-    UIManager.gridCursor = new createjs.Bitmap(cursorPath);
 
-    Game.renderers.cursorRenderer = CursorRenderer(
-      Game.managers.playerManager,
-      Game.renderers.playerRenderer,
-    );
-    Game.controllers.cursorController = CursorController(
-      Game.renderers.cursorRenderer,
-    );
+    BoardModel.gridCursor = new createjs.Bitmap(cursorPath);
+
+    Game.views.cursorView = CursorView(playerModel, Game.views.playerView);
+    Game.controllers.cursorController = CursorController(Game.views.cursorView);
   },
 
-  /**
-   * Register keydown event handlers for player input.
-   * @param {InputController} inputController
-   */
+  // ---------------------------------------------
+  // Register Key Handlers
+  // ---------------------------------------------
   events(inputController) {
     document.addEventListener("keydown", (event) =>
       inputController.handleKey(event),
     );
   },
 
-  /**
-   * Adds the main board background to the game stage.
-   * This is a static image and does not require updates.
-   */
-  addBackground() {
-    const background = new createjs.Bitmap(config.imagePath + "board.png");
-    Game.stage.addChild(background);
+  // ---------------------------------------------
+  // Full Game Init
+  // ---------------------------------------------
+  async all() {
+    console.log("[Game-Init] Starting setup...");
 
-    UIManager.boardContainer.x = offsets.gameOffsetX;
-    UIManager.boardContainer.y = offsets.gameOffsetY;
-    background.stage.addChild(UIManager.boardContainer);
-
-    Game.stage.update();
-  },
-
-  /**
-   * Initializs the game environment, setting up the CreateJS stage,
-   * ticker, managers, controllers, renderers, and event listeners.
-   */
-  all() {
-    console.log("[Game-Init] Setting up canvas...");
+    // Stage + UI
     this.stage();
-
-    this.uiContainers(); // Required to set up stuff for confirmation UI display
-
-    console.log("[Game-Init] Drawing background...");
+    Game.ui = {};
+    this.uiContainers();
     this.addBackground();
 
-    const { inputController } = this.managers();
+    // Core systems
+    const {
+      inputController,
+      playerModel,
+      aiTurnModel,
+      aiTurnController,
+      stateMachine,
+    } = this.models();
 
-    this.handPositions();
     this.cursors();
     this.events(inputController);
 
-    console.log("[Game-Init] Starting deck creation...");
-
+    // Decks
     const playerDeck = createDeck("player");
     const aiDeck = createDeck("ai");
+    playerModel.deck = playerDeck;
+    aiTurnModel.deck = aiDeck;
 
-    Game.managers.playerManager.deck = playerDeck;
-    Game.managers.aiManager.deck = aiDeck;
+    // Now set up visual offsets based on hand
+    // TODO: Move this logic
+    // NOTE: aiTurnController.initHand() depends on these positions
+    playerModel.handOffsetX =
+      offsets.gameOffsetX + offsets.cellWidth * 3 + offsets.cardWidth / 4;
+    aiTurnController.handOffsetX =
+      offsets.gameOffsetX / 3 - offsets.cardWidth / 2;
+    aiTurnModel.handOffsetX = aiTurnController.handOffsetX;
 
-    console.log("[Game-Init] Decks created:", {
+    // AI Hand
+    const drawnCards = aiTurnModel.populateHand();
+    aiTurnController.initHand(drawnCards);
+
+    // Phase Dependencies
+    stateMachine.setRootDependencies({
+      playerModel,
       playerDeck,
-      aiDeck,
+      cursorController: Game.controllers.cursorController,
+      selectionUI: playerModel,
+
+      aiTurnModel,
+      aiTurnController,
+
+      placementModel: Game.models.placementModel,
+      placementController: Game.controllers.placementController,
+
+      boardModel: BoardModel,
+      scoreboard: Game.ui.scoreBoard,
     });
 
-    Game.managers.aiManager.populateHand();
-
-    console.log(
-      "[Game-Init] Initialisation complete. Passing off to [Game]...",
-    );
-    Game.setupSelectionBook(Game.managers.playerManager);
+    console.log("[Game-Init] Entering first phase: deck-selection");
+    await stateMachine.transitionTo("deck-selection");
   },
 };

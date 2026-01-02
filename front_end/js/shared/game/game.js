@@ -1,11 +1,14 @@
-import { UIManager } from "../ui/ui-manager.js";
-import { UIRenderer } from "../ui/ui-renderer.js";
-import { BoardRenderer } from "../board/board-renderer.js";
-import { SelectionBookUI } from "../../phase-1-pregame/phase-1.1-card-selection-phase/selection-book/selection-book-ui.js";
+import { BoardView } from "../board/board-view.js";
+import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
+import { InfoBox } from "../ui/info-box.js";
+import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
+import { PreviewCard } from "../ui/preview-card.js";
+import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
+import { PhaseChecker } from "../../game/phases.js";
 
 /**
  * Core game logic container.
- * All initialization, rendering, and manager setup
+ * All initialisation, rendering, and model setup
  * should happen via game-init.js. Game only handles
  * match rounds, hand selection, and outcomes.
  */
@@ -16,14 +19,14 @@ export const Game = {
   /** Reference to the CreateJS stage */
   stage: undefined,
 
-  /** Container for all instantiated managers */
-  managers: {},
+  /** Container for all instantiated models */
+  models: {},
 
   /** Container for all controllers */
   controllers: {},
 
-  /** Container for all renderers */
-  renderers: {},
+  /** Container for all views */
+  views: {},
 
   /** Stage dimensions */
   stageWidth: 0,
@@ -40,45 +43,49 @@ export const Game = {
   startGame() {
     console.log("[Game] Starting new match...");
 
-    const sb = UIManager.selectionBook;
+    const sb = DeckSelectionModel;
 
     // Clear selection UI containers
     if (sb?.container) {
       this.stage.removeChild(sb.container);
     }
-    if (UIManager.confirmation?.container) {
-      this.stage.removeChild(UIManager.confirmation.container);
+    if (ConfirmationView?.container) {
+      this.stage.removeChild(ConfirmationView.container);
     }
 
     // Generate the game board
-    BoardRenderer.generateGrid();
+    BoardView.generateGrid();
 
-    const { playerManager } = this.managers;
-    const { playerRenderer } = this.renderers;
+    const { playerModel } = this.models;
+    const { playerView } = this.views;
 
     // Render player's hand
-    if (playerManager.hand.length === 0) {
+    if (playerModel.hand.length === 0) {
       console.warn("[startGame] Player hand empty.");
     } else {
-      playerRenderer.renderHand?.(playerManager.hand);
+      playerView.renderHand?.(playerModel.hand);
     }
 
     // Setup info box for first card
-    const firstCard = playerManager.hand[0];
+    const firstCard = playerModel.hand[0];
     if (firstCard) {
-      UIManager.selectedCard = firstCard;
-      playerRenderer.indentSelectedCard(firstCard);
-      UIRenderer.drawInfoBox();
-      UIRenderer.updateInfoBox(firstCard);
+      playerModel.selectedCard = firstCard;
+      playerView.indentSelectedCard(firstCard);
+      InfoBox.drawInfoBox(this);
+      InfoBox.updateInfoBox(this, firstCard);
     }
 
     // Update UI state flags
-    UIManager.playerConfirming = false;
-    UIManager.playerChoosingCard = true;
-    UIManager.playerSelectingHand = false;
+    PhaseChecker.playerConfirming = false;
+    PhaseChecker.playerChoosingCard = true;
+    PhaseChecker.playerSelectingHand = false;
 
-    // Draw overlays
-    UIRenderer.drawCardCounts();
+    // Draw scoreboard overlays
+    Game.ui.scoreBoard.draw();
+    Game.stage.setChildIndex(
+      Game.ui.scoreBoard.container,
+      Game.stage.numChildren - 1,
+    );
 
     // Place the player's hand cursor
     this.controllers.cursorController?.playerHand?.place?.();
@@ -91,17 +98,20 @@ export const Game = {
    * Handles setup and operation of the selection board (hand selection screen)
    * where the player chooses 5 cards from their deck.
    */
-  setupSelectionBook() {
+  setupSelectionBook(playerModel) {
     console.log("[Game] Initialising selection book...");
-    const playerManager = Game.managers.playerManager;
 
     // Initialise selection book
-    SelectionBookUI.initialise(playerManager.deck, playerManager);
+    DeckSelectionUI.initialise(
+      playerModel.deck,
+      playerModel,
+      DeckSelectionUI.controller,
+    );
 
-    UIManager.playerSelectingHand = true;
+    PhaseChecker.playerSelectingHand = true;
 
     // Show preview card for the default selected card
-    const card = SelectionBookUI.getSelectedCard();
+    const card = DeckSelectionUI.getSelectedCard();
     if (card) {
       console.log(
         "[Game] Showing preview card for the default card:",
@@ -113,15 +123,17 @@ export const Game = {
       if (faceBitmap && faceBitmap.image && !faceBitmap.image.complete) {
         // Wait for image load
         faceBitmap.image.addEventListener("load", () => {
-          UIManager.selectionBook.showPreviewCard(card);
+          PreviewCard.showPreviewCard(card);
         });
       } else {
-        UIManager.selectionBook.showPreviewCard(card);
+        PreviewCard.showPreviewCard(card);
       }
     }
 
     // Place the selection cursor on top
-    Game.controllers.cursorController.selection.place();
+    queueMicrotask(() => {
+      Game.controllers.cursorController?.selection?.place?.();
+    });
   },
 
   /**
@@ -130,11 +142,12 @@ export const Game = {
    * sudden-death rules if applicable.
    */
   endGame() {
-    const { playerManager, aiManager } = this.managers;
+    const { playerModel } = this.models;
+    const { aiTurnModel } = this.models;
 
-    if (aiManager.totalRedCards > playerManager.totalBlueCards) {
+    if (aiTurnModel.currentlyOwnedCards > playerModel.totalBlueCards) {
       alert("lose");
-    } else if (playerManager.totalBlueCards > aiManager.totalRedCards) {
+    } else if (playerModel.totalBlueCards > aiTurnModel.currentlyOwnedCards) {
       alert("win");
     } else {
       alert("draw");
