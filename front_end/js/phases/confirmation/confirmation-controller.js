@@ -1,6 +1,6 @@
 import { Game } from "../../shared/game/game.js";
 import { UIModel } from "../../shared/ui/ui-model.js";
-import { UIView } from "../../shared/ui/ui-view.js";
+import { ConfirmationView } from "./confirmation-view.js";
 
 /**
  * Controller responsible for showing and managing the
@@ -16,8 +16,6 @@ export const ConfirmationController = {
    */
   show() {
     console.log("[Confirmation Controller] Showing confirmation dialog...");
-    const config = UIModel.confirmation;
-
     if (Game.controllers.cursorController.selection) {
       Game.controllers.cursorController.selection.remove();
     }
@@ -26,13 +24,13 @@ export const ConfirmationController = {
     UIModel.playerConfirming = true;
 
     // Reset the default choice index
-    config.selectedChoice = 0;
+    ConfirmationView.selectedChoice = 0;
 
-    // Render the confirmation box (UI only)
-    UIView.drawConfirmationBox(config);
+    // Render the confirmation box
+    ConfirmationView.drawConfirmationBox();
 
     // Add container to the stage
-    Game.stage.addChild(config.container);
+    Game.stage.addChild(ConfirmationView.container);
 
     // Create cursor if it doesn't exist
     if (!Game.controllers.cursorController.confirmation) {

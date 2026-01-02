@@ -4,6 +4,7 @@ import { ConfirmationController } from "../../phases/confirmation/confirmation-c
 import { Game } from "../game/game.js";
 import { CursorModel } from "../cursor/cursor-model.js";
 import { InfoBox } from "../ui/info-box.js";
+import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 
 /**
  * InputModel class, responsible for handling player input and
@@ -185,12 +186,11 @@ export class InputModel {
    */
   handleConfirmationChoice(forcedChoice) {
     // Clear the confirmation box and cursor either way
-    Game.stage.removeChild(UIModel.confirmation.container);
+    Game.stage.removeChild(ConfirmationView.container);
     Game.controllers.cursorController.confirmation.remove();
 
     const choice =
-      forcedChoice ||
-      (UIModel.confirmation.selectedChoice === 0 ? "yes" : "no");
+      forcedChoice || (ConfirmationView.selectedChoice === 0 ? "yes" : "no");
 
     if (choice === "yes") {
       console.log("[Input Model] Player confirmed their hand.");

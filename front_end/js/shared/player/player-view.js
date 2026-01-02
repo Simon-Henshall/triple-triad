@@ -1,6 +1,7 @@
 import { Game } from "../game/game.js";
 import { UIModel } from "../ui/ui-model.js";
 import { offsets } from "../../constants/offsets.js";
+import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 
 /**
  * Handles all visual rendering and animation of the player's hand.
@@ -126,7 +127,7 @@ export class PlayerView {
     const previewCard = UIModel.selectionBook?.displayedCard;
     let topIndex = Game.stage.numChildren;
 
-    const confirmationContainer = UIModel.confirmation?.container;
+    const confirmationContainer = ConfirmationView?.container;
     if (confirmationContainer && Game.stage.contains(confirmationContainer)) {
       topIndex = Game.stage.getChildIndex(confirmationContainer);
     }
@@ -158,7 +159,7 @@ export class PlayerView {
      * @param {createjs.Container} cardContainer
      */
     const tickHandler = () => {
-      const confirmationContainer = UIModel.confirmation?.container;
+      const confirmationContainer = ConfirmationView?.container;
       let topIndex = Game.stage.numChildren;
       if (confirmationContainer && Game.stage.contains(confirmationContainer)) {
         topIndex = Game.stage.getChildIndex(confirmationContainer);

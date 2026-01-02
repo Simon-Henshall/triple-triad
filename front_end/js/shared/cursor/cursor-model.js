@@ -3,6 +3,7 @@ import { offsets } from "../../constants/offsets.js";
 import { BoardModel } from "../board/board-model.js";
 import { Game } from "../game/game.js";
 import { debug } from "../../utilities/debug.js";
+import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 
 /**
  * Manages the logical state of all cursors in the game.
@@ -86,7 +87,7 @@ export const CursorModel = {
      * Reset the currently selected choice to default (0).
      */
     resetChoice() {
-      UIModel.confirmation.selectedChoice = 0;
+      ConfirmationView.selectedChoice = 0;
     },
 
     /**
@@ -96,27 +97,27 @@ export const CursorModel = {
      * @returns {boolean} True if the selection changed, false otherwise.
      */
     move(direction) {
-      const previousChoice = UIModel.confirmation.selectedChoice;
+      const previousChoice = ConfirmationView.selectedChoice;
 
       if (direction === "up") {
-        if (UIModel.confirmation.selectedChoice > 0) {
-          UIModel.confirmation.selectedChoice -= 1;
+        if (ConfirmationView.selectedChoice > 0) {
+          ConfirmationView.selectedChoice -= 1;
         }
       } else if (direction === "down") {
-        if (UIModel.confirmation.selectedChoice < 1) {
-          UIModel.confirmation.selectedChoice += 1;
+        if (ConfirmationView.selectedChoice < 1) {
+          ConfirmationView.selectedChoice += 1;
         }
       } else {
         console.warn(`Unknown or out-of-bounds direction: ${direction}`);
       }
 
       // Clamp choice to valid range
-      UIModel.confirmation.selectedChoice = Math.max(
+      ConfirmationView.selectedChoice = Math.max(
         0,
-        Math.min(1, UIModel.confirmation.selectedChoice),
+        Math.min(1, ConfirmationView.selectedChoice),
       );
 
-      return previousChoice !== UIModel.confirmation.selectedChoice;
+      return previousChoice !== ConfirmationView.selectedChoice;
     },
   },
 

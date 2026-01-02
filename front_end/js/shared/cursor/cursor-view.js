@@ -1,8 +1,8 @@
 import { Game } from "../game/game.js";
 import { UIModel } from "../ui/ui-model.js";
-import { UIView } from "../ui/ui-view.js";
 import { debug } from "../../utilities/debug.js";
 import { InfoBox } from "../ui/info-box.js";
+import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 
 /**
  * Handles all visual rendering of cursors.
@@ -83,10 +83,10 @@ export const CursorView = (playerModel, playerView) => ({
      * Place the confirmation cursor at its initial visual position.
      */
     place() {
-      UIModel.confirmation.cursor.x = UIModel.confirmation.background.x + 50;
-      UIModel.confirmation.cursor.y = UIModel.confirmation.background.y + 60;
+      ConfirmationView.cursor.x = ConfirmationView.background.x + 50;
+      ConfirmationView.cursor.y = ConfirmationView.background.y + 60;
 
-      Game.stage.addChild(UIModel.confirmation.cursor);
+      Game.stage.addChild(ConfirmationView.cursor);
       Game.stage.update();
 
       if (debug.active) {
@@ -98,10 +98,10 @@ export const CursorView = (playerModel, playerView) => ({
      * Update the confirmation cursor's Y position according to selected choice.
      */
     updatePosition() {
-      UIModel.confirmation.cursor.y =
-        UIModel.confirmation.background.y +
+      ConfirmationView.cursor.y =
+        ConfirmationView.background.y +
         60 +
-        UIModel.confirmation.selectedChoice * 30;
+        ConfirmationView.selectedChoice * 30;
       Game.stage.update();
     },
 
@@ -109,7 +109,7 @@ export const CursorView = (playerModel, playerView) => ({
      * Remove the confirmation cursor from the stage.
      */
     remove() {
-      Game.stage.removeChild(UIModel.confirmation.cursor);
+      Game.stage.removeChild(ConfirmationView.cursor);
       Game.stage.update();
 
       if (debug.active) {

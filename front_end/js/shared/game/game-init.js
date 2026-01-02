@@ -27,6 +27,7 @@ import { InputController } from "../input/input-controller.js";
 import { BoardModel } from "../board/board-model.js";
 import { createDeck } from "../card/card-factory.js";
 import { InfoBox } from "../ui/info-box.js";
+import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 
 export const gameInit = {
   // ---------------------------------------------
@@ -45,9 +46,9 @@ export const gameInit = {
   // UI Containers
   // ---------------------------------------------
   uiContainers() {
-    UIModel.confirmation.container = new createjs.Container();
-    UIModel.confirmation.background = new createjs.Shape();
-    UIModel.confirmation.cursor = new createjs.Bitmap(
+    ConfirmationView.container = new createjs.Container();
+    ConfirmationView.background = new createjs.Shape();
+    ConfirmationView.cursor = new createjs.Bitmap(
       config.imagePath + "cursor.png",
     );
 

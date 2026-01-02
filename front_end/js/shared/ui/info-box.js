@@ -88,7 +88,7 @@ export const InfoBox = {
   updateInfoBox(gameInstance, card) {
     console.log(gameInstance);
     const ui = UIModel;
-    console.log("UIView.updateInfoBox() called", ui, card);
+    console.log("InfoBox.updateInfoBox() called", ui, card);
 
     // Update selected card name
     if (this.cardName && card) {

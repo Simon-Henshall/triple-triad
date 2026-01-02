@@ -1,8 +1,8 @@
 import { UIModel } from "../ui/ui-model.js";
-import { UIView } from "../ui/ui-view.js";
 import { BoardView } from "../board/board-view.js";
 import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
 import { InfoBox } from "../ui/info-box.js";
+import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 
 /**
  * Core game logic container.
@@ -47,8 +47,8 @@ export const Game = {
     if (sb?.container) {
       this.stage.removeChild(sb.container);
     }
-    if (UIModel.confirmation?.container) {
-      this.stage.removeChild(UIModel.confirmation.container);
+    if (ConfirmationView?.container) {
+      this.stage.removeChild(ConfirmationView.container);
     }
 
     // Generate the game board
