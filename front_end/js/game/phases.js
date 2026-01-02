@@ -26,7 +26,6 @@ export const PhaseChecker = {
   playerConfirming: false,
   playerChoosingCard: false,
   playerSelectingPlacement: false,
-  playerTurn: "blue", // TODO: fall back to getPlayerTurn() exclusively
 };
 
 export default {

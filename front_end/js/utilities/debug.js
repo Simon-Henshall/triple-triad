@@ -71,9 +71,10 @@ export const debug = {
   logHands() {
     console.log("=============== PLAYER HAND ===============");
     const playerModel = Game.models.playerModel;
-    for (const [index, card] of playerModel.cardsInPlayerHand.entries()) {
+    // Use the logical hand from the PlayerModel (card objects)
+    for (const [index, card] of playerModel.hand.entries()) {
       console.log(
-        `Card ${index}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
+        `Card ${index}: ${card.data?.name ?? card.name} | Owner: ${card.owner} | Element: ${card.element}`,
       );
     }
 

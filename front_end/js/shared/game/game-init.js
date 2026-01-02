@@ -13,6 +13,7 @@ import { CursorController } from "../cursor/cursor-controller.js";
 
 import { PlayerModel } from "../player/player-model.js";
 import { PlayerView } from "../player/player-view.js";
+import { PlayerController } from "../player/player-controller.js";
 
 import { AITurnModel } from "../../phases/ai-turn/ai-turn-model.js";
 import { AITurnController } from "../../phases/ai-turn/ai-turn-controller.js";
@@ -79,6 +80,7 @@ export const gameInit = {
     const playerModel = new PlayerModel();
     const playerView = new PlayerView(playerModel);
     playerModel.view = playerView;
+    const playerController = new PlayerController(playerModel, playerView);
 
     const placementController = new PlacementController(playerModel);
     placementController.init();
@@ -118,6 +120,7 @@ export const gameInit = {
 
     Game.controllers = {
       aiTurnController,
+      playerController,
       placementController,
       inputController,
     };
@@ -129,6 +132,7 @@ export const gameInit = {
     return {
       aiTurnModel,
       aiTurnController,
+      playerController,
       playerModel,
       playerView,
       placementModel,

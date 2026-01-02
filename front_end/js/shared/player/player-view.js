@@ -2,7 +2,6 @@ import { Game } from "../game/game.js";
 import { offsets } from "../../constants/offsets.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
-import { PlayerModel } from "./player-model.js";
 
 /**
  * Handles all visual rendering and animation of the player's hand.

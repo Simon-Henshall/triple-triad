@@ -5,7 +5,8 @@ import { PhaseChecker } from "../game/phases.js";
  * @returns {"red" | "blue"} The current player's colour.
  */
 export function getPlayerTurn() {
-  return PhaseChecker.playerTurn;
+  // If PhaseChecker.playerTurn is not defined, default to 'blue'.
+  return PhaseChecker.playerTurn ?? "blue";
 }
 
 /**

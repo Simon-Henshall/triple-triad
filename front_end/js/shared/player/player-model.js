@@ -1,6 +1,3 @@
-import { DeckSelectionView } from "../../phases/deck-selection/deck-selection-view.js";
-import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
-
 /**
  * Manages the player's logical state: deck, hand, played cards, and counts.
  */
@@ -111,7 +108,6 @@ export class PlayerModel {
     );
 
     this._recalculateSelection();
-    DeckSelectionView.populate(DeckSelectionUI.controller);
 
     return card;
   }

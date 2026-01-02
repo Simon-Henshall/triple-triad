@@ -99,19 +99,11 @@ export class InputModel {
     container.y = Game.stage.canvas.height + 200;
     handCard.visuals.container = container;
 
-    // Add to hand logically
-    this.playerModel.addCardToHand(handCard);
-    this.playerView.cardsInPlayerHand.push(container);
-
-    // Animate into hand
-    this.playerView.animateCardToHand(
-      container,
-      this.playerModel.hand.length - 1,
-    );
-    this.playerView._updateHandAndPreviewZOrder();
-
-    // Refresh book visuals
-    DeckSelectionUI.populate();
+    // Delegate adding + animation + UI sync to the PlayerController
+    const added = Game.controllers.playerController.addCardToHand(handCard);
+    if (!added) {
+      return;
+    }
     Game.stage.update();
 
     // Trigger confirmation if hand full
@@ -128,23 +120,12 @@ export class InputModel {
    * Undo last selection and refresh UI.
    */
   cancelLastSelection() {
-    const removedCard = this.playerModel.removeLastCardFromHand();
+    const removedCard =
+      Game.controllers.playerController.removeLastCardFromHand();
     if (!removedCard) {
       return;
     }
 
-    const container = removedCard.visuals?.container;
-    if (container && Game.stage.contains(container)) {
-      Game.stage.removeChild(container);
-    }
-
-    const index = this.playerView.cardsInPlayerHand.indexOf(container);
-    if (index !== -1) {
-      this.playerView.cardsInPlayerHand.splice(index, 1);
-    }
-
-    // Refresh book and stage
-    DeckSelectionUI.populate();
     Game.stage.update();
 
     // Reset flags if hand < 5
@@ -205,10 +186,8 @@ export class InputModel {
 
     if (choice === "no") {
       console.log("[Input Model] Player cancelled their hand.");
-      this.playerModel.resetHand();
-      this.playerModel.view.resetHand();
-
-      DeckSelectionUI.populate();
+      // Delegate reset to player controller (also refreshes selection UI)
+      Game.controllers.playerController.resetHand();
       PhaseChecker.playerConfirming = false;
       PhaseChecker.playerSelectingHand = true;
       this.updatePreview();
