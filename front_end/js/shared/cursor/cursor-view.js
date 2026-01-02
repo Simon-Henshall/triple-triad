@@ -100,10 +100,18 @@ export const CursorView = (playerModel, playerView) => ({
      * Update the confirmation cursor's Y position according to selected choice.
      */
     updatePosition() {
+      if (!ConfirmationView?.model) {
+        console.warn(
+          "Confirmation model missing; defaulting selected index to 0",
+        );
+      }
+      const selected =
+        ConfirmationView.model &&
+        typeof ConfirmationView.model.selectedIndex === "number"
+          ? ConfirmationView.model.selectedIndex
+          : 0;
       ConfirmationView.cursor.y =
-        ConfirmationView.background.y +
-        60 +
-        ConfirmationView.selectedChoice * 30;
+        ConfirmationView.background.y + 60 + selected * 30;
       Game.stage.update();
     },
 

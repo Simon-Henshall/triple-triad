@@ -88,7 +88,14 @@ export const CursorModel = {
      * Reset the currently selected choice to default (0).
      */
     resetChoice() {
-      ConfirmationView.selectedChoice = 0;
+      if (!ConfirmationView?.model) {
+        console.warn(
+          "Confirmation model missing; cannot reset choice via model",
+        );
+        return false;
+      }
+      ConfirmationView.model.setSelected(0);
+      return true;
     },
 
     /**
@@ -98,27 +105,24 @@ export const CursorModel = {
      * @returns {boolean} True if the selection changed, false otherwise.
      */
     move(direction) {
-      const previousChoice = ConfirmationView.selectedChoice;
-
-      if (direction === "up") {
-        if (ConfirmationView.selectedChoice > 0) {
-          ConfirmationView.selectedChoice -= 1;
-        }
-      } else if (direction === "down") {
-        if (ConfirmationView.selectedChoice < 1) {
-          ConfirmationView.selectedChoice += 1;
-        }
-      } else {
-        console.warn(`Unknown or out-of-bounds direction: ${direction}`);
+      if (!ConfirmationView?.model) {
+        console.warn(
+          "Confirmation model missing; cannot move choice via model",
+        );
+        return false;
       }
 
-      // Clamp choice to valid range
-      ConfirmationView.selectedChoice = Math.max(
-        0,
-        Math.min(1, ConfirmationView.selectedChoice),
-      );
+      const previousChoice = ConfirmationView.model.selectedIndex;
+      if (direction === "up") {
+        ConfirmationView.model.setSelected(previousChoice - 1);
+      } else if (direction === "down") {
+        ConfirmationView.model.setSelected(previousChoice + 1);
+      } else {
+        console.warn(`Unknown or out-of-bounds direction: ${direction}`);
+        return false;
+      }
 
-      return previousChoice !== ConfirmationView.selectedChoice;
+      return previousChoice !== ConfirmationView.model.selectedIndex;
     },
   },
 

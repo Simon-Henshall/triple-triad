@@ -173,8 +173,9 @@ export class InputModel {
     Game.stage.removeChild(ConfirmationView.container);
     Game.controllers.cursorController.confirmation.remove();
 
-    const choice =
-      forcedChoice || (ConfirmationView.selectedChoice === 0 ? "yes" : "no");
+    const currentChoiceIndex =
+      ConfirmationController?.model?.selectedIndex ?? 0;
+    const choice = forcedChoice || (currentChoiceIndex === 0 ? "yes" : "no");
 
     if (choice === "yes") {
       console.log("[Input Model] Player confirmed their hand.");

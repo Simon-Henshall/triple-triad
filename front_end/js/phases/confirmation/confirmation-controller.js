@@ -2,6 +2,7 @@ import { PhaseChecker } from "../../game/phases.js";
 import { Game } from "../../shared/game/game.js";
 import { PreviewCard } from "../../shared/ui/preview-card.js";
 import { ConfirmationView } from "./confirmation-view.js";
+import ConfirmationModel from "./confirmation-model.js";
 
 /**
  * Controller responsible for showing and managing the
@@ -24,8 +25,12 @@ export const ConfirmationController = {
     // Set the player state to 'confirming'
     PhaseChecker.playerConfirming = true;
 
-    // Reset the default choice index
-    ConfirmationView.selectedChoice = 0;
+    // Ensure model exists and reset selection
+    if (!this.model) {
+      this.model = new ConfirmationModel(ConfirmationView);
+      ConfirmationView.model = this.model;
+    }
+    this.model.setSelected(0);
 
     // Render the confirmation box
     ConfirmationView.drawConfirmationBox();
