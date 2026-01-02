@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-commented-code/no-commented-code
 /**
  * game-state-machine.js
  *
@@ -12,7 +11,6 @@
  *  - Emits optional listeners on phase changes via onChange()
  */
 export class StateMachine {
-  // eslint-disable-next-line no-commented-code/no-commented-code
   /**
    * Creates a new StateMachine instance.
    *

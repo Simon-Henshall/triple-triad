@@ -1,6 +1,5 @@
 import { Game } from "../../shared/game/game";
 
-// eslint-disable-next-line no-commented-code/no-commented-code
 /**
  * Deck Selection Controller
  * @export
@@ -13,7 +12,7 @@ export class DeckSelectionController {
    * @param {Array} deck - Array of Card objects with count and selected properties
    * @param {PlayerModel} playerModel - Reference to the player model
    */
-  constructor({ deck = [], playerModel }, transition) {
+  constructor({ deck = [], playerModel }) {
     this.cards = deck.map((c) => ({
       ...c,
       remaining: (c.count ?? 0) - (c.selected ?? 0),

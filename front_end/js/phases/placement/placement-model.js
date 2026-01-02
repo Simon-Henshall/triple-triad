@@ -223,7 +223,6 @@ export class PlacementModel {
     }
   }
 
-  // eslint-disable-next-line no-commented-code/no-commented-code
   /**
    * Check if the card placement is valid.
    * Valid placement is a square with no adjacent cards of the same element.
