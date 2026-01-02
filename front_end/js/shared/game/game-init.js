@@ -172,6 +172,21 @@ export const gameInit = {
   },
 
   // ---------------------------------------------
+  // Set up visual hand offsets
+  // ---------------------------------------------
+  handOffsets() {
+    const playerModel = Game.models.playerModel;
+    const aiTurnController = Game.controllers.aiTurnController;
+    const aiTurnModel = Game.models.aiTurnModel;
+
+    playerModel.handOffsetX =
+      offsets.gameOffsetX + offsets.cellWidth * 3 + offsets.cardWidth / 4;
+    aiTurnController.handOffsetX =
+      offsets.gameOffsetX / 3 - offsets.cardWidth / 2;
+    aiTurnModel.handOffsetX = aiTurnController.handOffsetX;
+  },
+
+  // ---------------------------------------------
   // Full Game Init
   // ---------------------------------------------
   async all() {
@@ -201,14 +216,9 @@ export const gameInit = {
     playerModel.deck = playerDeck;
     aiTurnModel.deck = aiDeck;
 
-    // Now set up visual offsets based on hand
-    // TODO: Move this logic
+    // Set up visual hand offsets
     // NOTE: aiTurnController.initHand() depends on these positions
-    playerModel.handOffsetX =
-      offsets.gameOffsetX + offsets.cellWidth * 3 + offsets.cardWidth / 4;
-    aiTurnController.handOffsetX =
-      offsets.gameOffsetX / 3 - offsets.cardWidth / 2;
-    aiTurnModel.handOffsetX = aiTurnController.handOffsetX;
+    this.handOffsets();
 
     // AI Hand
     const drawnCards = aiTurnModel.populateHand();
