@@ -1,40 +1,24 @@
 /**
- *
+ * ResolutionView handles all visual animations for card flips during the resolution phase.
  */
 export class ResolutionView {
   /**
-   * Handles visual updates triggered by card flipping animations.
+   * Constructor for ResolutionView
+   * @param {createjs.Stage} stage - The main game stage
    */
   constructor(stage) {
     this.stage = stage;
   }
 
   /**
+   * @unimplemented TODO: Unimplemented
    * Flip a single card in a given direction.
-   * @param {Object} card - The card to flip
-   * @param {string} direction - Direction to flip
+   * @param {Object} container - The card container to flip
+   * @param {string} direction - Direction to flip ("left" or "right")
    */
   flipCard(container, direction) {
-    // TODO: FIX THIS
-    // const sliceContainer = new createjs.Container();
-    // const faceBitmap =
-    //   container.getChildByName("faceBitmap") || container.getChildAt(2);
-    // const sliceWidth = faceBitmap.image.width * container.scaleX;
-    // const sliceHeight = faceBitmap.image.height * container.scaleY;
-    // sliceContainer.x = container.x + sliceWidth / 2;
-    // sliceContainer.y = container.y;
-    // container.sourceRect = new createjs.Rectangle(0, 0, 0, sliceWidth);
-    // container.cache(0, 0, sliceWidth, sliceHeight);
-    // sliceContainer.addChild(container);
-    // this.stage.addChild(sliceContainer);
-    // this._animateFlip(
-    //   container,
-    //   sliceContainer,
-    //   direction,
-    //   0,
-    //   container.x,
-    //   container.y,
-    // );
+    // TODO: Implement card flip animation
+    // This needs work to properly animate the card flip effect
   }
 
   /**
@@ -135,6 +119,12 @@ export class ResolutionView {
    * @param {Object} cardToReplace - The card whose visual representation to update
    */
   refreshCardFace(cardToReplace) {
+    // TODO: Implement card face refresh
+    // This needs work to properly update the card's visual representation
+    if (!cardToReplace || !cardToReplace.children) {
+      return;
+    }
+
     if (cardToReplace.children[0]) {
       cardToReplace.children[0].image.src = `front_end/images/cards/${cardToReplace.owner}.png`;
     } else {
@@ -153,7 +143,11 @@ export class ResolutionView {
     }
   }
 
-  /** Flip AI hand at game start */
+  /**
+   * @unimplemented TODO: Unimplemented
+   * Animate flipping each card in the AI hand at game start.
+   * @param {Array<Card>} hand - The AI's hand of cards
+   */
   flipAIHand(hand) {
     const handCopy = hand.toReversed();
     for (const [index, card] of handCopy.entries()) {

@@ -15,7 +15,8 @@ export class ResolutionController {
    * between the player's ownerships and the AI's ownership. It uses the ResolutionView
    * to render the animation.
    */
-  constructor() {
+  constructor(model) {
+    this.model = model || undefined;
     this.view = new ResolutionView(Game.stage);
   }
 
@@ -26,29 +27,17 @@ export class ResolutionController {
    */
   flipCardsCheck(card) {
     for (const [direction, map] of Object.entries(directionMap)) {
-      console.log(`Checking direction: ${direction}`);
-      console.log("map:", map);
-      console.log("card:", card);
-      console.log("target:", card[map.prop]);
-      console.log("target data:", card[map.prop]?.data);
-      console.log("target strength:", card[map.prop]?.data?.strength);
       const target = card[map.prop];
       if (!target) {
         continue;
       }
-
-      console.log(
-        `flipCardsCheck(), Card: ${card.data.name} | owner: ${card.owner} | ` +
-          `Target: ${target.data.name} | target.owner: ${target.owner} | Direction: ${direction}`,
-      );
 
       if (
         card.owner !== target.owner &&
         card.data.strength[direction] >
           target.data.strength[map.opponentStrength]
       ) {
-        console.log("Flipping card over!");
-        this.flipCardOver(card, direction);
+        this.flipCardOver(target, direction);
       }
     }
   }
@@ -58,26 +47,24 @@ export class ResolutionController {
    * @param {Card} card - The card to be flipped to the active player's ownership.
    * @param {string} direction - The direction of the card flip.
    */
-  flipCardOver(card, direction) {
-    const targetCard = card[directionMap[direction].prop];
+  flipCardOver(targetCard, direction) {
     if (!targetCard) {
       return;
     }
 
-    console.log(
-      "flipCardOver() called | targetCard:",
-      targetCard.data.name,
-      "currentOwner:",
-      targetCard.owner,
-      "newOwner (getPlayerTurn()):",
-      getPlayerTurn(),
-    );
-
     // Update ownership
     targetCard.setOwner(getPlayerTurn());
 
+    // Record the flip in model
+    if (this.model) {
+      this.model.recordFlip(targetCard);
+    }
+
     // Animate flip visually
     this.view.flipCard(targetCard.visuals.container, direction);
+
+    // Update card face
+    this.view.refreshCardFace(targetCard);
 
     // Update counts
     this.updateOwnershipCounts(1);
