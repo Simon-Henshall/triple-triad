@@ -2,6 +2,7 @@ import { Game } from "../game/game.js";
 import { UIModel } from "../ui/ui-model.js";
 import { UIView } from "../ui/ui-view.js";
 import { debug } from "../../utilities/debug.js";
+import { InfoBox } from "../ui/info-box.js";
 
 /**
  * Handles all visual rendering of cursors.
@@ -149,7 +150,7 @@ export const CursorView = (playerModel, playerView) => ({
       UIModel.previouslySelectedCard = UIModel.selectedCard;
       UIModel.selectedCard = playerModel.hand[UIModel.selectedCardNumber];
 
-      UIView.updateInfoBox(UIModel.selectedCard);
+      InfoBox.updateInfoBox(Game, UIModel.selectedCard);
       playerView.indentSelectedCard(UIModel.selectedCard);
     },
 

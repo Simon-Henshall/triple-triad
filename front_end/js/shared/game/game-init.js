@@ -26,6 +26,7 @@ import { InputController } from "../input/input-controller.js";
 
 import { BoardModel } from "../board/board-model.js";
 import { createDeck } from "../card/card-factory.js";
+import { InfoBox } from "../ui/info-box.js";
 
 export const gameInit = {
   // ---------------------------------------------
@@ -50,7 +51,7 @@ export const gameInit = {
       config.imagePath + "cursor.png",
     );
 
-    UIModel.infoBox.container = new createjs.Container();
+    InfoBox.container = new createjs.Container();
     UIModel.previouslySelectedCard = [];
 
     UIModel.boardContainer = new createjs.Container();

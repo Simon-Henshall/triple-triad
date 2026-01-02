@@ -2,6 +2,7 @@ import { UIModel } from "../ui/ui-model.js";
 import { UIView } from "../ui/ui-view.js";
 import { BoardView } from "../board/board-view.js";
 import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
+import { InfoBox } from "../ui/info-box.js";
 
 /**
  * Core game logic container.
@@ -68,8 +69,8 @@ export const Game = {
     if (firstCard) {
       UIModel.selectedCard = firstCard;
       playerView.indentSelectedCard(firstCard);
-      UIView.drawInfoBox();
-      UIView.updateInfoBox(firstCard);
+      InfoBox.drawInfoBox(this);
+      InfoBox.updateInfoBox(this, firstCard);
     }
 
     // Update UI state flags

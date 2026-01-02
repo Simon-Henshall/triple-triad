@@ -3,6 +3,7 @@ import { UIModel } from "../ui/ui-model.js";
 import { ConfirmationController } from "../../phases/confirmation/confirmation-controller.js";
 import { Game } from "../game/game.js";
 import { CursorModel } from "../cursor/cursor-model.js";
+import { InfoBox } from "../ui/info-box.js";
 
 /**
  * InputModel class, responsible for handling player input and
@@ -266,7 +267,7 @@ export class InputModel {
       }
       case "Backspace":
       case "Escape": {
-        UIModel.toggleInfoBox(true);
+        InfoBox.toggleInfoBox(Game, true);
         UIModel.restorePlayerHandCursor();
         Game.controllers.cursorController.grid.remove();
         break;
@@ -290,7 +291,7 @@ export class InputModel {
     Game.controllers.cursorController.grid.place();
 
     // Immediately hide info box now that placement is active
-    UIModel.toggleInfoBox(false);
+    InfoBox.toggleInfoBox(Game, false);
 
     // Remove hand cursor from stage
     Game.stage.removeChild(this.playerModel.playerHandCursor);

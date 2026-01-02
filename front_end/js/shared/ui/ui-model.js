@@ -1,6 +1,7 @@
 import { offsets } from "../../constants/offsets.js";
 import { Game } from "../game/game.js";
 import { debug } from "../../utilities/debug.js";
+import { InfoBox } from "./info-box.js";
 
 export const UIModel = {
   // -------------------------
@@ -89,28 +90,6 @@ export const UIModel = {
   },
 
   // -------------------------
-  // Info box state
-  // -------------------------
-  infoBox: {
-    container: undefined,
-    cardName: undefined,
-  },
-
-  /**
-   * Show or hide the info box.
-   * @param {boolean} visible
-   */
-  toggleInfoBox(visible) {
-    if (this.infoBox.container) {
-      this.infoBox.container.visible = visible;
-      Game.stage.update();
-      if (debug.active) {
-        //console.log(`Info box visibility set to: ${visible}`);
-      }
-    }
-  },
-
-  // -------------------------
   // Player interaction flags
   // -------------------------
   selectedCardNumber: 0,
@@ -144,13 +123,12 @@ export const UIModel = {
   cardImage: undefined,
 
   bringToFront() {
-    const { infoBox } = UIModel;
-    if (infoBox.container) {
+    if (InfoBox.container) {
       Game.stage.setChildIndex(
-        infoBox.container,
+        InfoBox.container,
         Game.stage.getNumChildren() - 1,
       );
-      infoBox.container.visible = true;
+      InfoBox.container.visible = true;
     }
   },
 };

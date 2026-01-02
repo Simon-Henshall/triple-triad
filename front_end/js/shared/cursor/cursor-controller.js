@@ -2,8 +2,8 @@ import { CursorModel } from "./cursor-model.js";
 import { debug } from "../../utilities/debug.js";
 import { Game } from "../game/game.js";
 import { UIModel } from "../ui/ui-model.js";
-import { UIView } from "../ui/ui-view.js";
 import { offsets } from "../../constants/offsets.js";
+import { InfoBox } from "../ui/info-box.js";
 
 /**
  * High-level controller that bridges cursor state and visual updates.
@@ -121,7 +121,7 @@ export const CursorController = (cursorView) => ({
       const newlySelectedCard = playerModel.hand[selectedIndex];
       if (newlySelectedCard) {
         UIModel.selectedCard = newlySelectedCard;
-        UIView.updateInfoBox(newlySelectedCard);
+        InfoBox.updateInfoBox(Game, newlySelectedCard);
       }
 
       if (debug.active) {
