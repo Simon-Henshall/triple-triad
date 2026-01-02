@@ -1,3 +1,37 @@
+/**
+ * Fallback card dataset used for testing and as a safe fallback when
+ * server-provided card data cannot be loaded.
+ *
+ * This module exports a single constant `fallBackCardsForTesting` containing
+ * an array of card descriptors. Each descriptor describes the card id,
+ * the image key/path (usually without extension) and the available count.
+ *
+ * @module fallback-cards
+ */
+
+/**
+ * A single fallback card descriptor.
+ *
+ * @typedef {Object} CardFallback
+ * @property {number} card - Numeric card identifier (usually 1-based id).
+ * @property {string} image - Image key or filename (without extension) used to resolve the card image.
+ * @property {number} count - Quantity of this card available in the fallback dataset.
+ */
+
+/**
+ * Array of fallback card descriptors used by the front-end when real card data
+ * is unavailable (for testing or offline use).
+ *
+ * Each array element conforms to the `CardFallback` typedef above.
+ *
+ * @type {CardFallback[]}
+ * @example
+ * import { fallBackCardsForTesting } from './fallback-cards.js';
+ * // iterate and log card ids
+ * fallBackCardsForTesting.forEach(({ card, image, count }) => {
+ *   console.log(card, image, count);
+ * });
+ */
 export const fallBackCardsForTesting = [
   { card: 1, image: "card0", count: 6 },
   { card: 2, image: "card1", count: 4 },

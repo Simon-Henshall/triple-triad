@@ -1,3 +1,18 @@
+/**
+ * @typedef {Object} Card
+ * @property {string} displayName - Human-visible name of the card.
+ * @property {string} image - Image identifier (matches filename without extension).
+ * @property {number} strengthUp - Attack value facing up.
+ * @property {number} strengthRight - Attack value facing right.
+ * @property {number} strengthDown - Attack value facing down.
+ * @property {number} strengthLeft - Attack value facing left.
+ * @property {number} element - Element index (see constants/elements.js for mapping).
+ */
+
+/**
+ * All available Triple Triad cards used by the game.
+ * @type {Card[]}
+ */
 export const cards = [
   {
     displayName: "Geezard",
