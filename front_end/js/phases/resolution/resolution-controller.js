@@ -14,10 +14,38 @@ export class ResolutionController {
    * ResolutionController handles animation of cards as they are flipped
    * between the player's ownerships and the AI's ownership. It uses the ResolutionView
    * to render the animation.
+   * @param {Object} localDeps - dependencies provided by the state machine (optional for legacy usage)
+   * @param {Function} transition - function to request phase transitions
    */
-  constructor(model) {
-    this.model = model || undefined;
+  constructor(localDeps = {}, transition) {
+    // Support both legacy (no args) and new (with deps/transition) usage
+    if (typeof localDeps === "function") {
+      // If first arg is a function, it's the transition (legacy shift)
+      transition = localDeps;
+      localDeps = {};
+    }
+
+    this.model = localDeps.model || undefined;
+    this.transition = transition;
     this.view = new ResolutionView(Game.stage);
+  }
+
+  /**
+   * Activate the resolution phase.
+   */
+  async activate() {
+    // Resolution animations are triggered during placement.
+    // After activation, immediately transition to end-turn
+    if (this.transition) {
+      await this.transition("end-turn");
+    }
+  }
+
+  /**
+   * Deactivate the resolution phase.
+   */
+  async deactivate() {
+    // Clean up if needed
   }
 
   /**

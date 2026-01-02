@@ -14,19 +14,37 @@ import { PhaseChecker } from "../../game/phases.js";
 export class PlacementController {
   /**
    * Initializes the PlacementController with the BoardModel and PlayerModel.
+   * @param {Object} localDeps - dependencies provided by the state machine
+   * @param {Function} transition - function to request phase transitions
    */
-  constructor(playerModel) {
-    this.playerModel = playerModel;
-    this.resolutionView = new ResolutionView(playerModel);
+  constructor(localDeps, transition) {
+    this.playerModel = localDeps.playerModel;
+    this.transition = transition;
+    this.resolutionView = new ResolutionView(this.playerModel);
     this.model = undefined; // set in init()
+    this.placementComplete = false;
   }
 
   /**
-   * Handles the application of element effects on the board when a card is played.
-   * @param {Card} card The card being played.
+   * Activate the placement phase.
+   */
+  async activate() {
+    this.placementComplete = false;
+    this.init();
+  }
+
+  /**
+   * Deactivate the placement phase.
+   */
+  async deactivate() {
+    // Clean up if needed
+  }
+
+  /**
+   * Initialize the placement model.
    */
   init() {
-    this.model = new PlacementModel(this);
+    this.model = new PlacementModel(this, this.transition);
   }
 
   /**

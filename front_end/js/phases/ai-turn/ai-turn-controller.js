@@ -10,12 +10,34 @@ import { offsets } from "../../constants/offsets.js";
 export class AITurnController {
   /**
    * Constructor for AI Turn Controller.
-   * @param {AITurnModel} model - The AI turn model.
+   * @param {Object} localDeps - dependencies provided by the state machine
+   * @param {Function} transition - function to request phase transitions
    */
-  constructor(model) {
-    this.model = model;
+  constructor(localDeps, transition) {
+    this.model = localDeps.aiModel;
+    this.transition = transition;
     this.view = new AITurnView(Game.stage);
     this.handOffsetX = offsets.cardOffsetX; // x-position for AI hand on stage
+  }
+
+  /**
+   * Activate the AI turn phase.
+   */
+  async activate() {
+    console.log("[AI Turn] Activating AI turn phase");
+    console.log(
+      "[AI Turn] AI hand:",
+      this.model.hand.map((c) => c.data.name),
+    );
+    // Execute the AI's turn
+    this.takeTurn();
+  }
+
+  /**
+   * Deactivate the AI turn phase.
+   */
+  async deactivate() {
+    // Clean up if needed
   }
 
   /**

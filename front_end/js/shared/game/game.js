@@ -135,25 +135,4 @@ export const Game = {
       Game.controllers.cursorController?.selection?.place?.();
     });
   },
-
-  /**
-   * Determine the outcome of the current match.
-   * Alerts the player with win/lose/draw and handles
-   * sudden-death rules if applicable.
-   */
-  endGame() {
-    const { playerModel } = this.models;
-    const { aiTurnModel } = this.models;
-
-    if (aiTurnModel.currentlyOwnedCards > playerModel.totalBlueCards) {
-      alert("lose");
-    } else if (playerModel.totalBlueCards > aiTurnModel.currentlyOwnedCards) {
-      alert("win");
-    } else {
-      alert("draw");
-      if (this.rules.includes("sudden_death")) {
-        this.startGame();
-      }
-    }
-  },
 };

@@ -75,17 +75,23 @@ export const gameInit = {
   // ---------------------------------------------
   models() {
     const aiTurnModel = new AITurnModel();
-    const aiTurnController = new AITurnController(aiTurnModel);
+    const aiTurnController = new AITurnController(
+      { aiModel: aiTurnModel },
+      undefined,
+    );
 
     const playerModel = new PlayerModel();
     const playerView = new PlayerView(playerModel);
     playerModel.view = playerView;
     const playerController = new PlayerController(playerModel, playerView);
 
-    const placementController = new PlacementController(playerModel);
+    const placementController = new PlacementController(
+      { playerModel },
+      undefined,
+    );
     placementController.init();
 
-    const placementModel = new PlacementModel(placementController);
+    const placementModel = new PlacementModel(placementController, undefined);
     placementModel.setController?.(placementController);
 
     const inputModel = new InputModel(

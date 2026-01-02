@@ -167,6 +167,8 @@ export default {
      * Dependencies for the game over phase
      */
     deps: (rootDeps, payload) => ({
+      playerModel: rootDeps.playerModel,
+      aiTurnModel: rootDeps.aiTurnModel,
       result: payload?.result || undefined,
       ui: rootDeps.gameOverUI,
       scoreboard: rootDeps.scoreboard,

@@ -4,6 +4,7 @@ import { PlacementView } from "./placement-view.js";
 import { BoardModel } from "../../shared/board/board-model.js";
 import { ResolutionView } from "../resolution/resolution-view.js";
 import { offsets } from "../../constants/offsets.js";
+import GameOverController from "../game-over/game-over-controller.js";
 
 /**
  * Handles the logical flow of card placement, coordinating animations and
@@ -13,10 +14,14 @@ export class PlacementModel {
   /**
    * Creates an instance of PlacementModel.
    * @param {PlacementController} controller - The high-level controller managing placement logic.
+   * @param {Function} transition - Function to request phase transitions.
    */
-  constructor(controller) {
+  constructor(controller, transition) {
     /** @type {PlacementController} */
     this.controller = controller;
+
+    /** @type {Function} */
+    this.transition = transition;
 
     /** @type {PlacementView} */
     this.view = new PlacementView();
@@ -139,11 +144,11 @@ export class PlacementModel {
 
   /**
    * Callback after the card has been fully placed on the board.
-   * Updates board state, applies element effects, and triggers flips or turn changes.
+   * Updates board state, applies element effects, and triggers flips.
    *
    * @param {createjs.Container} card
    */
-  onCardPlacementComplete(card) {
+  async onCardPlacementComplete(card) {
     // Correctly calculate adjacency for this card
     this.setCardAdjacents(card, BoardModel.selectedSquare);
 
@@ -158,8 +163,22 @@ export class PlacementModel {
 
     Game.stage.update();
 
+    // TODO: Correct this transition
+    if (this.transition) {
+      await this.transition("resolution");
+    }
+
+    // TODO: Move this logic to EndTurnController
+    // TODO: Then rely on .transition there
     if (BoardModel.isGameOver()) {
-      Game.endGame();
+      const gameOver = new GameOverController(
+        {
+          playerModel: Game.models.playerModel,
+          aiTurnModel: Game.models.aiTurnModel,
+        },
+        undefined,
+      );
+      gameOver.activate();
     } else {
       this.controller.playerTurnSwitch();
     }

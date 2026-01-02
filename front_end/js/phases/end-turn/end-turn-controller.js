@@ -33,9 +33,9 @@ export default class EndTurnController {
       console.error("EndTurnController: failed to update scoreboard", error);
     }
 
-    // If the board is full, end the game immediately
+    // If the board is full, end the game
     if (BoardModel.isGameOver()) {
-      Game.endGame();
+      await this.transition("game-over");
       return;
     }
 
