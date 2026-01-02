@@ -1,7 +1,6 @@
 import { config } from "../../constants/config.js";
 import { offsets } from "../../constants/offsets.js";
 
-// eslint-disable-next-line no-commented-code/no-commented-code
 /**
  *  Card class representing a game card with properties and visuals.
  *  @module Card
@@ -150,11 +149,23 @@ export class Card {
     this.owner = owner;
 
     // Update colours for flipped card
-    this.visuals.container.children.find(
-      (child) => child.name === "colourBitmap",
-    ).image.src = `${config.imagePath}cards/${owner}.png`;
+    const colourChild =
+      this.visuals.container.getChildByName("colourBitmap") ||
+      this.visuals.container.children.find(
+        (child) => child.name === "colourBitmap",
+      );
 
-    this.visuals.container.stage?.update();
+    if (colourChild) {
+      const replacementImage = new Image();
+      /**
+       *
+       */
+      replacementImage.addEventListener("load", () => {
+        colourChild.image = replacementImage;
+        this.visuals.container.stage?.update();
+      });
+      replacementImage.src = `${config.imagePath}cards/${owner}.png`;
+    }
 
     console.log(
       `[Card] Setting owner to ${owner} for card ${this.data.name}` +
