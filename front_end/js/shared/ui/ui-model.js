@@ -1,6 +1,3 @@
-import { Game } from "../game/game.js";
-import { debug } from "../../utilities/debug.js";
-
 export const UIModel = {
   // -------------------------
   // Grid / Selection state
@@ -36,16 +33,6 @@ export const UIModel = {
   },
 
   // -------------------------
-  // Confirmation UI
-  // -------------------------
-  confirmation: {
-    container: undefined,
-    background: undefined,
-    cursor: undefined,
-    selectedChoice: 0,
-  },
-
-  // -------------------------
   // Player interaction flags
   // -------------------------
   selectedCardNumber: 0,
@@ -56,17 +43,4 @@ export const UIModel = {
   playerChoosingCard: false,
   playerSelectingPlacement: false,
   playerTurn: "blue",
-
-  /**
-   * Restore player hand cursor visually (used on cancel).
-   */
-  restorePlayerHandCursor() {
-    Game.controllers.cursorController.playerHand.place();
-    if (debug.active) {
-      console.log("Player hand cursor restored");
-    }
-    // Restore cursors
-    UIModel.playerSelectingPlacement = false;
-    UIModel.playerChoosingCard = true;
-  },
 };

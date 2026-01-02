@@ -269,7 +269,7 @@ export class InputModel {
       case "Backspace":
       case "Escape": {
         InfoBox.toggleInfoBox(Game, true);
-        UIModel.restorePlayerHandCursor();
+        Game.controllers.cursorController.playerHand.restorePlayerHandCursor();
         Game.controllers.cursorController.grid.remove();
         break;
       }

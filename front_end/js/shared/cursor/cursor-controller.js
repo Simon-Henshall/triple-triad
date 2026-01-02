@@ -161,6 +161,19 @@ export const CursorController = (cursorView) => ({
         //console.log("CursorController.playerHand.remove()");
       }
     },
+
+    /**
+     * Restore player hand cursor visually (used on cancel).
+     */
+    restorePlayerHandCursor() {
+      Game.controllers.cursorController.playerHand.place();
+      if (debug.active) {
+        console.log("Player hand cursor restored");
+      }
+      // Restore cursors
+      UIModel.playerSelectingPlacement = false;
+      UIModel.playerChoosingCard = true;
+    },
   },
 
   // -------------------------
