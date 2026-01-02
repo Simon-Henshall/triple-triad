@@ -5,6 +5,7 @@ import { debug } from "../../utilities/debug.js";
 import { ResolutionView } from "../resolution/resolution-view.js";
 import { PlacementModel } from "./placement-model.js";
 import { Game } from "../../shared/game/game.js";
+import { InfoBox } from "../../shared/ui/info-box.js";
 
 /**
  * Coordinates the logical flow of card placement, bridging player input,
@@ -101,7 +102,7 @@ export class PlacementController {
     Game.stage.addChild(playerModel.playerHandCursor);
 
     // Ensure info box is visible and topmost
-    UIModel.bringToFront();
+    InfoBox.bringToFront();
 
     // Swap back to the card choice phase
     UIModel.playerChoosingCard = true;

@@ -1,5 +1,6 @@
-import { UIModel } from "./ui-model";
+import { UIModel } from "./ui-model.js";
 import { debug } from "../../utilities/debug.js";
+import { Game } from "../game/game.js";
 
 // Info box layout constants
 const INFO_BOX_WIDTH = 420;
@@ -8,7 +9,7 @@ const INFO_BOX_X = 260;
 const INFO_BOX_Y = 540;
 
 /**
- *
+ * InfoBox module for managing the display of selected card information.
  */
 export const InfoBox = {
   // -------------------------
@@ -134,6 +135,19 @@ export const InfoBox = {
       if (debug.active) {
         //console.log(`Info box visibility set to: ${visible}`);
       }
+    }
+  },
+
+  /**
+   * Brings the info box to the front of the stage.
+   */
+  bringToFront() {
+    if (InfoBox.container) {
+      Game.stage.setChildIndex(
+        InfoBox.container,
+        Game.stage.getNumChildren() - 1,
+      );
+      InfoBox.container.visible = true;
     }
   },
 };

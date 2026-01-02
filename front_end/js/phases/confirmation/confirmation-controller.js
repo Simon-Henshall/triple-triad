@@ -1,4 +1,5 @@
 import { Game } from "../../shared/game/game.js";
+import { PreviewCard } from "../../shared/ui/preview-card.js";
 import { UIModel } from "../../shared/ui/ui-model.js";
 import { ConfirmationView } from "./confirmation-view.js";
 
@@ -45,7 +46,7 @@ export const ConfirmationController = {
     Game.controllers.cursorController.confirmation.place();
 
     // Hide any preview cards while confirmation is active
-    UIModel.selectionBook.hidePreviewCard();
+    PreviewCard.hidePreviewCard();
 
     // Update the stage to reflect all changes
     Game.stage.update();

@@ -5,6 +5,7 @@ import { Game } from "../game/game.js";
 import { CursorModel } from "../cursor/cursor-model.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
+import { PreviewCard } from "../ui/preview-card.js";
 
 /**
  * InputModel class, responsible for handling player input and
@@ -69,10 +70,10 @@ export class InputModel {
   updatePreview() {
     // Get the currently selected card from the DeckSelectionUI
     const card = DeckSelectionUI.getSelectedCard();
-    UIModel.selectionBook.showPreviewCard(card);
+    PreviewCard.showPreviewCard(card);
     console.log(card);
     if (!card) {
-      UIModel.selectionBook.hidePreviewCard();
+      PreviewCard.hidePreviewCard();
       return;
     }
   }

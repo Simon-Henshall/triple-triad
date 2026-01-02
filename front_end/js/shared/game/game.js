@@ -3,6 +3,7 @@ import { BoardView } from "../board/board-view.js";
 import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
+import { PreviewCard } from "../ui/preview-card.js";
 
 /**
  * Core game logic container.
@@ -121,10 +122,10 @@ export const Game = {
       if (faceBitmap && faceBitmap.image && !faceBitmap.image.complete) {
         // Wait for image load
         faceBitmap.image.addEventListener("load", () => {
-          UIModel.selectionBook.showPreviewCard(card);
+          PreviewCard.showPreviewCard(card);
         });
       } else {
-        UIModel.selectionBook.showPreviewCard(card);
+        PreviewCard.showPreviewCard(card);
       }
     }
 
