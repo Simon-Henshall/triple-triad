@@ -4,6 +4,7 @@ import { BoardModel } from "../board/board-model.js";
 import { Game } from "../game/game.js";
 import { debug } from "../../utilities/debug.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
+import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
 
 /**
  * Manages the logical state of all cursors in the game.
@@ -31,9 +32,9 @@ export const CursorModel = {
       }
 
       CursorModel.player.playerHandSelectionCursor.x =
-        UIModel.selectionBook.background.x - 40;
+        DeckSelectionModel.background.x - 40;
       CursorModel.player.playerHandSelectionCursor.y =
-        UIModel.selectionBook.background.y + 58;
+        DeckSelectionModel.background.y + 58;
     },
 
     /**

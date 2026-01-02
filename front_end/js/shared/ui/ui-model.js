@@ -14,25 +14,6 @@ export const UIModel = {
   gridCursor: undefined,
 
   // -------------------------
-  // Selection board state
-  // -------------------------
-  selectionBook: {
-    container: undefined,
-    background: undefined,
-    shownCards: undefined,
-    page: 1,
-    pageDisplay: undefined,
-    totalPages: undefined,
-    remainingCards: undefined,
-    displayedCards: undefined,
-    displayedCard: undefined,
-    displayedCardImage: undefined,
-    displayedCardColour: undefined,
-    selectedHandCardNumber: 0,
-    selectedHandCard: undefined,
-  },
-
-  // -------------------------
   // Player interaction flags
   // -------------------------
   selectedCardNumber: 0,

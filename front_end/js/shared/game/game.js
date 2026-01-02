@@ -4,6 +4,7 @@ import { DeckSelectionUI } from "../../phases/deck-selection/deck-selection-ui.j
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 import { PreviewCard } from "../ui/preview-card.js";
+import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
 
 /**
  * Core game logic container.
@@ -42,7 +43,7 @@ export const Game = {
   startGame() {
     console.log("[Game] Starting new match...");
 
-    const sb = UIModel.selectionBook;
+    const sb = DeckSelectionModel;
 
     // Clear selection UI containers
     if (sb?.container) {

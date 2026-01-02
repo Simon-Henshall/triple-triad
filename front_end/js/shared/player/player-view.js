@@ -2,6 +2,7 @@ import { Game } from "../game/game.js";
 import { UIModel } from "../ui/ui-model.js";
 import { offsets } from "../../constants/offsets.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
+import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
 
 /**
  * Handles all visual rendering and animation of the player's hand.
@@ -124,7 +125,7 @@ export class PlayerView {
    * @param {boolean} updatePreview
    */
   _updateHandAndPreviewZOrder(updatePreview = true) {
-    const previewCard = UIModel.selectionBook?.displayedCard;
+    const previewCard = DeckSelectionModel?.displayedCard;
     let topIndex = Game.stage.numChildren;
 
     const confirmationContainer = ConfirmationView?.container;
@@ -148,7 +149,7 @@ export class PlayerView {
    * @param {createjs.Container} cardContainer
    */
   _attachPreviewTicker(cardContainer) {
-    const previewCard = UIModel.selectionBook?.displayedCard;
+    const previewCard = DeckSelectionModel?.displayedCard;
     if (!previewCard) {
       return;
     }

@@ -3,6 +3,7 @@ import { UIModel } from "../ui/ui-model.js";
 import { debug } from "../../utilities/debug.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
+import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
 
 /**
  * Handles all visual rendering of cursors.
@@ -32,7 +33,7 @@ export const CursorView = (playerModel, playerView) => ({
     updatePosition() {
       const controller = SelectionBookUI.controller;
       if (controller !== undefined && controller !== null) {
-        const sb = UIModel.selectionBook;
+        const sb = DeckSelectionModel;
 
         if (
           playerModel.playerHandSelectionCursor !== undefined &&

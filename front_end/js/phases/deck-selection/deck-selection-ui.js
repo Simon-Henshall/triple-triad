@@ -3,6 +3,7 @@ import { DeckSelectionView } from "./deck-selection-view.js";
 import { DeckSelectionController } from "./deck-selection-controller.js";
 import { Game } from "../../shared/game/game.js";
 import { Card } from "../../shared/card/card.js";
+import DeckSelectionModel from "./deck-selection-model.js";
 
 export const DeckSelectionUI = {
   controller: undefined,
@@ -16,7 +17,7 @@ export const DeckSelectionUI = {
     this.controller =
       existingController ?? new DeckSelectionController({ deck, playerModel });
 
-    const sb = UIModel.selectionBook;
+    const sb = DeckSelectionModel;
     if (!sb.container) {
       sb.container = new createjs.Container();
     }
@@ -74,7 +75,7 @@ export const DeckSelectionUI = {
 
   /** Draw static background */
   _drawBackground() {
-    const sb = UIModel.selectionBook;
+    const sb = DeckSelectionModel;
     if (!sb.background) {
       sb.background = new createjs.Shape();
       sb.background.graphics.beginFill("#666").drawRect(0, 0, 420, 450);
@@ -86,7 +87,7 @@ export const DeckSelectionUI = {
 
   /** Draw static header text */
   _drawHeaderText() {
-    const sb = UIModel.selectionBook;
+    const sb = DeckSelectionModel;
     if (sb.headerDrawn) {
       return;
     }

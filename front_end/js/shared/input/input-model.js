@@ -6,6 +6,7 @@ import { CursorModel } from "../cursor/cursor-model.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 import { PreviewCard } from "../ui/preview-card.js";
+import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
 
 /**
  * InputModel class, responsible for handling player input and
@@ -195,7 +196,7 @@ export class InputModel {
 
     if (choice === "yes") {
       console.log("[Input Model] Player confirmed their hand.");
-      Game.stage.removeChild(UIModel.selectionBook.container);
+      Game.stage.removeChild(DeckSelectionModel.container);
       Game.startGame();
       CursorModel.playerHand.init();
       return;
