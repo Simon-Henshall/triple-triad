@@ -164,7 +164,9 @@ export class Card {
         colourChild.image = replacementImage;
         this.visuals.container.stage?.update();
       });
-      replacementImage.src = `${config.imagePath}cards/${owner}.png`;
+      // Map "player"/"ai" to "blue"/"red" for the colour image, matching initVisuals
+      const colour = owner === "player" ? "blue" : "red";
+      replacementImage.src = `${config.imagePath}cards/${colour}.png`;
     }
 
     console.log(

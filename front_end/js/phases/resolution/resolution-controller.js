@@ -80,8 +80,10 @@ export class ResolutionController {
       return;
     }
 
-    // Update ownership
-    targetCard.setOwner(getPlayerTurn());
+    // Update ownership - map turn colour to owner type
+    const turn = getPlayerTurn();
+    const updatedOwner = turn === "blue" ? "player" : "ai";
+    targetCard.setOwner(updatedOwner);
 
     // Record the flip in model
     if (this.model) {
