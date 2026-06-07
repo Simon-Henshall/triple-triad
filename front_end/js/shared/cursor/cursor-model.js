@@ -316,7 +316,7 @@ export const CursorModel = {
 
       if (debug.active) {
         console.log(
-          `[Cursor Model] Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${BoardModel.gridCursor.x}, Y:${BoardModel.gridCursor.y}, selectedSquare=${BoardModel.selectedSquare}`,
+          `[Cursor Model] Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${BoardModel.gridCursor.x}, Y:${BoardModel.gridCursor.y}, selectedSquare: ${BoardModel.selectedSquare}`,
         );
       }
     },
