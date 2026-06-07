@@ -163,9 +163,15 @@ export class PlacementModel {
 
     Game.stage.update();
 
-    // TODO: Correct this transition
+    // Transition to resolution and provide lastPlacement info so the
+    // `resolution` phase can inspect what was just placed.
     if (this.transition) {
-      await this.transition("resolution");
+      await this.transition("resolution", {
+        lastPlacement: {
+          card,
+          square: BoardModel.selectedSquare,
+        },
+      });
     }
 
     // TODO: Move this logic to EndTurnController
