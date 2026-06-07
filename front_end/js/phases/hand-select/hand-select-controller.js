@@ -1,5 +1,6 @@
 import { Game } from "../../shared/game/game.js";
 import { BoardModel } from "../../shared/board/board-model.js";
+import { InfoBox } from "../../shared/ui/info-box.js";
 import { PhaseChecker } from "../../game/phases.js";
 import HandSelectModel from "./hand-select-model.js";
 import HandSelectView from "./hand-select-view.js";
@@ -73,6 +74,16 @@ export default class HandSelectController {
 
     // Hide hand-select visuals
     this.view.hide();
+
+    // The info box may have been hidden by view.hide() — re-evaluate
+    // whether the default selected cell (center) has a card on it.
+    const cellIndex = BoardModel.selectedSquare - 1;
+    const occupant = BoardModel.getOccupant(cellIndex);
+    if (occupant) {
+      InfoBox.drawInfoBox(Game);
+      InfoBox.updateInfoBox(Game, occupant);
+      InfoBox.toggleInfoBox(Game, true);
+    }
 
     PhaseChecker.playerSelectingPlacement = true;
 

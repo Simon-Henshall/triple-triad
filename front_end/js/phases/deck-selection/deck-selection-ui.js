@@ -41,17 +41,6 @@ export const DeckSelectionUI = {
       return;
     }
     DeckSelectionView.populate(this.controller);
-
-    // Ensure the info box is visible and shows the currently selected card
-    const selectedCard = this.getSelectedCard();
-    if (selectedCard) {
-      InfoBox.drawInfoBox(Game);
-      InfoBox.updateInfoBox(Game, selectedCard);
-      InfoBox.toggleInfoBox(Game, true);
-    } else if (InfoBox.container) {
-      // Hide info box when no valid selection
-      InfoBox.toggleInfoBox(Game, false);
-    }
   },
 
   /**

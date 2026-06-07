@@ -1,6 +1,7 @@
 import { offsets } from "../../constants/offsets.js";
 import { BoardModel } from "../board/board-model.js";
 import { Game } from "../game/game.js";
+import { InfoBox } from "../ui/info-box.js";
 import { debug } from "../../utilities/debug.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
@@ -230,6 +231,9 @@ export const CursorModel = {
       Game.stage.addChild(BoardModel.gridCursor);
       Game.stage.update();
 
+      // Show info box for the initially selected cell, if it has a card
+      this._updateInfoBoxForSelectedCell();
+
       if (debug.active) {
         console.log(
           `[Cursor Model] Grid cursor placed at X:${BoardModel.gridCursor.x}, Y:${BoardModel.gridCursor.y}`,
@@ -312,6 +316,10 @@ export const CursorModel = {
 
       // Update BoardModel/UI
       BoardModel.updateUISelection(BoardModel.selectedSquare);
+
+      // Update info box based on what's in the newly selected cell
+      this._updateInfoBoxForSelectedCell();
+
       Game.stage.update();
 
       if (debug.active) {
@@ -322,11 +330,26 @@ export const CursorModel = {
     },
 
     /**
-     * Clears the grid cursor state.
+     * Update the info box to show the card in the currently selected cell,
+     * or hide it if the cell is empty.
      */
+    _updateInfoBoxForSelectedCell() {
+      const cellIndex = BoardModel.selectedSquare - 1;
+      const occupant = BoardModel.getOccupant(cellIndex);
+
+      if (occupant) {
+        InfoBox.drawInfoBox(Game);
+        InfoBox.updateInfoBox(Game, occupant);
+        InfoBox.toggleInfoBox(Game, true);
+      } else {
+        InfoBox.toggleInfoBox(Game, false);
+      }
+    },
+
     clear() {
       PhaseChecker.playerSelectingPlacement = false;
       Game.stage.removeChild(BoardModel.gridCursor);
+      InfoBox.toggleInfoBox(Game, false);
       Game.stage.update();
 
       if (debug.active) {
