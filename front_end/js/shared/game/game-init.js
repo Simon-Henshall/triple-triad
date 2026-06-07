@@ -17,6 +17,7 @@ import { PlayerController } from "../player/player-controller.js";
 
 import { AITurnModel } from "../../phases/ai-turn/ai-turn-model.js";
 import { AITurnController } from "../../phases/ai-turn/ai-turn-controller.js";
+import HandSelectController from "../../phases/hand-select/hand-select-controller.js";
 
 import { PlacementModel } from "../../phases/placement/placement-model.js";
 import { PlacementController } from "../../phases/placement/placement-controller.js";
@@ -101,6 +102,16 @@ export const gameInit = {
     );
     const inputController = new InputController(inputModel);
 
+    const handSelectController = new HandSelectController(
+      {
+        playerModel,
+        cursorController: undefined,
+        handUI: playerModel,
+        boardModel: BoardModel,
+      },
+      undefined,
+    );
+
     const stateMachine = new StateMachine(phases, {
       allowedTransitions: {
         "deck-selection": ["confirmation"],
@@ -129,6 +140,7 @@ export const gameInit = {
       playerController,
       placementController,
       inputController,
+      handSelectController,
     };
 
     Game.views = { playerView };
@@ -145,6 +157,7 @@ export const gameInit = {
       placementController,
       inputModel,
       inputController,
+      handSelectController,
       stateMachine,
     };
   },

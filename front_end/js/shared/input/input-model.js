@@ -7,7 +7,6 @@ import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js
 import { PreviewCard } from "../ui/preview-card.js";
 import DeckSelectionModel from "../../phases/deck-selection/deck-selection-model.js";
 import { PhaseChecker } from "../../game/phases.js";
-import { BoardModel } from "../board/board-model.js";
 
 /**
  * InputModel class, responsible for handling player input and
@@ -263,31 +262,7 @@ export class InputModel {
    * Moves cursors and prepares for placement.
    */
   playSelectedCard() {
-    // Remove hand cursor
-    Game.controllers.cursorController.playerHand.remove();
-
-    // Set default selected cell BEFORE placing the cursor
-    BoardModel.selectedRow = 2;
-    BoardModel.selectedColumn = 2;
-
-    // Place grid cursor using current selectedRow/Column
-    Game.controllers.cursorController.grid.place();
-
-    // Immediately hide info box now that placement is active
-    InfoBox.toggleInfoBox(Game, false);
-
-    // Remove hand cursor from stage
-    Game.stage.removeChild(this.playerModel.playerHandCursor);
-
-    // Enter placement mode
-    PhaseChecker.playerSelectingPlacement = true;
-
-    // Actually play the card
-    const selectedIndex = this.playerModel.selectedCardNumber;
-    const selectedCard = this.playerModel.hand[selectedIndex];
-    if (!selectedCard) {
-      console.warn("No card selected!");
-      return;
-    }
+    // Prefer controller-driven flow when available
+    return Game.controllers.handSelectController.playSelectedCard();
   }
 }

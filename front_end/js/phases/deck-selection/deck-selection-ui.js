@@ -1,6 +1,7 @@
 import { DeckSelectionView } from "./deck-selection-view.js";
 import { DeckSelectionController } from "./deck-selection-controller.js";
 import { Game } from "../../shared/game/game.js";
+import { InfoBox } from "../../shared/ui/info-box.js";
 import { Card } from "../../shared/card/card.js";
 import DeckSelectionModel from "./deck-selection-model.js";
 
@@ -40,6 +41,17 @@ export const DeckSelectionUI = {
       return;
     }
     DeckSelectionView.populate(this.controller);
+
+    // Ensure the info box is visible and shows the currently selected card
+    const selectedCard = this.getSelectedCard();
+    if (selectedCard) {
+      InfoBox.drawInfoBox(Game);
+      InfoBox.updateInfoBox(Game, selectedCard);
+      InfoBox.toggleInfoBox(Game, true);
+    } else if (InfoBox.container) {
+      // Hide info box when no valid selection
+      InfoBox.toggleInfoBox(Game, false);
+    }
   },
 
   /**
