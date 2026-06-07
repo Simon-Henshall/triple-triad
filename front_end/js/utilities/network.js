@@ -21,8 +21,6 @@ export async function fetchPlayerCards(playerId, { timeout = 7000 } = {}) {
       signal: controller.signal,
     });
 
-    clearTimeout(timer);
-
     if (!result.ok) {
       throw new Error(`Request failed with status ${result.status}`);
     }
@@ -35,5 +33,7 @@ export async function fetchPlayerCards(playerId, { timeout = 7000 } = {}) {
       throw new Error("Request timed out");
     }
     throw error;
+  } finally {
+    clearTimeout(timer);
   }
 }
