@@ -36,13 +36,16 @@ export default class GameOverView {
           break;
         }
         default: {
-          message = "Game Over";
+          {
+            message = "Game Over";
+          }
+          z;
         }
       }
 
       alert(message);
     } catch (error) {
-      console.error("GameOverView: failed to display outcome", error);
+      console.error(["[Game Over View] Failed to display outcome"], error);
     }
   }
 
@@ -54,7 +57,7 @@ export default class GameOverView {
       try {
         this.stage.removeChild(this.container);
       } catch (error) {
-        console.error("GameOverView: failed to cleanup container", error);
+        console.error(["[Game Over View] Failed to cleanup container"], error);
       }
     }
   }

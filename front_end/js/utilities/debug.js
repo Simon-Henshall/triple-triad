@@ -25,17 +25,25 @@ export const debug = {
 
     if (cardHere && cardHere !== "Empty") {
       console.log("Card Present:");
-      console.log(`  Name: ${cardHere.name}`);
+      console.log(`  Name: ${cardHere.data?.name ?? cardHere.name}`);
       console.log(`  Owner: ${cardHere.owner}`);
-      console.log(`  Element: ${cardHere.element}`);
+      console.log(`  Element: ${cardHere.data?.element ?? cardHere.element}`);
       console.log(
-        `  Strengths -> L:${cardHere.strengthLeft} U:${cardHere.strengthUp} R:${cardHere.strengthRight} D:${cardHere.strengthDown}`,
+        `  Strengths -> L:${cardHere.data?.strength?.left ?? "?"} U:${cardHere.data?.strength?.up ?? "?"} R:${cardHere.data?.strength?.right ?? "?"} D:${cardHere.data?.strength?.down ?? "?"}`,
       );
       console.log("  Adjacent Cards:");
-      console.log(`    Left: ${cardHere.cardLeft?.name ?? "None"}`);
-      console.log(`    Up: ${cardHere.cardUp?.name ?? "None"}`);
-      console.log(`    Right: ${cardHere.cardRight?.name ?? "None"}`);
-      console.log(`    Down: ${cardHere.cardDown?.name ?? "None"}`);
+      console.log(
+        `    Left: ${cardHere.cardLeft?.data?.name ?? cardHere.cardLeft?.name ?? "None"}`,
+      );
+      console.log(
+        `    Up: ${cardHere.cardUp?.data?.name ?? cardHere.cardUp?.name ?? "None"}`,
+      );
+      console.log(
+        `    Right: ${cardHere.cardRight?.data?.name ?? cardHere.cardRight?.name ?? "None"}`,
+      );
+      console.log(
+        `    Down: ${cardHere.cardDown?.data?.name ?? cardHere.cardDown?.name ?? "None"}`,
+      );
     } else {
       console.log("Card Present: NONE");
     }
@@ -58,7 +66,7 @@ export const debug = {
           if (!cell.occupant) {
             return `[Empty | ${element}]`;
           }
-          return `[${cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.element} | Cell Element: ${element}]`;
+          return `[${cell.occupant.data?.name ?? cell.occupant.name} | ${cell.occupant.owner} | Card Element: ${cell.occupant.data?.element ?? cell.occupant.element} | Cell Element: ${element}]`;
         });
       console.log(`Row ${index + 1}: ${row.join(" | ")}`);
     }
@@ -74,7 +82,7 @@ export const debug = {
     // Use the logical hand from the PlayerModel (card objects)
     for (const [index, card] of playerModel.hand.entries()) {
       console.log(
-        `Card ${index}: ${card.data?.name ?? card.name} | Owner: ${card.owner} | Element: ${card.element}`,
+        `Card ${index}: ${card.data?.name ?? card.name} | Owner: ${card.owner} | Element: ${card.data?.element ?? card.element}`,
       );
     }
 
@@ -82,7 +90,7 @@ export const debug = {
     const aiTurnModel = Game.models.aiTurnModel;
     for (const [index, card] of aiTurnModel.hand.entries()) {
       console.log(
-        `Card ${index}: ${card.name} | Owner: ${card.owner} | Element: ${card.element}`,
+        `Card ${index}: ${card.data?.name ?? card.name} | Owner: ${card.owner} | Element: ${card.data?.element ?? card.element}`,
       );
     }
     console.log("==========================================");
@@ -109,10 +117,11 @@ export const debug = {
    * Combined full debug log
    */
   logFullState(target) {
+    console.log("*****************************************");
     console.log("Logging full state for:", target);
     this.logBoard();
-    //this.logHands();
-    //this.logTurn();
+    this.logHands();
+    this.logTurn();
   },
 
   /**

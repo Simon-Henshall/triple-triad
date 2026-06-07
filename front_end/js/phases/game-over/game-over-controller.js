@@ -35,14 +35,14 @@ export default class GameOverController {
     // Handle sudden death rule: restart game if it's a draw and sudden_death is active
     if (outcome === "draw" && Game.rules.includes("sudden_death")) {
       console.log(
-        "[GameOverController] Draw detected with sudden_death rule - restarting game",
+        "[Game Over Controller] Draw detected with sudden_death rule - restarting game",
       );
       Game.startGame();
       return;
     }
 
     // For other outcomes, game is complete
-    console.log(`[GameOverController] Game over - ${outcome}`);
+    console.log(`[Game Over Controller] Game over - ${outcome}`);
   }
 
   /**

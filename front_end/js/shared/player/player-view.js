@@ -86,17 +86,19 @@ export class PlayerView {
    * @param {createjs.Container} selectedCard
    */
   indentSelectedCard(selectedCard) {
-    console.log("Indenting selected card:", selectedCard.data.name);
+    console.log(
+      "[Player View] Indenting selected card:",
+      selectedCard.data.name,
+    );
     const previousCard = this.model.previouslySelectedCard;
 
     if (selectedCard) {
-      console.log(selectedCard);
       selectedCard.visuals.container.x -= 30;
     }
 
     if (previousCard && previousCard?.visuals?.container?.x !== undefined) {
       console.log(
-        "Unindenting previously selected card:",
+        "[Player View] Unindenting previously selected card:",
         previousCard.data.name,
       );
       previousCard.visuals.container.x += 30;

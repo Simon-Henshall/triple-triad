@@ -90,7 +90,7 @@ export const CursorModel = {
     resetChoice() {
       if (!ConfirmationView?.model) {
         console.warn(
-          "Confirmation model missing; cannot reset choice via model",
+          "[Cursor Model] Confirmation model missing; cannot reset choice via model",
         );
         return false;
       }
@@ -107,7 +107,7 @@ export const CursorModel = {
     move(direction) {
       if (!ConfirmationView?.model) {
         console.warn(
-          "Confirmation model missing; cannot move choice via model",
+          "[Cursor Model] Confirmation model missing; cannot move choice via model",
         );
         return false;
       }
@@ -135,7 +135,7 @@ export const CursorModel = {
      */
     init() {
       if (!CursorModel.player || !CursorModel.player.playerHandCursor) {
-        console.warn("CursorModel.playerHandCursor not available yet");
+        console.warn("[Cursor Model] Player hand cursor not available yet");
         return;
       }
 
@@ -175,7 +175,9 @@ export const CursorModel = {
           playerModel.selectedCardNumber--;
           player.cardsAboveSelection--;
         } else {
-          console.warn("Cannot move player hand cursor up - out of bounds");
+          console.warn(
+            "[Cursor Model] Cannot move player hand cursor up - out of bounds",
+          );
           return false;
         }
       } else if (direction === "down") {
@@ -184,7 +186,9 @@ export const CursorModel = {
           playerModel.selectedCardNumber++;
           player.cardsAboveSelection++;
         } else {
-          console.warn("Cannot move player hand cursor down - out of bounds");
+          console.warn(
+            "[Cursor Model] Cannot move player hand cursor down - out of bounds",
+          );
           return false;
         }
       } else {
@@ -228,7 +232,7 @@ export const CursorModel = {
 
       if (debug.active) {
         console.log(
-          `Grid cursor placed at X:${BoardModel.gridCursor.x}, Y:${BoardModel.gridCursor.y}`,
+          `[Cursor Model] Grid cursor placed at X:${BoardModel.gridCursor.x}, Y:${BoardModel.gridCursor.y}`,
         );
       }
     },
@@ -248,7 +252,9 @@ export const CursorModel = {
             BoardModel.gridCursor.x -= offsets.cellWidth;
             BoardModel.selectedColumn--;
           } else {
-            return console.warn("Cannot move grid cursor left - out of bounds");
+            return console.warn(
+              "[Cursor Model] Cannot move grid cursor left - out of bounds",
+            );
           }
           break;
         }
@@ -258,7 +264,9 @@ export const CursorModel = {
             BoardModel.gridCursor.y -= offsets.cellHeight;
             BoardModel.selectedRow--;
           } else {
-            return console.warn("Cannot move grid cursor up - out of bounds");
+            return console.warn(
+              "[Cursor Model] Cannot move grid cursor up - out of bounds",
+            );
           }
           break;
         }
@@ -272,7 +280,7 @@ export const CursorModel = {
             BoardModel.selectedColumn++;
           } else {
             return console.warn(
-              "Cannot move grid cursor right - out of bounds",
+              "[Cursor Model] Cannot move grid cursor right - out of bounds",
             );
           }
           break;
@@ -286,7 +294,9 @@ export const CursorModel = {
             BoardModel.gridCursor.y += offsets.cellHeight;
             BoardModel.selectedRow++;
           } else {
-            return console.warn("Cannot move grid cursor down - out of bounds");
+            return console.warn(
+              "[Cursor Model] Cannot move grid cursor down - out of bounds",
+            );
           }
           break;
         }
@@ -306,7 +316,7 @@ export const CursorModel = {
 
       if (debug.active) {
         console.log(
-          `Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${BoardModel.gridCursor.x}, Y:${BoardModel.gridCursor.y}, selectedSquare=${BoardModel.selectedSquare}`,
+          `[Cursor Model] Grid cursor moved ${direction} from X:${oldX}, Y:${oldY} to X:${BoardModel.gridCursor.x}, Y:${BoardModel.gridCursor.y}, selectedSquare=${BoardModel.selectedSquare}`,
         );
       }
     },
@@ -320,7 +330,7 @@ export const CursorModel = {
       Game.stage.update();
 
       if (debug.active) {
-        console.log("Grid cursor removed");
+        console.log("[Cursor Model] Grid cursor removed");
       }
     },
   },

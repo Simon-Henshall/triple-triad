@@ -1,6 +1,4 @@
-import { debug } from "../../utilities/debug.js";
 import { Game } from "../game/game.js";
-import { PlayerModel } from "../player/player-model.js";
 
 // Info box layout constants
 const INFO_BOX_WIDTH = 420;
@@ -21,7 +19,6 @@ export const InfoBox = {
    * Initializes the container and text elements if they don't exist yet.
    */
   drawInfoBox(gameInstance) {
-    console.log(gameInstance);
     const playerModel = Game.models.playerModel;
     const ui = playerModel;
 
@@ -61,18 +58,14 @@ export const InfoBox = {
         "30px Arial",
         "#ffffff",
       );
-      this.cardName.textBaseline = "alphabetic";
+      this.cardName.textAlign = "center";
+      this.cardName.textBaseline = "middle";
     }
     this.cardName.text = ui.selectedCard?.name || "";
 
-    const verticalOffset = 30 / 2 + 10;
-    this.cardName.x =
-      INFO_BOX_X + INFO_BOX_WIDTH / 2 - this.cardName.getMeasuredWidth() / 2;
-    this.cardName.y =
-      INFO_BOX_Y +
-      INFO_BOX_HEIGHT / 2 -
-      this.cardName.getMeasuredHeight() / 2 +
-      verticalOffset;
+    // Center horizontally and vertically inside the info box
+    this.cardName.x = INFO_BOX_X + INFO_BOX_WIDTH / 2;
+    this.cardName.y = INFO_BOX_Y + INFO_BOX_HEIGHT / 2;
 
     this.container.addChild(this.cardName);
     gameInstance.stage.addChild(this.container);
@@ -88,31 +81,21 @@ export const InfoBox = {
    * Updates player/AI card counts as well.
    */
   updateInfoBox(gameInstance, card) {
-    console.log(gameInstance);
-    const playerModel = Game.models.playerModel;
-    const ui = playerModel;
-    console.log("InfoBox.updateInfoBox() called", ui, card);
-
     // Update selected card name
     if (this.cardName && card) {
-      this.cardName.text = card.data.name;
-
-      const verticalOffset = 30 / 2 + 10;
-      this.cardName.x =
-        INFO_BOX_X + INFO_BOX_WIDTH / 2 - this.cardName.getMeasuredWidth() / 2;
-      this.cardName.y =
-        INFO_BOX_Y +
-        INFO_BOX_HEIGHT / 2 -
-        this.cardName.getMeasuredHeight() / 2 +
-        verticalOffset;
+      this.cardName.text = card.data?.name || card.name || "";
+      this.cardName.x = INFO_BOX_X + INFO_BOX_WIDTH / 2;
+      this.cardName.y = INFO_BOX_Y + INFO_BOX_HEIGHT / 2;
     } else if (!this.cardName) {
-      console.log("Creating new cardName text element");
       this.cardName = new createjs.Text(
         card.name || "",
         "30px Arial",
         "#ffffff",
       );
-      this.cardName.textBaseline = "alphabetic";
+      this.cardName.textAlign = "center";
+      this.cardName.textBaseline = "middle";
+      this.cardName.x = INFO_BOX_X + INFO_BOX_WIDTH / 2;
+      this.cardName.y = INFO_BOX_Y + INFO_BOX_HEIGHT / 2;
     }
 
     gameInstance.stage.update();
@@ -130,13 +113,9 @@ export const InfoBox = {
    * @param {boolean} visible
    */
   toggleInfoBox(gameInstance, visible) {
-    console.log(gameInstance);
     if (this.container) {
       this.container.visible = visible;
       gameInstance.stage.update();
-      if (debug.active) {
-        //console.log(`Info box visibility set to: ${visible}`);
-      }
     }
   },
 

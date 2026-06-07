@@ -119,7 +119,6 @@ export const Game = {
       );
       // Ensure the visuals are ready before previewing
       const faceBitmap = card.visuals?.faceBitmap;
-      console.log(faceBitmap);
       if (faceBitmap && faceBitmap.image && !faceBitmap.image.complete) {
         // Wait for image load
         faceBitmap.image.addEventListener("load", () => {

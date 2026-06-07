@@ -42,15 +42,15 @@ export class PlacementModel {
   placeCardOnBoard() {
     const selectedCard =
       this.playerModel.hand[this.playerModel.selectedCardNumber];
-    console.log("SELECTED", selectedCard);
-    console.log("HAND", this.playerModel.hand);
     if (!selectedCard) {
-      return console.warn("No card selected!");
+      return console.warn("[Placement Model] No card selected!");
     }
 
     const cellIndex = BoardModel.selectedSquare - 1;
     if (BoardModel.cellOccupied(cellIndex)) {
-      console.warn("Player tried to place on occupied square");
+      console.warn(
+        "[Placement Model] Player tried to place on occupied square",
+      );
       return false;
     }
 
@@ -82,7 +82,7 @@ export class PlacementModel {
    */
   placeCard(card, x, y) {
     console.log(
-      "[PLACEMENT MANAGER] Placing card:",
+      "[Placement Model] Placing card:",
       card,
       "selectedSquare:",
       BoardModel.selectedSquare,

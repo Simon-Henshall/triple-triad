@@ -12,7 +12,7 @@ export class PlacementView {
    * or adjust AI cards accordingly.
    */
   shiftHandCardsDown() {
-    console.log("shiftHandCardsDown");
+    console.log("[Placement View] Shifting hand cards down");
     if (getPlayerTurn() === "blue") {
       const playerModel = Game.models.playerModel;
       playerModel.shiftCardsDown(offsets.handCardOffset);
@@ -45,7 +45,7 @@ export class PlacementView {
    * @param {(card: createjs.Container) => void} [onComplete] - Callback when animation finishes.
    */
   moveCardOffscreen(card, onComplete) {
-    console.log("moveCardOffscreen:", card);
+    console.log("[Placement View] Moving card offscreen:", card);
 
     const offScreenX =
       getPlayerTurn() === "blue"
@@ -66,10 +66,8 @@ export class PlacementView {
    * @param {(card: createjs.Container) => void} [onComplete] - Callback when animation finishes.
    */
   moveCardToBoard(card, placementX, placementY, onComplete) {
-    console.log(card);
+    console.log("[Placement View] Moving card to board:", card);
     // Ensure card renders above all others
-    //Game.stage.setChildIndex(card, Game.stage.getNumChildren() - 1);
-
     createjs.Tween.get(card.visuals.container)
       .to({ x: placementX, y: placementY }, 500)
       .call(() => onComplete?.(card));
@@ -108,7 +106,7 @@ export class PlacementView {
     const playerModel = Game.models.playerModel;
     if (playerModel.selectedCard) {
       console.log(
-        "Indenting selected card after placement",
+        "[Placement View] Indenting selected card after placement",
         playerModel.selectedCard,
       );
       playerModel.selectedCard.visuals.container.x -= 30;

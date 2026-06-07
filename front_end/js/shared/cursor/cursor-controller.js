@@ -33,10 +33,6 @@ export const CursorController = (cursorView) => ({
       CursorModel.selection.move(direction);
       cursorView.selection.updatePosition();
       cursorView.selection.ensurePopulated();
-
-      if (debug.active) {
-        //console.log("CursorController.selection.move() ->", direction);
-      }
     },
 
     /**
@@ -44,10 +40,6 @@ export const CursorController = (cursorView) => ({
      */
     remove() {
       cursorView.selection.remove();
-
-      if (debug.active) {
-        //console.log("CursorController.selection.remove()");
-      }
     },
   },
 
@@ -61,10 +53,6 @@ export const CursorController = (cursorView) => ({
     place() {
       CursorModel.confirmation.resetChoice();
       cursorView.confirmation.place();
-
-      if (debug.active) {
-        //console.log("CursorController.confirmation.place()");
-      }
     },
 
     /**
@@ -78,10 +66,6 @@ export const CursorController = (cursorView) => ({
       if (changed) {
         cursorView.confirmation.updatePosition();
       }
-
-      if (debug.active) {
-        //console.log("CursorController.confirmation.move() ->", direction);
-      }
     },
 
     /**
@@ -89,10 +73,6 @@ export const CursorController = (cursorView) => ({
      */
     remove() {
       cursorView.confirmation.remove();
-
-      if (debug.active) {
-        //console.log("CursorController.confirmation.remove()");
-      }
     },
   },
 
@@ -122,14 +102,6 @@ export const CursorController = (cursorView) => ({
         playerModel.selectedCard = newlySelectedCard;
         InfoBox.updateInfoBox(Game, newlySelectedCard);
       }
-
-      if (debug.active) {
-        console.log(
-          "CursorController.playerHand.place() -> cursor positioned",
-          selectedIndex,
-          playerModel.playerHandCursor.y,
-        );
-      }
     },
 
     /**
@@ -143,10 +115,6 @@ export const CursorController = (cursorView) => ({
         cursorView.playerHand.updatePosition();
         cursorView.playerHand.syncSelection();
       }
-
-      if (debug.active) {
-        //console.log("CursorController.playerHand.move() ->", direction);
-      }
     },
 
     /**
@@ -155,10 +123,6 @@ export const CursorController = (cursorView) => ({
     remove() {
       CursorModel.playerHand.clear();
       cursorView.playerHand.remove();
-
-      if (debug.active) {
-        //console.log("CursorController.playerHand.remove()");
-      }
     },
 
     /**
@@ -185,10 +149,6 @@ export const CursorController = (cursorView) => ({
     place() {
       CursorModel.grid.init();
       cursorView.grid.place();
-
-      if (debug.active) {
-        //console.log("CursorController.grid.place()");
-      }
     },
 
     /**
@@ -201,10 +161,6 @@ export const CursorController = (cursorView) => ({
       if (moved) {
         cursorView.grid.updatePosition();
       }
-
-      if (debug.active) {
-        //console.log("CursorController.grid.move() ->", direction);
-      }
     },
 
     /**
@@ -213,10 +169,6 @@ export const CursorController = (cursorView) => ({
     remove() {
       CursorModel.grid.clear();
       cursorView.grid.remove();
-
-      if (debug.active) {
-        //console.log("CursorController.grid.remove()");
-      }
     },
   },
 });

@@ -51,9 +51,6 @@ export const BoardView = {
           const elementGraphic = new createjs.Bitmap(
             `${config.imagePath}elements/${elements[elementID].imagePath}`,
           );
-
-          console.log(elementGraphic);
-
           elementGraphic.x = 60; // <- relative to square
           elementGraphic.y = 70;
 

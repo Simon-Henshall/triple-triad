@@ -87,7 +87,7 @@ export class PlacementController {
     const { model: placementModel } = this;
 
     console.log(
-      "[_preparePlayerTurn] hand:",
+      "[Placement Controller] Player Hand:",
       playerModel.hand.map((c, index) => ({
         i: index,
         name: c.data.name,
@@ -95,7 +95,7 @@ export class PlacementController {
       })),
     );
     console.log(
-      "selectedCardIndex:",
+      "[Placement Controller] Selected Card:",
       playerModel.selectedCardIndex,
       "selectedCardNumber:",
       playerModel.selectedCardNumber,

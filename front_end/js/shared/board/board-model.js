@@ -90,8 +90,6 @@ export const BoardModel = {
       elementArray.push(0);
     }
 
-    console.log(elementArray);
-
     return shuffle(elementArray);
   },
 

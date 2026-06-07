@@ -158,8 +158,6 @@ export class PlayerModel {
 
     for (let index = 0; index < count; index++) {
       const card = this.hand[index];
-      console.log(card);
-      console.log("Offset:", offset);
       if (card) {
         createjs.Tween.get(card.visuals.container).to(
           { y: card.visuals.container.y + offset },

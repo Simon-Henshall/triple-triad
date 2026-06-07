@@ -60,7 +60,7 @@ export default class HandSelectController {
     const selectedIndex = this.playerModel?.selectedCardNumber ?? 0;
     const selectedCard = this.playerModel?.hand?.[selectedIndex];
     if (!selectedCard) {
-      return console.warn("[HandSelectController] No card selected");
+      return console.warn("[Hand Select Controller] No card selected");
     }
 
     // Default to center cell

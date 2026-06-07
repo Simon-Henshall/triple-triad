@@ -72,7 +72,6 @@ export class InputModel {
     // Get the currently selected card from the DeckSelectionUI
     const card = DeckSelectionUI.getSelectedCard();
     PreviewCard.showPreviewCard(card);
-    console.log(card);
     if (!card) {
       PreviewCard.hidePreviewCard();
       return;

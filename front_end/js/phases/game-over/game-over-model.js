@@ -19,7 +19,7 @@ export default class GameOverModel {
    */
   determineOutcome() {
     if (!this.playerModel || !this.aiTurnModel) {
-      console.error("GameOverModel: Missing player or AI model");
+      console.error("[Game Over Model] Missing player or AI model");
       return "draw";
     }
 
