@@ -1,7 +1,8 @@
 import { Game } from "../../shared/game/game.js";
 import { BoardModel } from "../../shared/board/board-model.js";
-import { InfoBox } from "../../shared/ui/info-box.js";
 import { PhaseChecker } from "../../game/phases.js";
+import HandSelectModel from "./hand-select-model.js";
+import HandSelectView from "./hand-select-view.js";
 
 /**
  * HandSelectController class, responsible for managing the player's hand selection phase,
@@ -23,6 +24,10 @@ export default class HandSelectController {
     this.boardModel = localDeps.boardModel;
     this.transition = transition;
 
+    // model / view helpers for this phase
+    this.model = new HandSelectModel(this.playerModel);
+    this.view = new HandSelectView(this.playerModel);
+
     // make controller discoverable via Game.controllers
     Game.controllers = Game.controllers || {};
     Game.controllers.handSelectController = this;
@@ -34,18 +39,9 @@ export default class HandSelectController {
   async activate() {
     PhaseChecker.playerChoosingCard = true;
 
-    // Ensure player cursor and preview/indent are in the expected state
-    if (Game.controllers?.cursorController?.playerHand?.place) {
-      Game.controllers.cursorController.playerHand.place();
-    }
-
-    const selected =
-      this.playerModel?.hand?.[this.playerModel.selectedCardNumber];
-    if (selected) {
-      Game.views.playerView.indentSelectedCard(selected);
-      InfoBox.drawInfoBox(Game);
-      InfoBox.updateInfoBox(Game, selected);
-    }
+    // initialise logical cursor position and present selection UI
+    this.model.initCursor();
+    this.view.show();
   }
 
   /**
@@ -53,6 +49,7 @@ export default class HandSelectController {
    */
   async deactivate() {
     PhaseChecker.playerChoosingCard = false;
+    this.view.hide();
   }
 
   /**
@@ -74,10 +71,8 @@ export default class HandSelectController {
     // Place grid cursor
     Game.controllers.cursorController.grid.place();
 
-    // Hide info box and remove the visual player hand cursor
-    InfoBox.toggleInfoBox(Game, false);
-    Game.controllers.cursorController.playerHand.remove();
-    Game.stage.removeChild(this.playerModel.playerHandCursor);
+    // Hide hand-select visuals
+    this.view.hide();
 
     PhaseChecker.playerSelectingPlacement = true;
 
