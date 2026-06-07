@@ -28,7 +28,8 @@ export default class EndTurnController {
   async activate() {
     // Ensure scoreboard reflects latest counts
     try {
-      Game.ui?.scoreBoard?.update?.();
+      const sb = this.model.getScoreboard();
+      sb?.update?.();
     } catch (error) {
       console.error("EndTurnController: failed to update scoreboard", error);
     }
