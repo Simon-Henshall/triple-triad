@@ -15,13 +15,17 @@ export class AITurnView {
   }
 
   /**
-   * Place the AI hand on stage visually
+   * Place the AI hand on stage visually, animating cards in
+   * from below the stage one at a time.
    */
   displayHand(hand, handOffsetX) {
     for (const [index, card] of hand.entries()) {
       const container = card.visuals.container;
+      const targetY = offsets.handOffsetY + index * offsets.handCardOffset;
+
       container.x = handOffsetX || offsets.gameOffsetX / 2;
-      container.y = offsets.handOffsetY + index * offsets.handCardOffset;
+      container.y = this.stage.canvas.height + 200;
+      container.alpha = 0;
 
       // Hide face, show back
       if (card.visuals.faceBitmap) {
@@ -35,6 +39,13 @@ export class AITurnView {
       }
 
       this.stage.addChild(container);
+
+      // Animate card sliding up and fading in with staggered delay
+      createjs.Tween.get(container, { delay: index * 200 }).to(
+        { y: targetY, alpha: 1 },
+        400,
+        createjs.Ease.quadOut,
+      );
     }
     this.stage.update();
   }
