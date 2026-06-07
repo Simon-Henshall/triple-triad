@@ -40,7 +40,7 @@ test("fetchPlayerCards makes correct POST request and returns JSON", async () =>
   let capturedOptions;
 
   /**
-   *
+   * Mock fetch that captures the request URL and options for assertion.
    */
   globalThis.fetch = async (url, options) => {
     capturedUrl = url;
@@ -73,7 +73,7 @@ test("fetchPlayerCards makes correct POST request and returns JSON", async () =>
  */
 test("fetchPlayerCards throws on non-ok response", async () => {
   /**
-   *
+   * Mock fetch that returns a non-OK response to simulate a server error.
    */
   globalThis.fetch = async () => ({
     ok: false,
@@ -91,7 +91,7 @@ test("fetchPlayerCards throws on non-ok response", async () => {
  */
 test("fetchPlayerCards throws on abort (timeout)", async () => {
   /**
-   *
+   * Mock fetch that simulates an abort signal to test timeout handling.
    */
   globalThis.fetch = async (_url, options) => {
     // Simulate the AbortController aborting
@@ -119,7 +119,7 @@ test("fetchPlayerCards throws on abort (timeout)", async () => {
  */
 test("fetchPlayerCards re-throws non-abort errors", async () => {
   /**
-   *
+   * Mock fetch that throws a generic network error.
    */
   globalThis.fetch = async () => {
     throw new Error("Network failure");

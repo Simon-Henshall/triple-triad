@@ -18,16 +18,25 @@ import { StateMachine } from "../game/game-state-machine.js";
 function createMachine(overrides = {}) {
   const phases = {
     boot: {
-      /** @param {Object} rootDeps */
+      /**
+       * Returns a shallow copy of root deps.
+       * @param {Object} rootDeps
+       * @returns {Object}
+       */
       deps: (rootDeps) => ({ ...rootDeps }),
-      /** @param {Object} deps @param {Function} transition */
+      /**
+       * Creates the boot phase instance.
+       * @param {Object} deps
+       * @param {Function} transition
+       * @returns {Object}
+       */
       factory: (deps, transition) => ({
         /**
-         *
+         * Activates the boot phase.
          */
         activate: () => {},
         /**
-         *
+         * Deactivates the boot phase.
          */
         deactivate: () => {},
         deps,
@@ -36,19 +45,24 @@ function createMachine(overrides = {}) {
     },
     menu: {
       /**
-       *
+       * Returns a shallow copy of root deps.
+       * @param {Object} rootDeps
+       * @returns {Object}
        */
       deps: (rootDeps) => ({ ...rootDeps }),
       /**
-       *
+       * Creates the menu phase instance.
+       * @param {Object} deps
+       * @param {Function} transition
+       * @returns {Object}
        */
       factory: (deps, transition) => ({
         /**
-         *
+         * Activates the menu phase.
          */
         activate: () => {},
         /**
-         *
+         * Deactivates the menu phase.
          */
         deactivate: () => {},
         deps,
@@ -57,19 +71,24 @@ function createMachine(overrides = {}) {
     },
     play: {
       /**
-       *
+       * Returns a shallow copy of root deps.
+       * @param {Object} rootDeps
+       * @returns {Object}
        */
       deps: (rootDeps) => ({ ...rootDeps }),
       /**
-       *
+       * Creates the play phase instance.
+       * @param {Object} deps
+       * @param {Function} transition
+       * @returns {Object}
        */
       factory: (deps, transition) => ({
         /**
-         *
+         * Activates the play phase.
          */
         activate: () => {},
         /**
-         *
+         * Deactivates the play phase.
          */
         deactivate: () => {},
         deps,
@@ -78,21 +97,26 @@ function createMachine(overrides = {}) {
     },
     fail: {
       /**
-       *
+       * Returns a shallow copy of root deps.
+       * @param {Object} rootDeps
+       * @returns {Object}
        */
       deps: (rootDeps) => ({ ...rootDeps }),
       /**
-       *
+       * Creates the fail phase instance.
+       * @param {Object} deps
+       * @param {Function} transition
+       * @returns {Object}
        */
       factory: (deps, transition) => ({
         /**
-         *
+         * Activates the fail phase (always throws).
          */
         activate: () => {
           throw new Error("activation failed");
         },
         /**
-         *
+         * Deactivates the fail phase (always throws).
          */
         deactivate: () => {
           throw new Error("deactivation failed");
@@ -166,11 +190,11 @@ test("transitionTo deactivates previous phase and activates next", async () => {
 
   setFactory(sm, "boot", (deps, transition) => ({
     /**
-     *
+     * Records boot activation.
      */
     activate: () => calls.push({ phase: "boot", action: "activate" }),
     /**
-     *
+     * Records boot deactivation.
      */
     deactivate: () => calls.push({ phase: "boot", action: "deactivate" }),
     deps,
@@ -179,11 +203,11 @@ test("transitionTo deactivates previous phase and activates next", async () => {
 
   setFactory(sm, "menu", (deps, transition) => ({
     /**
-     *
+     * Records menu activation.
      */
     activate: () => calls.push({ phase: "menu", action: "activate" }),
     /**
-     *
+     * Records menu deactivation.
      */
     deactivate: () => calls.push({ phase: "menu", action: "deactivate" }),
     deps,
@@ -332,11 +356,11 @@ test("phase transition callback triggers transition", async () => {
     phaseTransition = transition;
     return {
       /**
-       *
+       * Activates the boot phase.
        */
       activate: () => {},
       /**
-       *
+       * Deactivates the boot phase.
        */
       deactivate: () => {},
       deps,
@@ -366,11 +390,11 @@ test("phase transition callback throws on invalid transition", async () => {
     phaseTransition = transition;
     return {
       /**
-       *
+       * Activates the boot phase.
        */
       activate: () => {},
       /**
-       *
+       * Deactivates the boot phase.
        */
       deactivate: () => {},
       deps,
@@ -415,11 +439,11 @@ test("shutdown deactivates and clears state", async () => {
 
   setFactory(sm, "boot", () => ({
     /**
-     *
+     * Activates the boot phase.
      */
     activate: () => {},
     /**
-     *
+     * Deactivates the boot phase (logs).
      */
     deactivate: () => log.push("deactivated"),
   }));

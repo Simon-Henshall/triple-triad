@@ -36,13 +36,9 @@ export default class GameOverView {
           break;
         }
         default: {
-          {
-            message = "Game Over";
-          }
-          z;
+          message = "Game Over";
         }
       }
-
       alert(message);
     } catch (error) {
       console.error(["[Game Over View] Failed to display outcome"], error);

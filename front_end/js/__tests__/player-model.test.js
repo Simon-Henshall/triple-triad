@@ -30,11 +30,14 @@ function fakeCard(id, name, count = 1) {
  */
 function createPlayerModel(deckSize = 5) {
   const view = {
-    /**
-     *
-     */
+    /** Resets the hand slot display in the UI. */
     resetHandSlots: () => {},
-    /** @param {*} _container @param {number} _index @param {boolean} _reverse */
+    /**
+     * Animates a card moving into the player's hand.
+     * @param {*} _container The DOM container element.
+     * @param {number} _index The target hand slot index.
+     * @param {boolean} _reverse Whether to play the animation in reverse.
+     */
     animateCardToHand: () => {},
     cardsInPlayerHand: [],
   };
@@ -146,15 +149,11 @@ test("getHandCard returns correct card or undefined", () => {
 test("resetHand restores deck and clears hand", () => {
   let resetHandCalled = false;
   const view = {
-    /**
-     *
-     */
+    /** Resets the hand slot display in the UI. */
     resetHandSlots: () => {
       resetHandCalled = true;
     },
-    /**
-     *
-     */
+    /** Animates a card moving into the player's hand. */
     animateCardToHand: () => {},
     cardsInPlayerHand: [],
   };

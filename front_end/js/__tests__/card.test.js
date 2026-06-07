@@ -64,7 +64,7 @@ test("Card construction, setCount, setOwner, clone", () => {
      * @param {boolean} _deep Whether to deep-clone (ignored).
      * @returns {object} A mock container object.
      */
-    clone: (deep) => ({
+    clone: () => ({
       /**
        * Mock implementation of getChildByName – returns undefined.
        *

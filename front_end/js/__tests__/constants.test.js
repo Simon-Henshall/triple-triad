@@ -191,7 +191,7 @@ test("elements has entries 1-8 with valid values", () => {
     .toSorted((a, b) => a - b);
   expect(keys).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
 
-  for (const [id, element] of Object.entries(elements)) {
+  for (const [, element] of Object.entries(elements)) {
     expect(typeof element.imagePath).toBe("string");
     expect(element.imagePath.length).toBeGreaterThan(0);
 
