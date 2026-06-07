@@ -117,9 +117,8 @@ export const DeckSelectionView = {
       sb.container.addChild(cursor);
     }
 
-    // Ensure cursor is on top
-    const shownIndex = sb.container.getChildIndex(sb.shownCards);
-    sb.container.setChildIndex(cursor, shownIndex + 1);
+    // Ensure cursor is on top of everything (including background)
+    sb.container.setChildIndex(cursor, sb.container.children.length - 1);
 
     cursor.visible = true;
   },
