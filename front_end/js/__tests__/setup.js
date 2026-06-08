@@ -20,6 +20,7 @@ if (globalThis.createjs === undefined) {
       this.removeAllChildren = jest.fn(function () {
         this.children = [];
       });
+      this.removeChild = jest.fn();
       this.getChildByName = function () {
         return;
       };
@@ -35,29 +36,49 @@ if (globalThis.createjs === undefined) {
       this.globalToLocal = function (x, y) {
         return { x, y };
       };
-      this.contains = function () {
-        return false;
-      };
+      this.contains = jest.fn().mockReturnValue(false);
+      this.getNumChildren = jest.fn().mockReturnValue(0);
+      this.getChildAt = jest.fn().mockReturnValue();
+      this.addChildAt = jest.fn();
       this.getBounds = function () {
         return { width: 100, height: 100 };
       };
+      this.addEventListener = jest.fn();
+      this.removeEventListener = jest.fn();
+      this.remove = jest.fn();
+      this.hitArea = undefined;
+      this.update = jest.fn();
+      this.updateCache = jest.fn();
+      this.setChildIndex = jest.fn();
+      this.getChildIndex = jest.fn().mockReturnValue(0);
+      this.alpha = 1;
+      this.visible = true;
+      this.x = 0;
+      this.y = 0;
+      this.scaleX = 1;
+      this.scaleY = 1;
+      this.skewY = 0;
     },
     Bitmap: jest.fn(function (path) {
       this.image = {
         complete: true,
         naturalWidth: 100,
         naturalHeight: 100,
+        width: 100,
+        height: 100,
         addEventListener: jest.fn(),
         removeEventListener: jest.fn(),
       };
       this.name = "";
       this.x = 0;
       this.y = 0;
+      this.visible = true;
+      this.alpha = 1;
     }),
     Shape: function () {
       this.graphics = {
         beginFill: jest.fn().mockReturnThis(),
-        drawRect: jest.fn(),
+        drawRect: jest.fn().mockReturnThis(),
       };
       this.setBounds = jest.fn();
       this.x = 0;
@@ -75,10 +96,18 @@ if (globalThis.createjs === undefined) {
     Ticker: {
       setFPS: jest.fn(),
       addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    },
+    Ease: {
+      quadOut: "quadOut",
+      linear: "linear",
+      backIn: "backIn",
+      backOut: "backOut",
     },
     Tween: {
       get: jest.fn().mockReturnValue({
-        to: jest.fn().mockReturnValue({ to: jest.fn() }),
+        to: jest.fn().mockReturnValue({ to: jest.fn(), call: jest.fn() }),
+        call: jest.fn().mockReturnValue({ to: jest.fn() }),
       }),
     },
     Stage: function () {
@@ -90,6 +119,8 @@ if (globalThis.createjs === undefined) {
       this.getNumChildren = jest.fn().mockReturnValue(0);
       this.removeChild = jest.fn();
       this.getChildByName = jest.fn();
+      this.contains = jest.fn().mockReturnValue(false);
+      this.getChildIndex = jest.fn().mockReturnValue(0);
     },
   };
 }
