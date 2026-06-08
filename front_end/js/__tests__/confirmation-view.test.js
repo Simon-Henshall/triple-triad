@@ -11,6 +11,8 @@ describe("ConfirmationView", () => {
   beforeAll(async () => {
     const module_ = await import("../phases/confirmation/confirmation-view.js");
     ConfirmationView = module_.ConfirmationView;
+    // model is set dynamically at runtime; provide a minimal mock
+    ConfirmationView.model = {};
   });
 
   test("ConfirmationView is defined", () => {

@@ -25,4 +25,18 @@ export default class EndTurnView {
   hide() {
     // No-op for now
   }
+
+  /**
+   * Activate the end-turn view (alias for show).
+   */
+  activate() {
+    this.show();
+  }
+
+  /**
+   * Deactivate the end-turn view (alias for hide).
+   */
+  deactivate() {
+    this.hide();
+  }
 }

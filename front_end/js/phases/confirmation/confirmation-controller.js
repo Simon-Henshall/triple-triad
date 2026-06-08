@@ -56,4 +56,30 @@ export const ConfirmationController = {
     // Update the stage to reflect all changes
     Game.stage.update();
   },
+
+  /**
+   * Hide the confirmation dialog.
+   */
+  hide() {
+    console.log("[Confirmation Controller] Hiding confirmation dialog...");
+    Game.stage.removeChild(ConfirmationView.container);
+    ConfirmationView.hide();
+    PhaseChecker.playerConfirming = false;
+  },
+
+  /**
+   * Accept the confirmation (player chose "Yes").
+   */
+  accept() {
+    this.hide();
+    console.log("[Confirmation Controller] Player accepted.");
+  },
+
+  /**
+   * Cancel the confirmation (player chose "No").
+   */
+  cancel() {
+    this.hide();
+    console.log("[Confirmation Controller] Player cancelled.");
+  },
 };

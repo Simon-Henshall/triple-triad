@@ -3,10 +3,45 @@
  * Responsible for rendering the "Are you sure?" confirmation box.
  */
 export const ConfirmationView = {
+  /** @type {object|undefined} Set at runtime by ConfirmationController */
+  model: undefined,
+  /** @type {createjs.Container|undefined} Initialised lazily */
+  container: undefined,
+  /** @type {createjs.Shape|undefined} Initialised lazily */
+  background: undefined,
+
   /**
-   * Draws the "Are you sure?" confirmation box with text and border.
+   * Ensure the container and background are initialised.
+   * Called lazily to avoid depending on createjs at module load time.
    */
+  _ensureInitialised() {
+    if (!this.container) {
+      this.container = new createjs.Container();
+    }
+    if (!this.background) {
+      this.background = new createjs.Shape();
+    }
+  },
+
+  /**
+   * Show the confirmation dialog.
+   */
+  show() {
+    this.drawConfirmationBox();
+  },
+
+  /**
+   * Hide the confirmation dialog.
+   */
+  hide() {
+    if (this.container) {
+      this.container.removeAllChildren();
+    }
+  },
+
   drawConfirmationBox() {
+    this._ensureInitialised();
+
     // Set the dimensions and fill color of the confirmation background
     this.background.x = 380;
     this.background.y = 285;

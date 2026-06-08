@@ -18,7 +18,7 @@ describe("InputModel", () => {
   });
 
   test("InputModel exists in the module", () => {
-    // InputModel is the default export, check it exists
-    expect(typeof InputModel).toBe("object" || "function");
+    // InputModel is a class, so typeof is "function"
+    expect(typeof InputModel).toBe("function");
   });
 });

@@ -23,6 +23,9 @@ describe("main.js", () => {
     }
 
     documentAddEventListenerSpy = jest.spyOn(document, "addEventListener");
+
+    // Import main.js to trigger the DOMContentLoaded listener registration
+    await import("../main.js");
   });
 
   test("document.addEventListener is called with DOMContentLoaded", () => {

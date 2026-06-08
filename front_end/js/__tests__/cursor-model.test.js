@@ -12,6 +12,8 @@ describe("CursorModel", () => {
   let mockCursor;
 
   beforeAll(async () => {
+    // SelectionBook is referenced but not imported by cursor-model; mock it globally
+    globalThis.SelectionBook = { controller: undefined };
     const module_ = await import("../shared/cursor/cursor-model.js");
     CursorModel = module_.CursorModel;
   });

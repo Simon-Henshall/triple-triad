@@ -76,4 +76,18 @@ export class AITurnView {
     }
     this.stage.update();
   }
+
+  /**
+   * Activate the AI turn view.
+   */
+  activate() {
+    // No-op for now
+  }
+
+  /**
+   * Deactivate the AI turn view.
+   */
+  deactivate() {
+    // No-op for now
+  }
 }
