@@ -1,4 +1,4 @@
-import { Game } from "../../shared/game/game";
+import { Game } from "../../shared/game/game.js";
 
 /**
  * Deck Selection Controller
