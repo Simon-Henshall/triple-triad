@@ -172,3 +172,126 @@ test("resetHand restores deck and clears hand", () => {
   expect(pm.deck[0].selectedCount).toBe(0);
   expect(resetHandCalled).toBe(true);
 });
+
+/**
+ * Verifies that removeLastCardFromHand correctly restores
+ * deck card remaining count and returns the removed card.
+ */
+test("removeLastCardFromHand restores deck count correctly", () => {
+  const pm = createPlayerModel(3);
+  pm.addCardToHand(pm.deck[0]);
+  pm.addCardToHand(pm.deck[1]);
+  expect(pm.hand).toHaveLength(2);
+  expect(pm.deck[0].remaining).toBe(2);
+  expect(pm.deck[1].remaining).toBe(2);
+
+  pm.removeLastCardFromHand();
+  expect(pm.hand).toHaveLength(1);
+  expect(pm.deck[1].remaining).toBe(3); // restored
+});
+
+/**
+ * Verifies that after removing the last card from hand,
+ * selectedCardIndex is updated and selectedCard is set correctly.
+ */
+test("removeLastCardFromHand updates selection state", () => {
+  const pm = createPlayerModel(3);
+  pm.addCardToHand(pm.deck[0]);
+  pm.addCardToHand(pm.deck[1]);
+
+  pm.removeLastCardFromHand();
+  expect(pm.selectedCardIndex).toBe(0);
+  expect(pm.selectedCard).toBe(pm.hand[0]);
+
+  pm.removeLastCardFromHand();
+  expect(pm.selectedCardIndex).toBe(0);
+  expect(pm.selectedCard).toBeUndefined();
+});
+
+/**
+ * Verifies that removeLastCardFromHand on a hand with non-zero
+ * length returns the card and updates the deck.
+ */
+test("removeLastCardFromHand returns card instance", () => {
+  const pm = createPlayerModel(3);
+  const card = pm.deck[0];
+  pm.addCardToHand(card);
+
+  const result = pm.removeLastCardFromHand();
+  expect(result).toBe(card);
+  expect(result.data.id).toBe(0);
+});
+
+/**
+ * Verifies that _recalculateSelection correctly updates
+ * selectedCard and selectedCardIndex when hand changes.
+ */
+test("_recalculateSelection updates selected indexes correctly", () => {
+  const pm = createPlayerModel(3);
+
+  // Empty hand
+  pm._recalculateSelection();
+  expect(pm.selectedCardIndex).toBe(0);
+  expect(pm.selectedCard).toBeUndefined();
+
+  // One card in hand
+  pm.addCardToHand(pm.deck[0]);
+  pm._recalculateSelection();
+  expect(pm.selectedCardIndex).toBe(0);
+  expect(pm.selectedCard).toBe(pm.hand[0]);
+});
+
+/**
+ * Verifies that getHandCard returns correct card or undefined
+ * when hand is empty.
+ */
+test("getHandCard returns undefined for empty hand", () => {
+  const pm = createPlayerModel(0);
+  expect(pm.getHandCard(0)).toBeUndefined();
+});
+
+/**
+ * Verifies that shiftCardsDown does not throw when hand is empty.
+ */
+test("shiftCardsDown does nothing when hand is empty", () => {
+  const pm = createPlayerModel(0);
+  expect(() => pm.shiftCardsDown(10)).not.toThrow();
+});
+
+/**
+ * Verifies that constructor sets optional values correctly.
+ */
+test("constructor sets optional view parameter", () => {
+  const view = {
+    /**
+     *
+     */
+    resetHandSlots: () => {},
+    /**
+     *
+     */
+    animateCardToHand: () => {},
+    cardsInPlayerPlayerHand: [],
+  };
+  const pm = new PlayerModel({ view });
+  expect(pm.view).toBe(view);
+});
+
+/**
+ * Verifies that constructor works without view parameter.
+ */
+test("constructor works without view parameter", () => {
+  const pm = new PlayerModel();
+  expect(pm.view).toBeUndefined();
+  expect(pm.hand).toEqual([]);
+  expect(pm.deck).toEqual([]);
+  expect(pm.playedCardsCount).toBe(0);
+});
+
+/**
+ * Verifies that selectedCardNumber property exists and is 0 initially.
+ */
+test("constructor initializes selectedCardNumber to 0", () => {
+  const pm = new PlayerModel();
+  expect(pm.selectedCardNumber).toBe(0);
+});

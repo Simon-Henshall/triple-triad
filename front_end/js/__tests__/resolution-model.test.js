@@ -26,7 +26,6 @@ test("recordFlip, uniqueness, hasFlips, reset", () => {
   expect(rm.getFlippedCards()).toContain(cardA);
   expect(rm.totalFlipped).toBe(1);
 
-  // recording same card again should not increase total
   rm.recordFlip(cardA);
   expect(rm.totalFlipped).toBe(1);
   expect(rm.hasFlips()).toBe(true);
@@ -35,4 +34,39 @@ test("recordFlip, uniqueness, hasFlips, reset", () => {
   expect(rm.totalFlipped).toBe(0);
   expect(rm.getFlippedCards()).toHaveLength(0);
   expect(rm.hasFlips()).toBe(false);
+});
+
+test("recordFlip multiple distinct cards", () => {
+  const rm = new ResolutionModel();
+  const cardA = { id: "a" };
+  const cardB = { id: "b" };
+  const cardC = { id: "c" };
+
+  rm.recordFlip(cardA);
+  rm.recordFlip(cardB);
+  rm.recordFlip(cardC);
+
+  expect(rm.totalFlipped).toBe(3);
+  expect(rm.getFlippedCards()).toHaveLength(3);
+  expect(rm.hasFlips()).toBe(true);
+});
+
+test("isResolvingFlips is initially false", () => {
+  const rm = new ResolutionModel();
+  expect(rm.isResolvingFlips).toBe(false);
+});
+
+test("setResolvingFlips updates state", () => {
+  const rm = new ResolutionModel();
+  rm.setResolvingFlips(true);
+  expect(rm.isResolvingFlips).toBe(true);
+  rm.setResolvingFlips(false);
+  expect(rm.isResolvingFlips).toBe(false);
+});
+
+test("reset clears isResolvingFlips", () => {
+  const rm = new ResolutionModel();
+  rm.setResolvingFlips(true);
+  rm.reset();
+  expect(rm.isResolvingFlips).toBe(false);
 });

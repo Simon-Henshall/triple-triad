@@ -8,3 +8,106 @@ globalThis.console = {
   warn: jest.fn(),
   error: jest.fn(),
 };
+
+// Mock createjs globally for tests that import modules using it
+if (globalThis.createjs === undefined) {
+  globalThis.createjs = {
+    Container: function () {
+      this.children = [];
+      this.addChild = jest.fn(function (child) {
+        this.children.push(child);
+      });
+      this.removeAllChildren = jest.fn(function () {
+        this.children = [];
+      });
+      this.getChildByName = function () {
+        return;
+      };
+      this.clone = function () {
+        return {
+          /**
+           *
+           */
+          getChildByName: () => {},
+          children: [],
+        };
+      };
+      this.globalToLocal = function (x, y) {
+        return { x, y };
+      };
+      this.contains = function () {
+        return false;
+      };
+      this.getBounds = function () {
+        return { width: 100, height: 100 };
+      };
+    },
+    Bitmap: jest.fn(function (path) {
+      this.image = {
+        complete: true,
+        naturalWidth: 100,
+        naturalHeight: 100,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      };
+      this.name = "";
+      this.x = 0;
+      this.y = 0;
+    }),
+    Shape: function () {
+      this.graphics = {
+        beginFill: jest.fn().mockReturnThis(),
+        drawRect: jest.fn(),
+      };
+      this.setBounds = jest.fn();
+      this.x = 0;
+      this.y = 0;
+    },
+    Text: jest.fn(function (text, font, color) {
+      this.text = text;
+      this.font = font;
+      this.color = color;
+      this.textAlign = "left";
+      this.textBaseline = "alphabetic";
+      this.x = 0;
+      this.y = 0;
+    }),
+    Ticker: {
+      setFPS: jest.fn(),
+      addEventListener: jest.fn(),
+    },
+    Tween: {
+      get: jest.fn().mockReturnValue({
+        to: jest.fn().mockReturnValue({ to: jest.fn() }),
+      }),
+    },
+    Stage: function () {
+      this.canvas = { width: 800, height: 600 };
+      this.addChild = jest.fn();
+      this.update = jest.fn();
+      this.setChildIndex = jest.fn();
+      this.numChildren = 0;
+      this.getNumChildren = jest.fn().mockReturnValue(0);
+      this.removeChild = jest.fn();
+      this.getChildByName = jest.fn();
+    },
+  };
+}
+
+// Mock Image
+if (globalThis.Image === undefined) {
+  globalThis.Image = function () {
+    this.addEventListener = jest.fn();
+    this.removeEventListener = jest.fn();
+    this.complete = true;
+    this.naturalWidth = 100;
+    this.naturalHeight = 100;
+  };
+}
+
+// Mock document
+if (globalThis.document === undefined) {
+  globalThis.document = {
+    addEventListener: jest.fn(),
+  };
+}
