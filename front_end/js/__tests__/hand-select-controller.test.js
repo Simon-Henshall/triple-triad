@@ -27,6 +27,11 @@ describe("HandSelectController", () => {
       },
     };
     Game.stage = new createjs.Stage();
+    // Ensure InfoBox has a valid stage reference
+    Game.stage.canvas = { width: 800, height: 600 };
+    Game.models = {
+      playerModel: { selectedCard: { data: { id: 1 }, name: "Test Card" } },
+    };
   });
 
   test("constructor stores dependencies and creates model/view", () => {
@@ -48,6 +53,16 @@ describe("HandSelectController", () => {
     expect(Game.controllers.handSelectController).toBe(ctrl);
   });
 
+  test("activate sets playerChoosingCard to true and calls model/view", async () => {
+    const ctrl = new HandSelectController(
+      { playerModel: { hand: [] } },
+      transitionMock,
+    );
+    await ctrl.activate();
+    const module_ = await import("../game/phases.js");
+    expect(module_.PhaseChecker.playerChoosingCard).toBe(true);
+  });
+
   test("deactivate sets playerChoosingCard to false", async () => {
     const ctrl = new HandSelectController(
       { playerModel: { hand: [] } },
@@ -64,5 +79,73 @@ describe("HandSelectController", () => {
     ctrl.playSelectedCard();
     expect(consoleSpy).toHaveBeenCalled();
     consoleSpy.mockRestore();
+  });
+
+  test("playSelectedCard with valid card sets up board and transitions", () => {
+    const mockCard = { data: { id: 1 } };
+    const playerModel = {
+      hand: [mockCard],
+      selectedCardNumber: 0,
+      playedCardsCount: 0,
+    };
+    const ctrl = new HandSelectController(
+      { playerModel, cursorController: Game.controllers.cursorController },
+      transitionMock,
+    );
+    ctrl.playSelectedCard();
+    expect(BoardModel.selectedRow).toBe(2);
+    expect(BoardModel.selectedColumn).toBe(2);
+    expect(BoardModel.selectedSquare).toBe(5);
+    expect(transitionMock).toHaveBeenCalledWith("placement", {
+      selectedCard: mockCard,
+      selectedSquare: 5,
+    });
+  });
+
+  test("playSelectedCard without transition does not throw", () => {
+    const mockCard = { data: { id: 1 } };
+    const playerModel = {
+      hand: [mockCard],
+      selectedCardNumber: 0,
+      playedCardsCount: 0,
+    };
+    const ctrl = new HandSelectController(
+      { playerModel, cursorController: Game.controllers.cursorController },
+      undefined,
+    );
+    expect(() => ctrl.playSelectedCard()).not.toThrow();
+  });
+
+  test("playSelectedCard updates info box when cell has occupant", () => {
+    const mockCard = { data: { id: 1 } };
+    const mockOccupant = { data: { id: 2 } };
+    BoardModel.getOccupant = jest.fn().mockReturnValue(mockOccupant);
+    const playerModel = {
+      hand: [mockCard],
+      selectedCardNumber: 0,
+      playedCardsCount: 0,
+    };
+    const ctrl = new HandSelectController(
+      { playerModel, cursorController: Game.controllers.cursorController },
+      transitionMock,
+    );
+    ctrl.playSelectedCard();
+    expect(BoardModel.getOccupant).toHaveBeenCalledWith(4);
+  });
+
+  test("playSelectedCard does not update info box when cell is empty", () => {
+    const mockCard = { data: { id: 1 } };
+    BoardModel.getOccupant = jest.fn().mockReturnValue();
+    const playerModel = {
+      hand: [mockCard],
+      selectedCardNumber: 0,
+      playedCardsCount: 0,
+    };
+    const ctrl = new HandSelectController(
+      { playerModel, cursorController: Game.controllers.cursorController },
+      transitionMock,
+    );
+    ctrl.playSelectedCard();
+    expect(BoardModel.getOccupant).toHaveBeenCalledWith(4);
   });
 });

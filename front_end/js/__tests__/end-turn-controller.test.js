@@ -19,20 +19,32 @@ describe("EndTurnController", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     transitionMock = jest.fn();
-    Game.stage = new createjs.Stage();
+    Game.stage = {
+      addChild: jest.fn(),
+      removeChild: jest.fn(),
+      update: jest.fn(),
+    };
     Game.models = { playerModel: { hand: [] } };
-    BoardModel.grid = Array.from({ length: 9 }, () => {});
+    BoardModel.selectedSquare = 5;
+    BoardModel.squares = [];
+    BoardModel.gridCursor = {};
+    BoardModel.isGameOver = jest.fn().mockReturnValue(false);
   });
 
-  test("constructor creates model and view", () => {
+  test("constructor stores transition and creates model/view", () => {
     const ctrl = new EndTurnController({}, transitionMock);
     expect(ctrl.transition).toBe(transitionMock);
     expect(ctrl.model).toBeDefined();
     expect(ctrl.view).toBeDefined();
   });
 
-  test("deactivate does not throw", () => {
+  test("constructor stores transition as undefined when not provided", () => {
+    const ctrl = new EndTurnController({});
+    expect(ctrl.transition).toBeUndefined();
+  });
+
+  test("deactivate does not throw", async () => {
     const ctrl = new EndTurnController({}, transitionMock);
-    expect(() => ctrl.deactivate()).not.toThrow();
+    expect(async () => await ctrl.deactivate()).not.toThrow();
   });
 });

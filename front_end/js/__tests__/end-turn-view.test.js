@@ -13,21 +13,37 @@ describe("EndTurnView", () => {
     EndTurnView = module_.default;
   });
 
-  test("constructor creates instance with stage reference", () => {
-    const stage = new createjs.Stage();
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("constructor stores stage reference", () => {
+    const stage = { addChild: jest.fn() };
     const view = new EndTurnView(stage);
     expect(view.stage).toBe(stage);
   });
 
-  test("activate does not throw", () => {
-    const stage = new createjs.Stage();
-    const view = new EndTurnView(stage);
-    expect(() => view.activate()).not.toThrow();
+  test("show does not throw", () => {
+    const view = new EndTurnView({});
+    expect(() => view.show()).not.toThrow();
   });
 
-  test("deactivate does not throw", () => {
-    const stage = new createjs.Stage();
-    const view = new EndTurnView(stage);
-    expect(() => view.deactivate()).not.toThrow();
+  test("hide does not throw", () => {
+    const view = new EndTurnView({});
+    expect(() => view.hide()).not.toThrow();
+  });
+
+  test("activate calls show", () => {
+    const view = new EndTurnView({});
+    const showSpy = jest.spyOn(view, "show");
+    view.activate();
+    expect(showSpy).toHaveBeenCalled();
+  });
+
+  test("deactivate calls hide", () => {
+    const view = new EndTurnView({});
+    const hideSpy = jest.spyOn(view, "hide");
+    view.deactivate();
+    expect(hideSpy).toHaveBeenCalled();
   });
 });
