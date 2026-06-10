@@ -53,22 +53,32 @@ describe("ResolutionView", () => {
 
   test("refreshCardFace sets image src on existing child", () => {
     const card = {
-      children: [
-        { image: { src: "" } },
-      ],
+      children: [{ image: { src: "" } }],
       setChildIndex: jest.fn(),
       getNumChildren: jest.fn().mockReturnValue(2),
+      owner: "player",
     };
-    card.owner = "player";
+
     view.refreshCardFace(card);
     expect(card.children[0].image.src).toContain("player");
   });
 
   test("flipAIHand calls setTimeout for each card", () => {
+    // 1. Enable fake timers before running the logic
+    jest.useFakeTimers();
+
+    // 2. Spy on the timers using Jest's native timer spy
+    const spy = jest.spyOn(globalThis, "setTimeout");
+
     const hand = [{ id: 1 }, { id: 2 }, { id: 3 }];
-    const spy = jest.spyOn(global, "setTimeout");
+
     view.flipAIHand(hand);
+
+    // 3. Verify the count
     expect(spy).toHaveBeenCalledTimes(3);
-    spy.mockRestore();
+
+    // 4. Clear pending timeouts and restore the real timer environment
+    jest.clearAllTimers();
+    jest.useRealTimers();
   });
 });
