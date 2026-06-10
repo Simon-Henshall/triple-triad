@@ -5,7 +5,6 @@
 
 import { jest } from "@jest/globals";
 import { Game } from "../shared/game/game.js";
-import { offsets } from "../constants/offsets.js";
 
 describe("PlacementView", () => {
   let PlacementView;

@@ -43,7 +43,9 @@ describe("GameOverView", () => {
 
     // Mock createjs.Tween.get to support .wait() and .call() chaining
     /**
-     *
+     * Helper function to create a mock Tween instance with chainable methods for testing.
+     * Each method is mocked to allow chaining and to track calls.
+     * @returns {object} A mock Tween instance with chainable methods.
      */
     const createTweenInstance = () => {
       const instance = {

@@ -49,13 +49,16 @@ describe("ResolutionView (extended)", () => {
     };
     const container = {
       /**
-       *
+       * Mock implementation of getBounds for testing. In a real test, this would return the actual bounds of the container.
+       * @return {object} An object with width and height properties.
        */
       getNumChildren: () => 2,
       /**
-       *
+       * Mock implementation of getChildAt for testing. In a real test, this would return the actual child at the specified index.
+       * @param {number} index - The index of the child to retrieve.
+       * @return {object} A mock child object with x, y, skewY properties and an updateCache method.
        */
-      getChildAt: (index) => ({ y: 0, skewY: 0, x: 0, updateCache: jest.fn() }),
+      getChildAt: () => ({ y: 0, skewY: 0, x: 0, updateCache: jest.fn() }),
     };
     view.flipDirection(card, container, "left", 45);
     expect(mockStage.update).toHaveBeenCalled();

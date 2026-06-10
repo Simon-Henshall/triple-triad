@@ -3,8 +3,6 @@
  * @description Unit tests for InputModel
  */
 
-import { jest } from "@jest/globals";
-
 describe("InputModel", () => {
   let InputModel;
 

@@ -12,7 +12,7 @@ describe("createDeck", () => {
       globalThis.createjs = {
         Container: function () {
           /**
-           *
+           * Mock implementation of addChild that adds a child to the container's children array.
            */
           this.addChild = () => {};
           this.children = [];
@@ -26,27 +26,27 @@ describe("createDeck", () => {
         },
         Ticker: {
           /**
-           *
+           * Mock implementation of setFPS that does nothing.
            */
           setFPS: () => {},
           /**
-           *
+           * Mock implementation of addEventListener that does nothing.
            */
           addEventListener: () => {},
         },
         Shape: function () {
           this.graphics = {
             /**
-             *
+             * Mock implementation of beginFill that returns the graphics object for chaining.
              */
             beginFill: () => this,
             /**
-             *
+             * Mock implementation of drawRect that does nothing.
              */
             drawRect: () => {},
           };
           /**
-           *
+           * Mock implementation of setBounds that does nothing.
            */
           this.setBounds = () => {};
         },
@@ -54,11 +54,11 @@ describe("createDeck", () => {
         Stage: function () {
           this.canvas = { width: 800, height: 600 };
           /**
-           *
+           * Mock implementation of addChild that does nothing.
            */
           this.addChild = () => {};
           /**
-           *
+           * Mock implementation of update that does nothing.
            */
           this.update = () => {};
         },

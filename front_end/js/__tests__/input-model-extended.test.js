@@ -9,7 +9,6 @@ import { PhaseChecker } from "../game/phases.js";
 import DeckSelectionModel from "../phases/deck-selection/deck-selection-model.js";
 import { ConfirmationController } from "../phases/confirmation/confirmation-controller.js";
 import { PreviewCard } from "../shared/ui/preview-card.js";
-import { InfoBox } from "../shared/ui/info-box.js";
 
 describe("InputModel (extended)", () => {
   let InputModel;
@@ -127,13 +126,15 @@ describe("InputModel (extended)", () => {
         visuals: {
           container: {
             /**
-             *
+             * Mock implementation of clone for testing. In a real test, this would return a proper clone of the container.
+             * @return {object} A mock container clone with x and y properties.
              */
             clone: () => ({ x: 0, y: 0 }),
           },
         },
         /**
-         *
+         * Mock implementation of clone for testing. In a real test, this would return a proper clone of the card.
+         * @return {object} A mock card clone with visuals and data properties.
          */
         clone: () => ({ visuals: { container: {} }, data: {} }),
       });
@@ -198,7 +199,8 @@ describe("InputModel (extended)", () => {
         visuals: {
           container: {
             /**
-             *
+             * Mock implementation of clone for testing. In a real test, this would return a proper clone of the container.
+             * @return {object} A mock container clone with x and y properties.
              */
             clone: () => ({ x: 0, y: 0 }),
           },
@@ -235,7 +237,8 @@ describe("InputModel (extended)", () => {
         visuals: {
           container: {
             /**
-             *
+             * Mock implementation of clone for testing. In a real test, this would return a proper clone of the container.
+             * @return {object} A mock container clone with x and y properties.
              */
             clone: () => ({ x: 0, y: 0 }),
           },

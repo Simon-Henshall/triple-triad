@@ -3,7 +3,6 @@
  * @description Unit tests for the {@link GameDeck} class.
  */
 
-import { jest } from "@jest/globals";
 import { GameDeck } from "../shared/game/game-deck.js";
 
 /**
@@ -147,14 +146,12 @@ describe("GameDeck", () => {
 
     test("updates playerHand symbolic link when moving from player hand", () => {
       const card = createMockCard(1, "TestCard");
-      const fromHand = [card];
       const toDeck = [];
 
       // Replace playerModel.hand to a new array. The method iterates fromHand
       // but checks if fromHand === this.playerHand. Since fromHand is a reference
       // to the old hand, we assign playerModel.hand to a new array after passing
       // the reference check.
-      const originalHand = playerModel.hand;
       const freshHand = [];
       playerModel.hand = freshHand;
 

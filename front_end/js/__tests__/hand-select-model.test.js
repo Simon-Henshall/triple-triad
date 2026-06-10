@@ -27,7 +27,9 @@ describe("HandSelectModel", () => {
 
     indentSpy = jest.fn();
     Game.views = { playerView: { indentSelectedCard: indentSpy } };
-    updateInfoBoxSpy = jest.spyOn(InfoBox, "updateInfoBox").mockImplementation(() => {});
+    updateInfoBoxSpy = jest
+      .spyOn(InfoBox, "updateInfoBox")
+      .mockImplementation(() => {});
     initSpy = jest.fn();
     CursorModel.playerHand = { init: initSpy };
 

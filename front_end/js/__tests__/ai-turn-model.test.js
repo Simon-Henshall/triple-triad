@@ -3,7 +3,6 @@
  * @description Unit tests for the AITurnModel class.
  */
 
-import { jest } from "@jest/globals";
 import { AITurnModel } from "../phases/ai-turn/ai-turn-model.js";
 
 describe("AITurnModel", () => {

@@ -121,7 +121,7 @@ describe("ConfirmationModel", () => {
   });
 
   test("updateCursorPlacement does nothing if view is missing", () => {
-    model.view = null;
+    model.view = undefined;
     expect(() => model.updateCursorPlacement()).not.toThrow();
   });
 

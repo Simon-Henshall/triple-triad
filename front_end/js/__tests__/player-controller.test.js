@@ -70,7 +70,7 @@ describe("PlayerController delegation", () => {
   });
 
   test("indentSelectedCard can clear selection with undefined", () => {
-    controller.indentSelectedCard(undefined);
+    controller.indentSelectedCard();
     expect(mockView.indentSelectedCard).toHaveBeenCalledWith(undefined);
     expect(mockModel.previouslySelectedCard).toBeUndefined();
   });

@@ -8,7 +8,11 @@ import { DeckSelectionController } from "../phases/deck-selection/deck-selection
 import { Game } from "../shared/game/game.js";
 
 /**
- *
+ * Helper function to create a fake card object for testing.
+ * @param {number} id - The unique identifier for the card.
+ * @param {string} name - The name of the card.
+ * @param {number} count - The number of copies of the card in the deck (default is 3).
+ * @returns {object} A fake card object with the specified properties.
  */
 function fakeCard(id, name, count = 3) {
   return {

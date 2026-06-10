@@ -6,6 +6,9 @@
 import { jest } from "@jest/globals";
 import { Card } from "../shared/card/card.js";
 
+/**
+ * Helper function to create a mock image object with specified properties and event listener methods.
+ */
 function buildMockImage(width = 100, height = 100, complete = true) {
   return {
     width,
@@ -18,6 +21,9 @@ function buildMockImage(width = 100, height = 100, complete = true) {
   };
 }
 
+/**
+ * Helper function to create a mock Bitmap object for the card face, with specified image and properties.
+ */
 function buildMockFaceBitmap(image) {
   return {
     image,
@@ -27,14 +33,23 @@ function buildMockFaceBitmap(image) {
   };
 }
 
+/**
+ * Helper function to create a mock Bitmap object for the card back, with specified properties.
+ */
 function buildMockBackBitmap() {
   return { name: "backBitmap", x: 0, y: 0, visible: true };
 }
 
+/**
+ * Helper function to create a mock Bitmap object for the card colour overlay, with specified properties.
+ */
 function buildMockColourBitmap() {
   return { name: "colourBitmap", x: 0, y: 0, visible: true };
 }
 
+/**
+ * Helper function to create a mock Container object that can hold child elements and has methods to add children and retrieve them by name.
+ */
 function buildMockContainer(children = []) {
   const containerChildren = [...children];
   return {

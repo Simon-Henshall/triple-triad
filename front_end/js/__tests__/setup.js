@@ -27,7 +27,9 @@ if (globalThis.createjs === undefined) {
       this.clone = function () {
         return {
           /**
-           *
+           * Mock implementation of getChildByName for testing. In a real test, this would return the actual child with the specified name.
+           * @param {string} name - The name of the child to retrieve.
+           * @return {object} A mock child object with x and y properties.
            */
           getChildByName: () => {},
           children: [],
@@ -59,7 +61,7 @@ if (globalThis.createjs === undefined) {
       this.scaleY = 1;
       this.skewY = 0;
     },
-    Bitmap: jest.fn(function (path) {
+    Bitmap: jest.fn(function () {
       this.image = {
         complete: true,
         naturalWidth: 100,

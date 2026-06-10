@@ -3,8 +3,6 @@
  * @description Unit tests for AiTurnView
  */
 
-import { jest } from "@jest/globals";
-
 describe("AiTurnView", () => {
   let AiTurnView;
 

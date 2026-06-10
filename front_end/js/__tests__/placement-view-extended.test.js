@@ -83,7 +83,8 @@ describe("PlacementView (extended)", () => {
     const view = new PlacementView();
     const container = {
       /**
-       *
+       * Mock implementation of getBounds for testing. In a real test, this would return the actual bounds of the container.
+       * @return {object} An object with width and height properties.
        */
       getBounds: () => ({ width: 100, height: 100 }),
       addChild: jest.fn(),

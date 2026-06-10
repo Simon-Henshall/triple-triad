@@ -5,8 +5,6 @@
 
 import { jest } from "@jest/globals";
 import { Game } from "../shared/game/game.js";
-import { BoardModel } from "../shared/board/board-model.js";
-import { BoardView } from "../shared/board/board-view.js";
 
 describe("Game", () => {
   beforeEach(() => {
@@ -46,7 +44,9 @@ describe("Game", () => {
       view: {
         cardsInPlayerHand: [],
         /**
-         *
+         * Mock implementation of animateCardToHand for testing. In a real test, this would be more complex and might involve checking calls to this method.
+         * @param {object} card - The card being animated.
+         * @param {number} index - The index in the hand where the card is placed.
          */
         animateCardToHand: () => {},
       },

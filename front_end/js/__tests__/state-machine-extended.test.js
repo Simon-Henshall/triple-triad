@@ -11,7 +11,17 @@ describe("StateMachine extended", () => {
     const sm = new StateMachine(
       {
         phase1: {
+          /**
+           * Mock implementation of deps for testing. In a real test, this would return the actual dependencies needed to create the phase instance.
+           * @return {object} An object containing the dependencies for the phase factory.
+           */
           deps: () => ({}),
+          /**
+           * Mock implementation of factory for testing. In a real test, this would create and return the actual phase instance using the provided dependencies and transition function.
+           * @param {object} deps - The dependencies for the phase factory.
+           * @param {function} transition - The transition function to allow the phase to trigger transitions to other phases.
+           * @return {object} A mock phase instance with activate and deactivate methods.
+           */
           factory: () => ({ activate: jest.fn(), deactivate: jest.fn() }),
         },
       },
@@ -27,7 +37,17 @@ describe("StateMachine extended", () => {
     const sm = new StateMachine(
       {
         phase1: {
+          /**
+           * Mock implementation of deps for testing. In a real test, this would return the actual dependencies needed to create the phase instance.
+           * @return {object} An object containing the dependencies for the phase factory.
+           */
           deps: () => ({}),
+          /**
+           * Mock implementation of factory for testing. In a real test, this would create and return the actual phase instance using the provided dependencies and transition function.
+           * @param {object} deps - The dependencies for the phase factory.
+           * @param {function} transition - The transition function to allow the phase to trigger transitions to other phases.
+           * @return {object} A mock phase instance with activate and deactivate methods.
+           */
           factory: () => instance,
         },
       },
@@ -41,8 +61,38 @@ describe("StateMachine extended", () => {
   test("canTransitionTo allows transition if no allowedTransitions list", () => {
     const sm = new StateMachine(
       {
-        a: { deps: () => ({}), factory: () => ({ activate: jest.fn() }) },
-        b: { deps: () => ({}), factory: () => ({ activate: jest.fn() }) },
+        a: {
+          /**
+           * Mock implementation of deps for testing. In a real test, this would return the actual dependencies needed to create the phase instance.
+           * @return {object} An object containing the dependencies for the phase factory.
+           */
+          deps: () => ({}) /**
+           *
+           */,
+          /**
+           * Mock implementation of factory for testing. In a real test, this would create and return the actual phase instance using the provided dependencies and transition function.
+           * @param {object} deps - The dependencies for the phase factory.
+           * @param {function} transition - The transition function to allow the phase to trigger transitions to other phases.
+           * @return {object} A mock phase instance with activate and deactivate methods.
+           */
+          factory: () => ({ activate: jest.fn() }),
+        },
+        b: {
+          /**
+           * Mock implementation of deps for testing. In a real test, this would return the actual dependencies needed to create the phase instance.
+           * @return {object} An object containing the dependencies for the phase factory.
+           */
+          deps: () => ({}) /**
+           *
+           */,
+          /**
+           * Mock implementation of factory for testing. In a real test, this would create and return the actual phase instance using the provided dependencies and transition function.
+           * @param {object} deps - The dependencies for the phase factory.
+           * @param {function} transition - The transition function to allow the phase to trigger transitions to other phases.
+           * @return {object} A mock phase instance with activate and deactivate methods.
+           */
+          factory: () => ({ activate: jest.fn() }),
+        },
       },
       {},
     );
@@ -52,25 +102,62 @@ describe("StateMachine extended", () => {
 
   test("canTransitionTo denies unknown phase", () => {
     const sm = new StateMachine(
-      { a: { deps: () => ({}), factory: () => ({}) } },
+      {
+        a: {
+          /**
+           * Mock implementation of deps for testing. In a real test, this would return the actual dependencies needed to create the phase instance.
+           * @return {object} An object containing the dependencies for the phase factory.
+           */
+          deps: () => ({}) /**
+           *
+           */,
+          /**
+           * Mock implementation of factory for testing. In a real test, this would create and return the actual phase instance using the provided dependencies and transition function.
+           * @param {object} deps - The dependencies for the phase factory.
+           * @param {function} transition - The transition function to allow the phase to trigger transitions to other phases.
+           * @return {object} A mock phase instance with activate and deactivate methods.
+           */
+          factory: () => ({}),
+        },
+      },
       {},
     );
     expect(sm.canTransitionTo("unknown")).toBe(false);
   });
 
   test("phase transition function from factory calls state machine", async () => {
-    let transitionFn;
+    let transitionFunction;
     const sm = new StateMachine(
       {
         phase1: {
+          /**
+           * Mock implementation of deps for testing. In a real test, this would return the actual dependencies needed to create the phase instance.
+           * @return {object} An object containing the dependencies for the phase factory.
+           */
           deps: () => ({}),
+          /**
+           * Mock implementation of factory for testing. In a real test, this would create and return the actual phase instance using the provided dependencies and transition function.
+           * @param {object} deps - The dependencies for the phase factory.
+           * @param {function} transition - The transition function to allow the phase to trigger transitions to other phases.
+           * @return {object} A mock phase instance with activate and deactivate methods.
+           */
           factory: (deps, transition) => {
-            transitionFn = transition;
+            transitionFunction = transition;
             return { activate: jest.fn(), deactivate: jest.fn() };
           },
         },
         phase2: {
+          /**
+           * Mock implementation of deps for testing. In a real test, this would return the actual dependencies needed to create the phase instance.
+           * @return {object} An object containing the dependencies for the phase factory.
+           */
           deps: () => ({}),
+          /**
+           * Mock implementation of factory for testing. In a real test, this would create and return the actual phase instance using the provided dependencies and transition function.
+           * @param {object} deps - The dependencies for the phase factory.
+           * @param {function} transition - The transition function to allow the phase to trigger transitions to other phases.
+           * @return {object} A mock phase instance with activate and deactivate methods.
+           */
           factory: () => ({ activate: jest.fn(), deactivate: jest.fn() }),
         },
       },
@@ -78,14 +165,29 @@ describe("StateMachine extended", () => {
     );
 
     await sm.transitionTo("phase1");
-    await transitionFn("phase2", { foo: 1 });
+    await transitionFunction("phase2", { foo: 1 });
     expect(sm.getCurrentPhaseName()).toBe("phase2");
   });
 
   test("onChange unsubscribe stops listener", async () => {
     const sm = new StateMachine(
       {
-        a: { deps: () => ({}), factory: () => ({ activate: jest.fn() }) },
+        a: {
+          /**
+           * Mock implementation of deps for testing. In a real test, this would return the actual dependencies needed to create the phase instance.
+           * @return {object} An object containing the dependencies for the phase factory.
+           */
+          deps: () => ({}) /**
+           *
+           */,
+          /**
+           * Mock implementation of factory for testing. In a real test, this would create and return the actual phase instance using the provided dependencies and transition function.
+           * @param {object} deps - The dependencies for the phase factory.
+           * @param {function} transition - The transition function to allow the phase to trigger transitions to other phases.
+           * @return {object} A mock phase instance with activate and deactivate methods.
+           */
+          factory: () => ({ activate: jest.fn() }),
+        },
       },
       {},
     );
@@ -101,7 +203,22 @@ describe("StateMachine extended", () => {
   test("shutdown clears state and listeners", async () => {
     const sm = new StateMachine(
       {
-        a: { deps: () => ({}), factory: () => ({ activate: jest.fn() }) },
+        a: {
+          /**
+           * Mock implementation of deps for testing. In a real test, this would return the actual dependencies needed to create the phase instance.
+           * @return {object} An object containing the dependencies for the phase factory.
+           */
+          deps: () => ({}) /**
+           *
+           */,
+          /**
+           * Mock implementation of factory for testing. In a real test, this would create and return the actual phase instance using the provided dependencies and transition function.
+           * @param {object} deps - The dependencies for the phase factory.
+           * @param {function} transition - The transition function to allow the phase to trigger transitions to other phases.
+           * @return {object} A mock phase instance with activate and deactivate methods.
+           */
+          factory: () => ({ activate: jest.fn() }),
+        },
       },
       {},
     );

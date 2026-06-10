@@ -3,8 +3,12 @@
  * @description Unit tests for the phases module.
  */
 
-import { jest } from "@jest/globals";
 import phases, { PhaseChecker } from "../game/phases.js";
+
+/**
+ * A mock transition function for testing phase factories.
+ */
+const transition = () => {};
 
 describe("PhaseChecker", () => {
   test("initial state is all false", () => {
@@ -122,9 +126,9 @@ describe("phases registry", () => {
 
   test("every phase factory can be called without error except confirmation (object not class)", () => {
     /**
-     *
+     * Helper function to test that a phase factory can be instantiated without throwing an error. The confirmation phase is an object literal, so we expect it to throw if we try to instantiate it with `new`.
+     * @param {string} phaseName - The name of the phase to test.
      */
-    const transition = () => {};
     const phaseNames = Object.keys(phases);
     for (const name of phaseNames) {
       if (name === "confirmation") {
@@ -142,7 +146,8 @@ describe("phases registry", () => {
       resolutionView: {},
       scoreboard: {
         /**
-         *
+         * Mock implementation of update for testing. In a real test, this would be more complex and might involve checking calls to this method.
+         * @param {object} changes - The changes to update the scoreboard with.
          */
         update: () => {},
       },

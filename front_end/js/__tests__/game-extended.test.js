@@ -5,7 +5,6 @@
 
 import { jest } from "@jest/globals";
 import { Game } from "../shared/game/game.js";
-import { BoardModel } from "../shared/board/board-model.js";
 import { BoardView } from "../shared/board/board-view.js";
 import { PreviewCard } from "../shared/ui/preview-card.js";
 import { InfoBox } from "../shared/ui/info-box.js";
@@ -138,9 +137,7 @@ describe("Game (extended)", () => {
       jest
         .spyOn(deckSelectionUI.DeckSelectionUI, "getSelectedCard")
         .mockReturnValue(card);
-      const showSpy = jest
-        .spyOn(PreviewCard, "showPreviewCard")
-        .mockImplementation(() => {});
+      jest.spyOn(PreviewCard, "showPreviewCard").mockImplementation(() => {});
 
       const playerModel = { deck: [] };
       Game.controllers.cursorController = {

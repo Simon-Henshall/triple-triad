@@ -44,7 +44,7 @@ describe("ResolutionView", () => {
   });
 
   test("refreshCardFace does nothing for null card", () => {
-    expect(() => view.refreshCardFace(null)).not.toThrow();
+    expect(() => view.refreshCardFace()).not.toThrow();
   });
 
   test("refreshCardFace does nothing for card without children", () => {

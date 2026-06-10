@@ -7,7 +7,6 @@
 import { jest } from "@jest/globals";
 import { gameInit } from "../shared/game/game-init.js";
 import { Game } from "../shared/game/game.js";
-import { BoardModel } from "../shared/board/board-model.js";
 
 describe("gameInit", () => {
   beforeEach(() => {

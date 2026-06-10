@@ -85,9 +85,9 @@ describe("BoardModel extended", () => {
   });
 
   test("generateElements has between 1 and 3 non-zero elements", () => {
-    for (let i = 0; i < 20; i++) {
+    for (let index = 0; index < 20; index++) {
       const elements = BoardModel.generateElements();
-      const nonZero = elements.filter((e) => e !== 0).length;
+      const nonZero = elements.filter((element) => element !== 0).length;
       expect(nonZero).toBeGreaterThanOrEqual(1);
       expect(nonZero).toBeLessThanOrEqual(3);
     }

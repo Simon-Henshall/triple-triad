@@ -5,7 +5,6 @@
 
 import { jest } from "@jest/globals";
 import { Game } from "../shared/game/game.js";
-import { debug } from "../utilities/debug.js";
 
 describe("CursorModel", () => {
   let CursorModel;
@@ -80,7 +79,6 @@ describe("CursorModel", () => {
 
     test("clear sets playerChoosingCard to false", () => {
       CursorModel.playerHand.clear();
-      const PhaseChecker = undefined; // Will be checked via import
     });
   });
 

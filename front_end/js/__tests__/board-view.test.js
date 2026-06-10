@@ -34,8 +34,8 @@ describe("BoardView", () => {
     BoardView.generateGrid();
 
     expect(BoardModel.squares).toHaveLength(9);
-    for (let i = 0; i < 9; i++) {
-      expect(BoardModel.boardArray[i].element).toBeDefined();
+    for (let index = 0; index < 9; index++) {
+      expect(BoardModel.boardArray[index].element).toBeDefined();
     }
   });
 
@@ -60,9 +60,7 @@ describe("BoardView", () => {
       removeChild: jest.fn(),
       addChild: jest.fn(),
     };
-    BoardModel.squares = [
-      { id: 1, container, elementGraphic: { name: "x" } },
-    ];
+    BoardModel.squares = [{ id: 1, container, elementGraphic: { name: "x" } }];
     BoardView.redrawSquare(1);
     expect(container.removeChild).toHaveBeenCalled();
   });

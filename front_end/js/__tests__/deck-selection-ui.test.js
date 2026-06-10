@@ -10,7 +10,6 @@ import { Card } from "../shared/card/card.js";
 describe("DeckSelectionUI", () => {
   let DeckSelectionUI;
   let mockController;
-  let mockContainer;
 
   beforeAll(async () => {
     jest.unstable_mockModule(

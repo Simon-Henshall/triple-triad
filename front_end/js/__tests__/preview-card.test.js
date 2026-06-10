@@ -30,7 +30,7 @@ describe("PreviewCard", () => {
   });
 
   test("showPreviewCard with null card does nothing", () => {
-    expect(() => PreviewCard.showPreviewCard(null)).not.toThrow();
+    expect(() => PreviewCard.showPreviewCard()).not.toThrow();
   });
 
   test("showPreviewCard with card without visuals does nothing", () => {
