@@ -2,7 +2,7 @@ export default {
   testEnvironment: "node",
   transform: {},
   moduleDirectories: ["node_modules"], // standard
-  verbose: true,
+  verbose: false,
   setupFilesAfterEnv: ["./front_end/js/__tests__/setup.js"],
   testPathIgnorePatterns: ["/node_modules/", "setup.js"],
   collectCoverage: true,
