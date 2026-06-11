@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `card` (
   `strength_right` TINYINT UNSIGNED  NOT NULL,
   `strength_down` TINYINT UNSIGNED   NOT NULL,
   `strength_left` TINYINT UNSIGNED   NOT NULL,
-  `element_id`    TINYINT UNSIGNED   NOT NULL DEFAULT 0,
+  `element_id`    TINYINT UNSIGNED   DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `idx_element_id` (`element_id`),
   CONSTRAINT `fk_card_element` FOREIGN KEY (`element_id`) REFERENCES `element` (`id`)
