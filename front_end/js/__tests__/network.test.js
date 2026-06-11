@@ -55,7 +55,7 @@ test("fetchPlayerCards makes correct POST request and returns JSON", async () =>
 
   const result = await fetchPlayerCards(42);
 
-  expect(capturedUrl).toBe("/back_end/includes/get_player_cards.php");
+  expect(capturedUrl).toBe("front_end/api/get_player_cards.php");
   expect(capturedOptions.method).toBe("POST");
   expect(capturedOptions.headers["Content-Type"]).toBe("application/json");
   expect(capturedOptions.credentials).toBe("same-origin");
