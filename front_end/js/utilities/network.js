@@ -13,7 +13,7 @@ export async function fetchPlayerCards(playerId, { timeout = 7000 } = {}) {
   const timer = setTimeout(() => controller.abort(), timeout);
 
   try {
-    const result = await fetch("/back_end/includes/get_player_cards.php", {
+    const result = await fetch("front_end/api/get_player_cards.php", {
       method: "POST",
       credentials: "same-origin", // include cookies if needed
       headers: { "Content-Type": "application/json" },

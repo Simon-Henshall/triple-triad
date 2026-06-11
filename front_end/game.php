@@ -1,3 +1,5 @@
+<?php require_once 'config.php'; ?>
+
 <div id="game">
   <canvas id="gameArea" width="950" height="650"></canvas>
 </div>

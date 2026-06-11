@@ -1,15 +1,12 @@
 <?php
 
-class Player
-{
-  private int $id;
-  private string $name;
+namespace TripleTriad;
 
-  public function __construct(int $id, string $name)
-  {
-    $this->id = $id;
-    $this->name = $name;
-  }
+use PDO;
+
+class Card
+{
+  public function __construct(private int $id, private string $name) {}
 
   public function getId()
   {
@@ -24,7 +21,7 @@ class Player
   public static function getAll()
   {
     $db = new Database();
-    $stmt = $db->connect()->prepare("SELECT id, name FROM player");
+    $stmt = $db->connect()->prepare("SELECT id, name FROM card");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_CLASS, self::class);
   }
@@ -32,22 +29,22 @@ class Player
   public static function getById(int $id)
   {
     $db = new Database();
-    $stmt = $db->connect()->prepare("SELECT id, name FROM player WHERE id = ?");
+    $stmt = $db->connect()->prepare("SELECT id, name FROM card WHERE id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch(PDO::FETCH_CLASS, self::class);
   }
 
-  public function addCard(int $cardId)
+  public function addPlayer(int $playerId)
   {
     $db = new Database();
     $stmt = $db->connect()->prepare("INSERT INTO player_card (player_id, card_id) VALUES (?, ?)");
-    $stmt->execute([$this->id, $cardId]);
+    $stmt->execute([$playerId, $this->id]);
   }
 
-  public function removeCard(int $cardId)
+  public function removePlayer(int $playerId)
   {
     $db = new Database();
     $stmt = $db->connect()->prepare("DELETE FROM player_card WHERE player_id = ? AND card_id = ?");
-    $stmt->execute([$this->id, $cardId]);
+    $stmt->execute([$playerId, $this->id]);
   }
 }

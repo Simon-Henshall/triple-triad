@@ -1,6 +1,10 @@
 <?php
 
-class Card
+namespace TripleTriad;
+
+use PDO;
+
+class Player
 {
   private int $id;
   private string $name;
@@ -24,7 +28,7 @@ class Card
   public static function getAll()
   {
     $db = new Database();
-    $stmt = $db->connect()->prepare("SELECT id, name FROM card");
+    $stmt = $db->connect()->prepare("SELECT id, name FROM player");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_CLASS, self::class);
   }
@@ -32,22 +36,22 @@ class Card
   public static function getById(int $id)
   {
     $db = new Database();
-    $stmt = $db->connect()->prepare("SELECT id, name FROM card WHERE id = ?");
+    $stmt = $db->connect()->prepare("SELECT id, name FROM player WHERE id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch(PDO::FETCH_CLASS, self::class);
   }
 
-  public function addPlayer(int $playerId)
+  public function addCard(int $cardId)
   {
     $db = new Database();
     $stmt = $db->connect()->prepare("INSERT INTO player_card (player_id, card_id) VALUES (?, ?)");
-    $stmt->execute([$playerId, $this->id]);
+    $stmt->execute([$this->id, $cardId]);
   }
 
-  public function removePlayer(int $playerId)
+  public function removeCard(int $cardId)
   {
     $db = new Database();
     $stmt = $db->connect()->prepare("DELETE FROM player_card WHERE player_id = ? AND card_id = ?");
-    $stmt->execute([$playerId, $this->id]);
+    $stmt->execute([$this->id, $cardId]);
   }
 }
