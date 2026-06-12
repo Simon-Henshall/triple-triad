@@ -26,7 +26,10 @@ import { InputModel } from "../input/input-model.js";
 import { InputController } from "../input/input-controller.js";
 
 import { BoardModel } from "../board/board-model.js";
-import { createDeck } from "../card/card-factory.js";
+import {
+  createDeckFromFallback,
+  createDeckFromApi,
+} from "../card/card-factory.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 
@@ -208,7 +211,7 @@ export const gameInit = {
   // ---------------------------------------------
   // Full Game Init
   // ---------------------------------------------
-  async all() {
+  async all(playerApiCards) {
     console.log("[Game-Init] Starting setup...");
 
     // Stage + UI
@@ -229,9 +232,13 @@ export const gameInit = {
     this.cursors();
     this.events(inputController);
 
-    // Decks
-    const playerDeck = createDeck("player");
-    const aiDeck = createDeck("ai");
+    // Decks – use API data if available, otherwise fall back to static data
+    const playerDeck = playerApiCards
+      ? createDeckFromApi(playerApiCards, "player")
+      : createDeckFromFallback("player");
+    const aiDeck = playerApiCards
+      ? createDeckFromApi(playerApiCards, "ai")
+      : createDeckFromFallback("ai");
     playerModel.deck = playerDeck;
     aiTurnModel.deck = aiDeck;
 

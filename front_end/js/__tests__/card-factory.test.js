@@ -3,7 +3,7 @@
  * @description Unit tests for the {@link createDeck} factory function.
  */
 
-import { createDeck } from "../shared/card/card-factory.js";
+import { createDeckFromFallback } from "../shared/card/card-factory.js";
 
 describe("createDeck", () => {
   beforeEach(() => {
