@@ -210,7 +210,7 @@ export default class CardClaimView {
         container.scaleY = sy;
         this.stage.update();
       } else {
-        // Use a fallback scale - images should load from cache quickly
+        // Use a default scale - images should load from cache quickly
         container.scaleX = offsets.scaledCardWidth / offsets.cardWidth;
         container.scaleY = offsets.scaledCardHeight / offsets.cardHeight;
       }

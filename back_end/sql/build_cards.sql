@@ -2,8 +2,7 @@
 -- Triple Triad – MySQL Card Schema & Seed Data
 -- ============================================================
 -- This script creates the `element`, `card`, `player`, and
--- `player_card` tables and inserts seed data from
--- front_end/js/data/cards.js and front_end/js/data/fallback-cards.js.
+-- `player_card` tables and inserts seed data.
 -- ============================================================
 
 -- Use the application database (adjust as needed)
@@ -206,8 +205,9 @@ INSERT INTO `player` (`id`, `name`) VALUES
 (1, 'Player 1');
 
 -- ============================================================
--- Seed data – player 1 card inventory (from fallback-cards.js)
--- Only cards with count > 0 are included.
+-- Seed data – player 1 card inventory
+-- Sample card data for testing; adjust quantities as needed.
+-- Must come after cards and players to satisfy FK constraints.
 -- ============================================================
 INSERT INTO `player_card` (`player_id`, `card_id`, `quantity`) VALUES
 (1,   1, 6),

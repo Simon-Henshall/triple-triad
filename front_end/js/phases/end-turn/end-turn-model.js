@@ -27,7 +27,7 @@ export default class EndTurnModel {
       return this.scoreboard;
     }
 
-    // Fallback to the global Game.ui.scoreBoard if available
+    // Use the global Game.ui.scoreBoard if available
     return Game?.ui?.scoreBoard ?? undefined;
   }
 }

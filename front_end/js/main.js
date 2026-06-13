@@ -18,10 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.warn("[main] API returned success=false:", response.message);
       }
     } catch (fetchError) {
-      console.warn(
-        "[main] Could not fetch player cards, using fallback:",
-        fetchError,
-      );
+      console.warn("[main] Could not fetch player cards:", fetchError);
     }
 
     // Initialise the game, passing API cards if we got them
