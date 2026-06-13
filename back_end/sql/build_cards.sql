@@ -44,11 +44,20 @@ CREATE TABLE IF NOT EXISTS `card` (
 -- ------------------------------------------------------------
 -- 2. Player table
 --     Stores player profile information.
+--     level_low / level_high define the range of card levels
+--     this player can own. unique_card_id is a FK to a specific
+--     rare card that only this player possesses.
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `player` (
-  `id`   INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(64)  NOT NULL,
-  PRIMARY KEY (`id`)
+  `id`              INT UNSIGNED   NOT NULL AUTO_INCREMENT,
+  `name`            VARCHAR(64)    NOT NULL,
+  `level_low`       TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `level_high`      TINYINT UNSIGNED NOT NULL DEFAULT 10,
+  `unique_card_id`  INT UNSIGNED   DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_unique_card` (`unique_card_id`),
+  CONSTRAINT `fk_player_unique_card` FOREIGN KEY (`unique_card_id`) REFERENCES `card` (`id`)
+    ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
@@ -202,9 +211,11 @@ INSERT INTO `card` (`display_name`, `image`, `strength_up`, `strength_right`, `s
 
 -- ============================================================
 -- Seed data – players
+-- Player 1 uses the default level range (1-10) and has
+-- no unique card by default.
 -- ============================================================
-INSERT INTO `player` (`id`, `name`) VALUES
-(1, 'Player 1');
+INSERT INTO `player` (`id`, `name`, `level_low`, `level_high`, `unique_card_id`) VALUES
+(1, 'Player 1', 1, 10, NULL);
 
 -- ============================================================
 -- Seed data – player 1 card inventory
