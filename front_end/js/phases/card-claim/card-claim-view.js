@@ -1,6 +1,5 @@
 import { config } from "../../constants/config.js";
 import { offsets } from "../../constants/offsets.js";
-import { Game } from "../../shared/game/game.js";
 
 /**
  * CardClaimView
@@ -200,7 +199,7 @@ export default class CardClaimView {
 
     // Scale to fit target card dimensions
     /**
-     *
+     * Check the scale of the face bitmap and update the container accordingly.
      */
     const checkScale = () => {
       const img = faceBitmap.image;
@@ -222,7 +221,9 @@ export default class CardClaimView {
 
     // Also listen for load event in case images load asynchronously
     /**
-     *
+     * Handle the image load event to ensure the card is scaled correctly once the image is available.
+     * This is important for cases where the image is not immediately available (e.g. not cached).
+     * Once the image loads, we check the scale and update the container.
      */
     const onImgLoad = () => {
       checkScale();

@@ -154,7 +154,7 @@ describe("createDeckFromApi", () => {
       globalThis.createjs = {
         Container: function () {
           /**
-           *
+           * Mock implementation of addChild that adds a child to the container's children array.
            */
           this.addChild = () => {};
           this.children = [];

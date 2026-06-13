@@ -52,7 +52,10 @@ export default class CardClaimController {
     }
 
     /**
-     *
+     * Handle keydown events for navigating the card selection and confirming/skipping.
+     * ArrowLeft/ArrowRight: move selection left/right (wrap around)
+     * Enter: claim the currently selected card
+     * Escape: skip claiming a card
      */
     this._keyHandler = (event) => {
       switch (event.key) {

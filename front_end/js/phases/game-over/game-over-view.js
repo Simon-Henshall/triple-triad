@@ -222,9 +222,11 @@ export default class GameOverView {
     }
 
     /**
-     *
+     * Handle keydown event to dismiss the game over overlay. This is a one-shot handler that will remove itself after being triggered.
+     * It also invokes the optional onDismiss callback passed to displayOutcome.
+     * @this {GameOverView}
      */
-    this._dismissHandler = (event) => {
+    this._dismissHandler = () => {
       // Ignore if the overlay is already gone
       if (!this.container || !this.container.parent) {
         return;
