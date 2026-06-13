@@ -1,8 +1,9 @@
 -- ============================================================
 -- Triple Triad – MySQL Card Schema & Seed Data
 -- ============================================================
--- This script creates the `element`, `card`, `player`, and
--- `player_card` tables and inserts seed data.
+-- This script creates the `element`, `card`, `player`,
+-- `player_level`, and `player_card` tables and inserts seed
+-- data.
 -- ============================================================
 
 -- Use the application database (adjust as needed)
@@ -42,17 +43,28 @@ CREATE TABLE IF NOT EXISTS `card` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
--- 2. Player table
+-- 2. Level value reference table
+--     Holds the valid card levels (1-10). Used as a lookup
+--     target so the player_level bridge table can enforce
+--     referential integrity.
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `level_value` (
+  `value` TINYINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`value`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 3. Player table
 --     Stores player profile information.
---     level_low / level_high define the range of card levels
---     this player can own. unique_card_id is a FK to a specific
---     rare card that only this player possesses.
+--     unique_card_id is a FK to a specific rare card that only
+--     this player possesses.  Location describes where in the
+--     world the player is found.
+--     Allowed card levels are stored in the player_level bridge table.
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `player` (
   `id`              INT UNSIGNED   NOT NULL AUTO_INCREMENT,
   `name`            VARCHAR(64)    NOT NULL,
-  `level_low`       TINYINT UNSIGNED NOT NULL DEFAULT 1,
-  `level_high`      TINYINT UNSIGNED NOT NULL DEFAULT 10,
+  `location`        VARCHAR(128)   DEFAULT NULL,
   `unique_card_id`  INT UNSIGNED   DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_unique_card` (`unique_card_id`),
@@ -61,7 +73,23 @@ CREATE TABLE IF NOT EXISTS `player` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
--- 3. Player-Card junction table (referenced in Card.php)
+-- 4. Player-Level bridge table
+--     Allows each player to own any combination of card levels
+--     (1-10). A player with entries for 1, 2, 4 and 5 would NOT
+--     have access to levels 3, 6-10.
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `player_level` (
+  `player_id` INT UNSIGNED NOT NULL,
+  `level`     TINYINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`player_id`, `level`),
+  CONSTRAINT `fk_pl_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT `fk_pl_level` FOREIGN KEY (`level`) REFERENCES `level_value` (`value`)
+    ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 5. Player-Card junction table (referenced in Card.php)
 --     Tracks which players own which cards and how many.
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `player_card` (
@@ -90,6 +118,12 @@ INSERT INTO `element` (`id`, `name`, `image_path`) VALUES
 (6, 'poison',    '6.png'),
 (7, 'holy',      '7.png'),
 (8, 'wind',      '8.png');
+
+-- ============================================================
+-- Seed data – level values (1 through 10)
+-- ============================================================
+INSERT INTO `level_value` (`value`) VALUES
+(1), (2), (3), (4), (5), (6), (7), (8), (9), (10);
 
 -- ============================================================
 -- Seed data – cards (110 cards from cards.js)
@@ -211,11 +245,18 @@ INSERT INTO `card` (`display_name`, `image`, `strength_up`, `strength_right`, `s
 
 -- ============================================================
 -- Seed data – players
--- Player 1 uses the default level range (1-10) and has
--- no unique card by default.
+-- Player 1 has no unique card by default.
 -- ============================================================
-INSERT INTO `player` (`id`, `name`, `level_low`, `level_high`, `unique_card_id`) VALUES
-(1, 'Player 1', 1, 10, NULL);
+INSERT INTO `player` (`id`, `name`, `location`, `unique_card_id`) VALUES
+(1, 'Player 1', NULL, NULL);
+
+-- ============================================================
+-- Seed data – player 1 allowed levels (all 10 levels)
+-- Player 1 can use cards of every level.
+-- ============================================================
+INSERT INTO `player_level` (`player_id`, `level`) VALUES
+(1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
+(1, 6), (1, 7), (1, 8), (1, 9), (1, 10);
 
 -- ============================================================
 -- Seed data – player 1 card inventory
