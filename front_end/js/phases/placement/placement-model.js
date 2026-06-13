@@ -163,6 +163,25 @@ export class PlacementModel {
 
     Game.stage.update();
 
+    // Check for game-over BEFORE transitioning to resolution.
+    // If the board is full, skip resolution and go directly to game-over.
+    // Note: we use direct instantiation here because this callback fires
+    // within a CreateJS tween chain that is outside the state machine's
+    // lifecycle (the placement model is created in game-init.js with
+    // transition=undefined). The GameOverController will use the state
+    // machine from Game.models for any follow-up transitions (e.g. card-claim).
+    if (BoardModel.isGameOver()) {
+      const gameOver = new GameOverController(
+        {
+          playerModel: Game.models.playerModel,
+          aiTurnModel: Game.models.aiTurnModel,
+        },
+        undefined,
+      );
+      gameOver.activate();
+      return;
+    }
+
     // Transition to resolution and provide lastPlacement info so the
     // `resolution` phase can inspect what was just placed.
     if (this.transition) {
@@ -174,20 +193,7 @@ export class PlacementModel {
       });
     }
 
-    // TODO: Move this logic to EndTurnController
-    // TODO: Then rely on .transition there
-    if (BoardModel.isGameOver()) {
-      const gameOver = new GameOverController(
-        {
-          playerModel: Game.models.playerModel,
-          aiTurnModel: Game.models.aiTurnModel,
-        },
-        undefined,
-      );
-      gameOver.activate();
-    } else {
-      this.controller.playerTurnSwitch();
-    }
+    this.controller.playerTurnSwitch();
   }
 
   /**

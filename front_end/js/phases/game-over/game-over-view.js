@@ -20,9 +20,11 @@ export default class GameOverView {
    * Display the game outcome with a stylised animated overlay.
    * @param {string} outcome - "win", "lose", or "draw"
    * @param {Object} counts - { aiCards, playerCards } card counts
+   * @param {Function} [onDismiss] - optional callback invoked after the overlay is dismissed
    */
-  displayOutcome(outcome, counts) {
+  displayOutcome(outcome, counts, onDismiss) {
     try {
+      this._onDismissCallback = onDismiss;
       this._buildOverlay(outcome, counts);
     } catch (error) {
       console.error(["[Game Over View] Failed to display outcome"], error);
@@ -228,10 +230,20 @@ export default class GameOverView {
         return;
       }
 
-      // Speed up dismissal rather than instant kill
-      this._dismiss();
+      // Remove the listener immediately to prevent double-fire
       document.removeEventListener("keydown", this._dismissHandler);
       this._dismissHandler = undefined;
+
+      // Invoke the callback synchronously before tween cleanup,
+      // so the state machine's phase context is still valid.
+      const callback = this._onDismissCallback;
+      this._onDismissCallback = undefined;
+      if (callback) {
+        callback();
+      }
+
+      // Speed up dismissal rather than instant kill
+      this._dismiss();
     };
 
     document.addEventListener("keydown", this._dismissHandler);
@@ -250,7 +262,13 @@ export default class GameOverView {
     if (this.container) {
       createjs.Tween.get(this.container)
         .to({ alpha: 0 }, 300, createjs.Ease.quartIn)
-        .call(() => this.cleanup());
+        .call(() => {
+          this.cleanup();
+          if (this._onDismissCallback) {
+            this._onDismissCallback();
+            this._onDismissCallback = undefined;
+          }
+        });
     }
   }
 

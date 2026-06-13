@@ -20,6 +20,7 @@ import { ResolutionController } from "../phases/resolution/resolution-controller
 import EndTurnController from "../phases/end-turn/end-turn-controller.js";
 import { AITurnController } from "../phases/ai-turn/ai-turn-controller.js";
 import GameOverController from "../phases/game-over/game-over-controller.js";
+import CardClaimController from "../phases/card-claim/card-claim-controller.js";
 
 export const PhaseChecker = {
   playerSelectingHand: false,
@@ -159,6 +160,21 @@ export default {
      */
     factory: (localDeps, transition) =>
       new AITurnController(localDeps, transition),
+  },
+
+  // Card claim: player selects one of the AI's initial cards to claim (after a win)
+  "card-claim": {
+    /**
+     * Dependencies for the card claim phase
+     */
+    deps: (rootDeps) => ({
+      aiInitialCards: rootDeps.aiInitialCards || [],
+    }),
+    /**
+     * The card claim phase factory
+     */
+    factory: (localDeps, transition) =>
+      new CardClaimController(localDeps, transition),
   },
 
   // Game over: show results and possibly restart

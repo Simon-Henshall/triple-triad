@@ -33,6 +33,9 @@ import {
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 
+/** @type {import("../card/card.js").Card[]|undefined} */
+let aiInitialCards;
+
 export const gameInit = {
   // ---------------------------------------------
   // CreateJS Stage
@@ -120,11 +123,12 @@ export const gameInit = {
         "deck-selection": ["confirmation"],
         confirmation: ["deck-selection", "hand-select"],
         "hand-select": ["placement"],
-        placement: ["resolution"],
+        placement: ["resolution", "game-over"],
         resolution: ["end-turn"],
         "end-turn": ["ai-turn", "hand-select"],
         "ai-turn": ["placement"],
-        "game-over": [],
+        "game-over": ["card-claim"],
+        "card-claim": ["game-over"],
       },
       rootDeps: {},
     });
@@ -250,12 +254,16 @@ export const gameInit = {
     const drawnCards = aiTurnModel.populateHand();
     aiTurnController.initHand(drawnCards);
 
+    // Store a snapshot of the AI's initial hand *before* gameplay starts modifying it
+    aiInitialCards = drawnCards.map((card) => card.clone({ owner: "ai" }));
+
     // Phase Dependencies
     stateMachine.setRootDependencies({
       playerModel,
       playerDeck,
       cursorController: Game.controllers.cursorController,
       selectionUI: playerModel,
+      aiInitialCards,
 
       aiTurnModel,
       aiTurnController,
