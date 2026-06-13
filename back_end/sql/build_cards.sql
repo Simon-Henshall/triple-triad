@@ -245,18 +245,439 @@ INSERT INTO `card` (`display_name`, `image`, `strength_up`, `strength_right`, `s
 
 -- ============================================================
 -- Seed data – players
--- Player 1 has no unique card by default.
+-- unique_card_id values reference rare cards held by the player.
+--   Quistis=103, MiniMog=80, Zell=105, Pandemona=92,
+--   Doomtrain=97, Siren=85, Kiros=100, Rinoa=106,
+--   Ifrit=84, Irvine=104, Quezacotl=82, Selphie=102
 -- ============================================================
 INSERT INTO `player` (`id`, `name`, `location`, `unique_card_id`) VALUES
-(1, 'Player 1', NULL, NULL);
+-- Player 1 (human player)
+(  1, 'Player 1',                  NULL,                                                    NULL),
 
 -- ============================================================
--- Seed data – player 1 allowed levels (all 10 levels)
--- Player 1 can use cards of every level.
+-- Balamb Garden
+-- ============================================================
+(  2, 'Trepe Groupie #1',          'Balamb Garden - Cafetaria, guy in the back',             103),
+(  3, 'Friend Trepe Groupie #1',   'Balamb Garden - Cafetaria, guy in the front',            NULL),
+(  4, 'Gatekeeper',                'Balamb Garden - Gate Reception',                        NULL),
+(  5, 'Running Boy',               'Balamb Garden - Main Halls',                             80),
+(  6, 'Trepe Groupie #2',          'Balamb Garden - 2nd Floor Classroom',                   103),
+(  7, 'Trepe Groupie #3',          'Balamb Garden - 2nd Floor Classroom',                   103),
+(  8, 'Cafetaria Lady',            'Balamb Garden - Cafetaria behind counter',              NULL),
+(  9, 'Guy on bench',              'Balamb Garden - (Random) Right Main Hall',              NULL),
+( 10, 'Walking Student Girl',      'Balamb Garden - (Random) Hall to Library',              NULL),
+( 11, 'Dark Skinned Student',      'Balamb Garden - (Random) Hall to Library',              NULL),
+( 12, 'Library Girl w/Pigtail',    'Balamb Garden - Library, behind counter',               NULL),
+( 13, 'Male Student in blue',      'Balamb Garden - Library, middle of room',               NULL),
+( 14, 'Sitting Student',           'Balamb Garden - Library, Esuna Draw Screen',            NULL),
+( 15, 'Talking Student Girl',      'Balamb Garden - Library Reading Room',                  NULL),
+( 16, 'Boy in Infirmary Hall',     'Balamb Garden - (Random) Hallway to Infirmary',        NULL),
+( 17, 'Blonde Girl in Main Hall',  'Balamb Garden - (Random) Main Hall',                   NULL),
+( 18, 'Girl with short pants',     'Balamb Garden - (Random) Main Hall',                   NULL),
+( 19, '3 Girls Group',             'Balamb Garden - Hallway to Dormitory',                  NULL),
+( 20, 'White Male Student',        'Balamb Garden - 2nd Floor Hallway to Class',            NULL),
+( 21, 'Right Girl Talking',        'Balamb Garden - 2nd Floor Hallway to Class',            NULL),
+( 22, 'Left Girl Talking',         'Balamb Garden - (Random) 2nd Floor Hallway to Class',  NULL),
+( 23, 'Left Guy Talking',          'Balamb Garden - (Random) 2nd Floor Hallway to Class',  NULL),
+
+-- ============================================================
+-- Balamb Town
+-- ============================================================
+( 24, 'Ma Dincht',                 'Balamb Town - Zell''s House',                           105),
+( 25, 'Girl in a band',            'Balamb Town - Entrance Screen (Disc 1)',                NULL),
+( 26, 'Station Conductor',         'Balamb Town - Entrance of the Station',                 NULL),
+( 27, 'Galbadian Soldier',        'Balamb Town - Docks (Balamb Lockdown ONLY)',            NULL),
+( 28, 'Hotel Owner',               'Balamb Town - In front of the Hotel',                   92),
+( 29, 'Hotel Owner''s Daughter',   'Balamb Town - Old Man House / In front of the Hotel',  92),
+( 30, 'Girl with dog',             'Balamb Town - (Random) Docks',                          NULL),
+( 31, 'Student skipping class',    'Balamb Town - (Random) Docks',                          NULL),
+( 32, 'Chef with red shirt',       'Balamb Town - Docks (After Lockdown)',                  NULL),
+( 33, 'Big Bad Rascal',            'Balamb Town - (Events) Dincht Living Room',             NULL),
+( 34, 'Girl sitting',              'Balamb Town - Entrance Station',                        NULL),
+
+-- ============================================================
+-- Timber
+-- ============================================================
+( 35, 'Left Guard',                'Timber - Entrance/Exit to Worldmap',                    NULL),
+( 36, 'Cat Loving Girl',           'Timber - In the street near the Hotel',                 NULL),
+( 37, 'Girl looking at Models',    'Timber - In the Hotel',                                 NULL),
+( 38, 'Guy who likes Girls',       'Timber - (Random) Overpass',                            NULL),
+( 39, 'Guy in White',              'Timber - (Random) Galbadia Station',                    NULL),
+( 40, 'Old Lady',                  'Timber - Pet Shop Screen',                              NULL),
+( 41, 'Dark Woman/White Bikini',   'Timber - City Square Timber Maniacs',                   NULL),
+( 42, 'Old Lady (2)',              'Timber - Pet Shop Screen',                              NULL),
+( 43, 'Couple on Bench',           'Timber - Intersection to Pub+Station',                  NULL),
+( 44, 'Boy on Station Bridge',     'Timber - Eastern Station Bridge',                       NULL),
+( 45, 'Woman (Train Expert)',      'Timber - Eastern Station',                              NULL),
+( 46, 'Depressed Woman at Home',   'Timber - Old Man''s (Owl Tears) House',                 NULL),
+( 47, 'Pub Owner',                 'Timber - Timber Pub, upper right',                      97),
+( 48, 'Drunkard',                  'Timber - Back Alley',                                   NULL),
+( 49, 'Guard at TV Station path',  'Timber - After TV Station Events',                      NULL),
+
+-- ============================================================
+-- Dollet
+-- ============================================================
+( 50, 'Car Rental Woman',          'Dollet - Entrance Screen',                              NULL),
+( 51, 'Girl near Wheelchair Man',  'Dollet - Harbor (come from above)',                     NULL),
+( 52, 'Emo Kid in Green Jacket',   'Dollet - Harbor (come from below)',                     NULL),
+( 53, 'Man with Blue Sleeves',     'Dollet - Screen with stairs to beach',                  NULL),
+( 54, 'Girl at the beach',         'Dollet - Lapin Beach',                                  NULL),
+( 55, 'Son of Queen of Cards',     'Dollet - CQ''s Father Artist''s House',                 NULL),
+( 56, 'Woman near Pub',            'Dollet - Near the Shining Bomber Pub',                  NULL),
+( 57, 'Pub''s Waiter',             'Dollet - Behind counter',                               NULL),
+( 58, 'Old Man in Pub',            'Dollet - 2nd Floor Pub',                                NULL),
+( 59, 'Pub''s Owner',              'Dollet - Beat him -> Private Room',                     85),
+( 60, 'Shopping Lady in Yellow',   'Dollet - Walking in Nautilus Street',                   NULL),
+( 61, 'Old Man at Townsquare',     'Dollet - Townsquare',                                   NULL),
+( 62, 'Hotel Girl',                'Dollet - Dollet Hotel Main Hall',                       NULL),
+
+-- ============================================================
+-- Deling City
+-- ============================================================
+( 63, 'Travelling Lady from FH',   'Deling City - Across the street of Hotel',              NULL),
+( 64, 'Hotel Waitress',            'Deling City - Hotel Restaurant',                        NULL),
+( 65, 'Person near General Shop',  'Deling City - In the street with Shops',                NULL),
+( 66, 'Man in Black',              'Deling City - Across the Junk Shop',                    100),
+( 67, 'Old Woman',                 'Deling City - Street near Main Gate',                   NULL),
+( 68, 'Old Man',                   'Deling City - On Bench, Street near Main Gate',         NULL),
+( 69, 'General Caraway',           'Deling City - Caraway''s Mansion',                      106),
+( 70, 'Train Conductor',           'Deling City - City Train Station',                      NULL),
+( 71, 'Walking Woman',             'Deling City - Other street near Main Gate',             NULL),
+
+-- ============================================================
+-- Fisherman's Horizon
+-- ============================================================
+( 72, 'Familiar Face #3',          'FH - Nearby elevator going up',                         NULL),
+( 73, 'Martine',                   'FH - Right from Mayor''s House',                        84),
+( 74, 'Flo (Mayor''s Wife)',       'FH - Mayor''s House, Upstairs',                         104),
+( 75, 'Mayor Dobe',                'FH - Mayor''s House, Upstairs',                         82),
+( 76, 'Kid at Town Square',        'FH - Town Square near Station',                         NULL),
+( 77, 'Grease Monkey',             'FH - Grease Monkey''s House',                           NULL),
+( 78, 'Master Fisherman',          'FH - Crane (1st Visit ONLY)',                           NULL),
+
+-- ============================================================
+-- Winhill
+-- ============================================================
+( 79, 'Student Mercenary',         'Winhill - Nearby southern exit',                        NULL),
+( 80, 'Shop Owner',                'Winhill - Shop at southern exit',                       NULL),
+( 81, 'Hotel Owner',               'Winhill - In the Hotel',                                NULL),
+( 82, 'Old Man in Residence',      'Winhill - Residence in southern part',                  NULL),
+( 83, 'Man on bench',              'Winhill - Bench on North Town Square',                  NULL),
+( 84, 'Playing Girl',              'Winhill - North Town Square',                           NULL),
+( 85, 'Mansion Owner',             'Winhill - Man on the stairs in Mansion',                NULL),
+( 86, 'Blonde Woman',              'Winhill - At former Raine''s House',                    NULL),
+
+-- ============================================================
+-- Trabia Garden
+-- ============================================================
+( 87, 'Student in green',          'Trabia Garden - Path near entrance',                    NULL),
+( 88, 'Selphie''s Friend',         'Trabia Garden - Fountain Screen',                       102),
+( 89, 'Trabian Faculty',           'Trabia Garden - Fountain Screen (upper right)',         NULL),
+( 90, 'Girl Student',              'Trabia Garden - Garage Screen',                         NULL),
+( 91, 'Sitting Guy',               'Trabia Garden - Garage Screen',                         NULL),
+( 92, 'Girl with book',            'Trabia Garden - Classroom/Monitor Screen',              NULL),
+( 93, 'Mechanic',                  'Trabia Garden - Monitor Screen',                        NULL),
+( 94, 'Basketball Freak',          'Trabia Garden - Stage/Rocket Screen',                   NULL),
+( 95, 'Student near rocket',       'Trabia Garden - Stage/Rocket Screen',                   NULL),
+( 96, 'Boy at Basketball Court',   'Trabia Garden - Basketball Court',                      NULL),
+( 97, 'Girl in Bikini',            'Trabia Garden - Basketball Court',                      NULL),
+
+-- ============================================================
+-- Shumi Village
+-- ============================================================
+( 98, 'Left Shumi',                'Shumi Village - Entrance Guarding Draw Point',          NULL),
+( 99, 'Middle Shumi',              'Shumi Village - Entrance Guarding Draw Point',          NULL),
+(100, 'Right Shumi',               'Shumi Village - Entrance Guarding Draw Point',          NULL),
+(101, 'Shumi at a table',          'Shumi Village - First Underground Screen',              NULL),
+(102, 'Elder',                     'Shumi Village - Elder''s House',                        NULL),
+(103, 'Elder''s Assistant',        'Shumi Village - Elder''s House',                        NULL),
+(104, 'Artisan',                   'Shumi Village - Artisan''s House',                      NULL),
+(105, 'Busy Working Shumi',        'Shumi Village - Sculptor''s Workplace',                 NULL),
+(106, 'Sculptor',                  'Shumi Village - Sculptor''s Workplace',                 NULL),
+(107, 'Master Fisherman',          'Shumi Village - Pond (Only during the quest)',          NULL),
+
+-- ============================================================
+-- CC-Group (Disc 4)
+-- ============================================================
+(108, 'Joker',                     'Ragnarok - Elevator Room',                              NULL),
+(109, 'Jack',                      'Ragnarok - North from hangar',                          NULL),
+(110, 'Club',                      'Ragnarok - Aisle upstairs',                             NULL),
+(111, 'Right Diamond',             'Ragnarok - Hangar',                                     NULL),
+(112, 'Left Diamond',              'Ragnarok - Hangar',                                     NULL),
+(113, 'Spade',                     'Ragnarok - Aisle near hangar',                          NULL),
+(114, 'Heart',                     'Ragnarok - Entrance',                                   NULL),
+(115, 'King',                      'Ragnarok - Air Room',                                   NULL);
+
+-- ============================================================
+-- Seed data – player levels
 -- ============================================================
 INSERT INTO `player_level` (`player_id`, `level`) VALUES
-(1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
-(1, 6), (1, 7), (1, 8), (1, 9), (1, 10);
+-- Player 1 (human player – all levels)
+(  1, 1), (  1, 2), (  1, 3), (  1, 4), (  1, 5),
+(  1, 6), (  1, 7), (  1, 8), (  1, 9), (  1, 10),
+
+-- ============================================================
+-- Balamb Garden
+-- ============================================================
+-- #2  Trepe Groupie #1: 2,5
+(  2, 2), (  2, 5),
+-- #3  Friend Trepe Groupie #1: 1-3
+(  3, 1), (  3, 2), (  3, 3),
+-- #4  Gatekeeper: 1-3,5
+(  4, 1), (  4, 2), (  4, 3), (  4, 5),
+-- #5  Running Boy: 1-3
+(  5, 1), (  5, 2), (  5, 3),
+-- #6  Trepe Groupie #2: 1,3,5
+(  6, 1), (  6, 3), (  6, 5),
+-- #7  Trepe Groupie #3: 1,2,4,5
+(  7, 1), (  7, 2), (  7, 4), (  7, 5),
+-- #8  Cafetaria Lady: 1,2,4,5
+(  8, 1), (  8, 2), (  8, 4), (  8, 5),
+-- #9  Guy on bench: 1-3
+(  9, 1), (  9, 2), (  9, 3),
+-- #10 Walking Student Girl: 1,3,4
+( 10, 1), ( 10, 3), ( 10, 4),
+-- #11 Dark Skinned Student: 1,4
+( 11, 1), ( 11, 4),
+-- #12 Library Girl w/Pigtail: 1-3
+( 12, 1), ( 12, 2), ( 12, 3),
+-- #13 Male Student in blue: 1,3-5
+( 13, 1), ( 13, 3), ( 13, 4), ( 13, 5),
+-- #14 Sitting Student: 2-4
+( 14, 2), ( 14, 3), ( 14, 4),
+-- #15 Talking Student Girl: 1-5
+( 15, 1), ( 15, 2), ( 15, 3), ( 15, 4), ( 15, 5),
+-- #16 Boy in Infirmary Hall: 1-3
+( 16, 1), ( 16, 2), ( 16, 3),
+-- #17 Blonde Girl in Main Hall: 1-3
+( 17, 1), ( 17, 2), ( 17, 3),
+-- #18 Girl with short pants: 1,2
+( 18, 1), ( 18, 2),
+-- #19 3 Girls Group: 1,2,4
+( 19, 1), ( 19, 2), ( 19, 4),
+-- #20 White Male Student: 1-3
+( 20, 1), ( 20, 2), ( 20, 3),
+-- #21 Right Girl Talking: 1,3,4
+( 21, 1), ( 21, 3), ( 21, 4),
+-- #22 Left Girl Talking: (none listed)
+-- #23 Left Guy Talking:  (none listed)
+
+-- ============================================================
+-- Balamb Town
+-- ============================================================
+-- #24 Ma Dincht: 1,2,4,5
+( 24, 1), ( 24, 2), ( 24, 4), ( 24, 5),
+-- #25 Girl in a band: 1,3,4
+( 25, 1), ( 25, 3), ( 25, 4),
+-- #26 Station Conductor: 1,2
+( 26, 1), ( 26, 2),
+-- #27 Galbadian Soldier: 1,2,4,5
+( 27, 1), ( 27, 2), ( 27, 4), ( 27, 5),
+-- #28 Hotel Owner: 4,5
+( 28, 4), ( 28, 5),
+-- #29 Hotel Owner's Daughter: 1,3,4
+( 29, 1), ( 29, 3), ( 29, 4),
+-- #30 Girl with dog: 1-5
+( 30, 1), ( 30, 2), ( 30, 3), ( 30, 4), ( 30, 5),
+-- #31 Student skipping class: 3-5
+( 31, 3), ( 31, 4), ( 31, 5),
+-- #32 Chef with red shirt: 1,2,4,5
+( 32, 1), ( 32, 2), ( 32, 4), ( 32, 5),
+-- #33 Big Bad Rascal: (none listed)
+-- #34 Girl sitting: 1,2,3
+( 34, 1), ( 34, 2), ( 34, 3),
+
+-- ============================================================
+-- Timber
+-- ============================================================
+-- #35 Left Guard: 1,2,4
+( 35, 1), ( 35, 2), ( 35, 4),
+-- #36 Cat Loving Girl: 1,2
+( 36, 1), ( 36, 2),
+-- #37 Girl looking at Models: 4
+( 37, 4),
+-- #38 Guy who likes Girls: 1,2,4
+( 38, 1), ( 38, 2), ( 38, 4),
+-- #39 Guy in White: 1,3
+( 39, 1), ( 39, 3),
+-- #40 Old Lady: 1,3
+( 40, 1), ( 40, 3),
+-- #41 Dark Woman/White Bikini: 1
+( 41, 1),
+-- #42 Old Lady (2): 1,3
+( 42, 1), ( 42, 3),
+-- #43 Couple on Bench: 2,3,4
+( 43, 2), ( 43, 3), ( 43, 4),
+-- #44 Boy on Station Bridge: 1
+( 44, 1),
+-- #45 Woman (Train Expert): 1,4
+( 45, 1), ( 45, 4),
+-- #46 Depressed Woman at Home: 1,2
+( 46, 1), ( 46, 2),
+-- #47 Pub Owner: 1,3,4
+( 47, 1), ( 47, 3), ( 47, 4),
+-- #48 Drunkard: 1,2,3
+( 48, 1), ( 48, 2), ( 48, 3),
+-- #49 Guard at TV Station path: 2,3
+( 49, 2), ( 49, 3),
+
+-- ============================================================
+-- Dollet
+-- ============================================================
+-- #50 Car Rental Woman: 4
+( 50, 4),
+-- #51 Girl near Wheelchair Man: 1,3
+( 51, 1), ( 51, 3),
+-- #52 Emo Kid in Green Jacket: 1,3,4
+( 52, 1), ( 52, 3), ( 52, 4),
+-- #53 Man with Blue Sleeves: 3
+( 53, 3),
+-- #54 Girl at the beach: 1,2
+( 54, 1), ( 54, 2),
+-- #55 Son of Queen of Cards: 1-4
+( 55, 1), ( 55, 2), ( 55, 3), ( 55, 4),
+-- #56 Woman near Pub: 1,2,4
+( 56, 1), ( 56, 2), ( 56, 4),
+-- #57 Pub's Waiter: 2
+( 57, 2),
+-- #58 Old Man in Pub: 2,3,4
+( 58, 2), ( 58, 3), ( 58, 4),
+-- #59 Pub's Owner: 1-4
+( 59, 1), ( 59, 2), ( 59, 3), ( 59, 4),
+-- #60 Shopping Lady in Yellow: 1
+( 60, 1),
+-- #61 Old Man at Townsquare: 1,3
+( 61, 1), ( 61, 3),
+-- #62 Hotel Girl: 2,3
+( 62, 2), ( 62, 3),
+
+-- ============================================================
+-- Deling City
+-- ============================================================
+-- #63 Travelling Lady from FH: 1-4
+( 63, 1), ( 63, 2), ( 63, 3), ( 63, 4),
+-- #64 Hotel Waitress: 1
+( 64, 1),
+-- #65 Person near General Shop: 1-4
+( 65, 1), ( 65, 2), ( 65, 3), ( 65, 4),
+-- #66 Man in Black: 1-7
+( 66, 1), ( 66, 2), ( 66, 3), ( 66, 4), ( 66, 5), ( 66, 6), ( 66, 7),
+-- #67 Old Woman: 1-3
+( 67, 1), ( 67, 2), ( 67, 3),
+-- #68 Old Man: 1-3
+( 68, 1), ( 68, 2), ( 68, 3),
+-- #69 General Caraway: 1-4
+( 69, 1), ( 69, 2), ( 69, 3), ( 69, 4),
+-- #70 Train Conductor: 1,2,4
+( 70, 1), ( 70, 2), ( 70, 4),
+-- #71 Walking Woman: 1,2
+( 71, 1), ( 71, 2),
+
+-- ============================================================
+-- Fisherman's Horizon
+-- ============================================================
+-- #72 Familiar Face #3: 1,4-6
+( 72, 1), ( 72, 4), ( 72, 5), ( 72, 6),
+-- #73 Martine: 1-7
+( 73, 1), ( 73, 2), ( 73, 3), ( 73, 4), ( 73, 5), ( 73, 6), ( 73, 7),
+-- #74 Flo (Mayor's Wife): 1,2,5,6
+( 74, 1), ( 74, 2), ( 74, 5), ( 74, 6),
+-- #75 Mayor Dobe: 1,2,4-6
+( 75, 1), ( 75, 2), ( 75, 4), ( 75, 5), ( 75, 6),
+-- #76 Kid at Town Square: 1-3
+( 76, 1), ( 76, 2), ( 76, 3),
+-- #77 Grease Monkey: 1,2,4,6
+( 77, 1), ( 77, 2), ( 77, 4), ( 77, 6),
+-- #78 Master Fisherman: ??? (unknown levels)
+
+-- ============================================================
+-- Winhill
+-- ============================================================
+-- #79 Student Mercenary: 1,2,3,5
+( 79, 1), ( 79, 2), ( 79, 3), ( 79, 5),
+-- #80 Shop Owner: 1,2,4
+( 80, 1), ( 80, 2), ( 80, 4),
+-- #81 Hotel Owner: 1,2,4
+( 81, 1), ( 81, 2), ( 81, 4),
+-- #82 Old Man in Residence: 1,4,5
+( 82, 1), ( 82, 4), ( 82, 5),
+-- #83 Man on bench: 1,3,5
+( 83, 1), ( 83, 3), ( 83, 5),
+-- #84 Playing Girl: 1-4
+( 84, 1), ( 84, 2), ( 84, 3), ( 84, 4),
+-- #85 Mansion Owner: 3,4,5
+( 85, 3), ( 85, 4), ( 85, 5),
+-- #86 Blonde Woman: 1,3,4
+( 86, 1), ( 86, 3), ( 86, 4),
+
+-- ============================================================
+-- Trabia Garden
+-- ============================================================
+-- #87 Student in green: 1,2,3,5
+( 87, 1), ( 87, 2), ( 87, 3), ( 87, 5),
+-- #88 Selphie's Friend: 1-5
+( 88, 1), ( 88, 2), ( 88, 3), ( 88, 4), ( 88, 5),
+-- #89 Trabian Faculty: 1-3,5
+( 89, 1), ( 89, 2), ( 89, 3), ( 89, 5),
+-- #90 Girl Student: 1,2,4
+( 90, 1), ( 90, 2), ( 90, 4),
+-- #91 Sitting Guy: 1-3
+( 91, 1), ( 91, 2), ( 91, 3),
+-- #92 Girl with book: 1,2,4
+( 92, 1), ( 92, 2), ( 92, 4),
+-- #93 Mechanic: 3-5
+( 93, 3), ( 93, 4), ( 93, 5),
+-- #94 Basketball Freak: 2,3,5
+( 94, 2), ( 94, 3), ( 94, 5),
+-- #95 Student near rocket: 1,2,4
+( 95, 1), ( 95, 2), ( 95, 4),
+-- #96 Boy at Basketball Court: 2,4
+( 96, 2), ( 96, 4),
+-- #97 Girl in Bikini: 1-3,5
+( 97, 1), ( 97, 2), ( 97, 3), ( 97, 5),
+
+-- ============================================================
+-- Shumi Village
+-- ============================================================
+-- #98  Left Shumi: 1,2,5,6
+( 98, 1), ( 98, 2), ( 98, 5), ( 98, 6),
+-- #99  Middle Shumi: 1,2,4-7
+( 99, 1), ( 99, 2), ( 99, 4), ( 99, 5), ( 99, 6), ( 99, 7),
+-- #100 Right Shumi: 1,2,4,6
+(100, 1), (100, 2), (100, 4), (100, 6),
+-- #101 Shumi at a table: 1,2,5,6
+(101, 1), (101, 2), (101, 5), (101, 6),
+-- #102 Elder: 2,4,6,7
+(102, 2), (102, 4), (102, 6), (102, 7),
+-- #103 Elder's Assistant: 1,2,4,6,7
+(103, 1), (103, 2), (103, 4), (103, 6), (103, 7),
+-- #104 Artisan: 1,2,6,7
+(104, 1), (104, 2), (104, 6), (104, 7),
+-- #105 Busy Working Shumi: 4,5,6
+(105, 4), (105, 5), (105, 6),
+-- #106 Sculptor: 3,4,5
+(106, 3), (106, 4), (106, 5),
+-- #107 Master Fisherman: (none listed)
+
+-- ============================================================
+-- CC-Group (Disc 4)
+-- ============================================================
+-- #108 Joker: 1-3,6,7
+(108, 1), (108, 2), (108, 3), (108, 6), (108, 7),
+-- #109 Jack: 3,4,6
+(109, 3), (109, 4), (109, 6),
+-- #110 Club: 3,5,6
+(110, 3), (110, 5), (110, 6),
+-- #111 Right Diamond: 3-5,7
+(111, 3), (111, 4), (111, 5), (111, 7),
+-- #112 Left Diamond: 3-5,7
+(112, 3), (112, 4), (112, 5), (112, 7),
+-- #113 Spade: 1-3,6,7
+(113, 1), (113, 2), (113, 3), (113, 6), (113, 7),
+-- #114 Heart: 3,5,6,7
+(114, 3), (114, 5), (114, 6), (114, 7),
+-- #115 King: 1-7
+(115, 1), (115, 2), (115, 3), (115, 4), (115, 5), (115, 6), (115, 7);
 
 -- ============================================================
 -- Seed data – player 1 card inventory
