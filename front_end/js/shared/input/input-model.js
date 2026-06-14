@@ -24,6 +24,51 @@ export class InputModel {
   }
 
   // ------------------------------
+  // OPPONENT SELECTION
+  // ------------------------------
+
+  /**
+   * Handles player input during the opponent selection phase.
+   * @param {KeyboardEvent} event
+   */
+  handleOpponentSelection(event) {
+    // Get the current state machine phase
+    const stateMachine = Game.models?.stateMachine;
+    const currentPhase = stateMachine?.getCurrentPhase?.();
+    if (!currentPhase) {
+      return;
+    }
+
+    switch (event.key) {
+      case "ArrowLeft": {
+        currentPhase.navigate("left");
+        break;
+      }
+      case "ArrowRight": {
+        currentPhase.navigate("right");
+        break;
+      }
+      case "ArrowUp": {
+        currentPhase.navigate("up");
+        break;
+      }
+      case "ArrowDown": {
+        currentPhase.navigate("down");
+        break;
+      }
+      case "Enter": {
+        currentPhase.confirm();
+        break;
+      }
+      case "Backspace":
+      case "Escape": {
+        // Do nothing - opponent selection has no cancel
+        break;
+      }
+    }
+  }
+
+  // ------------------------------
   // SELECTION BOOK HANDLING
   // ------------------------------
 

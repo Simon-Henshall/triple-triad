@@ -24,7 +24,9 @@ export class InputController {
       //console.log("Key pressed:", event.key);
     }
 
-    if (PhaseChecker.playerSelectingHand) {
+    if (PhaseChecker.playerSelectingOpponent) {
+      this.model.handleOpponentSelection(event);
+    } else if (PhaseChecker.playerSelectingHand) {
       this.model.handleSelectionBookInput(event);
     } else if (PhaseChecker.playerConfirming) {
       this.model.handleConfirmation(event);

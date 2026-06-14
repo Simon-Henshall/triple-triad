@@ -1,5 +1,5 @@
 import { gameInit } from "./shared/game/game-init.js";
-import { fetchPlayerCards } from "./utilities/network.js";
+import { fetchPlayerCards, fetchOpponents } from "./utilities/network.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
@@ -21,8 +21,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.warn("[main] Could not fetch player cards:", fetchError);
     }
 
-    // Initialise the game, passing API cards if we got them
-    await gameInit.all(playerApiCards);
+    // Fetch opponents grouped by location
+    let opponentLocations;
+    try {
+      const opponentsResponse = await fetchOpponents();
+      if (opponentsResponse.success) {
+        opponentLocations = opponentsResponse.opponents;
+        const totalPlayers = opponentLocations.reduce(
+          (sum, loc) => sum + loc.players.length,
+          0,
+        );
+        console.log(
+          `[main] Loaded ${opponentLocations.length} locations with ${totalPlayers} opponents`,
+        );
+      } else {
+        console.warn(
+          "[main] Opponents API returned success=false:",
+          opponentsResponse.message,
+        );
+      }
+    } catch (fetchError) {
+      console.warn("[main] Could not fetch opponents:", fetchError);
+    }
+
+    // Initialise the game, passing API cards and opponent locations
+    await gameInit.all(playerApiCards, opponentLocations);
   } finally {
     document.body.classList.remove("loading");
   }

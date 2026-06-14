@@ -21,15 +21,37 @@ import EndTurnController from "../phases/end-turn/end-turn-controller.js";
 import { AITurnController } from "../phases/ai-turn/ai-turn-controller.js";
 import GameOverController from "../phases/game-over/game-over-controller.js";
 import CardClaimController from "../phases/card-claim/card-claim-controller.js";
+import { OpponentSelectionController } from "../phases/opponent-selection/opponent-selection-controller.js";
 
 export const PhaseChecker = {
   playerSelectingHand: false,
   playerConfirming: false,
   playerChoosingCard: false,
   playerSelectingPlacement: false,
+  playerSelectingOpponent: false,
 };
 
 export default {
+  // Opponent selection: choose which AI opponent to play against.
+  "opponent-selection": {
+    /**
+     * Dependencies for the opponent selection phase
+     */
+    deps: (rootDeps) => ({
+      locations: rootDeps.opponentLocations || [],
+      callbacks: rootDeps.opponentSelectionCallbacks || {},
+    }),
+    /**
+     * The opponent selection phase factory
+     */
+    factory: (localDeps, transition) =>
+      new OpponentSelectionController(
+        localDeps.locations,
+        transition,
+        localDeps.callbacks,
+      ),
+  },
+
   // Deck selection where the player chooses 5 cards.
   "deck-selection": {
     /**

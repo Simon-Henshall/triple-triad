@@ -29,6 +29,7 @@ import { BoardModel } from "../board/board-model.js";
 import { createDeckFromApi } from "../card/card-factory.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
+import { fetchOpponentCards } from "../../utilities/network.js";
 
 /** @type {import("../card/card.js").Card[]|undefined} */
 let aiInitialCards;
@@ -117,6 +118,7 @@ export const gameInit = {
 
     const stateMachine = new StateMachine(phases, {
       allowedTransitions: {
+        "opponent-selection": ["deck-selection"],
         "deck-selection": ["confirmation"],
         confirmation: ["deck-selection", "hand-select"],
         "hand-select": ["placement"],
@@ -210,9 +212,91 @@ export const gameInit = {
   },
 
   // ---------------------------------------------
+  // Set up AI deck and hand after opponent is selected
+  // ---------------------------------------------
+  async setupAIForOpponent(opponent) {
+    console.log(
+      `[Game-Init] Setting up AI for opponent: "${opponent.name}" (ID: ${opponent.id})`,
+    );
+
+    const { aiTurnModel, stateMachine } = Game.models;
+    const { aiTurnController } = Game.controllers;
+
+    // Fetch the opponent's available cards from the database
+    let opponentCards;
+    try {
+      const response = await fetchOpponentCards(opponent.id);
+      if (response.success && response.cards.length > 0) {
+        opponentCards = response.cards;
+        console.log(
+          `[Game-Init] Loaded ${opponentCards.length} cards for opponent "${opponent.name}"`,
+        );
+      } else {
+        console.warn(
+          `[Game-Init] No cards returned for opponent "${opponent.name}", using player cards as fallback`,
+        );
+        // Fallback: use all player cards if opponent has no card data
+        opponentCards = await this._getPlayerCardsFallback();
+      }
+    } catch (error) {
+      console.error(
+        "[Game-Init] Failed to fetch opponent cards:",
+        error,
+        "Using player cards as fallback",
+      );
+      opponentCards = await this._getPlayerCardsFallback();
+    }
+
+    // Create the AI deck from the opponent's card pool
+    const aiDeck = createDeckFromApi(opponentCards, "ai");
+    aiTurnModel.deck = aiDeck;
+
+    // Clear any existing hand
+    aiTurnModel.resetHand();
+
+    // Populate AI hand (5 random cards from the opponent's pool)
+    const drawnCards = aiTurnModel.populateHand();
+    aiTurnController.initHand(drawnCards);
+
+    // Store a snapshot of the AI's initial hand
+    aiInitialCards = drawnCards.map((card) => card.clone({ owner: "ai" }));
+
+    // Update root dependencies with the initial cards
+    stateMachine.setRootDependencies({
+      ...stateMachine.rootDeps,
+      aiInitialCards,
+    });
+
+    console.log(
+      `[Game-Init] AI hand populated with ${drawnCards.length} cards`,
+    );
+  },
+
+  /**
+   * Fallback: get player cards from the in-memory player deck.
+   * @private
+   */
+  async _getPlayerCardsFallback() {
+    const playerModel = Game.models.playerModel;
+    // Convert the player deck back to API-style cards
+    return playerModel.deck.map((card) => ({
+      id: card.data.id,
+      display_name: card.data.name,
+      image:
+        card.data.imagePath?.split("/").pop()?.replace(".png", "") ||
+        `card${card.data.id}`,
+      strength_up: card.data.strength.up,
+      strength_right: card.data.strength.right,
+      strength_down: card.data.strength.down,
+      strength_left: card.data.strength.left,
+      element_id: card.data.element ?? 0,
+    }));
+  },
+
+  // ---------------------------------------------
   // Full Game Init
   // ---------------------------------------------
-  async all(playerApiCards) {
+  async all(playerApiCards, opponentLocations) {
     console.log("[Game-Init] Starting setup...");
 
     // Stage + UI
@@ -233,33 +317,33 @@ export const gameInit = {
     this.cursors();
     this.events(inputController);
 
-    // Decks – build from API data
+    // Player deck – build from API data
     const playerDeck = createDeckFromApi(playerApiCards, "player");
-    const aiDeck = createDeckFromApi(playerApiCards, "ai");
     playerModel.deck = playerDeck;
-    aiTurnModel.deck = aiDeck;
 
     // Set up visual hand offsets
     // NOTE: aiTurnController.initHand() depends on these positions
     this.handOffsets();
 
-    // AI Hand
-    const drawnCards = aiTurnModel.populateHand();
-    aiTurnController.initHand(drawnCards);
-
-    // Store a snapshot of the AI's initial hand *before* gameplay starts modifying it
-    aiInitialCards = drawnCards.map((card) => card.clone({ owner: "ai" }));
-
-    // Phase Dependencies
+    // Phase Dependencies – set up root deps (AI deck will be created later)
     stateMachine.setRootDependencies({
       playerModel,
       playerDeck,
       cursorController: Game.controllers.cursorController,
       selectionUI: playerModel,
-      aiInitialCards,
 
       aiTurnModel,
       aiTurnController,
+
+      opponentLocations: opponentLocations || [],
+      opponentSelectionCallbacks: {
+        /**
+         *
+         */
+        onOpponentSelected: (opponent) => this.setupAIForOpponent(opponent),
+      },
+
+      aiInitialCards: [],
 
       placementModel: Game.models.placementModel,
       placementController: Game.controllers.placementController,
@@ -268,7 +352,7 @@ export const gameInit = {
       scoreboard: Game.ui.scoreBoard,
     });
 
-    console.log("[Game-Init] Entering first phase: deck-selection");
-    await stateMachine.transitionTo("deck-selection");
+    console.log("[Game-Init] Entering first phase: opponent-selection");
+    await stateMachine.transitionTo("opponent-selection");
   },
 };
