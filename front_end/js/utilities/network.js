@@ -76,25 +76,34 @@ export async function fetchOpponents({ timeout = 7000 } = {}) {
 }
 
 /**
- * Fetch cards available to a specific opponent (based on their allowed levels).
+ * Fetch cards available to a specific opponent (based on their allowed levels),
+ * plus the opponent's rare card if unique_card_id is provided.
  *
  * @export
  * @async
  * @param {number} playerId - The opponent's player ID
- * @param {{ timeout?: number; }} [param1={}]
+ * @param {{ uniqueCardId?: number|null; timeout?: number; }} [param1={}]
  * @param {number} [param1.timeout=7000]
- * @returns {{ success: boolean, message: string, cards: Array }}
+ * @returns {{ success: boolean, message: string, cards: Array, rare_card: Object|null }}
  */
-export async function fetchOpponentCards(playerId, { timeout = 7000 } = {}) {
+export async function fetchOpponentCards(
+  playerId,
+  { uniqueCardId, timeout = 7000 } = {},
+) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
 
   try {
+    const payload = { player_id: playerId };
+    if (uniqueCardId != undefined) {
+      payload.unique_card_id = uniqueCardId;
+    }
+
     const result = await fetch("front_end/api/get_opponent_cards.php", {
       method: "POST",
       credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ player_id: playerId }),
+      body: JSON.stringify(payload),
       signal: controller.signal,
     });
 

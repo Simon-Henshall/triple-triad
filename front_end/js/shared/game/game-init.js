@@ -30,6 +30,8 @@ import { createDeckFromApi } from "../card/card-factory.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
 import { fetchOpponentCards } from "../../utilities/network.js";
+import { RNG } from "../../utilities/rng.js";
+import { generateAIHand } from "../../utilities/ai-hand-generator.js";
 
 /** @type {import("../card/card.js").Card[]|undefined} */
 let aiInitialCards;
@@ -219,15 +221,19 @@ export const gameInit = {
       `[Game-Init] Setting up AI for opponent: "${opponent.name}" (ID: ${opponent.id})`,
     );
 
-    const { aiTurnModel, stateMachine } = Game.models;
+    const { aiTurnModel, playerModel, stateMachine } = Game.models;
     const { aiTurnController } = Game.controllers;
 
-    // Fetch the opponent's available cards from the database
+    // Fetch the opponent's available cards AND rare card from the database
     let opponentCards;
+    let rareCardApi;
     try {
-      const response = await fetchOpponentCards(opponent.id);
+      const response = await fetchOpponentCards(opponent.id, {
+        uniqueCardId: opponent.unique_card_id,
+      });
       if (response.success && response.cards.length > 0) {
         opponentCards = response.cards;
+        rareCardApi = response.rare_card || undefined;
         console.log(
           `[Game-Init] Loaded ${opponentCards.length} cards for opponent "${opponent.name}"`,
         );
@@ -235,7 +241,6 @@ export const gameInit = {
         console.warn(
           `[Game-Init] No cards returned for opponent "${opponent.name}", using player cards as fallback`,
         );
-        // Fallback: use all player cards if opponent has no card data
         opponentCards = await this._getPlayerCardsFallback();
       }
     } catch (error) {
@@ -247,15 +252,40 @@ export const gameInit = {
       opponentCards = await this._getPlayerCardsFallback();
     }
 
-    // Create the AI deck from the opponent's card pool
+    // Create the AI deck from the opponent's card pool (for the UI deck display)
     const aiDeck = createDeckFromApi(opponentCards, "ai");
     aiTurnModel.deck = aiDeck;
 
     // Clear any existing hand
     aiTurnModel.resetHand();
 
-    // Populate AI hand (5 random cards from the opponent's pool)
-    const drawnCards = aiTurnModel.populateHand();
+    // Build rare Card object from the fetched API data (if any)
+    let rareCard;
+    if (rareCardApi) {
+      const rarityDeck = createDeckFromApi([rareCardApi], "ai");
+      if (rarityDeck.length > 0) {
+        rareCard = rarityDeck[0];
+      }
+    }
+
+    // Build common-card pool: AI deck cards (already Card objects from API data)
+    const commonCardPool = aiDeck.map((card) => card.clone({ owner: "ai" }));
+
+    // Get player 1's card IDs for the rare-card ownership check
+    const playerCardIds = playerModel.deck.map((card) => card.data.id);
+
+    // Use the RNG rare-card system to generate the AI's hand
+    const rng = new RNG(Date.now());
+    const drawnCards = generateAIHand(
+      commonCardPool,
+      rareCard,
+      playerCardIds,
+      opponent,
+      rng,
+    );
+
+    // Overwrite the AI's hand with the generated cards
+    aiTurnModel.hand = [...drawnCards];
     aiTurnController.initHand(drawnCards);
 
     // Store a snapshot of the AI's initial hand
