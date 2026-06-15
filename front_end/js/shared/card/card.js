@@ -201,6 +201,17 @@ export class Card {
       copy.visuals.backBitmap = containerClone.getChildByName("backBitmap");
       copy.visuals.colourBitmap = containerClone.getChildByName("colourBitmap");
       copy.visuals.faceBitmap = containerClone.getChildByName("faceBitmap");
+
+      // Ensure the cloned container gets properly scaled.
+      // On hard refresh, images may not be loaded yet when clone() is called,
+      // so the cloned container inherits scaleX=1 / scaleY=1 from the original.
+      // Call _waitForFaceAndScale() to apply the correct scale once the image
+      // finishes loading (or immediately if already loaded from cache).
+      // Only attempt scaling if faceBitmap was successfully resolved (it may be
+      // absent if visuals were never fully initialised, e.g. in tests).
+      if (copy.visuals.faceBitmap) {
+        copy._waitForFaceAndScale();
+      }
     }
 
     return copy;
