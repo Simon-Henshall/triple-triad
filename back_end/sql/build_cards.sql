@@ -246,9 +246,9 @@ INSERT INTO `card` (`display_name`, `image`, `strength_up`, `strength_right`, `s
 -- ============================================================
 -- Seed data – players
 -- unique_card_id values reference rare cards held by the player.
---   Quistis=103, MiniMog=80, Zell=105, Pandemona=92,
---   Doomtrain=97, Siren=85, Kiros=100, Rinoa=106,
---   Ifrit=84, Irvine=104, Quezacotl=82, Selphie=102
+--   Quistis=104, MiniMog=81, Zell=106, Pandemona=93,
+--   Doomtrain=98, Siren=86, Kiros=101, Rinoa=107,
+--   Ifrit=85, Irvine=105, Quezacotl=83, Selphie=103
 -- ============================================================
 INSERT INTO `player` (`id`, `name`, `location`, `unique_card_id`) VALUES
 -- Player 1 (human player)
@@ -257,12 +257,12 @@ INSERT INTO `player` (`id`, `name`, `location`, `unique_card_id`) VALUES
 -- ============================================================
 -- Balamb Garden
 -- ============================================================
-(  2, 'Trepe Groupie #1',          'Balamb Garden - Cafetaria, guy in the back',             103),
+(  2, 'Trepe Groupie #1',          'Balamb Garden - Cafetaria, guy in the back',             104),
 (  3, 'Friend Trepe Groupie #1',   'Balamb Garden - Cafetaria, guy in the front',            NULL),
 (  4, 'Gatekeeper',                'Balamb Garden - Gate Reception',                        NULL),
-(  5, 'Running Boy',               'Balamb Garden - Main Halls',                             80),
-(  6, 'Trepe Groupie #2',          'Balamb Garden - 2nd Floor Classroom',                   103),
-(  7, 'Trepe Groupie #3',          'Balamb Garden - 2nd Floor Classroom',                   103),
+(  5, 'Running Boy',               'Balamb Garden - Main Halls',                             81),
+(  6, 'Trepe Groupie #2',          'Balamb Garden - 2nd Floor Classroom',                   104),
+(  7, 'Trepe Groupie #3',          'Balamb Garden - 2nd Floor Classroom',                   104),
 (  8, 'Cafetaria Lady',            'Balamb Garden - Cafetaria behind counter',              NULL),
 (  9, 'Guy on bench',              'Balamb Garden - (Random) Right Main Hall',              NULL),
 ( 10, 'Walking Student Girl',      'Balamb Garden - (Random) Hall to Library',              NULL),
@@ -283,12 +283,12 @@ INSERT INTO `player` (`id`, `name`, `location`, `unique_card_id`) VALUES
 -- ============================================================
 -- Balamb Town
 -- ============================================================
-( 24, 'Ma Dincht',                 'Balamb Town - Zell''s House',                           105),
+( 24, 'Ma Dincht',                 'Balamb Town - Zell''s House',                           106),
 ( 25, 'Girl in a band',            'Balamb Town - Entrance Screen (Disc 1)',                NULL),
 ( 26, 'Station Conductor',         'Balamb Town - Entrance of the Station',                 NULL),
 ( 27, 'Galbadian Soldier',        'Balamb Town - Docks (Balamb Lockdown ONLY)',            NULL),
-( 28, 'Hotel Owner',               'Balamb Town - In front of the Hotel',                   92),
-( 29, 'Hotel Owner''s Daughter',   'Balamb Town - Old Man House / In front of the Hotel',  92),
+( 28, 'Hotel Owner',               'Balamb Town - In front of the Hotel',                   93),
+( 29, 'Hotel Owner''s Daughter',   'Balamb Town - Old Man House / In front of the Hotel',  93),
 ( 30, 'Girl with dog',             'Balamb Town - (Random) Docks',                          NULL),
 ( 31, 'Student skipping class',    'Balamb Town - (Random) Docks',                          NULL),
 ( 32, 'Chef with red shirt',       'Balamb Town - Docks (After Lockdown)',                  NULL),
@@ -310,7 +310,7 @@ INSERT INTO `player` (`id`, `name`, `location`, `unique_card_id`) VALUES
 ( 44, 'Boy on Station Bridge',     'Timber - Eastern Station Bridge',                       NULL),
 ( 45, 'Woman (Train Expert)',      'Timber - Eastern Station',                              NULL),
 ( 46, 'Depressed Woman at Home',   'Timber - Old Man''s (Owl Tears) House',                 NULL),
-( 47, 'Pub Owner',                 'Timber - Timber Pub, upper right',                      97),
+( 47, 'Pub Owner',                 'Timber - Timber Pub, upper right',                      98),
 ( 48, 'Drunkard',                  'Timber - Back Alley',                                   NULL),
 ( 49, 'Guard at TV Station path',  'Timber - After TV Station Events',                      NULL),
 
@@ -326,7 +326,7 @@ INSERT INTO `player` (`id`, `name`, `location`, `unique_card_id`) VALUES
 ( 56, 'Woman near Pub',            'Dollet - Near the Shining Bomber Pub',                  NULL),
 ( 57, 'Pub''s Waiter',             'Dollet - Behind counter',                               NULL),
 ( 58, 'Old Man in Pub',            'Dollet - 2nd Floor Pub',                                NULL),
-( 59, 'Pub''s Owner',              'Dollet - Beat him -> Private Room',                     85),
+( 59, 'Pub''s Owner',              'Dollet - Beat him -> Private Room',                     86),
 ( 60, 'Shopping Lady in Yellow',   'Dollet - Walking in Nautilus Street',                   NULL),
 ( 61, 'Old Man at Townsquare',     'Dollet - Townsquare',                                   NULL),
 ( 62, 'Hotel Girl',                'Dollet - Dollet Hotel Main Hall',                       NULL),
@@ -337,10 +337,10 @@ INSERT INTO `player` (`id`, `name`, `location`, `unique_card_id`) VALUES
 ( 63, 'Travelling Lady from FH',   'Deling City - Across the street of Hotel',              NULL),
 ( 64, 'Hotel Waitress',            'Deling City - Hotel Restaurant',                        NULL),
 ( 65, 'Person near General Shop',  'Deling City - In the street with Shops',                NULL),
-( 66, 'Man in Black',              'Deling City - Across the Junk Shop',                    100),
+( 66, 'Man in Black',              'Deling City - Across the Junk Shop',                    101),
 ( 67, 'Old Woman',                 'Deling City - Street near Main Gate',                   NULL),
 ( 68, 'Old Man',                   'Deling City - On Bench, Street near Main Gate',         NULL),
-( 69, 'General Caraway',           'Deling City - Caraway''s Mansion',                      106),
+( 69, 'General Caraway',           'Deling City - Caraway''s Mansion',                      107),
 ( 70, 'Train Conductor',           'Deling City - City Train Station',                      NULL),
 ( 71, 'Walking Woman',             'Deling City - Other street near Main Gate',             NULL),
 
@@ -348,9 +348,9 @@ INSERT INTO `player` (`id`, `name`, `location`, `unique_card_id`) VALUES
 -- Fisherman's Horizon
 -- ============================================================
 ( 72, 'Familiar Face #3',          'FH - Nearby elevator going up',                         NULL),
-( 73, 'Martine',                   'FH - Right from Mayor''s House',                        84),
-( 74, 'Flo (Mayor''s Wife)',       'FH - Mayor''s House, Upstairs',                         104),
-( 75, 'Mayor Dobe',                'FH - Mayor''s House, Upstairs',                         82),
+( 73, 'Martine',                   'FH - Right from Mayor''s House',                        85),
+( 74, 'Flo (Mayor''s Wife)',       'FH - Mayor''s House, Upstairs',                         105),
+( 75, 'Mayor Dobe',                'FH - Mayor''s House, Upstairs',                         83),
 ( 76, 'Kid at Town Square',        'FH - Town Square near Station',                         NULL),
 ( 77, 'Grease Monkey',             'FH - Grease Monkey''s House',                           NULL),
 ( 78, 'Master Fisherman',          'FH - Crane (1st Visit ONLY)',                           NULL),
@@ -371,7 +371,7 @@ INSERT INTO `player` (`id`, `name`, `location`, `unique_card_id`) VALUES
 -- Trabia Garden
 -- ============================================================
 ( 87, 'Student in green',          'Trabia Garden - Path near entrance',                    NULL),
-( 88, 'Selphie''s Friend',         'Trabia Garden - Fountain Screen',                       102),
+( 88, 'Selphie''s Friend',         'Trabia Garden - Fountain Screen',                       103),
 ( 89, 'Trabian Faculty',           'Trabia Garden - Fountain Screen (upper right)',         NULL),
 ( 90, 'Girl Student',              'Trabia Garden - Garage Screen',                         NULL),
 ( 91, 'Sitting Guy',               'Trabia Garden - Garage Screen',                         NULL),
