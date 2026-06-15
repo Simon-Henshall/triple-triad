@@ -17,8 +17,12 @@ export class AITurnView {
   /**
    * Place the AI hand on stage visually, animating cards in
    * from below the stage one at a time.
+   * When "open" rule is active, cards are shown face-up.
+   * When "open" rule is inactive, cards are shown face-down (back visible).
    */
   displayHand(hand, handOffsetX) {
+    const isOpen = Game.rules.includes("open");
+
     for (const [index, card] of hand.entries()) {
       const container = card.visuals.container;
       const targetY = offsets.handOffsetY + index * offsets.handCardOffset;
@@ -27,15 +31,28 @@ export class AITurnView {
       container.y = this.stage.canvas.height + 200;
       container.alpha = 0;
 
-      // Hide face, show back
-      if (card.visuals.faceBitmap) {
-        card.visuals.faceBitmap.visible = false;
-      }
-      if (card.visuals.colourBitmap) {
-        card.visuals.colourBitmap.visible = false;
-      }
-      if (card.visuals.backBitmap) {
-        card.visuals.backBitmap.visible = true;
+      if (isOpen) {
+        // Show card face (open rule)
+        if (card.visuals.faceBitmap) {
+          card.visuals.faceBitmap.visible = true;
+        }
+        if (card.visuals.colourBitmap) {
+          card.visuals.colourBitmap.visible = true;
+        }
+        if (card.visuals.backBitmap) {
+          card.visuals.backBitmap.visible = false;
+        }
+      } else {
+        // Hide face, show back (closed rule)
+        if (card.visuals.faceBitmap) {
+          card.visuals.faceBitmap.visible = false;
+        }
+        if (card.visuals.colourBitmap) {
+          card.visuals.colourBitmap.visible = false;
+        }
+        if (card.visuals.backBitmap) {
+          card.visuals.backBitmap.visible = true;
+        }
       }
 
       this.stage.addChild(container);

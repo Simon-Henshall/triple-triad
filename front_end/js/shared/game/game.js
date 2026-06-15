@@ -14,7 +14,7 @@ import { PhaseChecker } from "../../game/phases.js";
  */
 export const Game = {
   /** Rules active for the current match */
-  rules: ["elemental"],
+  rules: ["elemental", "open"],
 
   /** Reference to the CreateJS stage */
   stage: undefined,

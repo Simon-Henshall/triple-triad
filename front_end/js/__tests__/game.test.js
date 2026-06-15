@@ -29,8 +29,8 @@ describe("Game", () => {
     Game.cards = {};
   });
 
-  test("has default rules including elemental", () => {
-    expect(Game.rules).toEqual(["elemental"]);
+  test("has default rules including elemental and open", () => {
+    expect(Game.rules).toEqual(["elemental", "open"]);
   });
 
   test("stage and stageWidth are initially undefined", () => {

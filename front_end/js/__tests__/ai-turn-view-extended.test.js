@@ -32,7 +32,8 @@ describe("AiTurnView (extended)", () => {
     expect(view.stage).toBe(stage);
   });
 
-  test("displayHand places each card and tweens them in", () => {
+  test("displayHand shows card back when open rule is not active", () => {
+    Game.rules = ["elemental"]; // no "open" rule
     const view = new AiTurnView(stage);
     const card1 = {
       visuals: {
@@ -53,9 +54,48 @@ describe("AiTurnView (extended)", () => {
     view.displayHand([card1, card2], 100);
     expect(stage.addChild).toHaveBeenCalledWith(card1.visuals.container);
     expect(stage.addChild).toHaveBeenCalledWith(card2.visuals.container);
-    // Back bitmap was made visible
+    // Back bitmap was made visible (closed rule behavior)
     expect(card1.visuals.backBitmap.visible).toBe(true);
+    expect(card1.visuals.faceBitmap.visible).toBe(false);
+    expect(card1.visuals.colourBitmap.visible).toBe(false);
     expect(card2.visuals.backBitmap.visible).toBe(true);
+    expect(card2.visuals.faceBitmap.visible).toBe(false);
+    expect(card2.visuals.colourBitmap.visible).toBe(false);
+    // createjs.Tween.get was called for each card
+    expect(createjs.Tween.get).toHaveBeenCalled();
+    // Stage was updated
+    expect(stage.update).toHaveBeenCalled();
+  });
+
+  test("displayHand shows card face when open rule is active", () => {
+    Game.rules = ["elemental", "open"]; // "open" rule active
+    const view = new AiTurnView(stage);
+    const card1 = {
+      visuals: {
+        container: { x: 0, y: 0, alpha: 0 },
+        faceBitmap: { visible: false },
+        colourBitmap: { visible: false },
+        backBitmap: { visible: true },
+      },
+    };
+    const card2 = {
+      visuals: {
+        container: { x: 0, y: 0, alpha: 0 },
+        faceBitmap: { visible: false },
+        colourBitmap: { visible: false },
+        backBitmap: { visible: true },
+      },
+    };
+    view.displayHand([card1, card2], 100);
+    expect(stage.addChild).toHaveBeenCalledWith(card1.visuals.container);
+    expect(stage.addChild).toHaveBeenCalledWith(card2.visuals.container);
+    // Face bitmap was made visible (open rule behavior)
+    expect(card1.visuals.faceBitmap.visible).toBe(true);
+    expect(card1.visuals.colourBitmap.visible).toBe(true);
+    expect(card1.visuals.backBitmap.visible).toBe(false);
+    expect(card2.visuals.faceBitmap.visible).toBe(true);
+    expect(card2.visuals.colourBitmap.visible).toBe(true);
+    expect(card2.visuals.backBitmap.visible).toBe(false);
     // createjs.Tween.get was called for each card
     expect(createjs.Tween.get).toHaveBeenCalled();
     // Stage was updated
@@ -63,6 +103,7 @@ describe("AiTurnView (extended)", () => {
   });
 
   test("displayHand uses defaults when no offset is given", () => {
+    Game.rules = ["elemental", "open"];
     const view = new AiTurnView(stage);
     const card = {
       visuals: {
