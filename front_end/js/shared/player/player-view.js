@@ -109,6 +109,38 @@ export class PlayerView {
   }
 
   /**
+   * Render the full player hand on stage (used by Random rule & initial setup).
+   * Places each card's container at the correct stacked position and tracks it.
+   * @param {Array<Card>} hand - Array of Card instances to render
+   */
+  renderHand(hand) {
+    // Clear any existing hand visuals first
+    this.resetHand();
+
+    for (const [index, card] of hand.entries()) {
+      const container = card.visuals?.container;
+      if (!container) {
+        console.warn(
+          "[PlayerView] Card missing container, skipping:",
+          card.data?.name,
+        );
+        continue;
+      }
+
+      const targetX = this.stackOffsetX;
+      const targetY = this.stackOffsetY + index * this.stackSpacing;
+      container.x = targetX;
+      container.y = targetY;
+
+      Game.stage.addChild(container);
+      this.cardsInPlayerHand.push(container);
+    }
+
+    this._updateHandAndPreviewZOrder(true);
+    Game.stage.update();
+  }
+
+  /**
    * Remove all visual cards from stage
    */
   resetHand() {

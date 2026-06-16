@@ -28,6 +28,9 @@ export class ResolutionController {
     this.model = localDeps.model || undefined;
     this.transition = transition;
     this.view = new ResolutionView(Game.stage);
+
+    /** Tracks cards captured by Same/Plus/Wall for Combo chaining */
+    this._comboCapturedCards = [];
   }
 
   /**
@@ -49,25 +52,245 @@ export class ResolutionController {
   }
 
   /**
-   * flipCardsCheck() checks if any adjacent cards can be flipped based on comparing strengths.
-   * If so, it calls flipCardOver() to animate the flip.
+   * flipCardsCheck() checks if any adjacent cards can be flipped based on comparing strengths,
+   * and also handles Same, Same Wall, Plus, and Combo rules.
    * @param {Card} card
    */
   flipCardsCheck(card) {
+    const standardFlips = [];
+    const adjacentOpponents = [];
+    const adjacentPairs = [];
+
+    // Collect data from all four directions
     for (const [direction, map] of Object.entries(directionMap)) {
       const target = card[map.prop];
       if (!target) {
         continue;
       }
 
-      if (
-        card.owner !== target.owner &&
-        card.data.strength[direction] >
-          target.data.strength[map.opponentStrength]
+      const placedStrength = card.data.strength[direction];
+      const targetStrength = target.data.strength[map.opponentStrength];
+
+      // Standard flip: strength > opponent strength
+      if (card.owner !== target.owner && placedStrength > targetStrength) {
+        standardFlips.push(target);
+      }
+
+      // Collect adjacent opponent cards for Same/Plus checks
+      if (card.owner !== target.owner) {
+        adjacentOpponents.push({
+          target,
+          direction,
+          placedStrength,
+          targetStrength,
+        });
+      }
+
+      // Also collect same-owner pairs as candidates for Same/Plus
+      adjacentPairs.push({
+        target,
+        direction: map.opponentStrength,
+        placedStrength,
+        targetStrength,
+      });
+    }
+
+    // Apply standard flips first
+    let totalFlipped = 0;
+    for (const target of standardFlips) {
+      this.flipCardOver(target, "left");
+      totalFlipped++;
+    }
+
+    // Check Same rule
+    if (Game.rules.includes("same")) {
+      this._checkSameRule(card, adjacentOpponents);
+    }
+
+    // Check Plus rule
+    if (Game.rules.includes("plus")) {
+      this._checkPlusRule(card, adjacentOpponents);
+    }
+
+    // Apply Combo chain after any Same/Plus flips
+    if (this._comboCapturedCards.length > 0) {
+      this._applyComboChain(card);
+    }
+  }
+
+  /**
+   * Check Same rule: if a card is placed touching 2+ opponent cards and the
+   * touching values are equal, those opponent cards are flipped.
+   * Same Wall: board edges count as rank A (10) for Same checks.
+   * @param {Card} card - The placed card
+   * @param {Array} adjacentOpponents - Array of { target, direction, placedStrength, targetStrength }
+   */
+  _checkSameRule(card, adjacentOpponents) {
+    if (adjacentOpponents.length < 2) {
+      return;
+    }
+
+    const isSameWall =
+      Game.rules.includes("same_wall") && Game.rules.includes("same");
+
+    // Check all pairs of adjacent opponent cards
+    const flipsToApply = new Set();
+
+    for (let index = 0; index < adjacentOpponents.length; index++) {
+      for (
+        let index_ = index + 1;
+        index_ < adjacentOpponents.length;
+        index_++
       ) {
-        this.flipCardOver(target, direction);
+        const a = adjacentOpponents[index];
+        const b = adjacentOpponents[index_];
+
+        let matchA = a.placedStrength;
+        let matchB = b.placedStrength;
+
+        // Same Wall: board edges count as A (10)
+        if (isSameWall) {
+          // The placed card's strength is compared to the opponent's strength
+          // For Same, we check placedStrength vs targetStrength
+          // Same Wall means if the edge of the board is adjacent, it counts as A
+          const aEdgeIsBoard = this._isBoardEdge(card, a.direction);
+          const bEdgeIsBoard = this._isBoardEdge(card, b.direction);
+
+          if (aEdgeIsBoard) {
+            matchA = 10; // A rank
+          }
+          if (bEdgeIsBoard) {
+            matchB = 10; // A rank
+          }
+        }
+
+        if (matchA === matchB) {
+          flipsToApply.add(a.target);
+          flipsToApply.add(b.target);
+        }
       }
     }
+
+    for (const target of flipsToApply) {
+      this.flipCardOver(target, "left");
+    }
+  }
+
+  /**
+   * Check Plus rule: when a card touches 2+ opponents and the sum of
+   * placed strength + opponent opposing strength is equal for both pairs,
+   * both opponent cards are flipped.
+   * @param {Card} card - The placed card
+   * @param {Array} adjacentOpponents - Array of { target, direction, placedStrength, targetStrength }
+   */
+  _checkPlusRule(card, adjacentOpponents) {
+    if (adjacentOpponents.length < 2) {
+      return;
+    }
+
+    const flipsToApply = new Set();
+
+    // Check all pairs of adjacent opponent cards
+    for (let index = 0; index < adjacentOpponents.length; index++) {
+      for (
+        let index_ = index + 1;
+        index_ < adjacentOpponents.length;
+        index_++
+      ) {
+        const a = adjacentOpponents[index];
+        const b = adjacentOpponents[index_];
+
+        // For direction: placedCard.strength[direction] + opponent.strength[opponentStrength]
+        const sumA = a.placedStrength + a.targetStrength;
+        const sumB = b.placedStrength + b.targetStrength;
+
+        if (sumA === sumB) {
+          flipsToApply.add(a.target);
+          flipsToApply.add(b.target);
+        }
+      }
+    }
+
+    for (const target of flipsToApply) {
+      this.flipCardOver(target, "left");
+    }
+  }
+
+  /**
+   * Apply Combo chain: cards captured by Same/Plus/Wall now flip adjacent
+   * opponent cards with lower edge values.
+   * Combo is not a standalone rule - it activates automatically when Same/Plus
+   * caused flips.
+   * @param {Card} placedCard - The originally placed card
+   */
+  _applyComboChain(placedCard) {
+    // Work through captured cards in a queue to handle chains
+    const toProcess = [...this._comboCapturedCards];
+    const processed = new Set();
+    const comboFlips = [];
+
+    while (toProcess.length > 0) {
+      const capturedCard = toProcess.shift();
+
+      if (processed.has(capturedCard)) {
+        continue;
+      }
+      processed.add(capturedCard);
+
+      // Check all four sides of this captured card
+      for (const [, map] of Object.entries(directionMap)) {
+        const adjacent = capturedCard[map.prop];
+
+        // Skip if:
+        // - No adjacent card
+        // - Same owner (already on our side)
+        // - Already processed in this chain
+        // - Is the originally placed card
+        if (
+          !adjacent ||
+          capturedCard.owner === adjacent.owner ||
+          adjacent === placedCard
+        ) {
+          continue;
+        }
+
+        // A captured card has flipped to the current turn's owner
+        // Check if its edge is stronger than the opponent's opposing edge
+        const capturedStrength =
+          capturedCard.data.strength[map.opponentStrength];
+        const adjacentStrength = adjacent.data.strength[map.playerStrength];
+
+        if (capturedStrength > adjacentStrength) {
+          comboFlips.push(adjacent);
+
+          // This newly flipped card can also trigger further combos
+          toProcess.push(adjacent);
+        }
+      }
+    }
+
+    // Apply all combo flips
+    for (const target of comboFlips) {
+      this.flipCardOver(target, "left");
+    }
+
+    this._comboCapturedCards = [];
+  }
+
+  /**
+   * Check if a direction from the placed card faces the board edge.
+   * Used by Same Wall to treat edges as rank A.
+   * @param {Card} card
+   * @param {string} direction - "up", "down", "left", or "right"
+   * @returns {boolean}
+   */
+  _isBoardEdge(card, direction) {
+    // Check if there is no card in this direction (board edge)
+    const directionInfo = directionMap[direction];
+    if (!directionInfo) {
+      return false;
+    }
+    return !card[directionInfo.prop];
   }
 
   /**
@@ -89,6 +312,9 @@ export class ResolutionController {
     if (this.model) {
       this.model.recordFlip(targetCard);
     }
+
+    // Track for Combo chaining (cards flipped by Same/Plus)
+    this._comboCapturedCards.push(targetCard);
 
     // Animate flip visually
     this.view.flipCard(targetCard.visuals.container, direction);
