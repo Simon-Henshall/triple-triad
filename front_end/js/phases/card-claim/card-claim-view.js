@@ -186,9 +186,7 @@ export default class CardClaimView {
     container.name = "cardClaimDisplay";
 
     // Colour overlay (red for AI cards) - added FIRST so face goes on top
-    const colourBitmap = new createjs.Bitmap(
-      `${config.imagePath}cards/red.png`,
-    );
+    const colourBitmap = new createjs.Bitmap("assets/custom/red.png");
     colourBitmap.name = "claimColourBitmap";
     container.addChild(colourBitmap);
 

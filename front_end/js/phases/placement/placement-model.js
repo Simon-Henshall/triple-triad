@@ -277,8 +277,8 @@ export class PlacementModel {
       modified: true,
       image:
         modifier > 0
-          ? "front_end/images/plus_one.png"
-          : "front_end/images/minus_one.png",
+          ? "assets/original/plus_one.png"
+          : "assets/original/minus_one.png",
     };
   }
 }

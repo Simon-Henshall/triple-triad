@@ -24,16 +24,16 @@
  */
 export const config = {
   /**
-   * Base path (relative to project root) for images.
+   * Base path (relative to project root) for original Square Enix images.
    * @type {string}
    */
-  imagePath: "front_end/images/",
+  imagePath: "assets/original/",
 
   /**
    * Path (relative to project root) for card images.
    * @type {string}
    */
-  cardPath: "front_end/images/cards/",
+  cardPath: "assets/original/cards/",
 
   /**
    * Target frames-per-second for animations and rendering.

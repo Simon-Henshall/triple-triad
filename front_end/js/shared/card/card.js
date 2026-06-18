@@ -64,7 +64,7 @@ export class Card {
     this.visuals.backBitmap.name = "backBitmap";
 
     this.visuals.colourBitmap = new createjs.Bitmap(
-      `${config.imagePath}cards/${colour}.png`,
+      `assets/custom/${colour}.png`,
     );
     this.visuals.colourBitmap.name = "colourBitmap";
 
@@ -166,7 +166,7 @@ export class Card {
       });
       // Map "player"/"ai" to "blue"/"red" for the colour image, matching initVisuals
       const colour = owner === "player" ? "blue" : "red";
-      replacementImage.src = `${config.imagePath}cards/${colour}.png`;
+      replacementImage.src = `assets/custom/${colour}.png`;
     }
 
     console.log(

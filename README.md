@@ -75,8 +75,6 @@ triple-triad/
 │   ├── images/
 │   │   ├── board.png                # Game board background
 │   │   ├── cursor.png               # Selection cursor
-│   │   ├── tile.png                 # Board tile
-│   │   ├── selection.png            # Selection highlight
 │   │   ├── selection_card.png       # Card selection indicator
 │   │   ├── minus_one.png            # -1 indicator
 │   │   ├── plus_one.png             # +1 indicator
@@ -278,8 +276,6 @@ All visual assets are stored under `front_end/images/`:
 
 - **board.png** – The game board background (950×650 canvas).
 - **cursor.png** – Selection cursor graphic used throughout the UI.
-- **tile.png** – Individual board tile (3×3 grid cell).
-- **selection.png** / **selection_card.png** – Selection highlight overlays.
 - **minus_one.png** / **plus_one.png** – Strength modifiers displayed during resolution.
 - **cards/** – Individual card images, named `card0.png`, `card1.png`, etc.
 - **elements/** – Element icons named after their element ID (`1.png` through `8.png`).
