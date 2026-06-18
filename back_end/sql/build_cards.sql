@@ -459,8 +459,10 @@ INSERT INTO `player_level` (`player_id`, `level`) VALUES
 ( 20, 1), ( 20, 2), ( 20, 3),
 -- #21 Right Girl Talking: 1,3,4
 ( 21, 1), ( 21, 3), ( 21, 4),
--- #22 Left Girl Talking: (none listed)
--- #23 Left Guy Talking:  (none listed)
+-- #22 Left Girl Talking: 1-3 (PRESUMED)
+( 22, 1), ( 22, 2), ( 22, 3),
+-- #23 Left Guy Talking:  1-3 (PRESUMED)
+( 23, 1), ( 23, 2), ( 23, 3),
 
 -- ============================================================
 -- Balamb Town
@@ -483,7 +485,8 @@ INSERT INTO `player_level` (`player_id`, `level`) VALUES
 ( 31, 3), ( 31, 4), ( 31, 5),
 -- #32 Chef with red shirt: 1,2,4,5
 ( 32, 1), ( 32, 2), ( 32, 4), ( 32, 5),
--- #33 Big Bad Rascal: (none listed)
+-- #33 Big Bad Rascal: 1-3 (PRESUMED)
+( 33, 1), ( 33, 2), ( 33, 3),
 -- #34 Girl sitting: 1,2,3
 ( 34, 1), ( 34, 2), ( 34, 3),
 
@@ -588,7 +591,8 @@ INSERT INTO `player_level` (`player_id`, `level`) VALUES
 ( 76, 1), ( 76, 2), ( 76, 3),
 -- #77 Grease Monkey: 1,2,4,6
 ( 77, 1), ( 77, 2), ( 77, 4), ( 77, 6),
--- #78 Master Fisherman: ??? (unknown levels)
+-- #78 Master Fisherman (FH): 1-4 (PRESUMED)
+( 78, 1), ( 78, 2), ( 78, 3), ( 78, 4),
 
 -- ============================================================
 -- Winhill
@@ -657,7 +661,8 @@ INSERT INTO `player_level` (`player_id`, `level`) VALUES
 (105, 4), (105, 5), (105, 6),
 -- #106 Sculptor: 3,4,5
 (106, 3), (106, 4), (106, 5),
--- #107 Master Fisherman: (none listed)
+-- #107 Master Fisherman (Shumi): 1-5 (PRESUMED)
+(107, 1), (107, 2), (107, 3), (107, 4), (107, 5),
 
 -- ============================================================
 -- CC-Group (Disc 4)
