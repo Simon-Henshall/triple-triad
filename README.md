@@ -1,8 +1,10 @@
 # Triple Triad
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A fan-made web implementation of the classic **Triple Triad** card game from the _Final Fantasy_ series, originally created by Square Enix. This version is built as a single-page web application with a PHP/MySQL backend and a JavaScript front-end rendered on an HTML5 Canvas using CreateJS (EaselJS).
 
-> **Game concept © Square Enix. Web version © Simon Henshall. All rights reserved.**
+> **Game concept and all related intellectual property © Square Enix. Original source code and web implementation © Simon Henshall.**
 
 ---
 
@@ -22,6 +24,7 @@ A fan-made web implementation of the classic **Triple Triad** card game from the
 - [Running Tests](#running-tests)
 - [Linting & Formatting](#linting--formatting)
 - [Assets](#assets)
+- [Licence](#licence)
 - [Legal Notice & Disclaimer](#legal-notice---disclaimer)
 
 ---
@@ -252,6 +255,10 @@ The test script uses Node.js with `--experimental-vm-modules` to support ES modu
 
 ---
 
+## Licence
+
+This project is released under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for the full terms. The MIT licence applies to all original source code and web implementation authored by Simon Henshall. It does not extend to any game concepts, character designs, trademarks, visual assets, or other intellectual property belonging to Square Enix Co., Ltd., which are excluded from this grant of rights.
+
 ## Linting & Formatting
 
 [ESLint](https://eslint.org/) with the flat config (`eslint.config.ts`) is used for static analysis. [Prettier](https://prettier.io/) handles code formatting.
@@ -284,23 +291,37 @@ The JavaScript configuration in `front_end/js/constants/config.js` defines the b
 
 ---
 
-## Legal Notice & Disclaimer
+# Legal Notice, Disclaimer & Licence
 
-This repository is a non-commercial, open-source educational project built solely to demonstrate advanced programming capabilities, state-machine architecture, and UI/UX implementation.
+This repository is an unofficial, non-commercial fan creation intended for educational and portfolio review purposes only. It is not affiliated with, endorsed by, or associated with Square Enix.
 
 ### Intellectual Property Notice
 
-- **Game Concept and Visual Assets** are the exclusive intellectual property of **Square Enix Co., Ltd.**
-- **Source Code and Web Implementation** are copyright © Simon Henshall.
+| Asset Type                                                             | Owner                 | MIT Licence Applies? |
+| :--------------------------------------------------------------------- | :-------------------- | :------------------: |
+| **Original Source Code & Architecture** (PHP, JavaScript, logic)       | Simon Henshall        |      ✅ **Yes**      |
+| **Character Designs, Artwork, & Trademarks** (_Final Fantasy VIII_)    | Square Enix Co., Ltd. |      ❌ **No**       |
+| **Visual Assets** (Official board layouts, card faces, icons, sprites) | Square Enix Co., Ltd. |      ❌ **No**       |
+| **The "Triple Triad" Name & Brand Identity**                           | Square Enix Co., Ltd. |      ❌ **No**       |
+
+> 📌 **Key Point:** Square Enix retains absolute ownership of all _Final Fantasy_ intellectual property, trademarks, and associated visual assets. Only the original functional source code and software architecture authored by Simon Henshall are covered by the MIT licence. (Note: Game mechanics and rulesets are non-copyrightable elements; the MIT licence applies fully to the original code written to execute these mechanics).
 
 ### Copyright Attributions
 
-© 1999, 2019 SQUARE ENIX CO., LTD. All Rights Reserved.
-CHARACTER DESIGN: TETSUYA NOMURA
-LOGO ILLUSTRATION: © 1999 YOSHITAKA AMANO
+- **Square Enix IP:**
+  - © 1999, 2019 SQUARE ENIX CO., LTD. All Rights Reserved.
+  - CHARACTER DESIGN: TETSUYA NOMURA
+  - LOGO ILLUSTRATION: © 1999 YOSHITAKA AMANO
+- **Original Code:**
+  - Copyright © 2026 Simon Henshall. Released under the [MIT License](LICENSE).
 
 ### Terms of Use
 
-This project is an unofficial, non-profit fan creation. It is not affiliated with, endorsed by, or associated with Square Enix. No commercial use, distribution, or monetisation of any kind is permitted.
+- **Original Source Code:** You may use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software code under the terms of the MIT licence, provided the original copyright and permission notice are included.
+- **Square Enix Assets:** This repository does not grant, imply, or transfer any rights to copy, distribute, modify, or use Square Enix intellectual property (including character designs, artwork, or branding) outside of this portfolio context.
+- **No Endorsement:** This project does not represent or imply endorsement, sponsorship, or affiliation by Square Enix.
+- **Good Faith Community Compliance:** This project references guidelines in the [Square Enix West Material Usage Policy](https://square-enix-games.com/documents/materialusagepolicy) as a good-faith effort to respect intellectual property standards customary in the fan-creation community.
 
-The underlying code logic is shared for educational and portfolio review purposes only (under an MIT licence). While this project references guidelines outlined in the [Square Enix West Material Usage Policy](https://square-enix-games.com/documents/materialusagepolicy), it is fully acknowledged that Square Enix retains absolute ownership of all Final Fantasy VIII intellectual property, trademarks, and associated assets.
+### Warranty Disclaimer
+
+This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
