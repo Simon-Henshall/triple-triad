@@ -101,6 +101,7 @@ if (globalThis.createjs === undefined) {
       removeEventListener: jest.fn(),
     },
     Ease: {
+      quadIn: "quadIn",
       quadOut: "quadOut",
       linear: "linear",
       backIn: "backIn",

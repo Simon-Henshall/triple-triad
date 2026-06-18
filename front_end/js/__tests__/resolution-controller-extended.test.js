@@ -86,6 +86,7 @@ describe("ResolutionController (extended)", () => {
 
     test("flips when current card strength is higher", () => {
       const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view = { flipCard: jest.fn(), refreshCardFace: jest.fn() };
       const target = {
         owner: "ai",
         data: { strength: { right: 3 } },

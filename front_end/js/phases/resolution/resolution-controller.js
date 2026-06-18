@@ -73,7 +73,7 @@ export class ResolutionController {
 
       // Standard flip: strength > opponent strength
       if (card.owner !== target.owner && placedStrength > targetStrength) {
-        standardFlips.push(target);
+        standardFlips.push({ target, direction });
       }
 
       // Collect adjacent opponent cards for Same/Plus checks
@@ -97,8 +97,9 @@ export class ResolutionController {
 
     // Apply standard flips first
     let totalFlipped = 0;
-    for (const target of standardFlips) {
-      this.flipCardOver(target, "left");
+    for (const { target, direction } of standardFlips) {
+      const flipDirection = directionMap[direction].opponentStrength;
+      this.flipCardOver(target, flipDirection);
       totalFlipped++;
     }
 
@@ -165,14 +166,15 @@ export class ResolutionController {
         }
 
         if (matchA === matchB) {
-          flipsToApply.add(a.target);
-          flipsToApply.add(b.target);
+          flipsToApply.add({ target: a.target, direction: a.direction });
+          flipsToApply.add({ target: b.target, direction: b.direction });
         }
       }
     }
 
-    for (const target of flipsToApply) {
-      this.flipCardOver(target, "left");
+    for (const { target, direction } of flipsToApply) {
+      const flipDirection = directionMap[direction].opponentStrength;
+      this.flipCardOver(target, flipDirection);
     }
   }
 
@@ -205,14 +207,15 @@ export class ResolutionController {
         const sumB = b.placedStrength + b.targetStrength;
 
         if (sumA === sumB) {
-          flipsToApply.add(a.target);
-          flipsToApply.add(b.target);
+          flipsToApply.add({ target: a.target, direction: a.direction });
+          flipsToApply.add({ target: b.target, direction: b.direction });
         }
       }
     }
 
-    for (const target of flipsToApply) {
-      this.flipCardOver(target, "left");
+    for (const { target, direction } of flipsToApply) {
+      const flipDirection = directionMap[direction].opponentStrength;
+      this.flipCardOver(target, flipDirection);
     }
   }
 
@@ -238,7 +241,7 @@ export class ResolutionController {
       processed.add(capturedCard);
 
       // Check all four sides of this captured card
-      for (const [, map] of Object.entries(directionMap)) {
+      for (const [direction, map] of Object.entries(directionMap)) {
         const adjacent = capturedCard[map.prop];
 
         // Skip if:
@@ -261,7 +264,7 @@ export class ResolutionController {
         const adjacentStrength = adjacent.data.strength[map.playerStrength];
 
         if (capturedStrength > adjacentStrength) {
-          comboFlips.push(adjacent);
+          comboFlips.push({ target: adjacent, direction });
 
           // This newly flipped card can also trigger further combos
           toProcess.push(adjacent);
@@ -270,8 +273,9 @@ export class ResolutionController {
     }
 
     // Apply all combo flips
-    for (const target of comboFlips) {
-      this.flipCardOver(target, "left");
+    for (const { target, direction } of comboFlips) {
+      const flipDirection = directionMap[direction].opponentStrength;
+      this.flipCardOver(target, flipDirection);
     }
 
     this._comboCapturedCards = [];

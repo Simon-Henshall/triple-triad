@@ -24,61 +24,99 @@ describe("ResolutionView", () => {
     expect(view.stage).toBe(mockStage);
   });
 
-  test("flipCard is a no-op (TODO)", () => {
-    expect(() => view.flipCard({}, "left")).not.toThrow();
-    expect(() => view.flipCard({}, "right")).not.toThrow();
+  test.each([
+    ["left", "scaleX"],
+    ["right", "scaleX"],
+    ["up", "scaleY"],
+    ["down", "scaleY"],
+  ])(
+    "flipCard with direction '%s' animates %s to 0 then back to original",
+    (direction, axis) => {
+      const container = { scaleX: 1.5, scaleY: 0.8 };
+      const expectedOriginal = container[axis];
+
+      const tweenToMock = jest
+        .fn()
+        .mockReturnValue({ to: jest.fn(), call: jest.fn() });
+      const tweenCallMock = jest.fn().mockReturnValue({ to: jest.fn() });
+      const tweenMock = {
+        to: tweenToMock.mockReturnValue({
+          to: tweenToMock,
+          call: tweenCallMock,
+        }),
+        call: tweenCallMock,
+      };
+      jest.spyOn(createjs.Tween, "get").mockReturnValue(tweenMock);
+
+      view.flipCard(container, direction);
+
+      const firstTarget = { [axis]: 0 };
+
+      const secondTarget = { [axis]: expectedOriginal };
+
+      // First tween step squishes to 0
+      expect(tweenToMock).toHaveBeenNthCalledWith(
+        1,
+        firstTarget,
+        200,
+        createjs.Ease.quadIn,
+      );
+      // Second step expands back to original
+      expect(tweenToMock).toHaveBeenNthCalledWith(
+        2,
+        secondTarget,
+        200,
+        createjs.Ease.quadOut,
+      );
+    },
+  );
+
+  test("flipCard handles falsy container gracefully", () => {
+    expect(() => view.flipCard(undefined, "left")).not.toThrow();
+    expect(() => view.flipCard(0, "right")).not.toThrow();
   });
 
-  test("finaliseFlip restores position and adds card to stage", () => {
-    const card = { x: 0, y: 0 };
-    const container = {
-      removeAllChildren: jest.fn(),
-      remove: jest.fn(),
-    };
-    view.finaliseFlip(card, container, 100, 200);
-    expect(card.x).toBe(100);
-    expect(card.y).toBe(200);
-    expect(mockStage.addChild).toHaveBeenCalledWith(card);
-    expect(container.removeAllChildren).toHaveBeenCalled();
-    expect(container.remove).toHaveBeenCalled();
-  });
-
-  test("refreshCardFace does nothing for null card", () => {
+  test("refreshCardFace does nothing for falsy card", () => {
     expect(() => view.refreshCardFace()).not.toThrow();
+    expect(() => view.refreshCardFace(0)).not.toThrow();
   });
 
-  test("refreshCardFace does nothing for card without children", () => {
+  test("refreshCardFace does nothing for card without visuals", () => {
     expect(() => view.refreshCardFace({})).not.toThrow();
+    expect(() => view.refreshCardFace({ visuals: {} })).not.toThrow();
   });
 
-  test("refreshCardFace sets image src on existing child", () => {
-    const card = {
-      children: [{ image: { src: "" } }],
+  test("refreshCardFace sets face bitmap as last child", () => {
+    const container = {
+      contains: jest.fn().mockReturnValue(true),
       setChildIndex: jest.fn(),
-      getNumChildren: jest.fn().mockReturnValue(2),
-      owner: "player",
+      getNumChildren: jest.fn().mockReturnValue(3),
+    };
+    const face = { name: "faceBitmap" };
+    const card = {
+      visuals: { container, faceBitmap: face },
     };
 
     view.refreshCardFace(card);
-    expect(card.children[0].image.src).toContain("player");
+
+    expect(container.contains).toHaveBeenCalledWith(face);
+    expect(container.setChildIndex).toHaveBeenCalledWith(face, 2);
   });
 
-  test("flipAIHand calls setTimeout for each card", () => {
-    // 1. Enable fake timers before running the logic
-    jest.useFakeTimers();
+  test("refreshCardFace does nothing if face not in container", () => {
+    const container = {
+      contains: jest.fn().mockReturnValue(false),
+      setChildIndex: jest.fn(),
+    };
+    const card = {
+      visuals: {
+        container,
+        faceBitmap: { name: "faceBitmap" },
+      },
+    };
 
-    // 2. Spy on the timers using Jest's native timer spy
-    const spy = jest.spyOn(globalThis, "setTimeout");
+    view.refreshCardFace(card);
 
-    const hand = [{ id: 1 }, { id: 2 }, { id: 3 }];
-
-    view.flipAIHand(hand);
-
-    // 3. Verify the count
-    expect(spy).toHaveBeenCalledTimes(3);
-
-    // 4. Clear pending timeouts and restore the real timer environment
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    expect(container.setChildIndex).not.toHaveBeenCalled();
   });
 });

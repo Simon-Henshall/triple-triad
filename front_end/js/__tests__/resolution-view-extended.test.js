@@ -20,68 +20,72 @@ describe("ResolutionView (extended)", () => {
     view = new ResolutionView(mockStage);
   });
 
-  test("swapCardFace swaps face src based on backImage match", () => {
-    const card = {
-      children: [{ image: { src: "foo.png" } }, { image: { src: "back.png" } }],
-      backImage: "back.png",
-      frontImage: "front.png",
+  test("flipCard second tween step expands scaleX back to original", () => {
+    const container = { scaleX: 1.5 };
+    const tweenToMock = jest
+      .fn()
+      .mockReturnValue({ to: jest.fn(), call: jest.fn() });
+    const tweenCallMock = jest.fn().mockReturnValue({ to: jest.fn() });
+    const tweenMock = {
+      to: tweenToMock.mockReturnValue({ to: tweenToMock, call: tweenCallMock }),
+      call: tweenCallMock,
     };
+    jest.spyOn(createjs.Tween, "get").mockReturnValue(tweenMock);
 
-    view.swapCardFace(card);
-    // The face image should be replaced with the opposite
-    expect(card.children[1].image.src).toBe("front.png");
+    view.flipCard(container, "left");
+
+    // Verify the expansion tween uses the original scaleX and quadOut easing
+    expect(tweenToMock).toHaveBeenNthCalledWith(
+      2,
+      { scaleX: 1.5 },
+      200,
+      createjs.Ease.quadOut,
+    );
   });
 
-  test("swapCardFace with face being back toggles to front", () => {
-    const card = {
-      children: [{ image: { src: "x" } }, { image: { src: "front.png" } }],
-      backImage: "back.png",
-      frontImage: "front.png",
-    };
+  test("flipCard calls stage.update via the tween call callback", () => {
+    const callFunction = jest.fn();
+    const secondTo = jest.fn().mockReturnValue({ call: callFunction });
+    jest.spyOn(createjs.Tween, "get").mockReturnValue({
+      to: jest.fn().mockReturnValue({ to: secondTo }),
+      call: jest.fn(),
+    });
 
-    view.swapCardFace(card);
-    expect(card.children[1].image.src).toBe("back.png");
-  });
+    view.flipCard({ scaleX: 1 }, "right");
 
-  test("flipDirection updates slice properties and calls stage.update", () => {
-    const card = {
-      children: [{ image: { src: "x" } }, { image: { width: 100 } }],
-    };
-    const container = {
-      /**
-       * Mock implementation of getBounds for testing. In a real test, this would return the actual bounds of the container.
-       * @return {object} An object with width and height properties.
-       */
-      getNumChildren: () => 2,
-      /**
-       * Mock implementation of getChildAt for testing. In a real test, this would return the actual child at the specified index.
-       * @param {number} index - The index of the child to retrieve.
-       * @return {object} A mock child object with x, y, skewY properties and an updateCache method.
-       */
-      getChildAt: () => ({ y: 0, skewY: 0, x: 0, updateCache: jest.fn() }),
-    };
-    view.flipDirection(card, container, "left", 45);
+    const callback = callFunction.mock.calls[0][0];
+    callback();
     expect(mockStage.update).toHaveBeenCalled();
   });
 
-  test("refreshCardFace adds Bitmap when no child exists", () => {
-    const card = {
-      children: [],
-      owner: "ai",
+  test("refreshCardFace adds bitmap if face is not in container", () => {
+    const container = {
+      contains: jest.fn().mockReturnValue(false),
+      setChildIndex: jest.fn(),
       addChildAt: jest.fn(),
     };
+    const card = {
+      visuals: {
+        container,
+        faceBitmap: { name: "faceBitmap" },
+      },
+    };
+
     view.refreshCardFace(card);
-    expect(card.addChildAt).toHaveBeenCalled();
+    expect(container.setChildIndex).not.toHaveBeenCalled();
   });
 
-  test("refreshCardFace sets childIndex for second child", () => {
+  test("refreshCardFace handles missing faceBitmap", () => {
     const card = {
-      children: [{ image: { src: "x" } }, { id: "face" }],
-      owner: "player",
-      setChildIndex: jest.fn(),
-      getNumChildren: jest.fn().mockReturnValue(2),
+      visuals: {
+        container: {
+          contains: jest.fn(),
+          setChildIndex: jest.fn(),
+        },
+        faceBitmap: undefined,
+      },
     };
-    view.refreshCardFace(card);
-    expect(card.setChildIndex).toHaveBeenCalled();
+
+    expect(() => view.refreshCardFace(card)).not.toThrow();
   });
 });

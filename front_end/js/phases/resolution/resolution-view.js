@@ -11,147 +11,59 @@ export class ResolutionView {
   }
 
   /**
-   * @unimplemented TODO: Unimplemented
-   * Flip a single card in a given direction.
-   * @param {Object} container - The card container to flip
-   * @param {string} direction - Direction to flip ("left" or "right")
+   * Flip a single card container using a scale tween animation.
+   *
+   * The axis of the flip depends on `direction`:
+   * - "left" or "right" → animate **scaleX** (horizontal squash/expand)
+   * - "up" or "down"   → animate **scaleY** (vertical squash/expand)
+   *
+   * The container is squished to zero on the relevant axis, then expanded
+   * back to the original value. The card's colour/ownership bitmap is already
+   * updated by ResolutionController before this call, so the "new side" is
+   * visible as the card expands.
+   *
+   * @param {createjs.Container} container - The card container to flip
+   * @param {string} direction - "left" | "right" | "up" | "down"
    */
   flipCard(container, direction) {
-    // TODO: Implement card flip animation
-    // This needs work to properly animate the card flip effect
-  }
-
-  /**
-   * Recursive flip animation.
-   * @param {Object} card - Card to animate
-   * @param {createjs.Container} container - Container holding card
-   * @param {string} direction - Direction of flip
-   * @param {number} counter - Current frame
-   * @param {number} initialX - Original X position
-   * @param {number} initialY - Original Y position
-   */
-  _animateFlip(card, container, direction, counter, initialX, initialY) {
-    const MAX_FRAMES = 180;
-    const SWAP_FRAME = 90;
-
-    if (counter > MAX_FRAMES) {
-      this.finaliseFlip(card, container, initialX, initialY);
+    if (!container) {
       return;
     }
 
-    setTimeout(() => {
-      counter++;
-      if (counter === SWAP_FRAME) {
-        this.swapCardFace(card);
-      }
-      this.flipDirection(card, container, direction, counter);
-      this._animateFlip(
-        card,
-        container,
-        direction,
-        counter,
-        initialX,
-        initialY,
-      );
-    }, 2);
+    const isHorizontal = direction === "left" || direction === "right";
+    const axis = isHorizontal ? "scaleX" : "scaleY";
+    const originalValue = container[axis];
+
+    const firstTarget = { [axis]: 0 };
+
+    const secondTarget = { [axis]: originalValue };
+
+    createjs.Tween.get(container, { override: true })
+      .to(firstTarget, 200, createjs.Ease.quadIn)
+      .to(secondTarget, 200, createjs.Ease.quadOut)
+      .call(() => {
+        this.stage?.update();
+      });
   }
 
   /**
-   * Swap the visible face of the card (front ↔ back).
-   * @param {Object} card - Card whose face to swap
+   * Ensure card visuals are correct after a flip.
+   * The colour/ownership bitmap is already swapped by card.setOwner(),
+   * so this method just guarantees the face art stays on top of the
+   * display list.
+   *
+   * @param {import("../shared/card/card.js").Card} card - The Card instance
    */
-  swapCardFace(card) {
-    const face = card.children[1];
-    const isBack = face.image.src.includes(card.backImage);
-    face.image.src = isBack ? card.frontImage : card.backImage;
-
-    // Reset position/scale to avoid drift
-    face.x = 0;
-    face.scaleX = 1;
-  }
-
-  /**
-   * Flip container slices per direction.
-   * @param {Object} card - Card to manipulate
-   * @param {createjs.Container} container - Container for slices
-   * @param {string} direction - Flip direction
-   * @param {number} value - Current animation counter
-   */
-  flipDirection(card, container, direction, value) {
-    const factor = direction === "left" ? -1 : 1;
-    const totalSlices = container.getNumChildren();
-
-    for (let index = 0; index < totalSlices; index++) {
-      const slice = container.getChildAt(index);
-      slice.y =
-        (Math.sin((value * Math.PI) / 180) *
-          factor *
-          card.children[1].image.width) /
-        2;
-      slice.skewY = (index % 2 === 0 ? -1 : 1) * value * factor;
-      slice.x =
-        card.children[1].image.width *
-        (index - totalSlices / 2) *
-        Math.cos((slice.skewY * Math.PI) / 180);
-      slice.updateCache();
-    }
-
-    this.stage.update();
-  }
-
-  /**
-   * Finalise the card flip animation and clean up container.
-   * @param {Object} card - Card to finalize
-   * @param {createjs.Container} container - Container used for animation
-   * @param {number} initialX - Original X position
-   * @param {number} initialY - Original Y position
-   */
-  finaliseFlip(card, container, initialX, initialY) {
-    card.x = initialX;
-    card.y = initialY;
-    this.stage.addChild(card);
-    container.removeAllChildren();
-    container.remove();
-  }
-
-  /**
-   * Replace or update the card ownership image while retaining the front art.
-   * @param {Object} cardToReplace - The card whose visual representation to update
-   */
-  refreshCardFace(cardToReplace) {
-    // TODO: Implement card face refresh
-    // This needs work to properly update the card's visual representation
-    if (!cardToReplace || !cardToReplace.children) {
+  refreshCardFace(card) {
+    if (!card?.visuals?.container) {
       return;
     }
 
-    if (cardToReplace.children[0]) {
-      cardToReplace.children[0].image.src = `front_end/images/cards/${cardToReplace.owner}.png`;
-    } else {
-      const ownerBmp = new createjs.Bitmap(
-        `front_end/images/cards/${cardToReplace.owner}.png`,
-      );
-      cardToReplace.addChildAt(ownerBmp, 0);
-    }
+    const container = card.visuals.container;
+    const face = card.visuals.faceBitmap;
 
-    // Ensure front face stays above ownership background
-    if (cardToReplace.children[1]) {
-      cardToReplace.setChildIndex(
-        cardToReplace.children[1],
-        cardToReplace.getNumChildren() - 1,
-      );
-    }
-  }
-
-  /**
-   * @unimplemented TODO: Unimplemented
-   * Animate flipping each card in the AI hand at game start.
-   * @param {Array<Card>} hand - The AI's hand of cards
-   */
-  flipAIHand(hand) {
-    const handCopy = hand.toReversed();
-    for (const [index, card] of handCopy.entries()) {
-      setTimeout(() => this.flipCard(card, "right"), 2000 * (index + 1));
+    if (face && container.contains(face)) {
+      container.setChildIndex(face, container.getNumChildren() - 1);
     }
   }
 }
