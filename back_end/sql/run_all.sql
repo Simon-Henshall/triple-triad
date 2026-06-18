@@ -7,13 +7,18 @@
 --   mysql -u root -p < back_end/sql/run_all.sql
 -- ============================================================
 
--- First, create the schema (tables and constraints)
-SOURCE 00_schema.sql;
+-- Schema (tables and constraints)
+SOURCE back_end/sql/00_schema.sql;
 
--- Then seed data in dependency order:
-SOURCE 01_seed_elements.sql;    -- element lookup table
-SOURCE 02_seed_levels.sql;      -- level_value lookup table
-SOURCE 03_seed_cards.sql;       -- card definitions (depends on elements)
-SOURCE 04_seed_players.sql;     -- player profiles (depends on cards for FK)
-SOURCE 05_seed_player_levels.sql; -- player-level bridge (depends on players + level_values)
-SOURCE 06_seed_player_cards.sql;  -- player card inventory (depends on players + cards)
+-- Element lookup table
+SOURCE back_end/sql/01_seed_elements.sql;
+-- Level value lookup table
+SOURCE back_end/sql/02_seed_levels.sql;
+-- Card definitions (depends on elements)
+SOURCE back_end/sql/03_seed_cards.sql;
+-- Player profiles (depends on cards for FK)
+SOURCE back_end/sql/04_seed_players.sql;
+-- Player-level bridge (depends on players + level_values)
+SOURCE back_end/sql/05_seed_player_levels.sql;
+-- Player card inventory (depends on players + cards)
+SOURCE back_end/sql/06_seed_player_cards.sql;
