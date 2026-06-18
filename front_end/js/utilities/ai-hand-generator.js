@@ -14,8 +14,6 @@
  *  - Left Diamond CC Group (opponent id 112): 100% rare card choice rate
  */
 
-import { RNG } from "./rng.js";
-
 /** Standard rare-card threshold: 26 out of 256 = ~10.16% */
 const STANDARD_RARE_THRESHOLD = 26;
 
@@ -45,13 +43,7 @@ export function generateAIHand(
   const hand = [];
 
   // ---- Step 1: Try to place a rare card (1 slot) ----
-  const rareSlotFilled = tryPlaceRareCard(
-    hand,
-    rareCard,
-    playerCardIds,
-    opponent,
-    rng,
-  );
+  tryPlaceRareCard(hand, rareCard, playerCardIds, opponent, rng);
 
   // ---- Step 2: Fill remaining slots with common cards ----
   const slotsRemaining = 5 - hand.length;

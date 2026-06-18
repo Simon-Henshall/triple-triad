@@ -1,7 +1,6 @@
 import { DeckSelectionView } from "./deck-selection-view.js";
 import { DeckSelectionController } from "./deck-selection-controller.js";
 import { Game } from "../../shared/game/game.js";
-import { InfoBox } from "../../shared/ui/info-box.js";
 import { Card } from "../../shared/card/card.js";
 import DeckSelectionModel from "./deck-selection-model.js";
 

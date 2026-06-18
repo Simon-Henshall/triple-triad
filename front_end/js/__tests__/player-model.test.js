@@ -263,13 +263,9 @@ test("shiftCardsDown does nothing when hand is empty", () => {
  */
 test("constructor sets optional view parameter", () => {
   const view = {
-    /**
-     *
-     */
+    /** Resets hand slots in the UI */
     resetHandSlots: () => {},
-    /**
-     *
-     */
+    /** Animates card being added to hand */
     animateCardToHand: () => {},
     cardsInPlayerPlayerHand: [],
   };

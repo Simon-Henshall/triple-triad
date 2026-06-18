@@ -7,6 +7,9 @@ import jsdoc from "eslint-plugin-jsdoc";
 import eslintPluginNoCommentedCode from "eslint-plugin-no-commented-code";
 
 export default [
+  {
+    ignores: ["coverage/"],
+  },
   //pluginJs.configs.recommended,
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],

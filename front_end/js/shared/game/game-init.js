@@ -367,9 +367,7 @@ export const gameInit = {
 
       opponentLocations: opponentLocations || [],
       opponentSelectionCallbacks: {
-        /**
-         *
-         */
+        /** Called when an opponent is selected */
         onOpponentSelected: (opponent) => this.setupAIForOpponent(opponent),
       },
 

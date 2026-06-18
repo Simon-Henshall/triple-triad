@@ -96,11 +96,9 @@ export class ResolutionController {
     }
 
     // Apply standard flips first
-    let totalFlipped = 0;
     for (const { target, direction } of standardFlips) {
       const flipDirection = directionMap[direction].opponentStrength;
       this.flipCardOver(target, flipDirection);
-      totalFlipped++;
     }
 
     // Check Same rule

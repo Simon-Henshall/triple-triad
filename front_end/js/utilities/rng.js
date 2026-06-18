@@ -33,6 +33,7 @@ export class RNG {
    */
   next() {
     this.state = (this.MULTIPLIER * this.state + this.INCREMENT) >>> 0;
+    // eslint-disable-next-line unicorn/number-literal-case
     return (this.state >>> 24) & 0xff;
   }
 

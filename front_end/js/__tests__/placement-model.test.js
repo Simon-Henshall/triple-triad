@@ -107,9 +107,7 @@ describe("PlacementModel", () => {
         owner: "player",
         visuals: {
           container: {
-            /**
-             *
-             */
+            /** Get bounding box */
             getBounds: () => ({ width: 100, height: 100 }),
           },
         },
@@ -143,9 +141,7 @@ describe("PlacementModel", () => {
         owner: "player",
         visuals: {
           container: {
-            /**
-             *
-             */
+            /** Get bounding box */
             getBounds: () => ({ width: 100, height: 100 }),
             children: [],
             x: 0,
@@ -173,9 +169,7 @@ describe("PlacementModel", () => {
         owner: "player",
         visuals: {
           container: {
-            /**
-             *
-             */
+            /** Get bounding box */
             getBounds: () => ({ width: 100, height: 100 }),
             children: [],
             x: 0,
@@ -198,35 +192,16 @@ describe("PlacementModel", () => {
       const backBitmap = { name: "backBitmap", visible: true };
       const colourBitmap = { name: "colourBitmap", visible: false };
       const faceBitmap = { name: "faceBitmap", visible: false };
-      /**
-       *
-       */
-      const findByName = (name) => {
-        if (name === "backBitmap") {
-          return backBitmap;
-        }
-        if (name === "colourBitmap") {
-          return colourBitmap;
-        }
-        if (name === "faceBitmap") {
-          return faceBitmap;
-        }
-        return;
-      };
       const card = {
         data: { id: 1, element: 0 },
         element: 0,
         owner: "ai",
         visuals: {
           container: {
-            /**
-             *
-             */
+            /** Get bounding box */
             getBounds: () => ({ width: 100, height: 100 }),
             children: {
-              /**
-               *
-               */
+              /** Find child by predicate */
               find: (function_) => {
                 const list = [backBitmap, colourBitmap, faceBitmap];
                 // eslint-disable-next-line unicorn/no-array-callback-reference
@@ -261,14 +236,10 @@ describe("PlacementModel", () => {
         owner: "ai",
         visuals: {
           container: {
-            /**
-             *
-             */
+            /** Get bounding box */
             getBounds: () => ({ width: 100, height: 100 }),
             children: {
-              /**
-               *
-               */
+              /** Find child by name */
               find: () => backBitmap,
             },
             x: 0,
@@ -326,9 +297,7 @@ describe("PlacementModel", () => {
     test("adds card to board and removes from freeCells", () => {
       const model = new PlacementModel(mockController, mockTransition);
       const container = {
-        /**
-         *
-         */
+        /** Get bounding box */
         getBounds: () => ({ width: 100, height: 200 }),
         scaleX: 0,
         scaleY: 0,
@@ -348,9 +317,7 @@ describe("PlacementModel", () => {
     test("does not add container to boardContainer if already there", () => {
       const model = new PlacementModel(mockController, mockTransition);
       const container = {
-        /**
-         *
-         */
+        /** Get bounding box */
         getBounds: () => ({ width: 100, height: 200 }),
         x: 0,
         y: 0,
