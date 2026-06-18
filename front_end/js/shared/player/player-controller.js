@@ -108,11 +108,10 @@ export class PlayerController {
   }
 
   /**
-   * @unimplemented TODO: Unimplemented
-   * Retrieve a card from the player's hand by index.
+   * Get a card from the player's hand by index. Delegates to the model.
    *
-   * @param {number} index - Index of the card to return (0-based).
-   * @returns {Card|undefined} The `Card` at the requested index or `undefined` if out of range.
+   * @param {number} index - The index of the card to retrieve.
+   * @returns {Card|undefined} The card at the given index, or undefined.
    */
   getHandCard(index) {
     return this.model.getHandCard(index);

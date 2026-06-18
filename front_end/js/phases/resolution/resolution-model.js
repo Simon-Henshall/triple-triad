@@ -38,39 +38,35 @@ export default class ResolutionModel {
   }
 
   /**
-   * @unimplemented TODO: Implement this
-   * Get all cards that were flipped in this phase
-   * @returns {Array<Card>}
+   * Get the list of flipped cards
+   * @returns {Array<Card>} The array of flipped cards
    */
   getFlippedCards() {
     return this.flippedCards;
   }
 
   /**
-   * @unimplemented TODO: Implement this
-   * Reset the resolution state for the next turn
+   * Check if there are any flips recorded
+   * @returns {boolean} Whether there are any flipped cards
+   */
+  hasFlips() {
+    return this.flippedCards.length > 0;
+  }
+
+  /**
+   * Set whether the resolution phase is currently resolving flips
+   * @param {boolean} value - The new state
+   */
+  setResolvingFlips(value) {
+    this.isResolvingFlips = value;
+  }
+
+  /**
+   * Reset the model state, clearing all flips
    */
   reset() {
     this.flippedCards = [];
     this.totalFlipped = 0;
     this.isResolvingFlips = false;
-  }
-
-  /**
-   * @unimplemented TODO: Implement this
-   * Set the resolution state
-   * @param {boolean} isResolving
-   */
-  setResolvingFlips(isResolving) {
-    this.isResolvingFlips = isResolving;
-  }
-
-  /**
-   * @unimplemented TODO: Implement this
-   * Check if any cards were flipped in this phase
-   * @returns {boolean}
-   */
-  hasFlips() {
-    return this.totalFlipped > 0;
   }
 }
