@@ -54,7 +54,7 @@ export const DeckSelectionView = {
     // Reuse icon if exists
     let icon = sb.cardIcons[rowIndex];
     if (!icon) {
-      icon = new createjs.Bitmap("front_end/images/selection_card.png");
+      icon = new createjs.Bitmap("assets/original/selection_card.png");
       icon.scaleX = icon.scaleY = 0.6;
       sb.cardIcons[rowIndex] = icon;
     }

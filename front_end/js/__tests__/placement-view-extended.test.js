@@ -90,7 +90,7 @@ describe("PlacementView (extended)", () => {
       addChild: jest.fn(),
     };
     const card = { visuals: { container } };
-    view.showElementEffect(card, "front_end/images/plus_one.png");
+    view.showElementEffect(card, "assets/original/plus_one.png");
     expect(container.addChild).toHaveBeenCalled();
   });
 
