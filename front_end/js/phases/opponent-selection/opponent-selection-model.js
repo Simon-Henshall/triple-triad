@@ -14,6 +14,8 @@ export default class OpponentSelectionModel {
     this.locations = locations;
     this.locationIndex = 0;
     this.playerIndex = 0;
+    /** @type {createjs.Bitmap|undefined} Set by controller after cursors are ready */
+    this.cursor = undefined;
   }
 
   /** Total number of locations */
