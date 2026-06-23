@@ -29,6 +29,8 @@ import { BoardModel } from "../board/board-model.js";
 import { createDeckFromApi } from "../card/card-factory.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
+import { RulesView } from "../../phases/rules/rules-view.js";
+import { RulesController } from "../../phases/rules/rules-controller.js";
 import { fetchOpponentCards } from "../../utilities/network.js";
 import { RNG } from "../../utilities/rng.js";
 import { generateAIHand } from "../../utilities/ai-hand-generator.js";
@@ -53,6 +55,10 @@ export const gameInit = {
   // UI Containers
   // ---------------------------------------------
   uiContainers() {
+    RulesView.container = new createjs.Container();
+    RulesView.background = new createjs.Shape();
+    RulesView.cursor = new createjs.Bitmap(config.imagePath + "cursor.png");
+
     ConfirmationView.container = new createjs.Container();
     ConfirmationView.background = new createjs.Shape();
     ConfirmationView.cursor = new createjs.Bitmap(
@@ -118,9 +124,12 @@ export const gameInit = {
       undefined,
     );
 
+    const rulesController = new RulesController({}, undefined);
+
     const stateMachine = new StateMachine(phases, {
       allowedTransitions: {
-        "opponent-selection": ["deck-selection"],
+        "opponent-selection": ["rules"],
+        rules: ["deck-selection"],
         "deck-selection": ["confirmation"],
         confirmation: ["deck-selection", "hand-select"],
         "hand-select": ["placement"],
@@ -149,6 +158,7 @@ export const gameInit = {
       placementController,
       inputController,
       handSelectController,
+      rulesController,
     };
 
     Game.views = { playerView };
@@ -166,6 +176,7 @@ export const gameInit = {
       inputModel,
       inputController,
       handSelectController,
+      rulesController,
       stateMachine,
     };
   },

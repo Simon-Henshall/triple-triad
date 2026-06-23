@@ -22,6 +22,7 @@ import { AITurnController } from "../phases/ai-turn/ai-turn-controller.js";
 import GameOverController from "../phases/game-over/game-over-controller.js";
 import CardClaimController from "../phases/card-claim/card-claim-controller.js";
 import { OpponentSelectionController } from "../phases/opponent-selection/opponent-selection-controller.js";
+import { RulesController } from "../phases/rules/rules-controller.js";
 
 export const PhaseChecker = {
   playerSelectingHand: false,
@@ -29,6 +30,7 @@ export const PhaseChecker = {
   playerChoosingCard: false,
   playerSelectingPlacement: false,
   playerSelectingOpponent: false,
+  playerViewingRules: false,
 };
 
 export default {
@@ -50,6 +52,13 @@ export default {
         transition,
         localDeps.callbacks,
       ),
+  },
+
+  // Rules phase: display active rules and Play/Quit options.
+  rules: {
+    deps: (rootDeps) => ({}),
+    factory: (localDeps, transition) =>
+      new RulesController(localDeps, transition),
   },
 
   // Deck selection where the player chooses 5 cards.

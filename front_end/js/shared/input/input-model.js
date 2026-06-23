@@ -309,4 +309,39 @@ export class InputModel {
     // Prefer controller-driven flow when available
     return Game.controllers.handSelectController.playSelectedCard();
   }
+
+  // -------------------------------------------------
+  // RULES PHASE
+  // -------------------------------------------------
+
+  /**
+   * Handle rules phase input.
+   * @param {KeyboardEvent} event
+   */
+  handleRulesInput(event) {
+    const stateMachine = Game.models?.stateMachine;
+    const currentPhase = stateMachine?.getCurrentPhase?.();
+    if (!currentPhase) return;
+
+    switch (event.key) {
+      case "ArrowUp": {
+        currentPhase.navigate("up");
+        break;
+      }
+      case "ArrowDown": {
+        currentPhase.navigate("down");
+        break;
+      }
+      case "Enter": {
+        currentPhase.confirm();
+        break;
+      }
+      case "Backspace":
+      case "Escape": {
+        // Do nothing on cancel for rules
+        break;
+      }
+    }
+  }
+
 }

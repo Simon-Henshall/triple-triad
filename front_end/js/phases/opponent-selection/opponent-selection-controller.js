@@ -73,7 +73,7 @@ export class OpponentSelectionController {
   /**
    * Confirm the current opponent selection.
    * Invokes the onOpponentSelected callback (which fetches cards and sets up AI),
-   * then transitions to deck-selection.
+   * then transitions to rules.
    */
   async confirm() {
     const player = this.model.selectedPlayer;
@@ -98,7 +98,7 @@ export class OpponentSelectionController {
       return;
     }
 
-    // Transition to deck-selection
-    this.transition("deck-selection");
+    // Transition to rules phase
+    this.transition("rules");
   }
 }
