@@ -138,7 +138,7 @@ export const OpponentSelectionView = {
     const dPadY = this.boxY + 8;
     const dPadSpacing = 14;
 
-    const hasPlayersAbove = startIndex > 0;
+    const hasPlayersAbove = selectedIndex > 0;
     const hasPlayersBelow = startIndex + maxVisible < players.length;
     const totalLocations = this.model?.totalLocations || 0;
     const hasPreviousLocation = totalLocations > 1;
