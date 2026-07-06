@@ -143,5 +143,6 @@ if (globalThis.Image === undefined) {
 if (globalThis.document === undefined) {
   globalThis.document = {
     addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
   };
 }

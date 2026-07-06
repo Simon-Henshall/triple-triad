@@ -58,7 +58,7 @@ export const RulesView = {
     border.x = boxX - 1;
     border.y = boxY - 1;
 
-    const infoLabel = new createjs.Text("info", "14px Arial", "#aaaaaa");
+    const infoLabel = new createjs.Text("INFO.", "14px Arial", "#aaaaaa");
     infoLabel.x = boxX + 10;
     infoLabel.y = boxY + 5;
 
