@@ -334,8 +334,8 @@ describe("PlacementModel", () => {
     test("returns modified: false when no squareElement", () => {
       const model = new PlacementModel(mockController, mockTransition);
       const card = {
-        element: 1,
         data: {
+          element: 1,
           strength: { left: 1, up: 1, right: 1, down: 1 },
         },
       };
@@ -346,8 +346,7 @@ describe("PlacementModel", () => {
     test("returns modified: true with plus_one image when matching element", () => {
       const model = new PlacementModel(mockController, mockTransition);
       const card = {
-        element: 1,
-        data: { strength: { left: 1, up: 1, right: 1, down: 1 } },
+        data: { element: 1, strength: { left: 1, up: 1, right: 1, down: 1 } },
       };
       const result = model.applyElementEffects(card, 1);
       expect(result.modified).toBe(true);
@@ -361,8 +360,7 @@ describe("PlacementModel", () => {
     test("returns modified: true with minus_one image when not matching element", () => {
       const model = new PlacementModel(mockController, mockTransition);
       const card = {
-        element: 1,
-        data: { strength: { left: 5, up: 5, right: 5, down: 5 } },
+        data: { element: 1, strength: { left: 5, up: 5, right: 5, down: 5 } },
       };
       const result = model.applyElementEffects(card, 2);
       expect(result.modified).toBe(true);

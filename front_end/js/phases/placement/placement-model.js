@@ -267,7 +267,7 @@ export class PlacementModel {
       return { modified: false };
     }
 
-    const modifier = card.element === squareElement ? 1 : -1;
+    const modifier = card.data.element === squareElement ? 1 : -1;
     card.data.strength.left += modifier;
     card.data.strength.up += modifier;
     card.data.strength.right += modifier;
