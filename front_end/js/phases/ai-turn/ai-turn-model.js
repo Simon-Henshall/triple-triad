@@ -31,15 +31,31 @@ export class AITurnModel {
   }
 
   /**
-   * Choose a card to play
+   * Choose which card index to play (stores selection index without removing the card).
+   * Call takeCard() after the visual delay to actually remove it from the hand.
+   * @returns {number} The index of the chosen card, or -1 if hand is empty.
    */
   chooseCard() {
     if (this.hand.length === 0) {
-      return;
+      return -1;
     }
     const cardIndex = Math.floor(Math.random() * this.hand.length);
     this.cardsAboveSelection = cardIndex;
-    return this.hand.splice(cardIndex, 1)[0];
+    return cardIndex;
+  }
+
+  /**
+   * Remove the previously selected card from the hand (call after chooseCard + visual delay).
+   * @returns {Card|undefined} The removed card, or undefined if nothing to remove.
+   */
+  takeCard() {
+    if (
+      this.cardsAboveSelection < 0 ||
+      this.cardsAboveSelection >= this.hand.length
+    ) {
+      return;
+    }
+    return this.hand.splice(this.cardsAboveSelection, 1)[0];
   }
 
   /**

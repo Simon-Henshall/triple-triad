@@ -29,8 +29,8 @@ export class AITurnController {
       "[AI Turn] AI hand:",
       this.model.hand.map((c) => c.data.name),
     );
-    // Execute the AI's turn
-    this.takeTurn();
+    // Execute the AI's turn (await so the phase stays active during the 2s delay)
+    await this.takeTurn();
   }
 
   /**
@@ -57,13 +57,30 @@ export class AITurnController {
   }
 
   /**
-   * Executes a single AI turn
+   * Executes a single AI turn with a 2-second visual delay
+   * to show the card selection (cursor + indentation).
    */
-  takeTurn() {
-    // Choose a card
-    const playedCard = this.model.chooseCard();
-    if (!playedCard) {
+  async takeTurn() {
+    // Choose which card to play (selects index without removing)
+    const cardIndex = this.model.chooseCard();
+    if (cardIndex < 0) {
       console.warn("[AI Turn] No cards left to play");
+      return;
+    }
+
+    // Show the selection cursor and indent the chosen card
+    this.view.showSelection(this.model.hand, cardIndex);
+
+    // Wait 2 seconds so the user can see the selection
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Hide the selection cursor and unindent
+    this.view.hideSelection(this.model.hand);
+
+    // Now actually remove the selected card from the AI's hand
+    const playedCard = this.model.takeCard();
+    if (!playedCard) {
+      console.warn("[AI Turn] Failed to retrieve selected card from hand");
       return;
     }
 

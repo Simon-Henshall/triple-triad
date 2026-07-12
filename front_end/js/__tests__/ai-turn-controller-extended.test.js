@@ -20,9 +20,23 @@ describe("AiTurnController (extended)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     transitionMock = jest.fn();
+
+    // Mock global createjs so that AITurnView constructor can create a cursor bitmap
+    globalThis.createjs = {
+      Bitmap: jest.fn().mockReturnValue({ visible: false }),
+      Tween: {
+        get: jest.fn().mockReturnValue({
+          to: jest.fn().mockReturnValue({ call: jest.fn() }),
+        }),
+      },
+      Ease: { quadOut: jest.fn() },
+    };
+
     Game.stage = {
+      canvas: { height: 600 },
       addChild: jest.fn(),
       removeChild: jest.fn(),
+      contains: jest.fn().mockReturnValue(false),
       update: jest.fn(),
     };
     Game.controllers = {
@@ -48,7 +62,7 @@ describe("AiTurnController (extended)", () => {
   });
 
   describe("activate", () => {
-    test("activates and calls takeTurn", () => {
+    test("activates and calls takeTurn", async () => {
       const aiModel = {
         hand: [{ data: { name: "Card1" } }],
         chooseCard: jest.fn().mockReturnValue({ data: { name: "Card1" } }),
@@ -57,7 +71,7 @@ describe("AiTurnController (extended)", () => {
       };
       const ctrl = new AiTurnController({ aiModel }, transitionMock);
       ctrl.takeTurn = jest.fn();
-      ctrl.activate();
+      await ctrl.activate();
       expect(ctrl.takeTurn).toHaveBeenCalled();
     });
   });
@@ -92,23 +106,46 @@ describe("AiTurnController (extended)", () => {
   });
 
   describe("takeTurn", () => {
-    test("returns early when no card can be chosen", () => {
+    test("returns early when no card can be chosen", async () => {
       const aiModel = {
         hand: [],
-        chooseCard: jest.fn().mockReturnValue(),
+        chooseCard: jest.fn().mockReturnValue(-1),
       };
       const ctrl = new AiTurnController({ aiModel }, transitionMock);
       const logWarn = jest.spyOn(console, "warn").mockImplementation(() => {});
-      ctrl.takeTurn();
+      await ctrl.takeTurn();
       expect(aiModel.chooseCard).toHaveBeenCalled();
       logWarn.mockRestore();
     });
 
-    test("returns early when no free cells available", () => {
+    test("returns early when takeCard fails (no card retrieved)", async () => {
       const aiModel = {
         hand: [{ data: { name: "X" } }],
-        chooseCard: jest.fn().mockReturnValue({ data: { name: "X" } }),
+        chooseCard: jest.fn().mockReturnValue(0),
         cardsAboveSelection: 0,
+        takeCard: jest.fn().mockReturnValue(),
+        decrementMove: jest.fn(),
+      };
+      const ctrl = new AiTurnController({ aiModel }, transitionMock);
+      const logWarn = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+      // Mock view.showSelection/hideSelection to avoid 2s delay in test
+      jest.spyOn(ctrl.view, "showSelection").mockImplementation(() => {});
+      jest.spyOn(ctrl.view, "hideSelection").mockImplementation(() => {});
+
+      await ctrl.takeTurn();
+      expect(logWarn).toHaveBeenCalled();
+      expect(aiModel.takeCard).toHaveBeenCalled();
+      logWarn.mockRestore();
+    });
+
+    test("returns early when no free cells available", async () => {
+      const playedCard = { data: { name: "X" } };
+      const aiModel = {
+        hand: [playedCard],
+        chooseCard: jest.fn().mockReturnValue(0),
+        cardsAboveSelection: 0,
+        takeCard: jest.fn().mockReturnValue(playedCard),
         decrementMove: jest.fn(),
       };
       // Fill all cells
@@ -118,22 +155,33 @@ describe("AiTurnController (extended)", () => {
       }));
       const ctrl = new AiTurnController({ aiModel }, transitionMock);
       const logWarn = jest.spyOn(console, "warn").mockImplementation(() => {});
-      ctrl.takeTurn();
+
+      // Mock view.showSelection/hideSelection to avoid 2s delay in test
+      jest.spyOn(ctrl.view, "showSelection").mockImplementation(() => {});
+      jest.spyOn(ctrl.view, "hideSelection").mockImplementation(() => {});
+
+      await ctrl.takeTurn();
       expect(logWarn).toHaveBeenCalled();
       logWarn.mockRestore();
     });
 
-    test("places a card on a free cell", () => {
+    test("places a card on a free cell", async () => {
       const playedCard = { data: { name: "Played" } };
       const aiModel = {
         hand: [playedCard],
-        chooseCard: jest.fn().mockReturnValue(playedCard),
+        chooseCard: jest.fn().mockReturnValue(0),
         cardsAboveSelection: 0,
+        takeCard: jest.fn().mockReturnValue(playedCard),
         decrementMove: jest.fn(),
       };
       const ctrl = new AiTurnController({ aiModel }, transitionMock);
       ctrl.view.shiftCardsDown = jest.fn();
-      ctrl.takeTurn();
+
+      // Mock view.showSelection/hideSelection to avoid 2s delay in test
+      jest.spyOn(ctrl.view, "showSelection").mockImplementation(() => {});
+      jest.spyOn(ctrl.view, "hideSelection").mockImplementation(() => {});
+
+      await ctrl.takeTurn();
       expect(BoardModel.updateUISelection).toHaveBeenCalled();
       expect(
         Game.controllers.placementController.model.placeCard,

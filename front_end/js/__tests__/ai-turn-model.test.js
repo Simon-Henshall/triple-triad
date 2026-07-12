@@ -49,19 +49,48 @@ describe("AITurnModel", () => {
     expect(model.hand).toHaveLength(0);
   });
 
-  test("chooseCard returns undefined when hand is empty", () => {
-    expect(model.chooseCard()).toBeUndefined();
+  test("chooseCard returns -1 when hand is empty", () => {
+    expect(model.chooseCard()).toBe(-1);
   });
 
-  test("chooseCard returns a card from hand and removes it", () => {
+  test("chooseCard returns a valid index and sets cardsAboveSelection", () => {
     const card1 = { id: 1 };
     const card2 = { id: 2 };
-    model.hand = [card1, card2];
+    const card3 = { id: 3 };
+    model.hand = [card1, card2, card3];
 
-    const chosen = model.chooseCard();
+    const chosenIndex = model.chooseCard();
+    const expectedIndex = model.cardsAboveSelection;
 
-    expect([card1, card2]).toContain(chosen);
-    expect(model.hand).toHaveLength(1);
+    expect(chosenIndex).toBe(expectedIndex);
+    expect(chosenIndex).toBeGreaterThanOrEqual(0);
+    expect(chosenIndex).toBeLessThan(3);
+    // The card should still be in the hand (not removed yet)
+    expect(model.hand).toHaveLength(3);
+  });
+
+  test("takeCard removes and returns the card at cardsAboveSelection", () => {
+    const card1 = { id: 1 };
+    const card2 = { id: 2 };
+    const card3 = { id: 3 };
+    model.hand = [card1, card2, card3];
+    model.cardsAboveSelection = 1;
+
+    const taken = model.takeCard();
+
+    expect(taken).toBe(card2);
+    expect(model.hand).toHaveLength(2);
+    expect(model.hand[0]).toBe(card1);
+    expect(model.hand[1]).toBe(card3);
+  });
+
+  test("takeCard returns undefined when cardsAboveSelection is out of range", () => {
+    model.hand = [{ id: 1 }];
+    model.cardsAboveSelection = -1;
+    expect(model.takeCard()).toBeUndefined();
+
+    model.cardsAboveSelection = 5;
+    expect(model.takeCard()).toBeUndefined();
   });
 
   test("decrementMove reduces movesRemaining", () => {

@@ -74,6 +74,8 @@ export class PlacementController {
     if (currentTurn === "blue") {
       this._preparePlayerTurn();
     } else {
+      // Fire-and-forget is acceptable here; the state machine properly awaits
+      // the AI turn phase via ai-turn/activate
       Game.controllers.aiTurnController.takeTurn();
     }
   }
