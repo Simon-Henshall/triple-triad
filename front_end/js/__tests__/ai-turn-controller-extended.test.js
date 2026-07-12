@@ -129,7 +129,9 @@ describe("AiTurnController (extended)", () => {
       const ctrl = new AiTurnController({ aiModel }, transitionMock);
       const logWarn = jest.spyOn(console, "warn").mockImplementation(() => {});
 
-      // Mock view.showSelection/hideSelection to avoid 2s delay in test
+      // Mock the async thinking animation to skip delays
+      ctrl._animateThinking = jest.fn().mockResolvedValue();
+      // Mock view.showSelection/hideSelection to avoid visual delay in test
       jest.spyOn(ctrl.view, "showSelection").mockImplementation(() => {});
       jest.spyOn(ctrl.view, "hideSelection").mockImplementation(() => {});
 
@@ -156,7 +158,9 @@ describe("AiTurnController (extended)", () => {
       const ctrl = new AiTurnController({ aiModel }, transitionMock);
       const logWarn = jest.spyOn(console, "warn").mockImplementation(() => {});
 
-      // Mock view.showSelection/hideSelection to avoid 2s delay in test
+      // Mock the async thinking animation to skip delays
+      ctrl._animateThinking = jest.fn().mockResolvedValue();
+      // Mock view.showSelection/hideSelection to avoid visual delay in test
       jest.spyOn(ctrl.view, "showSelection").mockImplementation(() => {});
       jest.spyOn(ctrl.view, "hideSelection").mockImplementation(() => {});
 
@@ -177,7 +181,9 @@ describe("AiTurnController (extended)", () => {
       const ctrl = new AiTurnController({ aiModel }, transitionMock);
       ctrl.view.shiftCardsDown = jest.fn();
 
-      // Mock view.showSelection/hideSelection to avoid 2s delay in test
+      // Mock the async thinking animation to skip delays
+      ctrl._animateThinking = jest.fn().mockResolvedValue();
+      // Mock view.showSelection/hideSelection to avoid visual delay in test
       jest.spyOn(ctrl.view, "showSelection").mockImplementation(() => {});
       jest.spyOn(ctrl.view, "hideSelection").mockImplementation(() => {});
 

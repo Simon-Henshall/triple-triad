@@ -57,8 +57,52 @@ export class AITurnController {
   }
 
   /**
-   * Executes a single AI turn with a 2-second visual delay
-   * to show the card selection (cursor + indentation).
+   * Generate a random integer between min and max (inclusive).
+   * @param {number} min
+   * @param {number} max
+   * @returns {number}
+   */
+  _randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  /**
+   * Simulate the AI "thinking" by cycling its selection cursor across random cards
+   * before finally settling on the chosen card.
+   * Each thought step lasts ~2 seconds, with 2-5 steps total (4-10 seconds).
+   * @param {Array} hand - The AI hand
+   * @param {number} finalIndex - The index of the card the AI ultimately selects
+   */
+  async _animateThinking(hand, finalIndex) {
+    const numberSteps = this._randomInt(2, 5);
+    const handSize = hand.length;
+
+    // Pick random intermediate indices that differ from final and from each other
+    let previousIndex = finalIndex;
+    for (let step = 0; step < numberSteps; step++) {
+      // Choose a random index that differs from the previous one
+      let randomIndex;
+      do {
+        randomIndex = Math.floor(Math.random() * handSize);
+      } while (randomIndex === previousIndex && handSize > 1);
+
+      // Show selection (cursor + indent) on the random card
+      this.view.showSelection(hand, randomIndex);
+
+      // Wait ~2 seconds before moving to the next thought
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Hide the previous selection
+      this.view.hideSelection(hand);
+
+      previousIndex = randomIndex;
+    }
+  }
+
+  /**
+   * Executes a single AI turn, animating a "thinking" phase where the selection
+   * cursor moves across random cards (2-5 steps, each ~2s) before settling on
+   * the final chosen card.
    */
   async takeTurn() {
     // Choose which card to play (selects index without removing)
@@ -68,10 +112,13 @@ export class AITurnController {
       return;
     }
 
-    // Show the selection cursor and indent the chosen card
+    // Animate the AI "thinking" — cycling through random cards before settling
+    await this._animateThinking(this.model.hand, cardIndex);
+
+    // Show the final selection cursor and indent the chosen card
     this.view.showSelection(this.model.hand, cardIndex);
 
-    // Wait 2 seconds so the user can see the selection
+    // Pause briefly so the user sees the final selection
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Hide the selection cursor and unindent
