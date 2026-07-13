@@ -121,6 +121,13 @@ export class ResolutionController {
    * Check Same rule: if a card is placed touching 2+ opponent cards and the
    * touching values are equal, those opponent cards are flipped.
    * Same Wall: board edges count as rank A (10) for Same checks.
+   *
+   * Importantly, the Same rule only flips opponent cards where the placed
+   * card's effective strength actually exceeds the opponent's opposing
+   * strength. This prevents element penalties from causing false Same flips
+   * (e.g., both sides penalized to -1, matching each other but incapable of
+   * actually beating the opponent cards).
+   *
    * @param {Card} card - The placed card
    * @param {Array} adjacentOpponents - Array of { target, direction, placedStrength, targetStrength }
    */
@@ -163,7 +170,15 @@ export class ResolutionController {
           }
         }
 
-        if (matchA === matchB) {
+        // Only apply Same if the placed card's strength actually exceeds
+        // the opponent's opposing strength for BOTH matched cards.
+        // This prevents element-effect penalties (e.g. both sides -1)
+        // from triggering false Same flips.
+        if (
+          matchA === matchB &&
+          a.placedStrength > a.targetStrength &&
+          b.placedStrength > b.targetStrength
+        ) {
           flipsToApply.add({ target: a.target, direction: a.direction });
           flipsToApply.add({ target: b.target, direction: b.direction });
         }
