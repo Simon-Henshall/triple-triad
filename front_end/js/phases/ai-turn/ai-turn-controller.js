@@ -111,6 +111,25 @@ export class AITurnController {
   }
 
   /**
+   * Get the adjacent cell index (1-based) for a given cell and direction.
+   * Uses squareMap to correctly resolve adjacency for the cell being evaluated,
+   * rather than relying on BoardModel.square* properties which reflect the
+   * currently selected square (not necessarily the cell being scored).
+   *
+   * @param {number} cellIndex - 1-based board cell index
+   * @param {string} direction - "left", "up", "right", or "down"
+   * @returns {number|string} Adjacent cell index (1-based) or "none" if board edge
+   */
+  _getAdjacentCell(cellIndex, direction) {
+    const squareInfo = BoardModel.squareMap[cellIndex - 1];
+    if (!squareInfo) {
+      return "none";
+    }
+    const capitalised = direction.charAt(0).toUpperCase() + direction.slice(1);
+    return squareInfo[capitalised] ?? "none";
+  }
+
+  /**
    * Evaluate the offensive score for placing a card in a given cell.
    * Counts how many opponent cards would be flipped and scores each flip.
    * Simulates element effects on the card's strengths before evaluating.
@@ -125,10 +144,7 @@ export class AITurnController {
     let score = 0;
 
     for (const [direction, map] of Object.entries(directionMap)) {
-      const adjacentIndex =
-        BoardModel[
-          `square${direction.charAt(0).toUpperCase() + direction.slice(1)}`
-        ];
+      const adjacentIndex = this._getAdjacentCell(cellIndex, direction);
       if (adjacentIndex === "none") {
         continue;
       }
@@ -171,10 +187,7 @@ export class AITurnController {
     let score = 0;
 
     for (const [direction, map] of Object.entries(directionMap)) {
-      const adjacentIndex =
-        BoardModel[
-          `square${direction.charAt(0).toUpperCase() + direction.slice(1)}`
-        ];
+      const adjacentIndex = this._getAdjacentCell(cellIndex, direction);
 
       if (adjacentIndex === "none") {
         // Board edge - completely safe in this direction
