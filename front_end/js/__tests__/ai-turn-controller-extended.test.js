@@ -106,15 +106,20 @@ describe("AiTurnController (extended)", () => {
   });
 
   describe("takeTurn", () => {
-    test("returns early when no card can be chosen", async () => {
+    test("returns early when no card can be chosen (empty hand)", async () => {
       const aiModel = {
         hand: [],
-        chooseCard: jest.fn().mockReturnValue(-1),
+        cardsAboveSelection: 0,
+        takeCard: jest.fn(),
+        decrementMove: jest.fn(),
       };
       const ctrl = new AiTurnController({ aiModel }, transitionMock);
       const logWarn = jest.spyOn(console, "warn").mockImplementation(() => {});
       await ctrl.takeTurn();
-      expect(aiModel.chooseCard).toHaveBeenCalled();
+      expect(logWarn).toHaveBeenCalledWith(
+        "[AI Turn] No valid placement found",
+      );
+      expect(aiModel.takeCard).not.toHaveBeenCalled();
       logWarn.mockRestore();
     });
 
@@ -142,19 +147,21 @@ describe("AiTurnController (extended)", () => {
     });
 
     test("returns early when no free cells available", async () => {
-      const playedCard = { data: { name: "X" } };
+      const playedCard = {
+        data: {
+          name: "X",
+          strength: { left: 5, up: 5, right: 5, down: 5 },
+          element: 0,
+        },
+      };
       const aiModel = {
         hand: [playedCard],
-        chooseCard: jest.fn().mockReturnValue(0),
         cardsAboveSelection: 0,
         takeCard: jest.fn().mockReturnValue(playedCard),
         decrementMove: jest.fn(),
       };
-      // Fill all cells
-      BoardModel.boardArray = Array.from({ length: 9 }).map(() => ({
-        element: 0,
-        occupant: { data: { id: 1 } },
-      }));
+      // Clear freeCells to simulate a full board
+      BoardModel.freeCells = [];
       const ctrl = new AiTurnController({ aiModel }, transitionMock);
       const logWarn = jest.spyOn(console, "warn").mockImplementation(() => {});
 
@@ -165,19 +172,33 @@ describe("AiTurnController (extended)", () => {
       jest.spyOn(ctrl.view, "hideSelection").mockImplementation(() => {});
 
       await ctrl.takeTurn();
-      expect(logWarn).toHaveBeenCalled();
+      expect(logWarn).toHaveBeenCalledWith(
+        "[AI Turn] No valid placement found",
+      );
+      expect(aiModel.takeCard).not.toHaveBeenCalled();
       logWarn.mockRestore();
     });
 
     test("places a card on a free cell", async () => {
-      const playedCard = { data: { name: "Played" } };
+      const playedCard = {
+        data: {
+          name: "Played",
+          strength: { left: 5, up: 5, right: 5, down: 5 },
+          element: 0,
+        },
+      };
       const aiModel = {
         hand: [playedCard],
-        chooseCard: jest.fn().mockReturnValue(0),
         cardsAboveSelection: 0,
         takeCard: jest.fn().mockReturnValue(playedCard),
         decrementMove: jest.fn(),
       };
+      // Ensure freeCells has at least one entry
+      BoardModel.freeCells = [5];
+      BoardModel.boardArray = Array.from({ length: 9 }).map(() => ({
+        element: 0,
+        occupant: undefined,
+      }));
       const ctrl = new AiTurnController({ aiModel }, transitionMock);
       ctrl.view.shiftCardsDown = jest.fn();
 
@@ -188,7 +209,7 @@ describe("AiTurnController (extended)", () => {
       jest.spyOn(ctrl.view, "hideSelection").mockImplementation(() => {});
 
       await ctrl.takeTurn();
-      expect(BoardModel.updateUISelection).toHaveBeenCalled();
+      expect(BoardModel.updateUISelection).toHaveBeenCalledWith(5);
       expect(
         Game.controllers.placementController.model.placeCard,
       ).toHaveBeenCalled();

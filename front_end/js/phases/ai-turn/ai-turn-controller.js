@@ -1,7 +1,18 @@
 import { AITurnView } from "./ai-turn-view.js";
 import { BoardModel } from "../../shared/board/board-model.js";
 import { Game } from "../../shared/game/game.js";
+import { directionMap } from "../../constants/directions.js";
 import { offsets } from "../../constants/offsets.js";
+
+/**
+ * Scoring weights for AI placement evaluation.
+ * Offensive factors (flipping opponent cards) are weighted higher than
+ * defensive factors (avoiding getting flipped back).
+ */
+const OFFENSIVE_FLIP_SCORE = 10;
+const DEFENSIVE_EDGE_SAFE = 3;
+const DEFENSIVE_OPPONENT_SAFE = 3;
+const DEFENSIVE_RISK_PENALTY = -5;
 
 /**
  * AI Turn Controller
@@ -100,17 +111,193 @@ export class AITurnController {
   }
 
   /**
-   * Executes a single AI turn, animating a "thinking" phase where the selection
-   * cursor moves across random cards (2-5 steps, each ~2s) before settling on
-   * the final chosen card.
+   * Evaluate the offensive score for placing a card in a given cell.
+   * Counts how many opponent cards would be flipped and scores each flip.
+   * Simulates element effects on the card's strengths before evaluating.
+   *
+   * @param {Object} card - The AI card being considered
+   * @param {number} cellIndex - 1-based board cell index
+   * @returns {number} Offensive score (higher = better, more flips)
    */
-  async takeTurn() {
-    // Choose which card to play (selects index without removing)
-    const cardIndex = this.model.chooseCard();
-    if (cardIndex < 0) {
-      console.warn("[AI Turn] No cards left to play");
+  _calculateOffensiveScore(card, cellIndex) {
+    const boardElement = BoardModel.boardArray[cellIndex - 1]?.element || 0;
+
+    let score = 0;
+
+    for (const [direction, map] of Object.entries(directionMap)) {
+      const adjacentIndex =
+        BoardModel[
+          `square${direction.charAt(0).toUpperCase() + direction.slice(1)}`
+        ];
+      if (adjacentIndex === "none") {
+        continue;
+      }
+
+      const occupant = BoardModel.getOccupant(adjacentIndex - 1);
+      if (!occupant || occupant.owner !== "player") {
+        continue;
+      }
+
+      // Calculate effective strength with element effects
+      let placedStrength = card.data.strength[direction];
+      if (boardElement !== 0) {
+        const modifier = card.data.element === boardElement ? 1 : -1;
+        placedStrength += modifier;
+      }
+
+      const targetStrength = occupant.data.strength[map.opponentStrength];
+
+      if (placedStrength > targetStrength) {
+        score += OFFENSIVE_FLIP_SCORE;
+      }
+    }
+
+    return score;
+  }
+
+  /**
+   * Evaluate the defensive score for placing a card in a given cell.
+   * Assesses how vulnerable the AI card would be to being flipped back.
+   * The AI only considers opponent cards already visible on the board
+   * (no knowledge of the player's hand).
+   *
+   * @param {Object} card - The AI card being considered
+   * @param {number} cellIndex - 1-based board cell index
+   * @returns {number} Defensive score (higher = safer)
+   */
+  _calculateDefensiveScore(card, cellIndex) {
+    const boardElement = BoardModel.boardArray[cellIndex - 1]?.element || 0;
+
+    let score = 0;
+
+    for (const [direction, map] of Object.entries(directionMap)) {
+      const adjacentIndex =
+        BoardModel[
+          `square${direction.charAt(0).toUpperCase() + direction.slice(1)}`
+        ];
+
+      if (adjacentIndex === "none") {
+        // Board edge - completely safe in this direction
+        score += DEFENSIVE_EDGE_SAFE;
+        continue;
+      }
+
+      // Calculate effective strength with element effects
+      let placedStrength = card.data.strength[direction];
+      if (boardElement !== 0) {
+        const modifier = card.data.element === boardElement ? 1 : -1;
+        placedStrength += modifier;
+      }
+
+      const occupant = BoardModel.getOccupant(adjacentIndex - 1);
+
+      if (!occupant) {
+        // Empty cell - neutral (player could place here, but we don't know their hand)
+        continue;
+      }
+
+      if (occupant.owner === "ai") {
+        // Own card - safe, protects our card
+        score += DEFENSIVE_EDGE_SAFE;
+        continue;
+      }
+
+      // Opponent card - check if it can flip us back
+      const opponentStrength = occupant.data.strength[map.playerStrength];
+
+      score +=
+        opponentStrength >= placedStrength
+          ? DEFENSIVE_RISK_PENALTY
+          : DEFENSIVE_OPPONENT_SAFE;
+    }
+
+    return score;
+  }
+
+  /**
+   * Score a potential placement for evaluation.
+   *
+   * @param {Object} card - The AI card
+   * @param {number} cellIndex - 1-based board cell index
+   * @returns {{ offensiveScore: number, defensiveScore: number, totalScore: number }}
+   */
+  _scorePlacement(card, cellIndex) {
+    const offensiveScore = this._calculateOffensiveScore(card, cellIndex);
+    const defensiveScore = this._calculateDefensiveScore(card, cellIndex);
+
+    return {
+      offensiveScore,
+      defensiveScore,
+      totalScore: offensiveScore + defensiveScore,
+    };
+  }
+
+  /**
+   * Evaluate all possible placements (card + free cell combinations) and return
+   * the best one. Primary preference is offensive (flipping opponent cards).
+   * Secondary preference is defensive (avoiding being flipped).
+   *
+   * @returns {{ cardIndex: number, cellIndex: number } | undefined}
+   */
+  _evaluatePlacements() {
+    const freeCells = BoardModel.freeCells;
+
+    if (freeCells.length === 0) {
       return;
     }
+
+    const scoredPlacements = [];
+
+    for (let cardIndex = 0; cardIndex < this.model.hand.length; cardIndex++) {
+      const card = this.model.hand[cardIndex];
+
+      for (const cellIndex of freeCells) {
+        const score = this._scorePlacement(card, cellIndex);
+        scoredPlacements.push({ cardIndex, cellIndex, ...score });
+      }
+    }
+
+    if (scoredPlacements.length === 0) {
+      return;
+    }
+
+    // Sort: primary by offensive score (descending), secondary by defensive score (descending)
+    scoredPlacements.sort((a, b) => {
+      if (a.offensiveScore !== b.offensiveScore) {
+        return b.offensiveScore - a.offensiveScore;
+      }
+      return b.defensiveScore - a.defensiveScore;
+    });
+
+    const best = scoredPlacements[0];
+
+    console.log(
+      "[AI Turn] Best placement: cardIndex=%d, cellIndex=%d, offensive=%d, defensive=%d",
+      best.cardIndex,
+      best.cellIndex,
+      best.offensiveScore,
+      best.defensiveScore,
+    );
+
+    return best;
+  }
+
+  /**
+   * Executes a single AI turn, evaluating all possible placements to choose
+   * the best card and square. Primary preference is offensive (flipping player
+   * cards). Secondary preference is defensive (avoiding being flipped).
+   */
+  async takeTurn() {
+    // Evaluate all possible placements and pick the best (card + square combo)
+    const bestPlacement = this._evaluatePlacements();
+
+    if (!bestPlacement) {
+      console.warn("[AI Turn] No valid placement found");
+      return;
+    }
+
+    const { cardIndex, cellIndex } = bestPlacement;
+    this.model.cardsAboveSelection = cardIndex;
 
     // Animate the AI "thinking" — cycling through random cards before settling
     await this._animateThinking(this.model.hand, cardIndex);
@@ -131,20 +318,8 @@ export class AITurnController {
       return;
     }
 
-    // Determine free cells
-    const freeCells = BoardModel.boardArray
-      .map((cell, index) => (cell.occupant ? undefined : index + 1))
-      .filter(Boolean);
-
-    if (freeCells.length === 0) {
-      console.warn("[AI Turn] No free cells available!");
-      return;
-    }
-
-    // Pick random free cell
-    const selectedSquare =
-      freeCells[Math.floor(Math.random() * freeCells.length)];
-    BoardModel.selectedSquare = selectedSquare;
+    // Set the selected square to the best evaluated position
+    BoardModel.selectedSquare = cellIndex;
     BoardModel.updateUISelection(BoardModel.selectedSquare);
 
     // Animate cards above selection down
@@ -171,6 +346,8 @@ export class AITurnController {
     console.log(
       "[AI Turn] Played card:",
       playedCard.data.name,
+      "at cell:",
+      cellIndex,
       "Cards remaining:",
       this.model.hand.length,
     );
