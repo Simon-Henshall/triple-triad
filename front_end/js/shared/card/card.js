@@ -28,6 +28,7 @@ export class Card {
       name,
       element,
       strength: { ...strength },
+      originalStrength: { ...strength }, // preserved for Same/Plus checks (element-ignorant)
       imagePath,
     };
 

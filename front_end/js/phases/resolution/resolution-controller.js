@@ -58,40 +58,35 @@ export class ResolutionController {
    */
   flipCardsCheck(card) {
     const standardFlips = [];
-    const adjacentOpponents = [];
-    const adjacentPairs = [];
+    const adjacentCards = []; // All adjacent partners for Same/Plus checks
 
     // Collect data from all four directions
     for (const [direction, map] of Object.entries(directionMap)) {
       const target = card[map.prop];
-      if (!target) {
-        continue;
+
+      if (target) {
+        const placedStrength = card.data.strength[direction];
+        const targetStrength = target.data.strength[map.opponentStrength];
+
+        // Standard flip: strength > opponent strength
+        if (card.owner !== target.owner && placedStrength > targetStrength) {
+          standardFlips.push({ target, direction });
+        }
       }
 
-      const placedStrength = card.data.strength[direction];
-      const targetStrength = target.data.strength[map.opponentStrength];
-
-      // Standard flip: strength > opponent strength
-      if (card.owner !== target.owner && placedStrength > targetStrength) {
-        standardFlips.push({ target, direction });
-      }
-
-      // Collect adjacent opponent cards for Same/Plus checks
-      if (card.owner !== target.owner) {
-        adjacentOpponents.push({
-          target,
-          direction,
-          placedStrength,
-          targetStrength,
-        });
-      }
-
-      // Also collect same-owner pairs as candidates for Same/Plus
-      adjacentPairs.push({
-        target,
-        direction: map.opponentStrength,
-        placedStrength,
-        targetStrength,
+      // Collect adjacency info for Same/Plus (including board edges for Same Wall)
+      // Same checks use original (printed) strengths — element effects are ignored.
+      // Plus checks use current strengths (element effects apply).
+      adjacentCards.push({
+        target, // Card object or null (board edge)
+        direction,
+        // Fallback to strength if originalStrength not available (back-compat)
+        placedOriginal:
+          card.data.originalStrength?.[direction] ??
+          card.data.strength[direction],
+        placedCurrent: card.data.strength[direction],
+        isOpponent: target ? card.owner !== target.owner : false,
+        exists: !!target, // false = board edge
       });
     }
 
@@ -103,12 +98,12 @@ export class ResolutionController {
 
     // Check Same rule
     if (Game.rules.includes("same")) {
-      this._checkSameRule(card, adjacentOpponents);
+      this._checkSameRule(card, adjacentCards);
     }
 
     // Check Plus rule
     if (Game.rules.includes("plus")) {
-      this._checkPlusRule(card, adjacentOpponents);
+      this._checkPlusRule(card, adjacentCards);
     }
 
     // Apply Combo chain after any Same/Plus flips
@@ -118,69 +113,83 @@ export class ResolutionController {
   }
 
   /**
-   * Check Same rule: if a card is placed touching 2+ opponent cards and the
-   * touching values are equal, those opponent cards are flipped.
-   * Same Wall: board edges count as rank A (10) for Same checks.
+   * Check Same rule: when a placed card touches at least two adjacent cards
+   * (or board edges with Same Wall) and the touching values match for both
+   * partners, opponent cards in the matching set are flipped.
    *
-   * Importantly, the Same rule only flips opponent cards where the placed
-   * card's effective strength actually exceeds the opponent's opposing
-   * strength. This prevents element penalties from causing false Same flips
-   * (e.g., both sides penalized to -1, matching each other but incapable of
-   * actually beating the opponent cards).
+   * How matching works:
+   * - For each adjacent card, the placed card's printed value on that side is
+   *   compared to the adjacent card's printed value on the facing side.
+   * - If both comparisons equal (placed.sideA == adjacentA.facing AND
+   *   placed.sideB == adjacentB.facing), the Same rule triggers.
+   * - At least one of the matching partners must be opponent-owned to cause flips.
+   * - Element modifications are ignored — uses original/printed strengths only.
+   *
+   * Same Wall: board edges count as rank A (value 10) for Same checks.
    *
    * @param {Card} card - The placed card
-   * @param {Array} adjacentOpponents - Array of { target, direction, placedStrength, targetStrength }
+   * @param {Array} adjacentCards - Array of {target, direction, placedOriginal, isOpponent, exists}
    */
-  _checkSameRule(card, adjacentOpponents) {
-    if (adjacentOpponents.length < 2) {
-      return;
-    }
-
+  _checkSameRule(card, adjacentCards) {
     const isSameWall =
       Game.rules.includes("same_wall") && Game.rules.includes("same");
 
-    // Check all pairs of adjacent opponent cards
+    // Partners are directions with:
+    // - an actual adjacent card, OR
+    // - a board edge (when Same Wall is active)
+    const partners = adjacentCards.filter((a) => a.exists || isSameWall);
+    if (partners.length < 2) {
+      return;
+    }
+
     const flipsToApply = new Set();
 
-    for (let index = 0; index < adjacentOpponents.length; index++) {
-      for (
-        let index_ = index + 1;
-        index_ < adjacentOpponents.length;
-        index_++
-      ) {
-        const a = adjacentOpponents[index];
-        const b = adjacentOpponents[index_];
+    // Check all pairs of partners
+    for (let index = 0; index < partners.length; index++) {
+      for (let index_ = index + 1; index_ < partners.length; index_++) {
+        const a = partners[index];
+        const b = partners[index_];
 
-        let matchA = a.placedStrength;
-        let matchB = b.placedStrength;
-
-        // Same Wall: board edges count as A (10)
-        if (isSameWall) {
-          // The placed card's strength is compared to the opponent's strength
-          // For Same, we check placedStrength vs targetStrength
-          // Same Wall means if the edge of the board is adjacent, it counts as A
-          const aEdgeIsBoard = this._isBoardEdge(card, a.direction);
-          const bEdgeIsBoard = this._isBoardEdge(card, b.direction);
-
-          if (aEdgeIsBoard) {
-            matchA = 10; // A rank
-          }
-          if (bEdgeIsBoard) {
-            matchB = 10; // A rank
-          }
+        // Get the adjacent card's facing value (printed, element-ignorant)
+        // For a real card: look up its opposing side's printed strength
+        // For a board edge (Same Wall): value is 10 (A rank)
+        // Fallback to strength if originalStrength not available (back-compat)
+        let adjacentValueA;
+        if (a.exists) {
+          const mapA = directionMap[a.direction];
+          adjacentValueA =
+            a.target.data.originalStrength?.[mapA.opponentStrength] ??
+            a.target.data.strength[mapA.opponentStrength];
+        } else {
+          adjacentValueA = 10; // board edge = A
         }
 
-        // Only apply Same if the placed card's strength actually exceeds
-        // the opponent's opposing strength for BOTH matched cards.
-        // This prevents element-effect penalties (e.g. both sides -1)
-        // from triggering false Same flips.
-        if (
-          matchA === matchB &&
-          a.placedStrength > a.targetStrength &&
-          b.placedStrength > b.targetStrength
-        ) {
-          flipsToApply.add({ target: a.target, direction: a.direction });
-          flipsToApply.add({ target: b.target, direction: b.direction });
+        let adjacentValueB;
+        if (b.exists) {
+          const mapB = directionMap[b.direction];
+          adjacentValueB =
+            b.target.data.originalStrength?.[mapB.opponentStrength] ??
+            b.target.data.strength[mapB.opponentStrength];
+        } else {
+          adjacentValueB = 10; // board edge = A
+        }
+
+        // Same check: placed card's printed value on this side MUST equal
+        // the adjacent card's printed value on the opposing side, for BOTH partners.
+        // This is the literal "same" rule — each pair of touching sides shares
+        // the exact same number value, using printed (element-ignorant) strengths.
+        const matchA = a.placedOriginal === adjacentValueA;
+        const matchB = b.placedOriginal === adjacentValueB;
+
+        if (matchA && matchB) {
+          // At least one partner must be an opponent card for a flip to occur.
+          // (Your own cards can help complete the matching set but don't flip.)
+          if (a.isOpponent) {
+            flipsToApply.add({ target: a.target, direction: a.direction });
+          }
+          if (b.isOpponent) {
+            flipsToApply.add({ target: b.target, direction: b.direction });
+          }
         }
       }
     }
@@ -192,32 +201,41 @@ export class ResolutionController {
   }
 
   /**
-   * Check Plus rule: when a card touches 2+ opponents and the sum of
+   * Check Plus rule: when a card touches 2+ opponent cards and the sum of
    * placed strength + opponent opposing strength is equal for both pairs,
    * both opponent cards are flipped.
    * @param {Card} card - The placed card
-   * @param {Array} adjacentOpponents - Array of { target, direction, placedStrength, targetStrength }
+   * @param {Array} adjacentCards - Array of {target, direction, placedCurrent, isOpponent, exists}
    */
-  _checkPlusRule(card, adjacentOpponents) {
-    if (adjacentOpponents.length < 2) {
+  _checkPlusRule(card, adjacentCards) {
+    // Plus only considers actual opponent cards (not board edges or own cards)
+    const opponentAdjacents = adjacentCards.filter((a) => a.isOpponent);
+    if (opponentAdjacents.length < 2) {
       return;
     }
 
     const flipsToApply = new Set();
 
     // Check all pairs of adjacent opponent cards
-    for (let index = 0; index < adjacentOpponents.length; index++) {
+    for (let index = 0; index < opponentAdjacents.length; index++) {
       for (
         let index_ = index + 1;
-        index_ < adjacentOpponents.length;
+        index_ < opponentAdjacents.length;
         index_++
       ) {
-        const a = adjacentOpponents[index];
-        const b = adjacentOpponents[index_];
+        const a = opponentAdjacents[index];
+        const b = opponentAdjacents[index_];
 
-        // For direction: placedCard.strength[direction] + opponent.strength[opponentStrength]
-        const sumA = a.placedStrength + a.targetStrength;
-        const sumB = b.placedStrength + b.targetStrength;
+        // Get the opponent's opposing strength (current value, elements apply)
+        const mapA = directionMap[a.direction];
+        const targetStrengthA = a.target.data.strength[mapA.opponentStrength];
+
+        const mapB = directionMap[b.direction];
+        const targetStrengthB = b.target.data.strength[mapB.opponentStrength];
+
+        // For direction: placedCard.currentStrength[direction] + opponent.strength[opponentStrength]
+        const sumA = a.placedCurrent + targetStrengthA;
+        const sumB = b.placedCurrent + targetStrengthB;
 
         if (sumA === sumB) {
           flipsToApply.add({ target: a.target, direction: a.direction });
@@ -292,22 +310,6 @@ export class ResolutionController {
     }
 
     this._comboCapturedCards = [];
-  }
-
-  /**
-   * Check if a direction from the placed card faces the board edge.
-   * Used by Same Wall to treat edges as rank A.
-   * @param {Card} card
-   * @param {string} direction - "up", "down", "left", or "right"
-   * @returns {boolean}
-   */
-  _isBoardEdge(card, direction) {
-    // Check if there is no card in this direction (board edge)
-    const directionInfo = directionMap[direction];
-    if (!directionInfo) {
-      return false;
-    }
-    return !card[directionInfo.prop];
   }
 
   /**
