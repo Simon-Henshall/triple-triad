@@ -12,6 +12,12 @@ export class AITurnModel {
     this.movesRemaining = 0; // Number of cards left to play
     this.cardsAboveSelection = 0;
     this.currentlyOwnedCards = 5; // Initial number of cards owned by AI
+    /**
+     * Random placement delay (50-2000ms) determined once per game instance.
+     * Used as the base timing for AI thinking animation steps and final placement pause.
+     * This creates a unique, consistent "personality" for the AI each game.
+     */
+    this.placementDelay = Math.floor(Math.random() * 1951) + 50;
   }
 
   /**
