@@ -96,20 +96,47 @@ export class ResolutionController {
       this.flipCardOver(target, flipDirection);
     }
 
+    // Track whether any rule-based flips occurred
+    let sameTriggered = false;
+    let plusTriggered = false;
+
     // Check Same rule
     if (Game.rules.includes("same")) {
-      this._checkSameRule(card, adjacentCards);
+      sameTriggered = this._checkSameRule(card, adjacentCards);
     }
 
     // Check Plus rule
     if (Game.rules.includes("plus")) {
-      this._checkPlusRule(card, adjacentCards);
+      plusTriggered = this._checkPlusRule(card, adjacentCards);
+    }
+
+    // Show popups for Same/Plus if triggered (before Combo, so Combo appears after)
+    if (sameTriggered) {
+      this._showRulePopup("Same");
+    }
+    if (plusTriggered) {
+      this._showRulePopup("Plus");
     }
 
     // Apply Combo chain after any Same/Plus flips
     if (this._comboCapturedCards.length > 0) {
       this._applyComboChain(card);
     }
+  }
+
+  /**
+   * Show a flashy popup for a triggered rule effect.
+   * @param {string} ruleName - The name of the rule (e.g. "Same", "Plus", "Combo")
+   * @param {string} [color] - Optional text colour override
+   */
+  _showRulePopup(ruleName, color) {
+    const colorMap = {
+      Same: "#FFD700",
+      Plus: "#00BFFF",
+      Combo: "#FF4500",
+    };
+    const popupColor = color || colorMap[ruleName] || "#FFD700";
+    this.view.showRulePopup(`${ruleName}!`, popupColor);
   }
 
   /**
@@ -129,6 +156,7 @@ export class ResolutionController {
    *
    * @param {Card} card - The placed card
    * @param {Array} adjacentCards - Array of {target, direction, placedOriginal, isOpponent, exists}
+   * @returns {boolean} Whether any flips were applied by this rule
    */
   _checkSameRule(card, adjacentCards) {
     const isSameWall =
@@ -139,7 +167,7 @@ export class ResolutionController {
     // - a board edge (when Same Wall is active)
     const partners = adjacentCards.filter((a) => a.exists || isSameWall);
     if (partners.length < 2) {
-      return;
+      return false;
     }
 
     const flipsToApply = new Set();
@@ -198,6 +226,8 @@ export class ResolutionController {
       const flipDirection = directionMap[direction].opponentStrength;
       this.flipCardOver(target, flipDirection);
     }
+
+    return flipsToApply.size > 0;
   }
 
   /**
@@ -206,12 +236,13 @@ export class ResolutionController {
    * both opponent cards are flipped.
    * @param {Card} card - The placed card
    * @param {Array} adjacentCards - Array of {target, direction, placedCurrent, isOpponent, exists}
+   * @returns {boolean} Whether any flips were applied by this rule
    */
   _checkPlusRule(card, adjacentCards) {
     // Plus only considers actual opponent cards (not board edges or own cards)
     const opponentAdjacents = adjacentCards.filter((a) => a.isOpponent);
     if (opponentAdjacents.length < 2) {
-      return;
+      return false;
     }
 
     const flipsToApply = new Set();
@@ -248,6 +279,8 @@ export class ResolutionController {
       const flipDirection = directionMap[direction].opponentStrength;
       this.flipCardOver(target, flipDirection);
     }
+
+    return flipsToApply.size > 0;
   }
 
   /**
@@ -307,6 +340,11 @@ export class ResolutionController {
     for (const { target, direction } of comboFlips) {
       const flipDirection = directionMap[direction].opponentStrength;
       this.flipCardOver(target, flipDirection);
+    }
+
+    // Show Combo popup if any flips occurred in the chain
+    if (comboFlips.length > 0) {
+      this._showRulePopup("Combo");
     }
 
     this._comboCapturedCards = [];

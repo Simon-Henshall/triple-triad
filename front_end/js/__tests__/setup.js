@@ -106,11 +106,16 @@ if (globalThis.createjs === undefined) {
       linear: "linear",
       backIn: "backIn",
       backOut: "backOut",
+      quartOut: "quartOut",
+      quartIn: "quartIn",
+      sineOut: "sineOut",
+      sineInOut: "sineInOut",
     },
     Tween: {
       get: jest.fn().mockReturnValue({
-        to: jest.fn().mockReturnValue({ to: jest.fn(), call: jest.fn() }),
-        call: jest.fn().mockReturnValue({ to: jest.fn() }),
+        to: jest.fn().mockReturnThis(),
+        call: jest.fn().mockReturnThis(),
+        wait: jest.fn().mockReturnThis(),
       }),
     },
     Stage: function () {

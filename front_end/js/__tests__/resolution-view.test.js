@@ -16,6 +16,7 @@ describe("ResolutionView", () => {
       addChild: jest.fn(),
       removeChild: jest.fn(),
       update: jest.fn(),
+      canvas: { width: 800, height: 600 },
     };
     view = new ResolutionView(mockStage);
   });
@@ -118,5 +119,82 @@ describe("ResolutionView", () => {
     view.refreshCardFace(card);
 
     expect(container.setChildIndex).not.toHaveBeenCalled();
+  });
+
+  describe("showRulePopup", () => {
+    beforeEach(() => {
+      // Re-setup Tween mock after clearAllMocks since showRulePopup uses .wait()
+      jest.spyOn(createjs.Tween, "get").mockReturnValue({
+        to: jest.fn().mockReturnThis(),
+        call: jest.fn().mockReturnThis(),
+        wait: jest.fn().mockReturnThis(),
+      });
+    });
+
+    test("does nothing when stage is falsy", () => {
+      const viewNoStage = new ResolutionView(undefined);
+      expect(() => viewNoStage.showRulePopup("Same!")).not.toThrow();
+    });
+
+    test("adds popup container to stage", () => {
+      view.showRulePopup("Same!");
+      expect(mockStage.addChild).toHaveBeenCalled();
+    });
+
+    test("creates text with correct label and default gold color", () => {
+      view.showRulePopup("Same!");
+      // Two Text instances created: main text and glow text
+      expect(createjs.Text).toHaveBeenCalledWith(
+        "Same!",
+        "bold 56px Impact, Arial Black, sans-serif",
+        "#FFD700",
+      );
+    });
+
+    test("creates text with custom color", () => {
+      view.showRulePopup("Plus!", "#00BFFF");
+      expect(createjs.Text).toHaveBeenCalledWith(
+        "Plus!",
+        "bold 56px Impact, Arial Black, sans-serif",
+        "#00BFFF",
+      );
+    });
+
+    test("animates popup with scale and fade tweens", () => {
+      const tweenGetSpy = jest.spyOn(createjs.Tween, "get");
+      view.showRulePopup("Combo!");
+      // Should create tweens for: popupContainer, popupText, glowText
+      expect(tweenGetSpy).toHaveBeenCalledTimes(3);
+    });
+
+    test("removes popup from stage after animation completes", () => {
+      // Capture the call function from the tween chain
+      let callCallback;
+      const tweenMock = {
+        to: jest.fn().mockReturnThis(),
+        call: jest.fn().mockImplementation((function_) => {
+          callCallback = function_;
+          return tweenMock;
+        }),
+        wait: jest.fn().mockReturnThis(),
+      };
+      jest.spyOn(createjs.Tween, "get").mockReturnValue(tweenMock);
+
+      const mockContainer = { parent: mockStage };
+      // Override addChild to capture the container
+      mockStage.addChild.mockImplementation((child) => {
+        // Simulate parent being set
+        child.parent = mockStage;
+      });
+
+      view.showRulePopup("Test!");
+
+      // Execute the cleanup callback
+      if (callCallback) {
+        callCallback();
+      }
+
+      expect(mockStage.removeChild).toHaveBeenCalled();
+    });
   });
 });

@@ -188,4 +188,202 @@ describe("ResolutionController (extended)", () => {
     await ctrl.activate();
     // Should not throw
   });
+
+  describe("_showRulePopup", () => {
+    test("calls view.showRulePopup with rule name and exclamation mark", () => {
+      const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view.showRulePopup = jest.fn();
+      ctrl._showRulePopup("Same");
+      expect(ctrl.view.showRulePopup).toHaveBeenCalledWith("Same!", "#FFD700");
+    });
+
+    test("uses custom color when provided", () => {
+      const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view.showRulePopup = jest.fn();
+      ctrl._showRulePopup("Plus", "#FF0000");
+      expect(ctrl.view.showRulePopup).toHaveBeenCalledWith("Plus!", "#FF0000");
+    });
+
+    test("uses color map for Same (gold)", () => {
+      const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view.showRulePopup = jest.fn();
+      ctrl._showRulePopup("Same");
+      expect(ctrl.view.showRulePopup).toHaveBeenCalledWith("Same!", "#FFD700");
+    });
+
+    test("uses color map for Plus (deep sky blue)", () => {
+      const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view.showRulePopup = jest.fn();
+      ctrl._showRulePopup("Plus");
+      expect(ctrl.view.showRulePopup).toHaveBeenCalledWith("Plus!", "#00BFFF");
+    });
+
+    test("uses color map for Combo (orange red)", () => {
+      const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view.showRulePopup = jest.fn();
+      ctrl._showRulePopup("Combo");
+      expect(ctrl.view.showRulePopup).toHaveBeenCalledWith("Combo!", "#FF4500");
+    });
+  });
+
+  describe("rule popup integration", () => {
+    test("shows Same popup when Same rule triggers flips", () => {
+      Game.rules = ["same"];
+      const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view.showRulePopup = jest.fn();
+      // Mock flipCardOver to avoid side effects
+      ctrl.flipCardOver = jest.fn();
+
+      // Create a card with two adjacent opponent cards that have matching values
+      const targetA = {
+        owner: "ai",
+        data: {
+          strength: { right: 5 },
+          originalStrength: { right: 5 },
+        },
+        setOwner: jest.fn(),
+        visuals: { container: {} },
+        inCell: 1,
+      };
+      const targetB = {
+        owner: "ai",
+        data: {
+          strength: { left: 5 },
+          originalStrength: { left: 5 },
+        },
+        setOwner: jest.fn(),
+        visuals: { container: {} },
+        inCell: 2,
+      };
+      const card = {
+        owner: "player",
+        data: {
+          strength: { left: 5, right: 5, up: 5, down: 5 },
+          originalStrength: { left: 5, right: 5, up: 5, down: 5 },
+        },
+        cardLeft: targetA,
+        cardRight: targetB,
+        cardUp: undefined,
+        cardDown: undefined,
+        setOwner: jest.fn(),
+      };
+
+      ctrl.flipCardsCheck(card);
+
+      // Same should have triggered and shown popup
+      expect(ctrl.view.showRulePopup).toHaveBeenCalledWith("Same!", "#FFD700");
+    });
+
+    test("shows Plus popup when Plus rule triggers flips", () => {
+      Game.rules = ["plus"];
+      const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view.showRulePopup = jest.fn();
+      ctrl.flipCardOver = jest.fn();
+
+      // Create a card with two adjacent opponent cards where sums match
+      // placedCurrent[left]=3 + targetA.strength[right]=7 = 10
+      // placedCurrent[right]=4 + targetB.strength[left]=6 = 10
+      const targetA = {
+        owner: "ai",
+        data: {
+          strength: { right: 7 },
+        },
+        setOwner: jest.fn(),
+        visuals: { container: {} },
+        inCell: 1,
+      };
+      const targetB = {
+        owner: "ai",
+        data: {
+          strength: { left: 6 },
+        },
+        setOwner: jest.fn(),
+        visuals: { container: {} },
+        inCell: 2,
+      };
+      const card = {
+        owner: "player",
+        data: {
+          strength: { left: 3, right: 4, up: 5, down: 5 },
+          originalStrength: { left: 3, right: 4, up: 5, down: 5 },
+        },
+        cardLeft: targetA,
+        cardRight: targetB,
+        cardUp: undefined,
+        cardDown: undefined,
+        setOwner: jest.fn(),
+      };
+
+      ctrl.flipCardsCheck(card);
+
+      // Plus should have triggered and shown popup
+      expect(ctrl.view.showRulePopup).toHaveBeenCalledWith("Plus!", "#00BFFF");
+    });
+
+    test("shows Combo popup when combo chain triggers flips", () => {
+      Game.rules = ["same"];
+      const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view.showRulePopup = jest.fn();
+      ctrl.flipCardOver = jest.fn();
+
+      // Set up combo captured cards manually and call _applyComboChain
+      // For the combo check on the 'right' direction:
+      //   capturedStrength = capturedCard.data.strength[opponentStrength] = capturedCard.data.strength["left"]
+      //   adjacentStrength = adjacent.data.strength[playerStrength] = adjacent.data.strength["right"]
+      // So capturedCard.strength.left must be > adjacent.strength.right
+      const adjacentCard = {
+        owner: "ai",
+        data: {
+          strength: { right: 5, left: 1, up: 1, down: 1 },
+        },
+        setOwner: jest.fn(),
+        visuals: { container: {} },
+        inCell: 3,
+      };
+      const capturedCard = {
+        owner: "player",
+        data: {
+          strength: { left: 8, right: 1, up: 1, down: 1 },
+        },
+        cardLeft: undefined,
+        cardRight: adjacentCard,
+        cardUp: undefined,
+        cardDown: undefined,
+        setOwner: jest.fn(),
+        visuals: { container: {} },
+        inCell: 2,
+      };
+
+      ctrl._comboCapturedCards = [capturedCard];
+      ctrl._applyComboChain({ owner: "player" });
+
+      // Combo should have triggered and shown popup
+      expect(ctrl.view.showRulePopup).toHaveBeenCalledWith("Combo!", "#FF4500");
+    });
+
+    test("does not show Same popup when Same rule does not trigger", () => {
+      Game.rules = ["same"];
+      const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view.showRulePopup = jest.fn();
+      ctrl.flipCardOver = jest.fn();
+
+      // Card with no adjacent cards - Same can't trigger
+      const card = {
+        owner: "player",
+        data: {
+          strength: { left: 5, right: 5, up: 5, down: 5 },
+          originalStrength: { left: 5, right: 5, up: 5, down: 5 },
+        },
+        cardLeft: undefined,
+        cardRight: undefined,
+        cardUp: undefined,
+        cardDown: undefined,
+        setOwner: jest.fn(),
+      };
+
+      ctrl.flipCardsCheck(card);
+
+      expect(ctrl.view.showRulePopup).not.toHaveBeenCalled();
+    });
+  });
 });
