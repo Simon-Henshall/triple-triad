@@ -1,4 +1,3 @@
-import { config } from "../../constants/config.js";
 import { offsets } from "../../constants/offsets.js";
 
 /**

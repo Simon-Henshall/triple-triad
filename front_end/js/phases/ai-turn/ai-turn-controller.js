@@ -287,7 +287,7 @@ export class AITurnController {
     // Collect adjacent partners (cards or board edges for Same Wall)
     const partners = [];
 
-    for (const [direction, map] of Object.entries(directionMap)) {
+    for (const direction of Object.keys(directionMap)) {
       const adjacentIndex = this._getAdjacentCell(cellIndex, direction);
       const exists = adjacentIndex !== "none";
 
@@ -470,7 +470,7 @@ export class AITurnController {
       processed.add(capturedCard);
 
       // Check all four sides of this captured card
-      for (const [direction, map] of Object.entries(directionMap)) {
+      for (const [, map] of Object.entries(directionMap)) {
         const adjacent = capturedCard[map.prop];
 
         // Skip if:
@@ -540,7 +540,7 @@ export class AITurnController {
     if (sameResult.triggered) {
       // We don't know exactly which cards would be captured without full simulation,
       // but we can estimate based on the flip count
-      for (const [direction, map] of Object.entries(directionMap)) {
+      for (const direction of Object.keys(directionMap)) {
         const adjacentIndex = this._getAdjacentCell(cellIndex, direction);
         if (adjacentIndex === "none") {
           continue;
@@ -552,7 +552,7 @@ export class AITurnController {
       }
     }
     if (plusResult.triggered) {
-      for (const [direction, map] of Object.entries(directionMap)) {
+      for (const direction of Object.keys(directionMap)) {
         const adjacentIndex = this._getAdjacentCell(cellIndex, direction);
         if (adjacentIndex === "none") {
           continue;

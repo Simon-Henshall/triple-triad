@@ -180,7 +180,6 @@ describe("ResolutionView", () => {
       };
       jest.spyOn(createjs.Tween, "get").mockReturnValue(tweenMock);
 
-      const mockContainer = { parent: mockStage };
       // Override addChild to capture the container
       mockStage.addChild.mockImplementation((child) => {
         // Simulate parent being set

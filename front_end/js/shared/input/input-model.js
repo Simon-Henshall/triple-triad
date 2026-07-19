@@ -321,7 +321,9 @@ export class InputModel {
   handleRulesInput(event) {
     const stateMachine = Game.models?.stateMachine;
     const currentPhase = stateMachine?.getCurrentPhase?.();
-    if (!currentPhase) return;
+    if (!currentPhase) {
+      return;
+    }
 
     switch (event.key) {
       case "ArrowUp": {
@@ -343,5 +345,4 @@ export class InputModel {
       }
     }
   }
-
 }

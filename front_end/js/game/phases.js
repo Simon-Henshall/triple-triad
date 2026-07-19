@@ -56,7 +56,13 @@ export default {
 
   // Rules phase: display active rules and Play/Quit options.
   rules: {
-    deps: (rootDeps) => ({}),
+    /**
+     * Dependencies for the rules phase
+     */
+    deps: () => ({}),
+    /**
+     * The rules phase factory
+     */
     factory: (localDeps, transition) =>
       new RulesController(localDeps, transition),
   },
