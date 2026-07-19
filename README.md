@@ -32,10 +32,11 @@ A fan-made web implementation of the classic **Triple Triad** card game from the
 ## Features
 
 - **Canvas-based rendering** using CreateJS (EaselJS) for smooth 60 FPS animations.
-- **State machine-driven game flow** with distinct phases: opponent selection, deck selection, hand selection, card placement, resolution, AI turn, and game-over.
+- **State machine-driven game flow** with distinct phases: opponent selection, rules display, deck selection, hand selection, card placement, resolution, AI turn, and game-over.
 - **Database-backed card collection** – cards, players, elements, and ownership are stored in a MySQL database.
 - **RNG-based AI opponent system** – AI opponents generate their hands from a card pool using seeded randomness and a rare-card mechanic.
 - **Responsive opponent selection** – opponents are grouped by location (e.g. Balamb, Dollet, Galbadia).
+- **Advanced rule system** – supports Elemental, Same, Same Wall, Plus, Combo, Open, and Random rules.
 - **Linting and formatting** – ESLint + Prettier for code quality; Jest for unit tests.
 
 ---
@@ -55,6 +56,19 @@ A fan-made web implementation of the classic **Triple Triad** card game from the
 
 ```
 triple-triad/
+├── assets/
+│   ├── custom/
+│   │   ├── blue.png                 # Custom blue card face
+│   │   └── red.png                  # Custom red card face
+│   └── original/
+│       ├── ASSETS_README.md         # Third-party asset attribution
+│       ├── board.png                # Game board background
+│       ├── cursor.png               # Selection cursor
+│       ├── minus_one.png            # -1 strength modifier
+│       ├── plus_one.png             # +1 strength modifier
+│       ├── selection_card.png       # Card selection indicator
+│       ├── cards/                   # Card face images (card0.png – card109.png, back.png)
+│       └── elements/                # Element icons (1.png through 8.png)
 ├── back_end/
 │   ├── sql/
 │   │   ├── 00_schema.sql            # Database schema (tables, FKs)
@@ -75,27 +89,29 @@ triple-triad/
 │   │   ├── get_opponent_cards.php   # Fetch a specific opponent's card pool
 │   │   ├── get_opponents.php        # Fetch all opponents grouped by location
 │   │   └── get_player_cards.php     # Fetch cards owned by a player
-│   ├── images/
-│   │   ├── board.png                # Game board background
-│   │   ├── cursor.png               # Selection cursor
-│   │   ├── selection_card.png       # Card selection indicator
-│   │   ├── minus_one.png            # -1 indicator
-│   │   ├── plus_one.png             # +1 indicator
-│   │   ├── cards/                   # Individual card images (card0.png, etc.)
-│   │   └── elements/                # Element icons (1.png through 8.png)
 │   ├── js/
 │   │   ├── main.js                  # Entry point – bootstraps the game
 │   │   ├── constants/
 │   │   │   ├── config.js            # Configuration (FPS, image paths)
+│   │   │   ├── directions.js        # Direction mapping for card adjacency
+│   │   │   ├── elements.js          # Element type metadata
 │   │   │   └── offsets.js           # Layout offsets for rendering
 │   │   ├── data/                    # Local data definitions
-│   │   ├── game/                    # Core game logic modules
+│   │   ├── game/
+│   │   │   ├── game-state-machine.js# Phase state machine
+│   │   │   └── phases.js            # Phase registry
 │   │   ├── phases/                  # Game phase controllers/models/views
 │   │   │   ├── ai-turn/             # AI turn phase
-│   │   │   ├── hand-select/         # Player hand selection phase
-│   │   │   ├── placement/           # Card placement on the board
+│   │   │   ├── card-claim/          # Card claim phase (winner claims a card)
 │   │   │   ├── confirmation/        # Deck confirmation phase
-│   │   │   └── ...                  # Other phases
+│   │   │   ├── deck-selection/      # Player deck selection phase
+│   │   │   ├── end-turn/            # End-of-turn transition logic
+│   │   │   ├── game-over/           # Game-over determination
+│   │   │   ├── hand-select/         # Player hand selection phase
+│   │   │   ├── opponent-selection/  # Opponent selection phase
+│   │   │   ├── placement/           # Card placement on the board
+│   │   │   ├── resolution/          # Card flip resolution
+│   │   │   └── rules/               # Rules display phase
 │   │   ├── shared/
 │   │   │   ├── board/               # Board model and rendering
 │   │   │   ├── card/                # Card factory, Card class
@@ -103,13 +119,17 @@ triple-triad/
 │   │   │   ├── game/                # Game class, game-init (bootstrapper)
 │   │   │   ├── input/               # Keyboard input handling
 │   │   │   ├── player/              # Player model, view, controller (MVC)
-│   │   │   └── ui/                  # Scoreboard, InfoBox, etc.
+│   │   │   └── ui/                  # Scoreboard, InfoBox, PreviewCard, etc.
 │   │   ├── utilities/
+│   │   │   ├── ai-hand-generator.js # AI hand generation logic
+│   │   │   ├── debug.js             # Debug utilities
 │   │   │   ├── network.js           # Fetch wrappers for API calls
 │   │   │   ├── rng.js               # Seeded random number generator
-│   │   │   └── ai-hand-generator.js # AI hand generation logic
+│   │   │   ├── shuffle.js           # Array shuffle utility
+│   │   │   └── turn.js              # Turn management helpers
 │   │   └── __tests__/               # Jest test files
-│   └── game.php                     # Game HTML template (canvas + script tag)
+│   ├── game.php                     # Game HTML template (canvas + script tag)
+│   └── rules-panel.html             # Rules and controls panel (HTML overlay)
 ├── config.php                       # DB configuration loader (.env-aware)
 ├── header.php                       # HTML <head> with CDN dependencies
 ├── footer.php                       # HTML footer
@@ -209,24 +229,36 @@ mysql -u root -p triple_triad < back_end/sql/06_seed_player_cards.sql
 
 The game is driven by a **state machine** that transitions through the following phases:
 
-1. **Opponent Selection** – Choose an AI opponent to play against. Opponents are grouped by in-game location (e.g. Balamb, Doland, Galbadia).
-2. **Deck Selection** – Review the player's available cards and choose up to 5 to form a hand.
-3. **Confirmation** – Confirm or revise the selected deck before the match begins.
-4. **Hand Select** – The player selects cards from their deck to hold in their hand (max 5 cards).
-5. **Placement** – Players take turns placing cards on a 3×3 grid.
-6. **Resolution** – Captured cards are resolved based on directional strength comparisons.
-7. **End Turn** – Transition logic between turns.
-8. **AI Turn** – The AI opponent selects and places its card.
-9. **Game Over** – End-of-match determination. Winner may claim a card from the loser.
-10. **Card Claim** – The winner selects one card from the loser's hand to claim.
+1. **Opponent Selection** – Choose an AI opponent to play against. Opponents are grouped by in-game location (e.g. Balamb, Dollet, Galbadia).
+2. **Rules** – Display the active rules for the match with Play / Quit options.
+3. **Deck Selection** – Review the player's available cards and choose up to 5 to form a hand.
+4. **Confirmation** – Confirm or revise the selected deck before the match begins.
+5. **Hand Select** – The player selects cards from their deck to hold in their hand (max 5 cards).
+6. **Placement** – Players take turns placing cards on a 3×3 grid.
+7. **Resolution** – Captured cards are resolved based on directional strength comparisons, including Same, Plus, and Combo chain reactions.
+8. **End Turn** – Transition logic between turns.
+9. **AI Turn** – The AI opponent selects and places its card.
+10. **Game Over** – End-of-match determination. Winner may claim a card from the loser.
+11. **Card Claim** – The winner selects one card from the loser's hand to claim.
 
 ### Rules
 
 - The game is played on a **3×3 grid**.
 - Each card has four **directional strength values** (up, right, down, left) and an optional **element**.
 - When a card is placed adjacent to an opponent's card, the strengths on the touching sides are compared. If the placed card's strength is higher, the opponent's card is **captured** and becomes the current player's card.
-- **Elemental bonuses** apply when a card's element matches a coloured tile on the board, granting a +1 strength boost.
 - The player with the most cards on the board at the end of the match **wins** and may claim one card from the opponent.
+
+The following special rules can be active for a match:
+
+| Rule          | Description                                                                                                                                                |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Elemental** | Coloured tiles on the board grant a +1 strength boost to cards whose element matches the tile, or a −1 penalty if the element differs.                     |
+| **Same**      | When a placed card's printed value matches the facing printed value of two adjacent opponent cards, both opponent cards are captured.                      |
+| **Same Wall** | Board edges count as rank A (value 10) for the Same rule, allowing edge-adjacent matches to trigger captures. Requires the Same rule to be active.         |
+| **Plus**      | When the sum of the placed card's strength plus the opponent's facing strength is equal for two adjacent opponent pairs, both opponent cards are captured. |
+| **Combo**     | Cards captured by Same or Plus trigger a chain reaction — they immediately attempt to flip further adjacent opponent cards with lower edge values.         |
+| **Open**      | Both players see the AI's hand face-up on the board (the AI's cards are revealed instead of face-down).                                                    |
+| **Random**    | The player's hand is chosen randomly from their deck instead of allowing manual selection.                                                                 |
 
 ---
 
@@ -255,10 +287,6 @@ The test script uses Node.js with `--experimental-vm-modules` to support ES modu
 
 ---
 
-## Licence
-
-This project is released under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for the full terms. The MIT licence applies to all original source code and web implementation authored by Simon Henshall. It does not extend to any game concepts, character designs, trademarks, visual assets, or other intellectual property belonging to Square Enix Co., Ltd., which are excluded from this grant of rights.
-
 ## Linting & Formatting
 
 [ESLint](https://eslint.org/) with the flat config (`eslint.config.ts`) is used for static analysis. [Prettier](https://prettier.io/) handles code formatting.
@@ -279,7 +307,14 @@ npx prettier --write .
 
 ## Assets
 
-All visual assets are stored under `front_end/images/`:
+All visual assets are stored under `assets/original/` and `assets/custom/`:
+
+| Path               | Description                                                             |
+| ------------------ | ----------------------------------------------------------------------- |
+| `assets/original/` | Original Square Enix game assets (board, cursor, card faces, elements). |
+| `assets/custom/`   | Custom card face recolours (blue/red player indicators).                |
+
+Key files under `assets/original/`:
 
 - **board.png** – The game board background (950×650 canvas).
 - **cursor.png** – Selection cursor graphic used throughout the UI.
@@ -287,7 +322,13 @@ All visual assets are stored under `front_end/images/`:
 - **cards/** – Individual card images, named `card0.png`, `card1.png`, etc.
 - **elements/** – Element icons named after their element ID (`1.png` through `8.png`).
 
-The JavaScript configuration in `front_end/js/constants/config.js` defines the base image path and card image path used throughout the rendering code.
+The JavaScript configuration in `front_end/js/constants/config.js` defines the base image path (`assets/original/`) and card image path used throughout the rendering code.
+
+---
+
+## Licence
+
+This project is released under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for the full terms. The MIT licence applies to all original source code and web implementation authored by Simon Henshall. It does not extend to any game concepts, character designs, trademarks, visual assets, or other intellectual property belonging to Square Enix Co., Ltd., which are excluded from this grant of rights.
 
 ---
 
