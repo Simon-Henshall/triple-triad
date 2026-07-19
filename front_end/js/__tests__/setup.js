@@ -149,5 +149,24 @@ if (globalThis.document === undefined) {
   globalThis.document = {
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
+    createElement: jest.fn(() => ({
+      width: 0,
+      height: 0,
+      getContext: jest.fn(() => ({
+        font: "",
+        textBaseline: "",
+        textAlign: "",
+        strokeStyle: "",
+        lineWidth: 0,
+        lineJoin: "",
+        measureText: jest.fn(() => ({ width: 50 })),
+        createLinearGradient: jest.fn(() => ({
+          addColorStop: jest.fn(),
+        })),
+        strokeText: jest.fn(),
+        fillText: jest.fn(),
+        fillStyle: "",
+      })),
+    })),
   };
 }

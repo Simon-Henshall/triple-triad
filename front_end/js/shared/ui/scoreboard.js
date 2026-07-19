@@ -93,6 +93,7 @@ export class ScoreBoard {
     const bitmap = new createjs.Bitmap(canvas);
     bitmap.regX = canvas.width / 2;
     bitmap.regY = baselineY;
+    bitmap.text = text;
 
     return bitmap;
   }
