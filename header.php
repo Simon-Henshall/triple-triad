@@ -23,15 +23,34 @@
 
   <!-- Game Rules Panel Styles -->
   <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
     #game {
       display: flex;
-      align-items: flex-start;
+      align-items: stretch;
       gap: 20px;
       justify-content: center;
+      box-sizing: border-box;
+      height: 100vh;
       padding: 20px;
     }
 
-    #rules-panel {
+    #rules-panel-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 320px;
+      min-width: 260px;
+    }
+
+    #rules-panel,
+    #rules-details {
       background: #1a1a2e;
       border: 2px solid #c8a84e;
       border-radius: 8px;
@@ -39,12 +58,20 @@
       font-family: 'Lato', Arial, sans-serif;
       font-size: 14px;
       line-height: 1.6;
-      max-width: 320px;
-      min-width: 260px;
       padding: 16px 20px;
     }
 
-    #rules-panel h3 {
+    #rules-panel {
+      flex-shrink: 0;
+    }
+
+    #rules-details {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    #rules-panel h3,
+    #rules-details h3 {
       color: #c8a84e;
       font-family: 'Montserrat', Arial, sans-serif;
       font-size: 16px;
@@ -53,7 +80,8 @@
       letter-spacing: 1px;
     }
 
-    #rules-panel h3:first-child {
+    #rules-panel h3:first-child,
+    #rules-details h3:first-child {
       margin-top: 0;
     }
 
@@ -64,6 +92,30 @@
 
     #rules-panel li {
       margin-bottom: 4px;
+    }
+
+    #rules-details dl {
+      margin: 0;
+    }
+
+    #rules-details dt {
+      color: #c8a84e;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+      text-transform: uppercase;
+    }
+
+    #rules-details dt:first-of-type {
+      margin-top: 0;
+    }
+
+    #rules-details dd {
+      margin: 2px 0 0 0;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     .controls-table {

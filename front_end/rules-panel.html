@@ -1,26 +1,57 @@
 <!-- Rules and Controls Panel -->
-<div id="rules-panel">
-  <h3>How to Play</h3>
-  <ul>
-    <li>Select <strong>5 cards</strong> from your deck to form your hand.</li>
-    <li>Place cards on the <strong>3×3 board</strong> one at a time.</li>
-    <li>Compare numbers on adjacent sides &mdash; higher number wins and claims the opponent's card.</li>
-    <li>Whoever owns the most cards when the board is full <strong>wins</strong>.</li>
-  </ul>
+<div id="rules-panel-wrapper">
+  <div id="rules-panel">
+    <h3>How to Play</h3>
+    <ul>
+      <li>Select <strong>5 cards</strong> from your deck to form your hand.</li>
+      <li>Place cards on the <strong>3&times;3 board</strong> one at a time.</li>
+      <li>Compare numbers on adjacent sides &mdash; higher number wins and claims the opponent's card.</li>
+      <li>Whoever owns the most cards when the board is full <strong>wins</strong>.</li>
+    </ul>
 
-  <h3>Controls</h3>
-  <table class="controls-table">
-    <tr>
-      <td><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd></td>
-      <td>Navigate / Move cursor</td>
-    </tr>
-    <tr>
-      <td><kbd>Enter</kbd></td>
-      <td>Confirm / Select / Place card</td>
-    </tr>
-    <tr>
-      <td><kbd>Backspace</kbd> / <kbd>Esc</kbd></td>
-      <td>Cancel / Go back / Deselect card</td>
-    </tr>
-  </table>
+    <h3>Controls</h3>
+    <table class="controls-table">
+      <tr>
+        <td><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&larr;</kbd><kbd>&rarr;</kbd></td>
+        <td>Navigate / Move cursor</td>
+      </tr>
+      <tr>
+        <td><kbd>Enter</kbd></td>
+        <td>Confirm / Select / Place card</td>
+      </tr>
+      <tr>
+        <td><kbd>Backspace</kbd> / <kbd>Esc</kbd></td>
+        <td>Cancel / Go back / Deselect card</td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="rules-details">
+    <h3>Special Rules</h3>
+    <dl>
+      <dt>Elemental</dt>
+      <dd>Cards gain +1 on sides matching their element. Five elements form a rock-paper-scissors cycle.</dd>
+
+      <dt>Same</dt>
+      <dd>When two sides of your placed card match the touching sides of two adjacent opponent cards, you claim them.
+      </dd>
+
+      <dt>Same Wall</dt>
+      <dd>Board edges count as rank&nbsp;A&ensp;(value&nbsp;10) for the Same rule.</dd>
+
+      <dt>Plus</dt>
+      <dd>When the sum of your placed card's side + the opponent's touching side is equal for two pairs, you claim both.
+      </dd>
+
+      <dt>Combo</dt>
+      <dd>Cards captured by Same/Plus trigger a chain reaction &mdash; they immediately try to flip further adjacent
+        cards.</dd>
+
+      <dt>Open</dt>
+      <dd>Both players see the AI's hand face-up.</dd>
+
+      <dt>Random</dt>
+      <dd>Your hand is chosen randomly from your deck instead of letting you pick.</dd>
+    </dl>
+  </div>
 </div>
