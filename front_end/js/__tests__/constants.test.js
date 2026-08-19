@@ -188,7 +188,7 @@ test("directionMap opponentStrength is always the opposite direction", () => {
 test("elements has entries 1-8 with valid values", () => {
   const keys = Object.keys(elements)
     .map(Number)
-    .toSorted((a, b) => a - b);
+    .sort((a, b) => a - b);
   expect(keys).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
 
   for (const [, element] of Object.entries(elements)) {

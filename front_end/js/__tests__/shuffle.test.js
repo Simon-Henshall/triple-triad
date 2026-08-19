@@ -20,5 +20,5 @@ test("shuffle retains elements and length", () => {
   const copy = [...array];
   const out = shuffle([...array]);
   expect(out).toHaveLength(array.length);
-  expect([...out].toSorted()).toEqual(copy.toSorted());
+  expect([...out].sort()).toEqual([...copy].sort());
 });
