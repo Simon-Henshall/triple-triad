@@ -5,14 +5,34 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    env:
+      API_BASE_URL: http://127.0.0.1:8080
+      DB_HOST: 127.0.0.1
+      DB_NAME: triple_triad
+      DB_USER: root
+      DB_PASS: root
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: triple_triad
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     strategy:
       matrix:
@@ -20,12 +40,21 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_mysql
+      - run: npm ci
+      - run: npm run build --if-present
+      - name: Seed test database
+        run: mysql --protocol=TCP -h 127.0.0.1 -uroot -proot < back_end/sql/run_all.sql
+      - name: Start PHP server
+        run: php -S 127.0.0.1:8080 -t . > php-server.log 2>&1 &
+      - run: npm test
