@@ -58,3 +58,8 @@ jobs:
       - name: Start PHP server
         run: php -S 127.0.0.1:8080 -t . > php-server.log 2>&1 &
       - run: npm test
+      - name: Upload test coverage
+        if: matrix.node-version == '22.x'
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info

@@ -1,5 +1,7 @@
 # Triple Triad
 
+[![Build Status](https://github.com/Simon-Henshall/triple-triad/actions/workflows/node.js.yml/badge.svg)](https://github.com/Simon-Henshall/triple-triad/actions/workflows/node.js.yml)
+[![Test Coverage](https://codecov.io/gh/Simon-Henshall/triple-triad/branch/main/graph/badge.svg)](https://codecov.io/gh/Simon-Henshall/triple-triad)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A fan-made web implementation of the classic **Triple Triad** card game from the _Final Fantasy_ series, originally created by Square Enix. This version is built as a single-page web application with a PHP/MySQL backend and a JavaScript front-end rendered on an HTML5 Canvas using CreateJS (EaselJS).
