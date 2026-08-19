@@ -33,6 +33,9 @@ if (globalThis.createjs === undefined) {
            */
           getChildByName: () => {},
           children: [],
+          clone: function () {
+            return this;
+          },
         };
       };
       this.globalToLocal = function (x, y) {
@@ -80,7 +83,12 @@ if (globalThis.createjs === undefined) {
     Shape: function () {
       this.graphics = {
         beginFill: jest.fn().mockReturnThis(),
+        beginStroke: jest.fn().mockReturnThis(),
+        clear: jest.fn().mockReturnThis(),
         drawRect: jest.fn().mockReturnThis(),
+        lineTo: jest.fn().mockReturnThis(),
+        moveTo: jest.fn().mockReturnThis(),
+        setStrokeStyle: jest.fn().mockReturnThis(),
       };
       this.setBounds = jest.fn();
       this.x = 0;

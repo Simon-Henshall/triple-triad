@@ -44,6 +44,20 @@ describe("CardClaimController", () => {
     expect(ctrl.view.cleanup).toHaveBeenCalled();
   });
 
+  test("activate builds the view and attaches the key handler", async () => {
+    const ctrl = new CardClaimController({}, transitionMock);
+    ctrl.view.build = jest.fn().mockResolvedValue();
+    ctrl._attachKeyHandler = jest.fn();
+
+    await ctrl.activate();
+
+    expect(ctrl.view.build).toHaveBeenCalledWith(
+      ctrl.model.aiInitialCards,
+      ctrl.model.selectedIndex,
+    );
+    expect(ctrl._attachKeyHandler).toHaveBeenCalled();
+  });
+
   test("_attachKeyHandler does not re-attach", () => {
     const ctrl = new CardClaimController({}, transitionMock);
     ctrl._attachKeyHandler();
@@ -62,6 +76,30 @@ describe("CardClaimController", () => {
   test("_detachKeyHandler does nothing when no handler", () => {
     const ctrl = new CardClaimController({}, transitionMock);
     expect(() => ctrl._detachKeyHandler()).not.toThrow();
+  });
+
+  test("keyboard handler navigates, claims, skips, and ignores other keys", () => {
+    const ctrl = new CardClaimController({}, transitionMock);
+    ctrl.model.selectPrev = jest.fn();
+    ctrl.model.selectNext = jest.fn();
+    ctrl.view.updateSelection = jest.fn();
+    ctrl._claimCard = jest.fn();
+    ctrl._skipClaim = jest.fn();
+    ctrl._attachKeyHandler();
+    const handler = document.addEventListener.mock.calls.at(-1)[1];
+    const event = { preventDefault: jest.fn() };
+
+    handler({ ...event, key: "ArrowLeft" });
+    handler({ ...event, key: "ArrowRight" });
+    handler({ ...event, key: "Enter" });
+    handler({ ...event, key: "Escape" });
+    handler({ ...event, key: "Other" });
+
+    expect(ctrl.model.selectPrev).toHaveBeenCalled();
+    expect(ctrl.model.selectNext).toHaveBeenCalled();
+    expect(ctrl.view.updateSelection).toHaveBeenCalledTimes(2);
+    expect(ctrl._claimCard).toHaveBeenCalled();
+    expect(ctrl._skipClaim).toHaveBeenCalled();
   });
 
   test("_claimCard with no card logs warning", () => {

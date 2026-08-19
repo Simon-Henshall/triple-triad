@@ -5,7 +5,11 @@
  * global fetch.
  */
 
-import { fetchPlayerCards } from "../utilities/network.js";
+import {
+  fetchOpponentCards,
+  fetchOpponents,
+  fetchPlayerCards,
+} from "../utilities/network.js";
 
 /**
  * Store the original fetch before tests and add a mock after each test
@@ -126,4 +130,73 @@ test("fetchPlayerCards re-throws non-abort errors", async () => {
   };
 
   await expect(fetchPlayerCards(1)).rejects.toThrow("Network failure");
+});
+
+test("fetchOpponents makes a GET request and returns JSON", async () => {
+  const responseData = { success: true, opponents: [] };
+  let capturedUrl;
+  let capturedOptions;
+
+  globalThis.fetch = async (url, options) => {
+    capturedUrl = url;
+    capturedOptions = options;
+    return { ok: true, json: async () => responseData };
+  };
+
+  await expect(fetchOpponents()).resolves.toEqual(responseData);
+  expect(capturedUrl).toBe("front_end/api/get_opponents.php");
+  expect(capturedOptions.method).toBe("GET");
+  expect(capturedOptions.credentials).toBe("same-origin");
+});
+
+test("fetchOpponents handles HTTP and abort errors", async () => {
+  globalThis.fetch = async () => ({ ok: false, status: 503 });
+  await expect(fetchOpponents()).rejects.toThrow(
+    "Request failed with status 503",
+  );
+
+  globalThis.fetch = async () => {
+    const error = new Error("aborted");
+    error.name = "AbortError";
+    throw error;
+  };
+  await expect(fetchOpponents()).rejects.toThrow("Request timed out");
+});
+
+test("fetchOpponentCards sends player and optional rare-card IDs", async () => {
+  const requests = [];
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+    return { ok: true, json: async () => ({ success: true, cards: [] }) };
+  };
+
+  await fetchOpponentCards(7);
+  await fetchOpponentCards(8, { uniqueCardId: 109 });
+
+  expect(JSON.parse(requests[0].options.body)).toEqual({ player_id: 7 });
+  expect(JSON.parse(requests[1].options.body)).toEqual({
+    player_id: 8,
+    unique_card_id: 109,
+  });
+  expect(requests[0].url).toBe("front_end/api/get_opponent_cards.php");
+  expect(requests[0].options.method).toBe("POST");
+});
+
+test("fetchOpponentCards handles HTTP, timeout, and network errors", async () => {
+  globalThis.fetch = async () => ({ ok: false, status: 400 });
+  await expect(fetchOpponentCards(1)).rejects.toThrow(
+    "Request failed with status 400",
+  );
+
+  globalThis.fetch = async () => {
+    const error = new Error("aborted");
+    error.name = "AbortError";
+    throw error;
+  };
+  await expect(fetchOpponentCards(1)).rejects.toThrow("Request timed out");
+
+  globalThis.fetch = async () => {
+    throw new Error("connection refused");
+  };
+  await expect(fetchOpponentCards(1)).rejects.toThrow("connection refused");
 });

@@ -23,6 +23,7 @@ describe("AiTurnView (extended)", () => {
       addChild: jest.fn(),
       removeChild: jest.fn(),
       update: jest.fn(),
+      contains: jest.fn().mockReturnValue(false),
     };
     Game.stage = stage;
   });
@@ -150,5 +151,54 @@ describe("AiTurnView (extended)", () => {
     const card1 = { visuals: {} };
     const card2 = undefined;
     expect(() => view.clearHand([card1, card2])).not.toThrow();
+  });
+
+  test("showSelection positions the cursor and indents the selected card", () => {
+    const view = new AiTurnView(stage);
+    view.handOffsetX = 200;
+    const card = { visuals: { container: { x: 200, y: 300 } } };
+
+    view.showSelection([card], 0);
+
+    expect(view.aiCursor.x).toBe(150);
+    expect(view.aiCursor.y).toBe(380);
+    expect(view.aiCursor.visible).toBe(true);
+    expect(card.visuals.container.x).toBe(230);
+    expect(stage.addChild).toHaveBeenCalledWith(view.aiCursor);
+    expect(stage.update).toHaveBeenCalled();
+  });
+
+  test("showSelection ignores a missing card container", () => {
+    const view = new AiTurnView(stage);
+    expect(() => view.showSelection([{}], 0)).not.toThrow();
+    expect(stage.addChild).not.toHaveBeenCalled();
+  });
+
+  test("hideSelection unindents the selected card and removes cursor", () => {
+    const view = new AiTurnView(stage);
+    view.handOffsetX = 200;
+    const card = { visuals: { container: { x: 230, y: 300 } } };
+    view.showSelection([card], 0);
+    stage.contains.mockReturnValue(true);
+
+    view.hideSelection([card]);
+
+    expect(card.visuals.container.x).toBe(200);
+    expect(stage.removeChild).toHaveBeenCalledWith(view.aiCursor);
+    expect(view.aiCursor.visible).toBe(false);
+    expect(view._selectedCardIndex).toBe(-1);
+  });
+
+  test("clearHand removes a visible cursor and all card containers", () => {
+    const view = new AiTurnView(stage);
+    const card = { visuals: { container: { id: "card" } } };
+    stage.contains.mockReturnValue(true);
+
+    view.clearHand([card]);
+
+    expect(stage.removeChild).toHaveBeenCalledWith(view.aiCursor);
+    expect(Game.stage.removeChild).toHaveBeenCalledWith(card.visuals.container);
+    expect(view.aiCursor.visible).toBe(false);
+    expect(view._selectedCardIndex).toBe(-1);
   });
 });

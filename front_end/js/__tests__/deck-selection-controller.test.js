@@ -35,6 +35,7 @@ describe("DeckSelectionController", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    Game.rules = ["open"];
     Game.models = { playerModel: undefined };
     Game.stage = undefined;
 
@@ -161,6 +162,63 @@ describe("DeckSelectionController", () => {
     controller.selectedIndexOnPage = 3;
     controller.paginate("right");
     expect(controller.selectedIndexOnPage).toBe(0);
+  });
+
+  test("paginate right advances when multiple pages exist", () => {
+    controller.cardsPerPage = 2;
+    controller.paginate("right");
+
+    expect(controller.currentPage).toBe(2);
+    expect(controller.selectedIndexOnPage).toBe(0);
+  });
+
+  test("_pickRandomCard returns an available card", () => {
+    const randomCard = controller._pickRandomCard();
+
+    expect(randomCard).toBeDefined();
+    expect(randomCard.owner).toBe("player");
+    expect(randomCard.count).toBe(1);
+  });
+
+  test("_pickRandomCard returns undefined when the deck is exhausted", () => {
+    mockPlayerModel.hand = [
+      { data: { id: 1 } },
+      { data: { id: 1 } },
+      { data: { id: 1 } },
+    ];
+    controller = new DeckSelectionController({
+      deck: [fakeCard(1, "Card1", 3)],
+      playerModel: mockPlayerModel,
+    });
+
+    expect(controller._pickRandomCard()).toBeUndefined();
+  });
+
+  test("_autoSelectRandomHand respects card counts", () => {
+    const clone = jest.fn(() => ({
+      visuals: { container: { x: 0, y: 0 } },
+      data: { id: 1 },
+    }));
+    mockPlayerModel.handOffsetX = 120;
+    mockPlayerModel.deck = [{ data: { id: 1 }, count: 5, clone }];
+
+    const hand = controller._autoSelectRandomHand();
+
+    expect(hand).toHaveLength(5);
+    expect(clone).toHaveBeenCalledTimes(5);
+    expect(hand[0].visuals.container.x).toBe(120);
+  });
+
+  test("activate skips the book under the random rule", () => {
+    Game.rules = ["random"];
+    Game.stage = { removeChild: jest.fn() };
+    Game.startGame = jest.fn();
+    jest.spyOn(controller, "_autoSelectRandomHand").mockReturnValue([]);
+
+    controller.activate();
+
+    expect(Game.stage.removeChild).toHaveBeenCalled();
+    expect(Game.startGame).toHaveBeenCalled();
   });
 
   test("activate sets up the selection book via Game", () => {

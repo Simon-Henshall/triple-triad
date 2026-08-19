@@ -5,6 +5,7 @@
 
 import { jest } from "@jest/globals";
 import { Game } from "../shared/game/game.js";
+import { ConfirmationView } from "../phases/confirmation/confirmation-view.js";
 
 describe("PlayerView", () => {
   let PlayerView;
@@ -248,6 +249,100 @@ describe("PlayerView", () => {
 
       // Cleanup
       DeckSelectionModel.displayedCard = undefined;
+    });
+  });
+
+  describe("renderHand and preview handling", () => {
+    test("renders cards with containers and skips missing containers", () => {
+      const view = new PlayerView({ hand: [] });
+      const firstContainer = { x: 0, y: 0 };
+      const firstCard = {
+        data: { name: "First" },
+        visuals: { container: firstContainer },
+      };
+      const missingCard = { data: { name: "Missing" }, visuals: {} };
+
+      view.renderHand([firstCard, missingCard]);
+
+      expect(view.cardsInPlayerHand).toEqual([firstContainer]);
+      expect(Game.stage.addChild).toHaveBeenCalledWith(firstContainer);
+      expect(Game.stage.update).toHaveBeenCalled();
+    });
+
+    test("keeps confirmation and preview cards above the hand", () => {
+      const view = new PlayerView({ hand: [] });
+      const previewCard = { id: "preview" };
+      const confirmationContainer = { id: "confirmation" };
+      const handCard = { id: "hand" };
+      view.cardsInPlayerHand = [handCard];
+      DeckSelectionModel.displayedCard = previewCard;
+      ConfirmationView.container = confirmationContainer;
+      Game.stage.contains = jest.fn().mockReturnValue(true);
+      Game.stage.getChildIndex = jest.fn().mockReturnValue(4);
+      Game.stage.numChildren = 8;
+
+      view._updateHandAndPreviewZOrder(true);
+
+      expect(Game.stage.setChildIndex).toHaveBeenCalledWith(previewCard, 3);
+      expect(Game.stage.setChildIndex).toHaveBeenCalledWith(handCard, 3);
+
+      DeckSelectionModel.displayedCard = undefined;
+      ConfirmationView.container = undefined;
+    });
+
+    test("attaches a preview ticker and removes it after the tween", () => {
+      const view = new PlayerView({ hand: [] });
+      const previewCard = { id: "preview" };
+      const cardContainer = { id: "hand" };
+      DeckSelectionModel.displayedCard = previewCard;
+      Game.stage.contains = jest.fn().mockReturnValue(true);
+      const tickerHandler = jest.fn();
+      createjs.Ticker.addEventListener = jest.fn((event, handler) => {
+        tickerHandler.mockImplementation(handler);
+      });
+      createjs.Ticker.removeEventListener = jest.fn();
+      const chain = {
+        call: jest.fn((callback) => {
+          callback();
+          return chain;
+        }),
+      };
+      createjs.Tween.get = jest.fn().mockReturnValue(chain);
+
+      view._attachPreviewTicker(cardContainer);
+      tickerHandler();
+
+      expect(createjs.Ticker.addEventListener).toHaveBeenCalledWith(
+        "tick",
+        expect.any(Function),
+      );
+      expect(createjs.Ticker.removeEventListener).toHaveBeenCalledWith(
+        "tick",
+        expect.any(Function),
+      );
+      expect(Game.stage.setChildIndex).toHaveBeenCalled();
+      DeckSelectionModel.displayedCard = undefined;
+    });
+
+    test("removes a card after a removal tween completes", () => {
+      const view = new PlayerView({ hand: [] });
+      const cardContainer = { x: 0, y: 0 };
+      view.cardsInPlayerHand = [cardContainer];
+      Game.stage.contains = jest.fn().mockReturnValue(true);
+      const chain = {
+        to: jest.fn().mockReturnThis(),
+        call: jest.fn((callback) => {
+          callback();
+          return chain;
+        }),
+      };
+      createjs.Tween.get = jest.fn().mockReturnValue(chain);
+
+      view.animateCardToHand(cardContainer, 0, true);
+
+      expect(view.cardsInPlayerHand).toEqual([]);
+      expect(Game.stage.removeChild).toHaveBeenCalledWith(cardContainer);
+      expect(Game.stage.update).toHaveBeenCalled();
     });
   });
 });
