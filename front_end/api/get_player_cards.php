@@ -4,7 +4,9 @@ ini_set('display_errors', 0);
 error_reporting(E_ALL); // This keeps errors routing to system logs instead
 
 // 1. Set required API headers
-header("Content-Type: application/json; charset=UTF-8");
+require_once __DIR__ . '/bootstrap.php';
+sendApiHeaders();
+requireApiMethod('POST');
 
 // 2. Load database dependencies
 require_once __DIR__ . '/../../back_end/src/Database.php';
@@ -20,7 +22,7 @@ $response = [
 
 try {
   // 4. Read and parse the incoming JSON body
-  $input = json_decode(file_get_contents("php://input"), true);
+  $input = readJsonBody();
 
   if (!$input || !isset($input["player_id"])) {
     http_response_code(400); // Bad Request
@@ -79,19 +81,8 @@ try {
 } catch (PDOException $e) {
   http_response_code(500); // Server Error
 
-  // 1. Define where to save the private log file
-  // Keeping it outside public folders or naming it .log prevents browser access
-  $logFile = __DIR__ . '/../logs/db_errors.log';
+  logApiDatabaseError($e);
 
-  // 2. Format the message with a timestamp
-  $timestamp = date('[Y-m-d H:i:s]');
-  $logMessage = "{$timestamp} Database Error: " . $e->getMessage() . PHP_EOL;
-
-  // 3. Append the error message to the log file securely
-  // message_type 3 tells PHP to write directly to a specific file path
-  error_log($logMessage, 3, $logFile);
-
-  // 4. Give the frontend a generic message so the database information does not leak
   $response["message"] = "A database connection error occurred.";
 }
 

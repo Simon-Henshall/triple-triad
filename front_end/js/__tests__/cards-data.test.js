@@ -18,11 +18,7 @@ const API_BASE = process.env.API_BASE_URL || "http://localhost/triple-triad";
 async function fetchCards() {
   const url = `${API_BASE}/front_end/api/get_cards.php`;
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({}),
-  });
+  const response = await fetch(url, { method: "GET" });
 
   if (!response.ok) {
     throw new Error(`API request failed with status ${response.status}`);

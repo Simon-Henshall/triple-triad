@@ -1,0 +1,6 @@
+# Review security-sensitive changes with the repository owner.
+* @Simon-Henshall
+.github/ @Simon-Henshall
+config.php @Simon-Henshall
+back_end/ @Simon-Henshall
+front_end/api/ @Simon-Henshall

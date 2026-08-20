@@ -177,18 +177,18 @@ triple-triad/
    ```ini
    DB_HOST=localhost
    DB_NAME=triple_triad
-   DB_USER=root
+   DB_USER=triple_triad_app
    DB_PASS=your_password
    ```
 
-   The application reads `.env` automatically via `config.php`. Alternatively, set the environment variables directly on your system.
+Use a dedicated least-privilege database account; do not use `root` outside a local installation. The application reads `.env` automatically via `config.php`. Alternatively, set the environment variables directly on your system. See [`.env.example`](.env.example) and [`SECURITY_BASELINE.md`](SECURITY_BASELINE.md).
 
 4. **Serve the application**:
 
    Point your web server's document root to the project directory. With WAMP/XAMPP, place the project folder under `www/` or `htdocs/` and access it via:
 
    ```
-   http://localhost/triple-triad/
+   https://localhost/triple-triad/
    ```
 
 ### Database Setup

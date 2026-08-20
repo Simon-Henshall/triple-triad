@@ -4,7 +4,9 @@ ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 // 1. Set required API headers
-header("Content-Type: application/json; charset=UTF-8");
+require_once __DIR__ . '/bootstrap.php';
+sendApiHeaders();
+requireApiMethod('GET');
 
 // 2. Load database dependencies
 require_once __DIR__ . '/../../back_end/src/Database.php';
@@ -63,10 +65,7 @@ try {
 } catch (PDOException $e) {
   http_response_code(500);
 
-  $logFile = __DIR__ . '/../logs/db_errors.log';
-  $timestamp = date('[Y-m-d H:i:s]');
-  $logMessage = "{$timestamp} Database Error: " . $e->getMessage() . PHP_EOL;
-  error_log($logMessage, 3, $logFile);
+  logApiDatabaseError($e);
 
   $response["message"] = "A database connection error occurred.";
 }

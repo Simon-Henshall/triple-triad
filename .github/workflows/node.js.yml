@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: ["main"]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,8 +20,8 @@ jobs:
       API_BASE_URL: http://127.0.0.1:8080
       DB_HOST: 127.0.0.1
       DB_NAME: triple_triad
-      DB_USER: root
-      DB_PASS: root
+      DB_USER: triple_triad_ci
+      DB_PASS: triple_triad_ci_password
 
     services:
       mysql:
@@ -26,6 +29,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: triple_triad
+          MYSQL_USER: triple_triad_ci
+          MYSQL_PASSWORD: triple_triad_ci_password
         ports:
           - 3306:3306
         options: >-
@@ -40,27 +45,29 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45
         with:
           php-version: "8.2"
           extensions: pdo_mysql
       - run: npm ci
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
       - run: npm run build --if-present
       - name: Seed test database
-        run: mysql --protocol=TCP -h 127.0.0.1 -uroot -proot < back_end/sql/run_all.sql
+        run: mysql --protocol=TCP -h 127.0.0.1 -utriple_triad_ci -ptriple_triad_ci_password < back_end/sql/run_all.sql
       - name: Start PHP server
         run: php -S 127.0.0.1:8080 -t . > php-server.log 2>&1 &
       - run: npm test
       - name: Upload test coverage
         if: matrix.node-version == '22.x'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@ad3126e916f78f00d1c799d3f8f7e0e4c5f0b2a1
         with:
           files: ./coverage/lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
