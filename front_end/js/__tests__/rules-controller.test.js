@@ -8,6 +8,8 @@ import { RulesController } from "../phases/rules/rules-controller.js";
 import { Game } from "../shared/game/game.js";
 import { PhaseChecker } from "../game/phases.js";
 
+let globalAlert;
+
 beforeAll(() => {
   globalAlert = globalThis.alert;
   globalThis.alert = jest.fn();
