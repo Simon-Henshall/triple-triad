@@ -1,23 +1,23 @@
 {
   "type": "module",
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "@typescript-eslint/eslint-plugin": "^8.46.3",
+    "@eslint/js": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.67.0",
     "@typescript-eslint/parser": "^8.67.0",
     "baseline-browser-mapping": "^2.10.38",
-    "eslint": "^9.39.1",
+    "eslint": "^10.8.1",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-jsdoc": "^61.1.12",
+    "eslint-plugin-jsdoc": "^64.2.1",
     "eslint-plugin-no-commented-code": "^1.0.10",
     "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-unicorn": "^62.0.0",
+    "eslint-plugin-unicorn": "^73.0.0",
     "globals": "^16.5.0",
     "jest": "^30.4.2",
     "jest-environment-node": "^30.2.0",
     "jiti": "^2.7.0",
     "prettier": "^3.9.6",
-    "typescript": "^7.0.2",
-    "typescript-eslint": "^8.46.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.67.0"
   },
   "scripts": {
     "test": "node --experimental-vm-modules --no-warnings ./node_modules/jest/bin/jest.js"

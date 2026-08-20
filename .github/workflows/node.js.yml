@@ -41,7 +41,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [22.x, 24.x, 26.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -66,7 +66,7 @@ jobs:
         run: php -S 127.0.0.1:8080 -t . > php-server.log 2>&1 &
       - run: npm test
       - name: Upload test coverage
-        if: matrix.node-version == '22.x'
+        if: matrix.node-version == '26.x'
         uses: codecov/codecov-action@af2c6347526edfe5ff45ad690affad475d77ddb4
         with:
           files: ./coverage/lcov.info
