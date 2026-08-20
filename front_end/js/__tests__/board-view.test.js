@@ -18,7 +18,7 @@ describe("BoardView", () => {
       removeChild: jest.fn(),
     };
 
-    BoardModel.boardContainer = {
+    BoardView.boardContainer = {
       removeAllChildren: jest.fn(),
       addChild: jest.fn(),
     };
@@ -41,7 +41,7 @@ describe("BoardView", () => {
 
   test("generateGrid resets the boardContainer", () => {
     BoardView.generateGrid();
-    expect(BoardModel.boardContainer.removeAllChildren).toHaveBeenCalled();
+    expect(BoardView.boardContainer.removeAllChildren).toHaveBeenCalled();
   });
 
   test("generateGrid updates the stage", () => {

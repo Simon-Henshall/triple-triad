@@ -9,7 +9,6 @@ export const BoardModel = {
   // -------------------------
   // Board state
   // -------------------------
-  boardContainer: new createjs.Container(),
   squares: [],
   selectedSquare: 5,
   selectedRow: 2,

@@ -3,4 +3,4 @@
 .github/ @Simon-Henshall
 config.php @Simon-Henshall
 back_end/ @Simon-Henshall
-front_end/api/ @Simon-Henshall
+back_end/api/ @Simon-Henshall

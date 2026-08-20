@@ -16,7 +16,7 @@ const API_BASE = process.env.API_BASE_URL || "http://localhost/triple-triad";
  * @returns {Promise<Array>} Array of card objects from the database
  */
 async function fetchCards() {
-  const url = `${API_BASE}/front_end/api/get_cards.php`;
+  const url = `${API_BASE}/back_end/api/get_cards.php`;
 
   const response = await fetch(url, { method: "GET" });
 

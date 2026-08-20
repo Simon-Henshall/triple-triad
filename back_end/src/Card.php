@@ -30,7 +30,8 @@ class Card
   {
     $db = new Database();
     $stmt = $db->connect()->prepare("SELECT id, name FROM card WHERE id = ?");
-    $stmt->execute([$id]);
+    $stmt->bindValue(1, $id, PDO::PARAM_INT);
+    $stmt->execute();
     return $stmt->fetch(PDO::FETCH_CLASS, self::class);
   }
 
@@ -38,13 +39,17 @@ class Card
   {
     $db = new Database();
     $stmt = $db->connect()->prepare("INSERT INTO player_card (player_id, card_id) VALUES (?, ?)");
-    $stmt->execute([$playerId, $this->id]);
+    $stmt->bindValue(1, $playerId, PDO::PARAM_INT);
+    $stmt->bindValue(2, $this->id, PDO::PARAM_INT);
+    $stmt->execute();
   }
 
   public function removePlayer(int $playerId)
   {
     $db = new Database();
     $stmt = $db->connect()->prepare("DELETE FROM player_card WHERE player_id = ? AND card_id = ?");
-    $stmt->execute([$playerId, $this->id]);
+    $stmt->bindValue(1, $playerId, PDO::PARAM_INT);
+    $stmt->bindValue(2, $this->id, PDO::PARAM_INT);
+    $stmt->execute();
   }
 }

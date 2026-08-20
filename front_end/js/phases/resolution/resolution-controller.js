@@ -294,7 +294,9 @@ export class ResolutionController {
     // Work through captured cards in a queue to handle chains
     const toProcess = [...this._comboCapturedCards];
     const processed = new Set();
+    const scheduled = new Set(toProcess);
     const comboFlips = [];
+    const activeOwner = getPlayerTurn() === "blue" ? "player" : "ai";
 
     while (toProcess.length > 0) {
       const capturedCard = toProcess.shift();
@@ -315,8 +317,9 @@ export class ResolutionController {
         // - Is the originally placed card
         if (
           !adjacent ||
-          capturedCard.owner === adjacent.owner ||
-          adjacent === placedCard
+          adjacent === placedCard ||
+          scheduled.has(adjacent) ||
+          adjacent.owner === activeOwner
         ) {
           continue;
         }
@@ -329,6 +332,7 @@ export class ResolutionController {
 
         if (capturedStrength > adjacentStrength) {
           comboFlips.push({ target: adjacent, direction });
+          scheduled.add(adjacent);
 
           // This newly flipped card can also trigger further combos
           toProcess.push(adjacent);

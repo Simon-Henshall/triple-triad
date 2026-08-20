@@ -53,6 +53,35 @@ describe("ResolutionController (extended)", () => {
   });
 
   describe("flipCardsCheck", () => {
+    test("Plus flips exactly the matching opponent pair", () => {
+      Game.rules = ["plus"];
+      const ctrl = new ResolutionController({}, transitionMock);
+      ctrl.view.showRulePopup = jest.fn();
+      ctrl.flipCardOver = jest.fn();
+
+      const rightCard = {
+        owner: "ai",
+        data: { strength: { left: 8 } },
+      };
+      const downCard = {
+        owner: "ai",
+        data: { strength: { up: 8 } },
+      };
+      const placedCard = {
+        owner: "player",
+        data: { strength: { left: 1, up: 1, right: 1, down: 1 } },
+        cardRight: rightCard,
+        cardDown: downCard,
+      };
+
+      ctrl.flipCardsCheck(placedCard);
+
+      expect(ctrl.flipCardOver).toHaveBeenCalledTimes(2);
+      expect(ctrl.flipCardOver).toHaveBeenCalledWith(rightCard, "left");
+      expect(ctrl.flipCardOver).toHaveBeenCalledWith(downCard, "up");
+      expect(ctrl.view.showRulePopup).toHaveBeenCalledWith("Plus!", "#00BFFF");
+    });
+
     test("skips when no target card in direction", () => {
       const ctrl = new ResolutionController({}, transitionMock);
       const card = {
@@ -103,6 +132,39 @@ describe("ResolutionController (extended)", () => {
       ctrl.flipCardsCheck(card);
       expect(target.setOwner).toHaveBeenCalledWith("player");
     });
+  });
+
+  test("Combo resolves a finite two-card chain once", () => {
+    const ctrl = new ResolutionController({}, transitionMock);
+    ctrl.view.showRulePopup = jest.fn();
+
+    const finalCard = {
+      owner: "ai",
+      data: { strength: { left: 1, right: 1 } },
+    };
+    const chainedCard = {
+      owner: "ai",
+      data: { strength: { left: 5, right: 5 } },
+      cardRight: finalCard,
+    };
+    const capturedCard = {
+      owner: "player",
+      data: { strength: { left: 6, right: 1 } },
+      cardRight: chainedCard,
+    };
+
+    ctrl._comboCapturedCards = [capturedCard];
+    ctrl.flipCardOver = jest.fn((target) => {
+      target.owner = "player";
+    });
+
+    ctrl._applyComboChain(capturedCard);
+
+    expect(ctrl.flipCardOver).toHaveBeenCalledTimes(2);
+    expect(ctrl.flipCardOver).toHaveBeenNthCalledWith(1, chainedCard, "left");
+    expect(ctrl.flipCardOver).toHaveBeenNthCalledWith(2, finalCard, "left");
+    expect(ctrl.view.showRulePopup).toHaveBeenCalledWith("Combo!", "#FF4500");
+    expect(ctrl._comboCapturedCards).toEqual([]);
   });
 
   describe("flipCardOver", () => {

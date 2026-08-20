@@ -13,7 +13,7 @@ export async function fetchPlayerCards(playerId, { timeout = 7000 } = {}) {
   const timer = setTimeout(() => controller.abort(), timeout);
 
   try {
-    const result = await fetch("front_end/api/get_player_cards.php", {
+    const result = await fetch("back_end/api/get_player_cards.php", {
       method: "POST",
       credentials: "same-origin", // include cookies if needed
       headers: { "Content-Type": "application/json" },
@@ -52,7 +52,7 @@ export async function fetchOpponents({ timeout = 7000 } = {}) {
   const timer = setTimeout(() => controller.abort(), timeout);
 
   try {
-    const result = await fetch("front_end/api/get_opponents.php", {
+    const result = await fetch("back_end/api/get_opponents.php", {
       method: "GET",
       credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
@@ -99,7 +99,7 @@ export async function fetchOpponentCards(
       payload.unique_card_id = uniqueCardId;
     }
 
-    const result = await fetch("front_end/api/get_opponent_cards.php", {
+    const result = await fetch("back_end/api/get_opponent_cards.php", {
       method: "POST",
       credentials: "same-origin",
       headers: { "Content-Type": "application/json" },

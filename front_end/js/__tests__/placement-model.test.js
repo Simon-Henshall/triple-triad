@@ -9,6 +9,7 @@ describe("PlacementModel", () => {
   let PlacementModel;
   let Game;
   let BoardModel;
+  let BoardView;
   let mockController;
   let mockTransition;
 
@@ -16,6 +17,8 @@ describe("PlacementModel", () => {
     // Set up BoardModel and Game mocks before importing
     const boardModule = await import("../shared/board/board-model.js");
     BoardModel = boardModule.BoardModel;
+    const boardViewModule = await import("../shared/board/board-view.js");
+    BoardView = boardViewModule.BoardView;
     const gameModule = await import("../shared/game/game.js");
     Game = gameModule.Game;
 
@@ -40,7 +43,7 @@ describe("PlacementModel", () => {
     }));
     BoardModel.freeCells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     BoardModel.lastPlacedSquare = undefined;
-    BoardModel.boardContainer = {
+    BoardView.boardContainer = {
       globalToLocal: jest.fn((x, y) => ({ x, y })),
       contains: jest.fn().mockReturnValue(false),
       addChild: jest.fn(),
@@ -323,10 +326,10 @@ describe("PlacementModel", () => {
         y: 0,
       };
       const card = { visuals: { container } };
-      BoardModel.boardContainer.contains = jest.fn().mockReturnValue(true);
+      BoardView.boardContainer.contains = jest.fn().mockReturnValue(true);
 
       model.addCardToBoard(card, 1);
-      expect(BoardModel.boardContainer.addChild).not.toHaveBeenCalled();
+      expect(BoardView.boardContainer.addChild).not.toHaveBeenCalled();
     });
   });
 

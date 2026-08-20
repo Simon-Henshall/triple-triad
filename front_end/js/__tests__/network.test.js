@@ -59,7 +59,7 @@ test("fetchPlayerCards makes correct POST request and returns JSON", async () =>
 
   const result = await fetchPlayerCards(42);
 
-  expect(capturedUrl).toBe("front_end/api/get_player_cards.php");
+  expect(capturedUrl).toBe("back_end/api/get_player_cards.php");
   expect(capturedOptions.method).toBe("POST");
   expect(capturedOptions.headers["Content-Type"]).toBe("application/json");
   expect(capturedOptions.credentials).toBe("same-origin");
@@ -144,7 +144,7 @@ test("fetchOpponents makes a GET request and returns JSON", async () => {
   };
 
   await expect(fetchOpponents()).resolves.toEqual(responseData);
-  expect(capturedUrl).toBe("front_end/api/get_opponents.php");
+  expect(capturedUrl).toBe("back_end/api/get_opponents.php");
   expect(capturedOptions.method).toBe("GET");
   expect(capturedOptions.credentials).toBe("same-origin");
 });
@@ -178,7 +178,7 @@ test("fetchOpponentCards sends player and optional rare-card IDs", async () => {
     player_id: 8,
     unique_card_id: 109,
   });
-  expect(requests[0].url).toBe("front_end/api/get_opponent_cards.php");
+  expect(requests[0].url).toBe("back_end/api/get_opponent_cards.php");
   expect(requests[0].options.method).toBe("POST");
 });
 

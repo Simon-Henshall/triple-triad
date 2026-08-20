@@ -2,6 +2,7 @@ import { Game } from "../../shared/game/game.js";
 import { ResolutionController } from "../resolution/resolution-controller.js";
 import { PlacementView } from "./placement-view.js";
 import { BoardModel } from "../../shared/board/board-model.js";
+import { BoardView } from "../../shared/board/board-view.js";
 import { ResolutionView } from "../resolution/resolution-view.js";
 import { offsets } from "../../constants/offsets.js";
 import GameOverController from "../game-over/game-over-controller.js";
@@ -242,15 +243,15 @@ export class PlacementModel {
     cardContainer.scaleY = offsets.scaledCardHeight / bounds.height;
 
     // Convert GLOBAL → LOCAL
-    const pt = BoardModel.boardContainer.globalToLocal(
+    const pt = BoardView.boardContainer.globalToLocal(
       cardContainer.x,
       cardContainer.y,
     );
     cardContainer.x = pt.x;
     cardContainer.y = pt.y;
 
-    if (!BoardModel.boardContainer.contains(cardContainer)) {
-      BoardModel.boardContainer.addChild(cardContainer);
+    if (!BoardView.boardContainer.contains(cardContainer)) {
+      BoardView.boardContainer.addChild(cardContainer);
     }
   }
 

@@ -26,6 +26,7 @@ import { InputModel } from "../input/input-model.js";
 import { InputController } from "../input/input-controller.js";
 
 import { BoardModel } from "../board/board-model.js";
+import { BoardView } from "../board/board-view.js";
 import { createDeckFromApi } from "../card/card-factory.js";
 import { InfoBox } from "../ui/info-box.js";
 import { ConfirmationView } from "../../phases/confirmation/confirmation-view.js";
@@ -67,7 +68,7 @@ export const gameInit = {
 
     InfoBox.container = new createjs.Container();
 
-    BoardModel.boardContainer = new createjs.Container();
+    BoardView.boardContainer = new createjs.Container();
   },
 
   // ---------------------------------------------
@@ -77,10 +78,10 @@ export const gameInit = {
     const background = new createjs.Bitmap(config.imagePath + "board.png");
     Game.stage.addChild(background);
 
-    BoardModel.boardContainer.x = offsets.gameOffsetX;
-    BoardModel.boardContainer.y = offsets.gameOffsetY;
+    BoardView.boardContainer.x = offsets.gameOffsetX;
+    BoardView.boardContainer.y = offsets.gameOffsetY;
 
-    Game.stage.addChild(BoardModel.boardContainer);
+    Game.stage.addChild(BoardView.boardContainer);
   },
 
   // ---------------------------------------------

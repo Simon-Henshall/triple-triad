@@ -10,6 +10,8 @@ import { elements } from "../../constants/elements.js";
  * including the 3x3 grid, elements, and hit areas.
  */
 export const BoardView = {
+  boardContainer: undefined,
+
   /**
    * Generate the 3x3 board visually.
    * Pulls element IDs from BoardModel.generateElements()
@@ -19,8 +21,9 @@ export const BoardView = {
     const elementIDs = BoardModel.generateElements();
     BoardModel.squares = [];
 
-    // Clear existing squares from the board container
-    BoardModel.boardContainer.removeAllChildren();
+    // Keep the CreateJS container in the view layer; BoardModel remains data-only.
+    this.boardContainer ??= new createjs.Container();
+    this.boardContainer.removeAllChildren();
 
     let squareID = 0;
 
@@ -73,7 +76,7 @@ export const BoardView = {
         BoardModel.squares.push(square);
 
         // Add square to board layer (not the stage!)
-        BoardModel.boardContainer.addChild(c);
+        this.boardContainer.addChild(c);
       }
     }
 

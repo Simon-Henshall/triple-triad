@@ -45,12 +45,12 @@ A fan-made web implementation of the classic **Triple Triad** card game from the
 
 ## Tech Stack
 
-| Layer     | Technology                                              |
-| --------- | ------------------------------------------------------- |
-| Front-end | JavaScript (ES Modules), CreateJS (EaselJS)             |
-| Back-end  | PHP 8+ with PDO                                         |
-| Database  | MySQL 8 / MariaDB (InnoDB, utf8mb4)                     |
-| Tooling   | ESLint, Prettier, Jest, TypeScript (type-checking only) |
+| Layer     | Technology                                  |
+| --------- | ------------------------------------------- |
+| Front-end | JavaScript (ES Modules), CreateJS (EaselJS) |
+| Back-end  | PHP 8+ with PDO                             |
+| Database  | MySQL 8 / MariaDB (InnoDB, utf8mb4)         |
+| Tooling   | ESLint, Prettier, Jest, TypeScript          |
 
 ---
 
@@ -72,6 +72,11 @@ triple-triad/
 │       ├── cards/                   # Card face images (card0.png – card109.png, back.png)
 │       └── elements/                # Element icons (1.png through 8.png)
 ├── back_end/
+│   ├── api/
+│   │   ├── get_cards.php            # Fetch all cards
+│   │   ├── get_opponent_cards.php   # Fetch a specific opponent's card pool
+│   │   ├── get_opponents.php        # Fetch all opponents grouped by location
+│   │   └── get_player_cards.php     # Fetch cards owned by a player
 │   ├── sql/
 │   │   ├── 00_schema.sql            # Database schema (tables, FKs)
 │   │   ├── 01_seed_elements.sql     # Element reference data
@@ -86,11 +91,6 @@ triple-triad/
 │       ├── Card.php                 # Card model (CRUD + player association)
 │       └── Player.php               # Player model (CRUD + card association)
 ├── front_end/
-│   ├── api/
-│   │   ├── get_cards.php            # Fetch all cards
-│   │   ├── get_opponent_cards.php   # Fetch a specific opponent's card pool
-│   │   ├── get_opponents.php        # Fetch all opponents grouped by location
-│   │   └── get_player_cards.php     # Fetch cards owned by a player
 │   ├── js/
 │   │   ├── main.js                  # Entry point – bootstraps the game
 │   │   ├── constants/
@@ -266,14 +266,14 @@ The following special rules can be active for a match:
 
 ## API Endpoints
 
-All API endpoints are located under `front_end/api/` and return JSON responses.
+All API endpoints are located under `back_end/api/` and return JSON responses.
 
-| Endpoint                                  | Method | Description                                                                            |
-| ----------------------------------------- | ------ | -------------------------------------------------------------------------------------- |
-| `get_cards.php`                           | GET    | Returns all cards in the database.                                                     |
-| `get_player_cards.php?player_id={id}`     | GET    | Returns all cards owned by a specific player.                                          |
-| `get_opponents.php`                       | GET    | Returns all AI opponents grouped by location.                                          |
-| `get_opponent_cards.php?opponent_id={id}` | GET    | Returns the card pool for a specific opponent, including their rare card if available. |
+| Endpoint                              | Method | Description                                                                |
+| ------------------------------------- | ------ | -------------------------------------------------------------------------- |
+| `back_end/api/get_cards.php`          | GET    | Returns all cards in the database.                                         |
+| `back_end/api/get_player_cards.php`   | POST   | Returns all cards owned by a player.                                       |
+| `back_end/api/get_opponents.php`      | GET    | Returns all AI opponents grouped by location.                              |
+| `back_end/api/get_opponent_cards.php` | POST   | Returns an opponent's card pool, including their rare card when requested. |
 
 ---
 
