@@ -1,3 +1,4 @@
 node_modules/
 coverage/
+front_end/build/
 .env

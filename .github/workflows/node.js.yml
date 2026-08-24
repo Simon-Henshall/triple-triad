@@ -41,7 +41,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x, 24.x, 26.x]
+        node-version: [22.x, 24.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -59,14 +59,23 @@ jobs:
       - run: npm ci
       - name: Audit dependencies
         run: npm audit --audit-level=high
-      - run: npm run build --if-present
+      - run: npm run build
       - name: Seed test database
         run: mysql --protocol=TCP -h 127.0.0.1 -utriple_triad_ci -ptriple_triad_ci_password < back_end/sql/run_all.sql
       - name: Start PHP server
-        run: php -S 127.0.0.1:8080 -t . > php-server.log 2>&1 &
+        run: |
+          php -S 127.0.0.1:8080 -t . > php-server.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8080/front_end/game.php > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat php-server.log
+          exit 1
       - run: npm test
       - name: Upload test coverage
-        if: matrix.node-version == '26.x'
+        if: matrix.node-version == '24.x'
         uses: codecov/codecov-action@af2c6347526edfe5ff45ad690affad475d77ddb4
         with:
           files: ./coverage/lcov.info

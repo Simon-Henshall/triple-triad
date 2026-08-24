@@ -92,16 +92,16 @@ triple-triad/
 │       └── Player.php               # Player model (CRUD + card association)
 ├── front_end/
 │   ├── js/
-│   │   ├── main.js                  # Entry point – bootstraps the game
+│   │   ├── main.ts                  # Entry point – bootstraps the game
 │   │   ├── constants/
-│   │   │   ├── config.js            # Configuration (FPS, image paths)
-│   │   │   ├── directions.js        # Direction mapping for card adjacency
-│   │   │   ├── elements.js          # Element type metadata
-│   │   │   └── offsets.js           # Layout offsets for rendering
+│   │   │   ├── config.ts            # Configuration (FPS, image paths)
+│   │   │   ├── directions.ts        # Direction mapping for card adjacency
+│   │   │   ├── elements.ts          # Element type metadata
+│   │   │   └── offsets.ts           # Layout offsets for rendering
 │   │   ├── data/                    # Local data definitions
 │   │   ├── game/
-│   │   │   ├── game-state-machine.js# Phase state machine
-│   │   │   └── phases.js            # Phase registry
+│   │   │   ├── game-state-machine.ts# Phase state machine
+│   │   │   └── phases.ts            # Phase registry
 │   │   ├── phases/                  # Game phase controllers/models/views
 │   │   │   ├── ai-turn/             # AI turn phase
 │   │   │   ├── card-claim/          # Card claim phase (winner claims a card)
@@ -123,12 +123,12 @@ triple-triad/
 │   │   │   ├── player/              # Player model, view, controller (MVC)
 │   │   │   └── ui/                  # Scoreboard, InfoBox, PreviewCard, etc.
 │   │   ├── utilities/
-│   │   │   ├── ai-hand-generator.js # AI hand generation logic
-│   │   │   ├── debug.js             # Debug utilities
-│   │   │   ├── network.js           # Fetch wrappers for API calls
-│   │   │   ├── rng.js               # Seeded random number generator
-│   │   │   ├── shuffle.js           # Array shuffle utility
-│   │   │   └── turn.js              # Turn management helpers
+│   │   │   ├── ai-hand-generator.ts # AI hand generation logic
+│   │   │   ├── debug.ts             # Debug utilities
+│   │   │   ├── network.ts           # Fetch wrappers for API calls
+│   │   │   ├── rng.ts               # Seeded random number generator
+│   │   │   ├── shuffle.ts           # Array shuffle utility
+│   │   │   └── turn.ts              # Turn management helpers
 │   │   └── __tests__/               # Jest test files
 │   ├── game.php                     # Game HTML template (canvas + script tag)
 │   └── rules-panel.html             # Rules and controls panel (HTML overlay)
@@ -139,7 +139,7 @@ triple-triad/
 ├── package.json                     # Node.js devDependencies and scripts
 ├── package-lock.json
 ├── eslint.config.ts                 # ESLint flat config
-├── jest.config.js                   # Jest configuration
+├── jest.config.ts                   # Jest configuration
 └── .gitignore
 ```
 
@@ -152,7 +152,7 @@ triple-triad/
 - **Web server** – Apache / Nginx / IIS with PHP 8.0+ support (e.g. [WAMP](https://www.wampserver.com/), [XAMPP](https://www.apachefriends.org/), [Laravel Valet](https://laravel.com/docs/valet))
 - **PHP** 8.0 or higher
 - **MySQL** 8.0+ or MariaDB 10.5+
-- **Node.js** 18+ (for development tooling only – linting, testing)
+- **Node.js** 18+ (for development tooling only – building, linting, testing)
 - A modern browser with Canvas support (Chrome, Firefox, Edge, Safari)
 
 ### Installation
@@ -164,13 +164,19 @@ triple-triad/
    cd triple-triad
    ```
 
-2. **Install Node.js dev dependencies** (optional, for linting/testing):
+2. **Install Node.js dev dependencies** (optional, for building/linting/testing):
 
    ```bash
    npm install
    ```
 
-3. **Configure the database connection**:
+3. **Build the TypeScript frontend:**
+
+```bash
+npm run build
+```
+
+4. **Configure the database connection**:
 
    Create a `.env` file in the project root (or set environment variables):
 
@@ -285,7 +291,7 @@ Unit tests are written with [Jest](https://jestjs.io/) and located in `front_end
 npm test
 ```
 
-The test script uses Node.js with `--experimental-vm-modules` to support ES module syntax.
+The build script compiles the TypeScript frontend to `front_end/build/`, which is loaded by the PHP game page.
 
 ---
 
@@ -324,7 +330,7 @@ Key files under `assets/original/`:
 - **cards/** – Individual card images, named `card0.png`, `card1.png`, etc.
 - **elements/** – Element icons named after their element ID (`1.png` through `8.png`).
 
-The JavaScript configuration in `front_end/js/constants/config.js` defines the base image path (`assets/original/`) and card image path used throughout the rendering code.
+The TypeScript configuration in `front_end/js/constants/config.ts` defines the base image path (`assets/original/`) and card image path used throughout the rendering code.
 
 ---
 

@@ -5,4 +5,4 @@
   <?php include_once("front_end/rules-panel.html"); ?>
 </div>
 
-<script type="module" src="front_end/js/main.js"></script>
+<script type="module" src="front_end/build/main.js"></script>

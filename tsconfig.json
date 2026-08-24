@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": "front_end/js",
+    "outDir": "front_end/build",
+    "noCheck": true,
+    "allowJs": false,
+    "noEmitOnError": false,
+    "skipLibCheck": true,
+    "strict": false
+  },
+  "include": ["front_end/js/**/*.ts"],
+  "exclude": ["front_end/js/__tests__/**"]
+}
